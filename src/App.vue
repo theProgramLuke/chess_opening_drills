@@ -65,6 +65,6 @@ export default {
 
 <style lang="scss">
 html {
-  overflow: hidden !important;
+  overflow-y: hidden !important;
 }
 </style>
