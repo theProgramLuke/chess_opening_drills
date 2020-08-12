@@ -1,57 +1,70 @@
 <template>
-  <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+  <v-app id="inspire">
+    <v-navigation-drawer v-model="drawer" app>
+      <v-list>
+        <v-list-item
+          v-for="item in menuItems"
+          :to="item.route"
+          :key="item.route"
+        >
+          <v-list-item-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>{{ item.name }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+    <v-app-bar app color="blue">
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-toolbar-title>Application</v-toolbar-title>
     </v-app-bar>
 
     <v-main>
-      <HelloWorld />
+      <v-container class="fill-height" fluid>
+        <router-view></router-view>
+      </v-container>
     </v-main>
   </v-app>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
-
-export default Vue.extend({
-  name: "App",
-
-  components: {
-    HelloWorld
+<script>
+export default {
+  props: {
+    source: String
   },
-
   data: () => ({
-    //
+    drawer: null,
+    menuItems: [
+      {
+        name: "Edit",
+        route: "/edit",
+        icon: "mdi-file-tree"
+      },
+      {
+        name: "Train",
+        route: "/train",
+        icon: "mdi-play"
+      },
+      {
+        name: "Statistics",
+        route: "/statistics",
+        icon: "mdi-chart-bar"
+      },
+      {
+        name: "Settings",
+        route: "/settings",
+        icon: "mdi-wrench"
+      }
+    ]
   })
-});
+};
 </script>
+
+<style lang="scss">
+html {
+  overflow: hidden !important;
+}
+</style>
