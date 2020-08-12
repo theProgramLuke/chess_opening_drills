@@ -4,8 +4,17 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
-  mutations: {},
+  state: {
+    darkMode: true,
+    repertoire: {
+      white: [{}],
+      black: [{}]
+    }
+  },
+  mutations: {
+    setDarkMode: (state, darkMode) => (state.darkMode = darkMode)
+  },
   actions: {},
-  modules: {}
+  modules: {},
+  strict: process.env.NODE_ENV !== "production"
 });

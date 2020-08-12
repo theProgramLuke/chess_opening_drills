@@ -30,7 +30,9 @@
   </v-app>
 </template>
 
-<script>
+<script lang="ts">
+import { mapState } from "vuex";
+
 export default {
   props: {
     source: String
@@ -59,7 +61,17 @@ export default {
         icon: "mdi-wrench"
       }
     ]
-  })
+  }),
+  computed: mapState(["darkMode"]),
+  created() {
+    this.$vuetify.theme.dark = this.darkMode;
+
+    this.$store.subscribe((mutation, state) => {
+      if (mutation.type === "setDarkMode") {
+        this.$vuetify.theme.dark = state.darkMode;
+      }
+    });
+  }
 };
 </script>
 
