@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Settings</h1>
-    <v-switch @change="setDarkMode">
+    <v-switch @change="setDarkMode" v-model="darkMode">
       <template v-slot:label>
         Dark Mode
       </template>
@@ -10,9 +10,10 @@
 </template>
 
 <script lang="ts">
-import { mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
+  computed: mapState(["darkMode"]),
   methods: mapMutations(["setDarkMode"])
 };
 </script>
