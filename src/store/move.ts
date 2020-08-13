@@ -1,9 +1,11 @@
+import { Position } from "@/store/position";
+
 export class Move {
   san: string;
-  fen: string;
+  position: Position;
 
-  constructor(san: string, fen: string) {
+  constructor(san: string, position: Position) {
     this.san = san;
-    this.fen = fen;
+    this.position = position;
   }
 }
