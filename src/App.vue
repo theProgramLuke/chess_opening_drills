@@ -31,9 +31,10 @@
 </template>
 
 <script lang="ts">
+import Vue from "vue";
 import { mapState } from "vuex";
 
-export default {
+export default Vue.extend({
   props: {
     source: String
   },
@@ -72,7 +73,7 @@ export default {
       }
     });
   }
-};
+});
 </script>
 
 <style lang="scss">

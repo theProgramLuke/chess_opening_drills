@@ -10,10 +10,11 @@
 </template>
 
 <script lang="ts">
+import Vue from "vue";
 import { mapState, mapMutations } from "vuex";
 
-export default {
+export default Vue.extend({
   computed: mapState(["darkMode"]),
   methods: mapMutations(["setDarkMode"])
-};
+});
 </script>

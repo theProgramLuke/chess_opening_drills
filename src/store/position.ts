@@ -1,8 +1,10 @@
+import { Move } from "./move";
+
 export class Position {
   fen: string;
   comment: string;
   parents: Array<string>;
-  children: Array<string>;
+  children: Array<Move>;
   myTurn: boolean;
 
   constructor(
@@ -10,7 +12,7 @@ export class Position {
     myTurn: boolean,
     comment: string,
     parents: Array<string>,
-    children: Array<string>
+    children: Array<Move>
   ) {
     this.fen = fen;
     this.comment = comment;
