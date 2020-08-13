@@ -1,7 +1,7 @@
 <template lang="pug">
   v-container
-    v-row(cols=6, justify="center")
-      v-expansion-panels(hover)
+    v-row
+      v-expansion-panels(hover, popout)
         v-expansion-panel
           v-expansion-panel-header Appearance
           v-expansion-panel-content
