@@ -1,21 +1,21 @@
 <template lang="pug">
-  v-container class="fill-height"
-    v-row class="fill-height"
-      v-col dense xs="3" sm="3" md="3" lg="3" xl="3"
-        v-treeview
-          :items="repertoireTags"
-          @update:active="selectTag"
-          activatable
-          dense
-          hoverable
-      v-col>{{ position }}
+  v-container.fill-height
+    v-row.fill-height
+      v-col(cols=3, dense)
+        v-treeview(
+          :items="repertoireTags",
+          @update:active="selectTag",
+          activatable,
+          dense,
+          hoverable)
+      v-col
+        div {{position}}
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { mapState } from "vuex";
 import { RepertoireTag } from "@/store/repertoireTag";
-import { assert } from "console";
 
 function _findTag(tag: RepertoireTag, id: number): RepertoireTag | null {
   if (tag["id"] === id) {
@@ -54,9 +54,7 @@ export default Vue.extend({
   computed: mapState(["repertoireTags"]),
   methods: {
     selectTag(activeIds: Array<number>) {
-      const child =
-        findTag(this.repertoireTags[0], activeIds[0]) ||
-        findTag(this.repertoireTags[1], activeIds[0]);
+      const child = findTag(this.repertoireTags, activeIds[0]);
 
       if (child) {
         this.position = child.position;

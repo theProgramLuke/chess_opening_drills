@@ -1,12 +1,8 @@
-<template>
-  <v-container>
-    <h1>Settings</h1>
-    <v-switch @change="setDarkMode" v-model="darkMode">
-      <template v-slot:label>
-        Dark Mode
-      </template>
-    </v-switch>
-  </v-container>
+<template lang="pug">
+  v-container
+    h1 Settings
+    v-switch(@change="setDarkMode", v-model="darkMode")
+      template(v-slot:label) Dark Mode
 </template>
 
 <script lang="ts">

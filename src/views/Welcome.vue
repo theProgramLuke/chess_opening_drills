@@ -1,5 +1,3 @@
-<template>
-  <div>
-    Welcome
-  </div>
+<template lang="pug">
+  div Welcome
 </template>

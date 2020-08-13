@@ -1,5 +1,3 @@
-<template>
-  <div>
-    Train
-  </div>
+<template lang="pug">
+  div Train
 </template>

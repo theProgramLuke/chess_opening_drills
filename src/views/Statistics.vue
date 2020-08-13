@@ -1,5 +1,3 @@
-<template>
-  <div>
-    Statistics
-  </div>
+<template lang="pug">
+  div Statistics
 </template>
