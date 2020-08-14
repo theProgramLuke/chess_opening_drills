@@ -3,10 +3,12 @@ import _ from "lodash";
 import { Move } from "./move";
 import { Side } from "./side";
 
-export class Position {
-  fen: string;
+import { FEN } from "chessground/types";
+
+export class RepertoirePosition {
+  fen: FEN;
   comment: string;
-  parents: Array<Position>;
+  parents: Array<RepertoirePosition>;
   children: Array<Move>;
   myTurn: boolean;
   forSide: Side;
@@ -20,12 +22,16 @@ export class Position {
     this.children = [];
   }
 
-  addChild(move: Move): void {
-    this.children.push(move);
-    move.position.addParent(this);
+  addChild(move: Move): boolean {
+    if (!_.includes(this.children, move)) {
+      this.children.push(move);
+      move.position.addParent(this);
+      return true;
+    }
+    return false;
   }
 
-  addParent(position: Position): void {
+  addParent(position: RepertoirePosition): void {
     this.parents.push(position);
   }
 
@@ -46,7 +52,7 @@ export class Position {
     if (_.isEmpty(this.parents)) {
       collector.push(path);
     } else {
-      _.forEach(this.parents, (parent: Position) => {
+      _.forEach(this.parents, (parent: RepertoirePosition) => {
         const branch = _.clone(path);
         const parentMove = parent.getChildMove(this);
 
@@ -59,7 +65,7 @@ export class Position {
     }
   }
 
-  private getChildMove(other: Position): Move | undefined {
+  private getChildMove(other: RepertoirePosition): Move | undefined {
     return _.find(this.children, (child: Move) => child.position === other);
   }
 }

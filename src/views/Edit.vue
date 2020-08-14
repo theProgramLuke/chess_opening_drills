@@ -3,7 +3,7 @@
     v-row.fill-height
       v-col(cols=3, dense)
         v-treeview(
-          :items="repertoireTags",
+          :items="repertoire.tags",
           @update:active="selectTag",
           activatable,
           dense,
@@ -11,7 +11,8 @@
 
       v-divider(vertical)
       v-col
-        v-chip {{position}}
+        chessboard(:fen="activePosition.fen" orientation="white" @onMove="onBoardMove")
+        v-chip {{ activePosition.fen }}
 
       v-divider(vertical)
       v-col(cols=3)
@@ -24,7 +25,7 @@
                   td {{ moves.whiteMove.san }}
                   td(v-if="moves.blackMove !== undefined") {{ moves.blackMove.san }}
         
-        v-if(v-if="moveLists.length > 1")
+        div(v-if="moveLists.length > 1")
           v-btn(large @click="moveListIndex--" :disabled="doNotAllowMoveListPrevious")
             v-icon mdi-chevron-left
             div Previous
@@ -32,76 +33,117 @@
           v-btn(large @click="moveListIndex++" :disabled="doNotAllowMoveListNext")
             div Next
             v-icon mdi-chevron-right
+
+        div(v-for="position in repertoire.positions") {{ position.fen }}
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import _ from "lodash";
+import { mapState, mapMutations } from "vuex";
 
-import { mapState } from "vuex";
-
-import { FindRepertoireTag } from "@/store/repertoireTag";
-import { Position } from "@/store/position";
+import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";
 
-export default Vue.extend({
-  data: () => ({
-    position: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    moveListIndex: 0
-  }),
-  computed: {
-    ...mapState(["repertoireTags", "repertoirePositions"]),
-    moveLists(): Array<Array<Turn>> {
-      const repertoirePosition = this.repertoirePositions.find(
-        (repertoirePosition: Position) => {
-          return this.position === repertoirePosition.fen;
-        },
-        this
-      );
+import chessboard from "@/components/chessboard.vue";
+import { Threats } from "@/components/chessboard.vue";
+import { FEN } from "chessground/types";
+import { Side } from "@/store/side";
 
-      const paths = repertoirePosition.rootPaths();
+class EditData {
+  moveListIndex: number;
+  activePosition?: RepertoirePosition;
 
-      const moveLists: Array<Array<Turn>> = [];
+  constructor() {
+    this.moveListIndex = 0;
+  }
+}
 
-      _.forEach(paths, (path: Array<Move>) => {
-        const turns: Array<Turn> = [];
+function getMoveLists(
+  currentPosition: RepertoirePosition | undefined
+): Array<Array<Turn>> {
+  const moveLists: Array<Array<Turn>> = [];
 
-        _.forEach(_.range(0, path.length, 2), (i: number) => {
-          const whiteMove = path[i];
+  if (currentPosition) {
+    const paths = currentPosition.rootPaths();
 
-          if (path.length === i) {
-            turns.push(new Turn(whiteMove));
-          } else {
-            const blackMove = path[i + 1];
-            turns.push(new Turn(whiteMove, blackMove));
-          }
-        });
+    _.forEach(paths, (path: Array<Move>) => {
+      const turns: Array<Turn> = [];
 
-        moveLists.push(turns);
+      _.forEach(_.range(0, path.length, 2), (i: number) => {
+        const whiteMove = path[i];
+
+        if (path.length === i) {
+          turns.push(new Turn(whiteMove));
+        } else {
+          const blackMove = path[i + 1];
+          turns.push(new Turn(whiteMove, blackMove));
+        }
       });
 
-      return moveLists;
+      moveLists.push(turns);
+    });
+  }
+
+  return moveLists;
+}
+
+export default Vue.extend({
+  data: () => new EditData(),
+
+  components: {
+    chessboard
+  },
+
+  computed: {
+    ...mapState(["repertoire"]),
+
+    moveLists(): Array<Array<Turn>> {
+      return getMoveLists(this.activePosition);
     },
+
     doNotAllowMoveListPrevious(): boolean {
       return this.moveListIndex === 0;
     },
+
     doNotAllowMoveListNext(): boolean {
       return this.moveListIndex === this.moveLists.length - 1;
     }
   },
+
   methods: {
+    ...mapMutations(["addRepertoirePosition"]),
+
     selectTag(activeIds: Array<number>): void {
-      const child = FindRepertoireTag(this.repertoireTags, activeIds[0]);
+      const child = this.repertoire.LookupRepertoireTag(activeIds[0]);
 
       if (child) {
         this.updatePosition(child.position);
       }
     },
-    updatePosition(newPosition: string): void {
+
+    updatePosition(position: RepertoirePosition): void {
       this.moveListIndex = 0;
-      this.position = newPosition;
+
+      this.addRepertoirePosition({
+        parent: this.activePosition,
+        newMove: new Move("", position)
+      });
+
+      this.activePosition = position;
+    },
+
+    onBoardMove(threats: Threats) {
+      if (threats.fen) {
+        this.updatePosition(
+          new RepertoirePosition(threats.fen, true, "", Side.White)
+        );
+      }
     }
+  },
+  created() {
+    this.activePosition = this.repertoire.tags[0].position;
   }
 });
 </script>

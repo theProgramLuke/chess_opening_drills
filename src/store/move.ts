@@ -1,10 +1,10 @@
-import { Position } from "@/store/position";
+import { RepertoirePosition } from "@/store/repertoirePosition";
 
 export class Move {
   san: string;
-  position: Position;
+  position: RepertoirePosition;
 
-  constructor(san: string, position: Position) {
+  constructor(san: string, position: RepertoirePosition) {
     this.san = san;
     this.position = position;
   }
