@@ -145,5 +145,29 @@ describe("Repertoire", () => {
           expect(repertoire.positions).toContain(position)
       );
     });
+
+    it("replaces  given a transposition", () => {
+      const repertoire = new Repertoire([start], []);
+
+      repertoire.AddMove(start, e3); // 1. e3
+      repertoire.AddMove(e3.position, e3e6); // 1. e3 e6
+      repertoire.AddMove(e3e6.position, e3e6d3); // 1. e3 e6 2. d3
+      repertoire.AddMove(start, d3); // 1. d3
+      repertoire.AddMove(d3.position, d3e6); // 1. d3 e6
+      repertoire.AddMove(d3e6.position, d3e6e3); // 1. d3 e6 2. e3 (transposes)
+
+      _.forEach(
+        [
+          start,
+          e3.position,
+          e3e6.position,
+          e3e6d3.position,
+          d3.position,
+          d3e6.position
+        ],
+        (position: RepertoirePosition) =>
+          expect(repertoire.positions).toContain(position)
+      );
+    });
   });
 });
