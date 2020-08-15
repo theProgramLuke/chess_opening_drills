@@ -33,7 +33,7 @@ export class RepertoirePosition {
     }
   }
 
-  RootPaths(): Array<Array<Move>> {
+  private RootPaths(): Array<Array<Move>> {
     const collector: Array<Array<Move>> = [];
 
     if (!_.isEmpty(this.parents)) {
