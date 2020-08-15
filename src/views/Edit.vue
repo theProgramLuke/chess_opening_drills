@@ -51,23 +51,16 @@ import chessboard from "@/components/chessboard.vue";
 import { Threats } from "@/components/chessboard.vue";
 import { Side } from "@/store/side";
 
-class EditData {
-  turnListIndex: number;
-  activePosition: RepertoirePosition;
-
-  constructor() {
-    this.turnListIndex = 0;
-    this.activePosition = new RepertoirePosition(
+export default Vue.extend({
+  data: () => ({
+    turnListIndex: 0,
+    activePosition: new RepertoirePosition(
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
       true,
       "",
       Side.White
-    );
-  }
-}
-
-export default Vue.extend({
-  data: () => new EditData(),
+    )
+  }),
 
   components: {
     chessboard
@@ -109,12 +102,14 @@ export default Vue.extend({
           Side.White
         );
 
+        const move = new Move(lastMoveSan, position);
+
         this.addRepertoirePosition({
           parent: this.activePosition,
-          newMove: new Move(lastMoveSan, position)
+          newMove: move
         });
 
-        this.updateBoard(position);
+        this.updateBoard(move.position);
       }
     }
   },
