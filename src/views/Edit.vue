@@ -4,15 +4,16 @@
       v-col(cols=3, dense)
         v-treeview(
           :items="repertoire.tags",
-          @update:active="selectTag",
-          activatable,
           dense,
           hoverable)
+          template(v-slot:label="item")
+            a(@click="updateBoard(item.item.position)") {{ item.item.name }}
 
       v-divider(vertical)
       v-col
-        chessboard(:fen="activePosition.fen" orientation="white" @onMove="onBoardMove")
-        v-chip {{ activePosition.fen }}
+        div(v-if="activePosition.fen")
+          chessboard(:fen="activePosition.fen" orientation="white" @onMove="onBoardMove")
+          v-chip {{ activePosition.fen }}
 
       v-divider(vertical)
       v-col(cols=3)
@@ -50,43 +51,21 @@ import chessboard from "@/components/chessboard.vue";
 import { Threats } from "@/components/chessboard.vue";
 import { FEN } from "chessground/types";
 import { Side } from "@/store/side";
+import { RepertoireTag } from "@/store/repertoireTag";
 
 class EditData {
   moveListIndex: number;
-  activePosition?: RepertoirePosition;
+  activePosition: RepertoirePosition;
 
   constructor() {
     this.moveListIndex = 0;
+    this.activePosition = new RepertoirePosition(
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      true,
+      "",
+      Side.White
+    );
   }
-}
-
-function getMoveLists(
-  currentPosition: RepertoirePosition | undefined
-): Array<Array<Turn>> {
-  const moveLists: Array<Array<Turn>> = [];
-
-  if (currentPosition) {
-    const paths = currentPosition.rootPaths();
-
-    _.forEach(paths, (path: Array<Move>) => {
-      const turns: Array<Turn> = [];
-
-      _.forEach(_.range(0, path.length, 2), (i: number) => {
-        const whiteMove = path[i];
-
-        if (path.length === i) {
-          turns.push(new Turn(whiteMove));
-        } else {
-          const blackMove = path[i + 1];
-          turns.push(new Turn(whiteMove, blackMove));
-        }
-      });
-
-      moveLists.push(turns);
-    });
-  }
-
-  return moveLists;
 }
 
 export default Vue.extend({
@@ -100,7 +79,7 @@ export default Vue.extend({
     ...mapState(["repertoire"]),
 
     moveLists(): Array<Array<Turn>> {
-      return getMoveLists(this.activePosition);
+      return this.activePosition.GetTurnLists();
     },
 
     doNotAllowMoveListPrevious(): boolean {
@@ -115,35 +94,34 @@ export default Vue.extend({
   methods: {
     ...mapMutations(["addRepertoirePosition"]),
 
-    selectTag(activeIds: Array<number>): void {
-      const child = this.repertoire.LookupRepertoireTag(activeIds[0]);
-
-      if (child) {
-        this.updatePosition(child.position);
-      }
-    },
-
-    updatePosition(position: RepertoirePosition): void {
+    updateBoard(position: RepertoirePosition): void {
       this.moveListIndex = 0;
-
-      this.addRepertoirePosition({
-        parent: this.activePosition,
-        newMove: new Move("", position)
-      });
 
       this.activePosition = position;
     },
 
     onBoardMove(threats: Threats) {
-      if (threats.fen) {
-        this.updatePosition(
-          new RepertoirePosition(threats.fen, true, "", Side.White)
+      const lastMoveSan = _.last(threats.history) || "SAN";
+
+      if (threats.fen && threats.fen !== this.activePosition.fen) {
+        const position = new RepertoirePosition(
+          threats.fen,
+          true,
+          "",
+          Side.White
         );
+
+        this.addRepertoirePosition({
+          parent: this.activePosition,
+          newMove: new Move(lastMoveSan, position)
+        });
+
+        this.updateBoard(position);
       }
     }
   },
   created() {
-    this.activePosition = this.repertoire.tags[0].position;
+    this.updateBoard(this.repertoire.tags[0].position);
   }
 });
 </script>

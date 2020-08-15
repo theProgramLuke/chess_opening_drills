@@ -171,6 +171,7 @@ export default Vue.extend({
       const threats: Threats = this.countThreats(this.toColor()) || {};
       threats["history"] = this.game.history();
       threats["fen"] = this.game.fen();
+
       this.$emit("onMove", threats);
     },
     countThreats(color: Color) {

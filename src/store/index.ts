@@ -50,9 +50,7 @@ export default new Vuex.Store({
       payload: { parent: RepertoirePosition; newMove: Move }
     ): void => {
       if (payload["parent"]) {
-        if (payload["parent"].addChild(payload["newMove"])) {
-          state.repertoire.positions.push(payload["newMove"].position);
-        }
+        state.repertoire.AddMove(payload.parent, payload.newMove);
       }
     }
   },

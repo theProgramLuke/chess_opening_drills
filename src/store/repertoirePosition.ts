@@ -1,9 +1,9 @@
 import _ from "lodash";
-
-import { Move } from "./move";
-import { Side } from "./side";
-
 import { FEN } from "chessground/types";
+
+import { Move } from "@/store/move";
+import { Side } from "@/store/side";
+import { Turn } from "@/store/turn";
 
 export class RepertoirePosition {
   fen: FEN;
@@ -22,30 +22,32 @@ export class RepertoirePosition {
     this.children = [];
   }
 
-  addChild(move: Move): boolean {
-    if (!_.includes(this.children, move)) {
+  AddChild(move: Move): void {
+    const samePosition = this.fen == move.position.fen;
+    const alreadyChild = !_.isEmpty(
+      _.find(this.children, (child: Move) => this.fen === child.position.fen)
+    );
+    if (!samePosition && !alreadyChild) {
       this.children.push(move);
-      move.position.addParent(this);
-      return true;
+      move.position.AddParent(this);
     }
-    return false;
   }
 
-  addParent(position: RepertoirePosition): void {
+  private AddParent(position: RepertoirePosition): void {
     this.parents.push(position);
   }
 
-  rootPaths(): Array<Array<Move>> {
+  RootPaths(): Array<Array<Move>> {
     const collector: Array<Array<Move>> = [];
 
     if (!_.isEmpty(this.parents)) {
-      this.rootPathsRecursive([], collector);
+      this.RootPathsRecursive([], collector);
     }
 
     return collector;
   }
 
-  private rootPathsRecursive(
+  private RootPathsRecursive(
     path: Array<Move>,
     collector: Array<Array<Move>>
   ): void {
@@ -60,12 +62,37 @@ export class RepertoirePosition {
           branch.unshift(parentMove);
         }
 
-        parent.rootPathsRecursive(branch, collector);
+        parent.RootPathsRecursive(branch, collector);
       });
     }
   }
 
   private getChildMove(other: RepertoirePosition): Move | undefined {
     return _.find(this.children, (child: Move) => child.position === other);
+  }
+
+  GetTurnLists(): Array<Array<Turn>> {
+    const moveLists: Array<Array<Turn>> = [];
+
+    const paths = this.RootPaths();
+
+    _.forEach(paths, (path: Array<Move>) => {
+      const turns: Array<Turn> = [];
+
+      _.forEach(_.range(0, path.length, 2), (i: number) => {
+        const whiteMove = path[i];
+
+        if (path.length === i) {
+          turns.push(new Turn(whiteMove));
+        } else {
+          const blackMove = path[i + 1];
+          turns.push(new Turn(whiteMove, blackMove));
+        }
+      });
+
+      moveLists.push(turns);
+    });
+
+    return moveLists;
   }
 }

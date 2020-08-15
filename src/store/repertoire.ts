@@ -1,10 +1,9 @@
 import _ from "lodash";
 import { FEN } from "chessground/types";
 
-import { RepertoirePosition } from "./repertoirePosition";
-import { RepertoireTag } from "./repertoireTag";
-import { Position } from "vue-router/types/router";
-import { Move } from "./move";
+import { RepertoirePosition } from "@/store/repertoirePosition";
+import { RepertoireTag } from "@/store/repertoireTag";
+import { Move } from "@/store/move";
 
 export class Repertoire {
   positions: Array<RepertoirePosition>;
@@ -16,6 +15,19 @@ export class Repertoire {
   ) {
     this.positions = positions;
     this.tags = tags;
+  }
+
+  AddMove(parent: RepertoirePosition, move: Move): void {
+    const existingPosition = this.LookupRepertoirePosition(move.position.fen);
+    if (existingPosition) {
+      move.position = existingPosition;
+    }
+
+    parent.AddChild(move);
+
+    if (!existingPosition) {
+      this.positions.push(move.position);
+    }
   }
 
   LookupRepertoirePosition(fen: FEN): RepertoirePosition | undefined {
