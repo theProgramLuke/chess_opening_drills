@@ -29,12 +29,8 @@ export class RepertoirePosition {
     );
     if (!samePosition && !alreadyChild) {
       this.children.push(move);
-      move.position.AddParent(this);
+      move.position.parents.push(this);
     }
-  }
-
-  private AddParent(position: RepertoirePosition): void {
-    this.parents.push(position);
   }
 
   RootPaths(): Array<Array<Move>> {

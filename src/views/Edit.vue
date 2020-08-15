@@ -49,9 +49,7 @@ import { Move } from "@/store/move";
 
 import chessboard from "@/components/chessboard.vue";
 import { Threats } from "@/components/chessboard.vue";
-import { FEN } from "chessground/types";
 import { Side } from "@/store/side";
-import { RepertoireTag } from "@/store/repertoireTag";
 
 class EditData {
   moveListIndex: number;
