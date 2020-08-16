@@ -30,7 +30,10 @@ export class RepertoirePosition {
   AddChild(move: Move): void {
     const samePosition = this.fen == move.position.fen;
     const alreadyChild = !_.isEmpty(
-      _.find(this.children, (child: Move) => this.fen === child.position.fen)
+      _.find(
+        this.children,
+        (child: Move) => move.position.fen === child.position.fen
+      )
     );
     if (!samePosition && !alreadyChild) {
       this.children.push(move);

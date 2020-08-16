@@ -26,7 +26,7 @@
                   td {{ turn.whiteMove.san }}
                   td(v-if="turn.blackMove !== undefined") {{ turn.blackMove.san }}
         
-        div(v-if="turnLists.length > 1")
+        div(v-if="turnLists.length > 0")
           v-btn(large @click="turnListIndex--" :disabled="doNotAllowturnListPrevious")
             v-icon mdi-chevron-left
             div Previous
@@ -34,8 +34,6 @@
           v-btn(large @click="turnListIndex++" :disabled="doNotAllowturnListNext")
             div Next
             v-icon mdi-chevron-right
-
-        div(v-for="position in repertoire.positions") {{ position.fen }}
 </template>
 
 <script lang="ts">

@@ -153,6 +153,23 @@ describe("RepertoirePosition", () => {
       expect(start.children).toEqual([e3]);
       expect(e3.position.parents).toContain(start);
     });
+
+    it("does not add a child link given the same position", () => {
+      const e3Clone = _.cloneDeep(e3);
+
+      e3.position.AddChild(e3Clone);
+
+      expect(e3.position.children).toHaveLength(0);
+    });
+
+    it("does not add a child link given an existing child", () => {
+      const e3Clone = _.cloneDeep(e3);
+
+      start.AddChild(e3);
+      start.AddChild(e3Clone);
+
+      expect(start.children).toEqual([e3]);
+    });
   });
 
   describe("GetTurnLists", () => {
@@ -161,7 +178,7 @@ describe("RepertoirePosition", () => {
     it("returns an empty array given a position with no parents", () => {
       const paths = start.GetTurnLists();
 
-      expect(_.isEmpty(paths)).toBeTruthy();
+      expect(paths).toHaveLength(0);
     });
 
     it("returns a single turn list when there are no tranposition", () => {
