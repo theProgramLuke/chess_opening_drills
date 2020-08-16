@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { FEN } from "chessground/types";
+import { Chess } from "chess.js";
 
 import { Move } from "@/store/move";
 import { Side } from "@/store/side";
@@ -13,13 +14,17 @@ export class RepertoirePosition {
   myTurn: boolean;
   forSide: Side;
 
-  constructor(fen: string, myTurn: boolean, comment: string, forSide: Side) {
+  constructor(fen: FEN, myTurn: boolean, comment: string, forSide: Side) {
     this.fen = fen;
     this.comment = comment;
     this.myTurn = myTurn;
     this.forSide = forSide;
     this.parents = [];
     this.children = [];
+  }
+
+  SideToMove(): Side {
+    return Chess(this.fen).turn() === "w" ? Side.White : Side.Black;
   }
 
   AddChild(move: Move): void {
@@ -90,5 +95,45 @@ export class RepertoirePosition {
     });
 
     return moveLists;
+  }
+
+  AsPgnMoveText(turnCount = 1): string {
+    if (_.isEmpty(this.children)) {
+      return "";
+    }
+
+    const side = this.SideToMove();
+    let pgnMoveText = "";
+    let childTurnCount = turnCount;
+
+    if (side === Side.White) {
+      // White made this move.
+      pgnMoveText += turnCount + ". ";
+      childTurnCount++;
+    }
+
+    const mainLine = _.first(this.children);
+    if (mainLine) {
+      pgnMoveText += mainLine.san;
+    }
+
+    const variations = _.tail(this.children);
+
+    _.forEach(variations, (child: Move) => {
+      pgnMoveText += " ( "; // start variation
+      pgnMoveText += turnCount;
+      pgnMoveText += side === Side.White ? ". " : "... ";
+      pgnMoveText += child.san;
+      pgnMoveText += " ";
+      pgnMoveText += child.position.AsPgnMoveText(childTurnCount);
+      pgnMoveText += " )"; // end variation
+    });
+
+    if (mainLine) {
+      pgnMoveText += " ";
+      pgnMoveText += mainLine.position.AsPgnMoveText(childTurnCount);
+    }
+
+    return _.trim(pgnMoveText);
   }
 }

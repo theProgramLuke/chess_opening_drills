@@ -5,7 +5,9 @@ import { Side } from "@/store/side";
 import { Move } from "@/store/move";
 import { Repertoire } from "@/store/repertoire";
 import { Turn } from "@/store/turn";
+import { FEN } from "chessground/types";
 
+let repertoire: Repertoire;
 let start: RepertoirePosition;
 let e3: Move;
 let e3e6: Move;
@@ -99,13 +101,51 @@ beforeEach(() => {
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/3PP3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
       false,
-      "",
+      "This transposes to e3, e6, d3",
       Side.White
     )
   );
 });
 
+function LinkMoves(): void {
+  /*
+   * 1. e3 e6
+   * 2. d3
+   *
+   * 1. d3 e6
+   * 2. e3
+   *
+   * 1. e3 e6
+   * 2. e4 e5
+   */
+  repertoire = new Repertoire([start], []);
+  repertoire.AddMove(start, e3);
+  repertoire.AddMove(e3.position, e3e6);
+  repertoire.AddMove(e3e6.position, e3e6d3);
+  repertoire.AddMove(e3e6.position, e3e6e4);
+  repertoire.AddMove(e3e6e4.position, e3e6e4e5);
+  repertoire.AddMove(start, d3);
+  repertoire.AddMove(d3.position, d3e6);
+  repertoire.AddMove(d3e6.position, d3e6e3);
+}
+
 describe("RepertoirePosition", () => {
+  describe("SideToMove", () => {
+    it.each([
+      ["rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", Side.White],
+      ["rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1", Side.Black]
+    ])("for FEN %s return %s", (fen: FEN, expected: Side) => {
+      const side = new RepertoirePosition(
+        fen,
+        false,
+        "",
+        Side.White
+      ).SideToMove();
+
+      expect(side).toBe(expected);
+    });
+  });
+
   describe("AddChild", () => {
     it("adds child and parent links", () => {
       start.AddChild(e3);
@@ -116,29 +156,7 @@ describe("RepertoirePosition", () => {
   });
 
   describe("GetTurnLists", () => {
-    let repertoire: Repertoire;
-
-    beforeEach(() => {
-      /*
-       * 1. e3 e6
-       * 2. d3
-       *
-       * 1. d3 e6
-       * 2. e3
-       *
-       * 1. e3 e6
-       * 2. e4 e5
-       */
-      repertoire = new Repertoire([start], []);
-      repertoire.AddMove(start, e3);
-      repertoire.AddMove(e3.position, e3e6);
-      repertoire.AddMove(e3e6.position, e3e6d3);
-      repertoire.AddMove(e3e6.position, e3e6e4);
-      repertoire.AddMove(e3e6e4.position, e3e6e4e5);
-      repertoire.AddMove(start, d3);
-      repertoire.AddMove(d3.position, d3e6);
-      repertoire.AddMove(d3e6.position, d3e6e3);
-    });
+    beforeEach(LinkMoves);
 
     it("returns an empty array given a position with no parents", () => {
       const paths = start.GetTurnLists();
@@ -159,6 +177,18 @@ describe("RepertoirePosition", () => {
         [new Turn(e3, e3e6), new Turn(e3e6d3)],
         [new Turn(d3, d3e6), new Turn(d3e6e3)]
       ]);
+    });
+  });
+
+  describe("AsPgnMoveText", () => {
+    beforeEach(LinkMoves);
+
+    it("generates the pgn of position", () => {
+      const pgnMoveText = start.AsPgnMoveText();
+      const expectedPgnMoveText =
+        "1. e3 ( 1. d3 e6 2. e3 ) e6 2. d3 ( 2. e4 e5 )";
+
+      expect(pgnMoveText).toEqual(expectedPgnMoveText);
     });
   });
 });
