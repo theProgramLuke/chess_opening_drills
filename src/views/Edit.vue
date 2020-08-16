@@ -23,17 +23,21 @@
               tbody
                 tr(v-for="(turn, turnNumber) in turnList")
                   td {{ turnNumber + 1 }}
-                  td {{ turn.whiteMove.san }}
-                  td(v-if="turn.blackMove !== undefined") {{ turn.blackMove.san }}
+                  td
+                    v-btn.move(@click="updateBoard(turn.whiteMove.position)") {{ turn.whiteMove.san }}
+                  td(v-if="turn.blackMove !== undefined")
+                    v-btn.move(@click="updateBoard(turn.blackMove.position)") {{ turn.blackMove.san }}
         
-        div(v-if="turnLists.length > 0")
-          v-btn(large @click="turnListIndex--" :disabled="doNotAllowturnListPrevious")
-            v-icon mdi-chevron-left
-            div Previous
+        v-btn(large @click="turnListIndex--", :disabled="doNotAllowturnListPrevious")
+          v-icon mdi-chevron-left
+          div Previous
 
-          v-btn(large @click="turnListIndex++" :disabled="doNotAllowturnListNext")
-            div Next
-            v-icon mdi-chevron-right
+        v-btn(large @click="turnListIndex++", :disabled="doNotAllowturnListNext")
+          div Next
+          v-icon mdi-chevron-right
+
+        br
+        v-btn.move(v-for="move in nextMoves", @click="updateBoard(move.position)", color="primary") {{ move.san }}
 </template>
 
 <script lang="ts">
@@ -68,15 +72,22 @@ export default Vue.extend({
     ...mapState(["repertoire"]),
 
     turnLists(): Array<Array<Turn>> {
-      return this.activePosition.GetTurnLists();
+      return this.activePosition.GetTurnLists() || [[]];
     },
 
     doNotAllowturnListPrevious(): boolean {
-      return this.turnListIndex === 0;
+      return this.turnLists.length === 0 || this.turnListIndex === 0;
     },
 
     doNotAllowturnListNext(): boolean {
-      return this.turnListIndex === this.turnLists.length - 1;
+      return (
+        this.turnLists.length === 0 ||
+        this.turnListIndex === this.turnLists.length - 1
+      );
+    },
+
+    nextMoves(): Array<Move> {
+      return this.activePosition.children;
     }
   },
 
@@ -116,3 +127,9 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style lang="scss" scoped>
+.v-btn.move {
+  text-transform: none;
+}
+</style>
