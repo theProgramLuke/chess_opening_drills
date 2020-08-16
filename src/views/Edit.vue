@@ -28,16 +28,16 @@
                   td(v-if="turn.blackMove !== undefined")
                     v-btn.move(@click="updateBoard(turn.blackMove.position)") {{ turn.blackMove.san }}
         
-        v-btn(large @click="turnListIndex--", :disabled="doNotAllowturnListPrevious")
+        v-btn.ma-2(large @click="decrementTurnListIndex", :disabled="doNotAllowturnListPrevious")
           v-icon mdi-chevron-left
-          div Previous
+          div Back
 
-        v-btn(large @click="turnListIndex++", :disabled="doNotAllowturnListNext")
+        v-btn.ma-2.float-right(large @click="incrementTurnListIndex", :disabled="doNotAllowturnListNext")
           div Next
           v-icon mdi-chevron-right
 
         br
-        v-btn.move(v-for="move in nextMoves", @click="updateBoard(move.position)", color="primary") {{ move.san }}
+        v-btn.ma-2.move(v-for="move in nextMoves", @click="updateBoard(move.position)", color="primary") {{ move.san }}
 </template>
 
 <script lang="ts">
@@ -120,6 +120,12 @@ export default Vue.extend({
 
         this.updateBoard(move.position);
       }
+    },
+    decrementTurnListIndex() {
+      this.turnListIndex--;
+    },
+    incrementTurnListIndex() {
+      this.turnListIndex++;
     }
   },
   created() {
