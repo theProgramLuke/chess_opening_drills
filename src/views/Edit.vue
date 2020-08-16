@@ -17,7 +17,9 @@
 
       v-divider(vertical)
       v-col(cols=3)
-        v-window(v-model="turnListIndex")
+        v-window(show-arrows)
+          v-window-item(v-if="turnLists.length === 0")
+            v-alert(type="info") Move list is empty
           v-window-item(v-for="(turnList, index) in turnLists", :key="index")
             v-simple-table
               tbody
@@ -27,16 +29,7 @@
                     v-btn.move(@click="updateBoard(turn.whiteMove.position)") {{ turn.whiteMove.san }}
                   td(v-if="turn.blackMove !== undefined")
                     v-btn.move(@click="updateBoard(turn.blackMove.position)") {{ turn.blackMove.san }}
-        
-        v-btn.ma-2(large @click="decrementTurnListIndex", :disabled="doNotAllowturnListPrevious")
-          v-icon mdi-chevron-left
-          div Back
 
-        v-btn.ma-2.float-right(large @click="incrementTurnListIndex", :disabled="doNotAllowturnListNext")
-          div Next
-          v-icon mdi-chevron-right
-
-        br
         v-btn.ma-2.move(v-for="move in nextMoves", @click="updateBoard(move.position)", color="primary") {{ move.san }}
 </template>
 
@@ -55,7 +48,6 @@ import { Side } from "@/store/side";
 
 export default Vue.extend({
   data: () => ({
-    turnListIndex: 0,
     activePosition: new RepertoirePosition(
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
       true,
@@ -75,17 +67,6 @@ export default Vue.extend({
       return this.activePosition.GetTurnLists() || [[]];
     },
 
-    doNotAllowturnListPrevious(): boolean {
-      return this.turnLists.length === 0 || this.turnListIndex === 0;
-    },
-
-    doNotAllowturnListNext(): boolean {
-      return (
-        this.turnLists.length === 0 ||
-        this.turnListIndex === this.turnLists.length - 1
-      );
-    },
-
     nextMoves(): Array<Move> {
       return this.activePosition.children;
     }
@@ -95,8 +76,6 @@ export default Vue.extend({
     ...mapMutations(["addRepertoirePosition"]),
 
     updateBoard(position: RepertoirePosition): void {
-      this.turnListIndex = 0;
-
       this.activePosition = position;
     },
 
@@ -120,12 +99,6 @@ export default Vue.extend({
 
         this.updateBoard(move.position);
       }
-    },
-    decrementTurnListIndex() {
-      this.turnListIndex--;
-    },
-    incrementTurnListIndex() {
-      this.turnListIndex++;
     }
   },
   created() {
