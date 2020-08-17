@@ -17,16 +17,7 @@
                   v-text-field(label="Name" autofocus close-on-content-click=false close-on-click=false)
                   v-btn.ma-2(@click="showNewTagDialog=false", color="primary") Add
                   v-btn.ma-2(@click="showNewTagDialog=false", color="secondary", text) Cancel
-            v-dialog(v-model="showDeleteTagDialog" max-width="500px")
-              template(v-slot:activator="{on, attrs}")
-                v-btn(v-bind="attrs" v-on="on" icon, color="error")
-                  v-icon mdi-delete
-              v-form
-                v-sheet.pa-4
-                  h1 Delete?
-                  div The tag {{ item.item.name }} and all of it's children will be permanently deleted.
-                  v-btn.ma-2(@click="showDeleteTagDialog=false", color="error") Delete
-                  v-btn.ma-2(@click="showDeleteTagDialog=false", color="secondary", text) Cancel
+            tag-deleter(:tag="item.item" @onDelete="removeRepertoireTag")
 
       v-divider(vertical)
       v-col
@@ -62,6 +53,7 @@ import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";
 
 import chessboard from "@/components/chessboard.vue";
+import tagDeleter from "@/components/TagDeleter.vue";
 import { Threats } from "@/components/chessboard.vue";
 import { Side } from "@/store/side";
 import { RepertoireTag } from "@/store/repertoireTag";
@@ -79,7 +71,8 @@ export default Vue.extend({
   }),
 
   components: {
-    chessboard
+    chessboard,
+    tagDeleter
   },
 
   computed: {
@@ -125,11 +118,11 @@ export default Vue.extend({
     },
 
     addRepertoireTag(): void {
-      1 + 1;
+      alert("add tag");
     },
 
     removeRepertoireTag(tag: RepertoireTag): void {
-      this.repertoire.RemoveRepertoireTag(tag);
+      alert(tag.name);
     }
   },
   created() {
