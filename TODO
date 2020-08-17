@@ -1,4 +1,5 @@
 patch chess.js export # Blocked on yarn 2 failed install
+bug: deleting tags
 use vuetify theme for colors
 customizable vuetify theme colors
 training mode select
