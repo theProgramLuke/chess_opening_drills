@@ -20,6 +20,8 @@ export let d3e6e3: Move;
 export let White: RepertoireTag;
 export let Black: RepertoireTag;
 export let VariationA: RepertoireTag;
+export let VariationAB: RepertoireTag;
+export let VariationC: RepertoireTag;
 
 export function ResetTestRepertoire() {
   start = new RepertoirePosition(
@@ -109,17 +111,36 @@ export function ResetTestRepertoire() {
     )
   );
 
+  VariationAB = new RepertoireTag(
+    3,
+    Side.White,
+    "Variation AB",
+    e3e6.position,
+    e3e6.position.fen,
+    []
+  );
+
   VariationA = new RepertoireTag(
     2,
     Side.White,
     "Variation A",
     e3e6.position,
     e3e6.position.fen,
+    [VariationAB]
+  );
+
+  VariationC = new RepertoireTag(
+    4,
+    Side.White,
+    "Variation C",
+    e3e6.position,
+    e3e6.position.fen,
     []
   );
 
   White = new RepertoireTag(0, Side.White, "White", start, start.fen, [
-    VariationA
+    VariationA,
+    VariationC
   ]);
 
   Black = new RepertoireTag(1, Side.Black, "Black", start, start.fen, []);
@@ -217,6 +238,23 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
           2,
           Side.White,
           "Variation A",
+          2,
+          "rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+          [
+            new SavedRepertoireTag(
+              3,
+              Side.White,
+              "Variation AB",
+              2,
+              "rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+              []
+            )
+          ]
+        ),
+        new SavedRepertoireTag(
+          4,
+          Side.White,
+          "Variation C",
           2,
           "rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
           []

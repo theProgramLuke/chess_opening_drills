@@ -12,9 +12,10 @@ import {
   d3,
   d3e6,
   LinkTestPositions,
-  ExpectedSavedRepertoire
+  ExpectedSavedRepertoire,
+  VariationC,
+  VariationA
 } from "./testDataRepertoire";
-import { RepertoireTag } from "@/store/repertoireTag";
 
 beforeEach(() => {
   ResetTestRepertoire();
@@ -90,7 +91,18 @@ describe("Repertoire", () => {
 
       const nextId = repertoire.NextRepertoireTagId();
 
-      expect(nextId).toBe(3);
+      expect(nextId).toBe(5);
+    });
+  });
+
+  describe("RemoveRepertoireTag", () => {
+    it("should unlink a repertoire tag", () => {
+      LinkTestPositions();
+
+      const rep = repertoire;
+      repertoire.RemoveRepertoireTag(VariationC);
+
+      expect(repertoire.tags[0].children).toEqual([VariationA]);
     });
   });
 });
