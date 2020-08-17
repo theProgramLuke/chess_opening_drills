@@ -6,18 +6,27 @@
           :items="repertoire.tags",
           dense)
           template(v-slot:label="item")
-            v-btn.original-case(@click="updateBoard(item.item.position)") {{ item.item.name }}
+            v-btn.original-case(@click="updateBoard(item.item.position)" text) {{ item.item.name }}
           template(v-slot:append="item")
-            v-dialog(max-width="500px")
+            v-dialog(v-model="showNewTagDialog" max-width="500px")
               template(v-slot:activator="{on, attrs}")
                 v-btn(v-bind="attrs" v-on="on" icon, color="info")
-                  v-icon mdi-plus
-              v-sheet.pa-2
-                v-text-field(label="Name" autofocus close-on-content-click=false close-on-click=false)
-                v-btn.ma-2(color="primary") Add
-                v-btn.ma-2(color="secondary") Cancel
-            v-btn(@click="removeRepertoireTag(item)" icon, color="error")
-              v-icon mdi-close
+                  v-icon mdi-source-merge
+              v-form
+                v-sheet.pa-4
+                  v-text-field(label="Name" autofocus close-on-content-click=false close-on-click=false)
+                  v-btn.ma-2(@click="showNewTagDialog=false", color="primary") Add
+                  v-btn.ma-2(@click="showNewTagDialog=false", color="secondary", text) Cancel
+            v-dialog(v-model="showDeleteTagDialog" max-width="500px")
+              template(v-slot:activator="{on, attrs}")
+                v-btn(v-bind="attrs" v-on="on" icon, color="error")
+                  v-icon mdi-delete
+              v-form
+                v-sheet.pa-4
+                  h1 Delete?
+                  div The tag {{ item.item.name }} and all of it's children will be permanently deleted.
+                  v-btn.ma-2(@click="showDeleteTagDialog=false", color="error") Delete
+                  v-btn.ma-2(@click="showDeleteTagDialog=false", color="secondary", text) Cancel
 
       v-divider(vertical)
       v-col
@@ -36,9 +45,9 @@
                 tr(v-for="(turn, turnNumber) in turnList")
                   td {{ turnNumber + 1 }}
                   td
-                    v-btn.original-case(@click="updateBoard(turn.whiteMove.position)") {{ turn.whiteMove.san }}
+                    v-btn.original-case(@click="updateBoard(turn.whiteMove.position)" text) {{ turn.whiteMove.san }}
                   td(v-if="turn.blackMove !== undefined")
-                    v-btn.original-case(@click="updateBoard(turn.blackMove.position)") {{ turn.blackMove.san }}
+                    v-btn.original-case(@click="updateBoard(turn.blackMove.position)" text) {{ turn.blackMove.san }}
 
         v-btn.ma-2.original-case(v-for="move in nextMoves", @click="updateBoard(move.position)", color="primary") {{ move.san }}
 </template>
@@ -64,7 +73,9 @@ export default Vue.extend({
       true,
       "",
       Side.White
-    )
+    ),
+    showNewTagDialog: false,
+    showDeleteTagDialog: false
   }),
 
   components: {
