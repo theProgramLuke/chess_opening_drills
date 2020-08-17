@@ -9,7 +9,7 @@
             v-btn.original-case(@click="updateBoard(item.item.position)" text) {{ item.item.name }}
           template(v-slot:append="item")
             tag-creator(:parentTag="item.item" @onCreate="addRepertoireTag")
-            tag-deleter(:tag="item.item" @onDelete="removeRepertoireTag")
+            tag-deleter(:tag="item.item" @onDelete="removeRepertoireTag", :disabled="item.item.id === 0 || item.item.id === 1")
 
       v-divider(vertical)
       v-col

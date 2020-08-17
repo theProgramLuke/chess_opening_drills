@@ -1,9 +1,9 @@
 <template lang="pug">
   v-dialog(v-model="showDialog" max-width="750px")
     template(v-slot:activator="{on, attrs}")
-      v-btn(v-bind="attrs" v-on="on" icon, color="info")
+      v-btn(v-bind="attrs", v-on="on", icon, color="info",)
         v-icon mdi-source-merge
-        
+
     v-card.pa-4
       v-card-title Adding tag at current position as variation of "{{ parentTag.name }}".
       v-form
