@@ -3,7 +3,7 @@
     v-row.fill-height
       v-col(cols=3, dense)
         v-treeview(
-          :items="repertoire.tags",
+          :items="whiteRepertoire.tags",
           dense)
           template(v-slot:label="item")
             v-btn.original-case(@click="updateBoard(item.item.position)" text) {{ item.item.name }}
@@ -67,7 +67,7 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(["repertoire"]),
+    ...mapState(["whiteRepertoire", "blackRepertoire"]),
 
     turnLists(): Turn[][] {
       return this.activePosition.GetTurnLists() || [[]];
@@ -116,7 +116,7 @@ export default Vue.extend({
       this.addRepertoireTag({
         parent: parent,
         tag: new RepertoireTag(
-          this.repertoire.NextRepertoireTagId(),
+          -1, // Vuex will replace this with the next ID.
           parent.forSide,
           name,
           this.activePosition,
@@ -127,7 +127,7 @@ export default Vue.extend({
     }
   },
   created() {
-    this.updateBoard(this.repertoire.tags[0].position);
+    this.updateBoard(this.whiteRepertoire.tags[0].position);
   }
 });
 </script>

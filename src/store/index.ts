@@ -6,6 +6,7 @@ import { Move } from "./move";
 import { GetPersistantStorage } from "./storage";
 import { Repertoire } from "./repertoire";
 import { RepertoireTag } from "./repertoireTag";
+import { Side } from "./side";
 
 Vue.use(Vuex);
 
@@ -14,7 +15,8 @@ const storage = GetPersistantStorage();
 export default new Vuex.Store({
   state: {
     darkMode: storage.get("darkMode"),
-    repertoire: Repertoire.FromSaved(storage.get("repertoire"))
+    whiteRepertoire: Repertoire.FromSaved(storage.get("whiteRepertoire")),
+    blackRepertoire: Repertoire.FromSaved(storage.get("blackRepertoire"))
   },
   mutations: {
     setDarkMode: (state, darkMode): void => {
@@ -25,23 +27,45 @@ export default new Vuex.Store({
       state,
       payload: { parent: RepertoirePosition; newMove: Move }
     ): void => {
-      if (payload["parent"] && payload["newMove"]) {
-        state.repertoire.AddMove(payload.parent, payload.newMove);
-        storage.set("repertoire", state.repertoire.AsSaved());
+      if (payload.parent && payload.newMove) {
+        const repertoire =
+          payload.parent.forSide === Side.White
+            ? state.whiteRepertoire
+            : state.blackRepertoire;
+        const repertoireKey =
+          payload.parent.forSide === Side.White
+            ? "whiteRepertoire"
+            : "blackRepertoire";
+        repertoire.AddMove(payload.parent, payload.newMove);
+        storage.set(repertoireKey, repertoire.AsSaved());
       }
     },
     addRepertoireTag: (
       state,
       payload: { parent: RepertoireTag; tag: RepertoireTag }
     ): void => {
-      if (payload["parent"] && payload["tag"]) {
-        payload["parent"].AddChild(payload["tag"]);
-        storage.set("repertoire", state.repertoire.AsSaved());
+      if (payload.parent && payload.tag) {
+        const repertoire =
+          payload.parent.forSide === Side.White
+            ? state.whiteRepertoire
+            : state.blackRepertoire;
+        const repertoireKey =
+          payload.parent.forSide === Side.White
+            ? "whiteRepertoire"
+            : "blackRepertoire";
+        payload.parent.AddChild(payload.tag);
+        storage.set(repertoireKey, repertoire.AsSaved());
       }
     },
     removeRepertoireTag: (state, tag: RepertoireTag): void => {
-      state.repertoire.RemoveRepertoireTag(tag);
-      storage.set("repertoire", state.repertoire.AsSaved());
+      const repertoire =
+        tag.forSide === Side.White
+          ? state.whiteRepertoire
+          : state.blackRepertoire;
+      const repertoireKey =
+        tag.forSide === Side.White ? "whiteRepertoire" : "blackRepertoire";
+      repertoire.RemoveRepertoireTag(tag);
+      storage.set(repertoireKey, repertoire.AsSaved());
     },
     clearStorage: (state): void => {
       storage.clear();
