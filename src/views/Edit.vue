@@ -14,9 +14,7 @@
       v-divider(vertical)
       v-col
         div(v-if="activePosition.fen")
-          chessboard(:fen="activePosition.fen" orientation="white" @onMove="onBoardMove")
-          v-chip {{ activePosition.fen }}
-          v-chip {{ repertoire.NextRepertoireTagId() }}
+          chessboard(:fen="activePosition.fen" :orientation="boardOrientation" @onMove="onBoardMove")
 
       v-divider(vertical)
       v-col(cols=3)
@@ -59,8 +57,7 @@ export default Vue.extend({
       "",
       Side.White
     ),
-    showNewTagDialog: false,
-    showDeleteTagDialog: false
+    boardOrientation: Side.White
   }),
 
   components: {
@@ -90,6 +87,7 @@ export default Vue.extend({
 
     updateBoard(position: RepertoirePosition): void {
       this.activePosition = position;
+      this.boardOrientation = position.forSide;
     },
 
     onBoardMove(threats: Threats) {

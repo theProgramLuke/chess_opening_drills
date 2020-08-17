@@ -13,6 +13,7 @@ import { Chess, Move, ChessInstance, Square, PieceType } from "chess.js";
 import { Api } from "chessground/api";
 import { DrawShape } from "chessground/draw";
 import { Color, Dests, MoveMetadata, Key } from "chessground/types";
+import { Side } from "@/store/side";
 
 export declare type Threats = {
   history?: string[];
@@ -62,8 +63,8 @@ export default Vue.extend({
     },
     onPromotion: Object as PropType<Exclude<PieceType, "p">>,
     orientation: {
-      type: String,
-      default: ""
+      type: Number,
+      default: Side.White
     }
   },
   watch: {
@@ -220,7 +221,7 @@ export default Vue.extend({
           free: this.free,
           dests: this.possibleMoves()
         },
-        orientation: "white"
+        orientation: this.orientation === Side.White ? "white" : "black"
       });
       this.board.set({
         movable: { events: { after: this.changeTurn() } }

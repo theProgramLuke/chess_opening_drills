@@ -14,10 +14,10 @@ export const defaultPositions = [
     Side.White
   ),
   new RepertoirePosition(
-    "rnbqkbnr/pppppppr/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
-    true,
+    "rnbqkbnr/pppppppr/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    false,
     "",
-    Side.White
+    Side.Black
   )
 ];
 
@@ -38,7 +38,7 @@ export const defaultTags = [
     id++,
     Side.Black,
     "Black",
-    defaultPositions[0],
+    defaultPositions[1],
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     []
   )
