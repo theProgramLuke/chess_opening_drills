@@ -49,6 +49,10 @@ export class Repertoire {
     });
   }
 
+  RemoveRepertoireTag(tag: RepertoireTag) {
+    _.noop(); // TODO
+  }
+
   AsSaved(): SavedRepertoire {
     const savedPositions = _.map(this.positions, position =>
       position.AsSaved(this.positions)

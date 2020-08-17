@@ -4,10 +4,20 @@
       v-col(cols=3, dense)
         v-treeview(
           :items="repertoire.tags",
-          dense,
-          hoverable)
+          dense)
           template(v-slot:label="item")
-            a(@click="updateBoard(item.item.position)") {{ item.item.name }}
+            v-btn.original-case(@click="updateBoard(item.item.position)") {{ item.item.name }}
+          template(v-slot:append="item")
+            v-dialog(max-width="500px")
+              template(v-slot:activator="{on, attrs}")
+                v-btn(v-bind="attrs" v-on="on" icon, color="info")
+                  v-icon mdi-plus
+              v-sheet.pa-2
+                v-text-field(label="Name" autofocus close-on-content-click=false close-on-click=false)
+                v-btn.ma-2(color="primary") Add
+                v-btn.ma-2(color="secondary") Cancel
+            v-btn(@click="removeRepertoireTag(item)" icon, color="error")
+              v-icon mdi-close
 
       v-divider(vertical)
       v-col
@@ -26,11 +36,11 @@
                 tr(v-for="(turn, turnNumber) in turnList")
                   td {{ turnNumber + 1 }}
                   td
-                    v-btn.move(@click="updateBoard(turn.whiteMove.position)") {{ turn.whiteMove.san }}
+                    v-btn.original-case(@click="updateBoard(turn.whiteMove.position)") {{ turn.whiteMove.san }}
                   td(v-if="turn.blackMove !== undefined")
-                    v-btn.move(@click="updateBoard(turn.blackMove.position)") {{ turn.blackMove.san }}
+                    v-btn.original-case(@click="updateBoard(turn.blackMove.position)") {{ turn.blackMove.san }}
 
-        v-btn.ma-2.move(v-for="move in nextMoves", @click="updateBoard(move.position)", color="primary") {{ move.san }}
+        v-btn.ma-2.original-case(v-for="move in nextMoves", @click="updateBoard(move.position)", color="primary") {{ move.san }}
 </template>
 
 <script lang="ts">
@@ -45,6 +55,7 @@ import { Move } from "@/store/move";
 import chessboard from "@/components/chessboard.vue";
 import { Threats } from "@/components/chessboard.vue";
 import { Side } from "@/store/side";
+import { RepertoireTag } from "@/store/repertoireTag";
 
 export default Vue.extend({
   data: () => ({
@@ -100,6 +111,14 @@ export default Vue.extend({
 
         this.updateBoard(move.position);
       }
+    },
+
+    addRepertoireTag(): void {
+      1 + 1;
+    },
+
+    removeRepertoireTag(tag: RepertoireTag): void {
+      this.repertoire.RemoveRepertoireTag(tag);
     }
   },
   created() {
@@ -110,7 +129,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.v-btn.move {
+.v-btn.original-case {
   text-transform: none;
 }
 </style>

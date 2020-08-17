@@ -52,6 +52,10 @@ export class RepertoireTag {
     this.children = children;
   }
 
+  AddChild(tag: RepertoireTag) {
+    this.children.push(tag);
+  }
+
   AsSaved(positionSource: RepertoirePosition[]): SavedRepertoireTag {
     const children = _.map(this.children, child =>
       child.AsSaved(positionSource)

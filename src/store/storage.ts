@@ -4,6 +4,7 @@ import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Repertoire, SavedRepertoire } from "./repertoire";
+import { Move } from "./move";
 
 export const defaultPositions = [
   new RepertoirePosition(
@@ -11,8 +12,16 @@ export const defaultPositions = [
     true,
     "",
     Side.White
+  ),
+  new RepertoirePosition(
+    "rnbqkbnr/pppppppr/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+    true,
+    "",
+    Side.White
   )
 ];
+
+defaultPositions[0].AddChild(new Move("e4", defaultPositions[1]));
 
 let id = 0;
 
@@ -23,7 +32,16 @@ export const defaultTags = [
     "White",
     defaultPositions[0],
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    []
+    [
+      new RepertoireTag(
+        id++,
+        Side.White,
+        "1. e4",
+        defaultPositions[1],
+        "rnbqkbnr/pppppppr/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+        []
+      )
+    ]
   ),
   new RepertoireTag(
     id++,
