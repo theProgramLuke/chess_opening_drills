@@ -1,7 +1,7 @@
 patch chess.js export # Blocked on yarn 2 failed install
-board orientation for black repertoire
+split white/black repertoire
 delete repertoire lines
-only show branch if position is child of tag
+only show add tag if position is child of tag
 use vuetify theme for colors
 customizable vuetify theme colors
 training mode select
