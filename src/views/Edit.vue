@@ -8,15 +8,7 @@
           template(v-slot:label="item")
             v-btn.original-case(@click="updateBoard(item.item.position)" text) {{ item.item.name }}
           template(v-slot:append="item")
-            v-dialog(v-model="showNewTagDialog" max-width="500px")
-              template(v-slot:activator="{on, attrs}")
-                v-btn(v-bind="attrs" v-on="on" icon, color="info")
-                  v-icon mdi-source-merge
-              v-form
-                v-sheet.pa-4
-                  v-text-field(label="Name" autofocus close-on-content-click=false close-on-click=false)
-                  v-btn.ma-2(@click="showNewTagDialog=false", color="primary") Add
-                  v-btn.ma-2(@click="showNewTagDialog=false", color="secondary", text) Cancel
+            tag-creator(:parentTag="item.item" @onCreate="addRepertoireTag")
             tag-deleter(:tag="item.item" @onDelete="removeRepertoireTag")
 
       v-divider(vertical)
@@ -53,7 +45,8 @@ import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";
 
 import chessboard from "@/components/chessboard.vue";
-import tagDeleter from "@/components/TagDeleter.vue";
+import TagDeleter from "@/components/TagDeleter.vue";
+import TagCreator from "@/components/TagCreator.vue";
 import { Threats } from "@/components/chessboard.vue";
 import { Side } from "@/store/side";
 import { RepertoireTag } from "@/store/repertoireTag";
@@ -72,7 +65,8 @@ export default Vue.extend({
 
   components: {
     chessboard,
-    tagDeleter
+    TagDeleter,
+    TagCreator
   },
 
   computed: {
@@ -117,8 +111,8 @@ export default Vue.extend({
       }
     },
 
-    addRepertoireTag(): void {
-      alert("add tag");
+    addRepertoireTag(parentTag: RepertoireTag): void {
+      alert(parentTag.name);
     },
 
     removeRepertoireTag(tag: RepertoireTag): void {

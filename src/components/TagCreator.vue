@@ -1,14 +1,13 @@
 <template lang="pug">
-  v-dialog(v-model="showDialog" max-width="500px")
+  v-dialog(v-model="showDialog" max-width="750px")
     template(v-slot:activator="{on, attrs}")
-      v-btn(v-bind="attrs" v-on="on" icon, color="error")
-        v-icon mdi-delete
-
-    v-form
-      v-sheet.pa-4
-        h1 Delete?
-        div The tag "{{ tag.name }}" and all of it's children will be permanently deleted.
-        v-btn.ma-2(@click="onDelete(), showDialog=false", color="error") Delete
+      v-btn(v-bind="attrs" v-on="on" icon, color="info")
+        v-icon mdi-source-merge
+    v-card.pa-4
+      v-card-title Adding tag at current position as variation of "{{ parentTag.name }}".
+      v-form
+        v-text-field(label="Name" autofocus)
+        v-btn.ma-2(@click="onCreate(); showDialog=false", color="primary") Add
         v-btn.ma-2(@click="showDialog=false", color="secondary", text, outlined) Cancel
 </template>
 
@@ -22,14 +21,14 @@ export default Vue.extend({
     showDialog: false
   }),
   props: {
-    tag: {
+    parentTag: {
       type: RepertoireTag,
       required: true
     }
   },
   methods: {
-    onDelete() {
-      this.$emit("onDelete", this.tag);
+    onCreate() {
+      this.$emit("onCreate", this.parentTag);
     }
   }
 });
