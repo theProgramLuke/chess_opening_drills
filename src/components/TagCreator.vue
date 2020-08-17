@@ -6,9 +6,9 @@
 
     v-card.pa-4
       v-card-title Adding tag at current position as variation of "{{ parentTag.name }}".
-      v-form
-        v-text-field(label="Name" autofocus)
-        v-btn.ma-2(@click="onCreate(); showDialog=false", color="primary") Add
+      v-form(ref="form", v-model="valid")
+        v-text-field(label="Name", autofocus, v-model="name", :rules="nameRules", required)
+        v-btn.ma-2(@click="onCreate", color="primary") Add
         v-btn.ma-2(@click="showDialog=false", color="secondary", text, outlined) Cancel
 </template>
 
@@ -19,7 +19,10 @@ import { RepertoireTag } from "@/store/repertoireTag";
 
 export default Vue.extend({
   data: () => ({
-    showDialog: false
+    showDialog: false,
+    valid: false,
+    name: "",
+    nameRules: [(v: string) => !!v || "Name is required"]
   }),
   props: {
     parentTag: {
@@ -29,7 +32,10 @@ export default Vue.extend({
   },
   methods: {
     onCreate() {
-      this.$emit("onCreate", this.parentTag);
+      if (this.$refs.form.validate()) {
+        this.$emit("onCreate", this.parentTag);
+        this.showDialog = false;
+      }
     }
   }
 });
