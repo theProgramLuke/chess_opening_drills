@@ -40,21 +40,20 @@ import Vue from "vue";
 import _ from "lodash";
 import { mapState, mapMutations } from "vuex";
 
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Turn } from "@/store/turn";
-import { Move } from "@/store/move";
-
 import chessboard from "@/components/chessboard.vue";
 import TagDeleter from "@/components/TagDeleter.vue";
 import TagCreator from "@/components/TagCreator.vue";
 import { Threats } from "@/components/chessboard.vue";
+import { RepertoirePosition } from "@/store/repertoirePosition";
+import { Turn } from "@/store/turn";
+import { Move } from "@/store/move";
 import { Side } from "@/store/side";
 import { RepertoireTag } from "@/store/repertoireTag";
 
 export default Vue.extend({
   data: () => ({
     activePosition: new RepertoirePosition(
-      "8/8/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "8/8/8/8/8/8/8/8 w KQkq - 0 1",
       true,
       "",
       Side.White
