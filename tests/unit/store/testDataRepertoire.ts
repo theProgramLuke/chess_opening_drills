@@ -18,6 +18,7 @@ export let d3: Move;
 export let d3e6: Move;
 export let d3e6e3: Move;
 export let White: RepertoireTag;
+export let Black: RepertoireTag;
 export let VariationA: RepertoireTag;
 
 export function ResetTestRepertoire() {
@@ -109,7 +110,7 @@ export function ResetTestRepertoire() {
   );
 
   VariationA = new RepertoireTag(
-    1,
+    2,
     Side.White,
     "Variation A",
     e3e6.position,
@@ -121,7 +122,9 @@ export function ResetTestRepertoire() {
     VariationA
   ]);
 
-  repertoire = new Repertoire([start], [White]);
+  Black = new RepertoireTag(1, Side.Black, "Black", start, start.fen, []);
+
+  repertoire = new Repertoire([start], [White, Black]);
 }
 
 export function LinkTestPositions() {
@@ -211,7 +214,7 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
       [
         new SavedRepertoireTag(
-          1,
+          2,
           Side.White,
           "Variation A",
           2,
@@ -219,6 +222,14 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
           []
         )
       ]
+    ),
+    new SavedRepertoireTag(
+      1,
+      Side.Black,
+      "Black",
+      0,
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      []
     )
   ]
 );

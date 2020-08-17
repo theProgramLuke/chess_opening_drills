@@ -56,6 +56,21 @@ export class RepertoireTag {
     this.children.push(tag);
   }
 
+  RemoveChild(tag: RepertoireTag) {
+    const childIndex = _.indexOf(this.children, tag);
+    if (childIndex !== -1) {
+      this.children.splice(childIndex);
+    } else {
+      _.forEach(this.children, child => child.RemoveChild(tag));
+    }
+  }
+
+  GetMaxId(): number {
+    const ids = [this.id];
+    ids.push(..._.map(this.children, child => child.GetMaxId()));
+    return _.max(ids) || -1;
+  }
+
   AsSaved(positionSource: RepertoirePosition[]): SavedRepertoireTag {
     const children = _.map(this.children, child =>
       child.AsSaved(positionSource)

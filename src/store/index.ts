@@ -5,17 +5,16 @@ import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Move } from "./move";
 import { GetPersistantStorage } from "./storage";
 import { Repertoire } from "./repertoire";
+import { RepertoireTag } from "./repertoireTag";
 
 Vue.use(Vuex);
 
 const storage = GetPersistantStorage();
-const rep = Repertoire.FromSaved(storage.get("repertoire"));
-console.log("index", rep.positions[0].GetTurnLists);
 
 export default new Vuex.Store({
   state: {
     darkMode: storage.get("darkMode"),
-    repertoire: rep
+    repertoire: Repertoire.FromSaved(storage.get("repertoire"))
   },
   mutations: {
     setDarkMode: (state, darkMode): void => {
@@ -30,6 +29,19 @@ export default new Vuex.Store({
         state.repertoire.AddMove(payload.parent, payload.newMove);
         storage.set("repertoire", state.repertoire.AsSaved());
       }
+    },
+    addRepertoireTag: (
+      state,
+      payload: { parent: RepertoireTag; tag: RepertoireTag }
+    ): void => {
+      if (payload["parent"] && payload["tag"]) {
+        payload["parent"].AddChild(payload["tag"]);
+        storage.set("repertoire", state.repertoire.AsSaved());
+      }
+    },
+    removeRepertoireTag: (state, tag: RepertoireTag): void => {
+      state.repertoire.RemoveRepertoireTag(tag);
+      storage.set("repertoire", state.repertoire.AsSaved());
     },
     clearStorage: (state): void => {
       storage.clear();

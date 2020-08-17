@@ -83,4 +83,14 @@ describe("Repertoire", () => {
       );
     });
   });
+
+  describe("NextRepertoireTagId", () => {
+    it("gets an incrementing id", () => {
+      LinkTestPositions();
+
+      const nextId = repertoire.NextRepertoireTagId();
+
+      expect(nextId).toBe(3);
+    });
+  });
 });

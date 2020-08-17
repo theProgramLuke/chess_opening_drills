@@ -49,8 +49,13 @@ export class Repertoire {
     });
   }
 
-  RemoveRepertoireTag(tag: RepertoireTag) {
-    _.noop(); // TODO
+  RemoveRepertoireTag(tagToRemove: RepertoireTag) {
+    _.forEach(this.tags, tag => tag.RemoveChild(tagToRemove));
+  }
+
+  NextRepertoireTagId(): number {
+    const maxIds = _.map(this.tags, tag => tag.GetMaxId());
+    return (_.max(maxIds) || -2) + 1;
   }
 
   AsSaved(): SavedRepertoire {

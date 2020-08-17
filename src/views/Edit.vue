@@ -8,7 +8,7 @@
           template(v-slot:label="item")
             v-btn.original-case(@click="updateBoard(item.item.position)" text) {{ item.item.name }}
           template(v-slot:append="item")
-            tag-creator(:parentTag="item.item" @onCreate="addRepertoireTag")
+            tag-creator(:parentTag="item.item" @onCreate="addNewRepertoireTag")
             tag-deleter(:tag="item.item" @onDelete="removeRepertoireTag", :disabled="item.item.id === 0 || item.item.id === 1")
 
       v-divider(vertical)
@@ -16,6 +16,7 @@
         div(v-if="activePosition.fen")
           chessboard(:fen="activePosition.fen" orientation="white" @onMove="onBoardMove")
           v-chip {{ activePosition.fen }}
+          v-chip {{ repertoire.NextRepertoireTagId() }}
 
       v-divider(vertical)
       v-col(cols=3)
@@ -72,7 +73,6 @@ export default Vue.extend({
     ...mapState(["repertoire"]),
 
     turnLists(): Turn[][] {
-      console.log(this.repertoire.positions);
       return this.activePosition.GetTurnLists() || [[]];
     },
 
@@ -82,7 +82,11 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapMutations(["addRepertoirePosition"]),
+    ...mapMutations([
+      "addRepertoirePosition",
+      "addRepertoireTag",
+      "removeRepertoireTag"
+    ]),
 
     updateBoard(position: RepertoirePosition): void {
       this.activePosition = position;
@@ -110,16 +114,21 @@ export default Vue.extend({
       }
     },
 
-    addRepertoireTag(parentTag: RepertoireTag): void {
-      alert(parentTag.name);
-    },
-
-    removeRepertoireTag(tag: RepertoireTag): void {
-      alert(tag.name);
+    addNewRepertoireTag(parent: RepertoireTag, name: string): void {
+      this.addRepertoireTag({
+        parent: parent,
+        tag: new RepertoireTag(
+          this.repertoire.NextRepertoireTagId(),
+          parent.forSide,
+          name,
+          this.activePosition,
+          this.activePosition.fen,
+          []
+        )
+      });
     }
   },
   created() {
-    console.log("created", this.repertoire.positions[0].GetTurnLists);
     this.updateBoard(this.repertoire.tags[0].position);
   }
 });
