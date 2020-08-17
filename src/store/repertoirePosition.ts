@@ -2,15 +2,40 @@ import _ from "lodash";
 import { FEN } from "chessground/types";
 import { Chess } from "chess.js";
 
-import { Move } from "@/store/move";
+import { Move, SavedMove } from "@/store/move";
 import { Side } from "@/store/side";
 import { Turn } from "@/store/turn";
+
+export class SavedRepertoirePosition {
+  fen: FEN;
+  comment: string;
+  parentIds: number[];
+  children: SavedMove[];
+  myTurn: boolean;
+  forSide: Side;
+
+  constructor(
+    fen: FEN,
+    comment: string,
+    parentIds: number[],
+    children: SavedMove[],
+    myTurn: boolean,
+    forSide: Side
+  ) {
+    this.fen = fen;
+    this.comment = comment;
+    this.parentIds = parentIds;
+    this.children = children;
+    this.myTurn = myTurn;
+    this.forSide = forSide;
+  }
+}
 
 export class RepertoirePosition {
   fen: FEN;
   comment: string;
-  parents: Array<RepertoirePosition>;
-  children: Array<Move>;
+  parents: RepertoirePosition[];
+  children: Move[];
   myTurn: boolean;
   forSide: Side;
 
@@ -41,8 +66,8 @@ export class RepertoirePosition {
     }
   }
 
-  private RootPaths(): Array<Array<Move>> {
-    const collector: Array<Array<Move>> = [];
+  private RootPaths(): Move[][] {
+    const collector: Move[][] = [];
 
     if (!_.isEmpty(this.parents)) {
       this.RootPathsRecursive([], collector);
@@ -51,14 +76,11 @@ export class RepertoirePosition {
     return collector;
   }
 
-  private RootPathsRecursive(
-    path: Array<Move>,
-    collector: Array<Array<Move>>
-  ): void {
+  private RootPathsRecursive(path: Move[], collector: Move[][]): void {
     if (_.isEmpty(this.parents)) {
       collector.push(path);
     } else {
-      _.forEach(this.parents, (parent: RepertoirePosition) => {
+      _.forEach(this.parents, parent => {
         const branch = _.clone(path);
         const parentMove = parent.getChildMove(this);
 
@@ -72,7 +94,7 @@ export class RepertoirePosition {
   }
 
   private getChildMove(other: RepertoirePosition): Move | undefined {
-    return _.find(this.children, (child: Move) => child.position === other);
+    return _.find(this.children, child => child.position === other);
   }
 
   GetTurnLists(): Array<Array<Turn>> {
@@ -122,7 +144,7 @@ export class RepertoirePosition {
 
     const variations = _.tail(this.children);
 
-    _.forEach(variations, (child: Move) => {
+    _.forEach(variations, child => {
       pgnMoveText += " ( "; // start variation
       pgnMoveText += turnCount;
       pgnMoveText += side === Side.White ? ". " : "... ";
@@ -138,5 +160,35 @@ export class RepertoirePosition {
     }
 
     return _.trim(pgnMoveText);
+  }
+
+  AsSaved(childParentSource: RepertoirePosition[]): SavedRepertoirePosition {
+    const savedChildren = _.map(
+      this.children,
+      child =>
+        new SavedMove(child.san, _.indexOf(childParentSource, child.position))
+    );
+
+    const parentIds = _.map(this.parents, parent =>
+      _.indexOf(childParentSource, parent)
+    );
+
+    return new SavedRepertoirePosition(
+      this.fen,
+      this.comment,
+      parentIds,
+      savedChildren,
+      this.myTurn,
+      this.forSide
+    );
+  }
+
+  static FromSaved(saved: SavedRepertoirePosition): RepertoirePosition {
+    return new RepertoirePosition(
+      saved.fen,
+      saved.myTurn,
+      saved.comment,
+      saved.forSide
+    );
   }
 }

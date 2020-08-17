@@ -6,6 +6,10 @@
           v-expansion-panel-header Appearance
           v-expansion-panel-content
             v-switch(@change="setDarkMode", v-model="darkMode" label="Dark Mode")
+        v-expansion-panel
+          v-expansion-panel-header Development
+          v-expansion-panel-content
+            v-btn.ma-2(@click="clearStorage", color="warning") Clear Storage
 </template>
 
 <script lang="ts">
@@ -17,6 +21,6 @@ export default Vue.extend({
     panel: []
   }),
   computed: mapState(["darkMode"]),
-  methods: mapMutations(["setDarkMode"])
+  methods: mapMutations(["setDarkMode", "clearStorage"])
 });
 </script>

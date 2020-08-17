@@ -1,6 +1,7 @@
 module.exports = {
   transpileDependencies: ["vuetify"],
   configureWebpack: {
-    devtool: "source-map"
+    devtool: "source-map",
+    target: "electron-renderer"
   }
 };

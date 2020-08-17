@@ -49,7 +49,7 @@ import { Side } from "@/store/side";
 export default Vue.extend({
   data: () => ({
     activePosition: new RepertoirePosition(
-      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "8/8/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
       true,
       "",
       Side.White
@@ -63,7 +63,8 @@ export default Vue.extend({
   computed: {
     ...mapState(["repertoire"]),
 
-    turnLists(): Array<Array<Turn>> {
+    turnLists(): Turn[][] {
+      console.log(this.repertoire.positions);
       return this.activePosition.GetTurnLists() || [[]];
     },
 
@@ -102,6 +103,7 @@ export default Vue.extend({
     }
   },
   created() {
+    console.log("created", this.repertoire.positions[0].GetTurnLists);
     this.updateBoard(this.repertoire.tags[0].position);
   }
 });

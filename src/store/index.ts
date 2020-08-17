@@ -1,57 +1,38 @@
 import Vue from "vue";
 import Vuex from "vuex";
+
 import { RepertoirePosition } from "@/store/repertoirePosition";
-import { RepertoireTag } from "./repertoireTag";
-import { Side } from "./side";
 import { Move } from "./move";
+import { GetPersistantStorage } from "./storage";
 import { Repertoire } from "./repertoire";
 
 Vue.use(Vuex);
 
-const positions = [
-  new RepertoirePosition(
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    true,
-    "",
-    Side.White
-  )
-];
-
-let id = 0;
-
-const tags = [
-  new RepertoireTag(
-    id++,
-    Side.White,
-    "White",
-    positions[0],
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    []
-  ),
-  new RepertoireTag(
-    id++,
-    Side.Black,
-    "Black",
-    positions[0],
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    []
-  )
-];
+const storage = GetPersistantStorage();
+const rep = Repertoire.FromSaved(storage.get("repertoire"));
+console.log("index", rep.positions[0].GetTurnLists);
 
 export default new Vuex.Store({
   state: {
-    darkMode: true,
-    repertoire: new Repertoire(positions, tags)
+    darkMode: storage.get("darkMode"),
+    repertoire: rep
   },
   mutations: {
-    setDarkMode: (state, darkMode): void => (state.darkMode = darkMode),
+    setDarkMode: (state, darkMode): void => {
+      state.darkMode = darkMode;
+      storage.set("darkMode", darkMode);
+    },
     addRepertoirePosition: (
       state,
       payload: { parent: RepertoirePosition; newMove: Move }
     ): void => {
-      if (payload["parent"]) {
+      if (payload["parent"] && payload["newMove"]) {
         state.repertoire.AddMove(payload.parent, payload.newMove);
+        storage.set("repertoire", state.repertoire.AsSaved());
       }
+    },
+    clearStorage: (state): void => {
+      storage.clear();
     }
   },
   actions: {},

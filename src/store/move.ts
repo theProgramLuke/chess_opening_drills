@@ -1,7 +1,16 @@
 import _ from "lodash";
 
 import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Side } from "@/store/side";
+
+export class SavedMove {
+  san: string;
+  positionId: number;
+
+  constructor(san: string, positionId: number) {
+    this.san = san;
+    this.positionId = positionId;
+  }
+}
 
 export class Move {
   san: string;
