@@ -16,18 +16,7 @@
 
       v-divider(vertical)
       v-col(cols=3)
-        v-window(show-arrows)
-          v-window-item(v-if="turnLists.length === 0")
-            v-alert(type="info") Move list is empty
-          v-window-item(v-for="(turnList, index) in turnLists", :key="index")
-            v-simple-table
-              tbody
-                tr(v-for="(turn, turnNumber) in turnList")
-                  td {{ turnNumber + 1 }}
-                  td
-                    v-btn.original-case(@click="updateBoard(turn.whiteMove.position)" text) {{ turn.whiteMove.san }}
-                  td(v-if="turn.blackMove !== undefined")
-                    v-btn.original-case(@click="updateBoard(turn.blackMove.position)" text) {{ turn.blackMove.san }}
+        move-list(:turnLists="turnLists", @onSelectMove="updateBoard")
 
         v-btn.ma-2.original-case(v-for="move in nextMoves", @click="updateBoard(move.position)", color="primary") {{ move.san }}
 </template>
@@ -40,6 +29,7 @@ import { mapState, mapMutations } from "vuex";
 import chessboard from "@/components/chessboard.vue";
 import { Threats } from "@/components/chessboard.vue";
 import TagTree from "@/components/TagTree.vue";
+import MoveList from "@/components/MoveList.vue";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";
@@ -59,7 +49,8 @@ export default Vue.extend({
 
   components: {
     chessboard,
-    TagTree
+    TagTree,
+    MoveList
   },
 
   computed: {
