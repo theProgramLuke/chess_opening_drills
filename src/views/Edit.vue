@@ -12,13 +12,19 @@
       v-divider(vertical)
       v-col
         div(v-if="activePosition.fen")
-          chessboard(:fen="activePosition.fen" :orientation="boardOrientation" @onMove="onBoardMove")
+          chessboard(
+            :fen="activePosition.fen",
+            :orientation="boardOrientation",
+            @onMove="onBoardMove")
 
       v-divider(vertical)
       v-col(cols=3)
         move-list(:turnLists="turnLists", @onSelectMove="updateBoard")
 
-        v-btn.ma-2.original-case(v-for="move in nextMoves", @click="updateBoard(move.position)", color="primary") {{ move.san }}
+        v-btn.ma-2.original-case(
+          v-for="move in nextMoves",
+          @click="updateBoard(move.position)",
+          color="primary") {{ move.san }}
 </template>
 
 <script lang="ts">
