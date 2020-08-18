@@ -20,11 +20,7 @@
       v-divider(vertical)
       v-col(cols=3)
         move-list(:turnLists="turnLists", @onSelectMove="updateBoard")
-
-        v-btn.ma-2.original-case(
-          v-for="move in nextMoves",
-          @click="updateBoard(move.position)",
-          color="primary") {{ move.san }}
+        variation-list(:variations="nextMoves", @onSelectMove="updateBoard")
 </template>
 
 <script lang="ts">
@@ -36,6 +32,7 @@ import chessboard from "@/components/chessboard.vue";
 import { Threats } from "@/components/chessboard.vue";
 import TagTree from "@/components/TagTree.vue";
 import MoveList from "@/components/MoveList.vue";
+import VariationList from "@/components/VariationList.vue";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";
@@ -56,7 +53,8 @@ export default Vue.extend({
   components: {
     chessboard,
     TagTree,
-    MoveList
+    MoveList,
+    VariationList
   },
 
   computed: {
