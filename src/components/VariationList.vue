@@ -1,10 +1,13 @@
 <template lang="pug">
   v-container(v-if="variations.length > 0")
     h2 Saved moves
-    v-btn.ma-2.original-case(
-      v-for="move in variations",
-      @click="onSelectMove(move.position)",
-      color="primary") {{ move.san }}
+    v-card.d-inline-block.pa-1(v-for="move in variations", outlined, tile)
+      v-card-actions
+        v-btn.original-case(
+          @click="onSelectMove(move.position)",
+          color="primary") {{ move.san }}
+        v-btn(icon, color="error", @onDeleteMove="onDeleteMove(move.position)")
+          v-icon mdi-delete
 </template>
 
 <script lang="ts">
@@ -21,9 +24,14 @@ export default Vue.extend({
       required: true
     }
   },
+
   methods: {
     onSelectMove(position: RepertoirePosition) {
       this.$emit("onSelectMove", position);
+    },
+
+    onDeleteMove(position: RepertoirePosition) {
+      this.$emit("onDeleteMove", position);
     }
   }
 });

@@ -20,6 +20,7 @@ export default Vue.extend({
   data: () => ({
     showDialog: false
   }),
+
   props: {
     tag: {
       type: RepertoireTag,
@@ -30,6 +31,7 @@ export default Vue.extend({
       default: false
     }
   },
+
   methods: {
     onDelete() {
       this.$emit("onDelete", this.tag);
