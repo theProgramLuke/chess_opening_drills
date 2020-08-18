@@ -1,5 +1,4 @@
 patch chess.js export # Blocked on yarn 2 failed install
-split white/black repertoire
 delete repertoire lines
 only show add tag if position is child of tag
 use vuetify theme for colors
