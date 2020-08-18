@@ -33,12 +33,12 @@ export function GetPersistantStorage(): ElectronStore<Storage> {
         [whiteStartPosition],
         [
           new RepertoireTag(
-            0,
             Side.White,
             "White",
             whiteStartPosition,
             whiteStartPosition.fen,
-            []
+            [],
+            "whiteStart"
           )
         ]
       ).AsSaved(),
@@ -46,12 +46,12 @@ export function GetPersistantStorage(): ElectronStore<Storage> {
         [blackStartPosition],
         [
           new RepertoireTag(
-            0,
             Side.Black,
             "Black",
             blackStartPosition,
             blackStartPosition.fen,
-            []
+            [],
+            "blackStart"
           )
         ]
       ).AsSaved()

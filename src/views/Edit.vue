@@ -2,14 +2,12 @@
   v-container.fill-height
     v-row.fill-height
       v-col(cols=3, dense)
-        v-treeview(
-          :items="whiteRepertoire.tags",
-          dense)
-          template(v-slot:label="item")
-            v-btn.original-case(@click="updateBoard(item.item.position)" text) {{ item.item.name }}
-          template(v-slot:append="item")
-            tag-creator(:parentTag="item.item" @onCreate="addNewRepertoireTag")
-            tag-deleter(:tag="item.item" @onDelete="removeRepertoireTag", :disabled="item.item.id === 0 || item.item.id === 1")
+        tag-tree(
+          :whiteRepertoire="whiteRepertoire",
+          :blackRepertoire="blackRepertoire",
+          @onSelect="updateBoard"
+          @onDelete="removeRepertoireTag",
+          @onCreate="addNewRepertoireTag")
 
       v-divider(vertical)
       v-col
@@ -40,9 +38,8 @@ import _ from "lodash";
 import { mapState, mapMutations } from "vuex";
 
 import chessboard from "@/components/chessboard.vue";
-import TagDeleter from "@/components/TagDeleter.vue";
-import TagCreator from "@/components/TagCreator.vue";
 import { Threats } from "@/components/chessboard.vue";
+import TagTree from "@/components/TagTree.vue";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";
@@ -62,8 +59,7 @@ export default Vue.extend({
 
   components: {
     chessboard,
-    TagDeleter,
-    TagCreator
+    TagTree
   },
 
   computed: {
@@ -98,7 +94,7 @@ export default Vue.extend({
           threats.fen,
           true,
           "",
-          Side.White
+          this.activePosition.forSide
         );
 
         const move = new Move(lastMoveSan, position);
@@ -116,7 +112,6 @@ export default Vue.extend({
       this.addRepertoireTag({
         parent: parent,
         tag: new RepertoireTag(
-          -1, // Vuex will replace this with the next ID.
           parent.forSide,
           name,
           this.activePosition,

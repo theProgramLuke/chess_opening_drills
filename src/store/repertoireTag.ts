@@ -1,10 +1,12 @@
 import _ from "lodash";
+import { Guid } from "guid-typescript";
+
 import { Side } from "./side";
 import { FEN } from "chessground/types";
 import { RepertoirePosition } from "./repertoirePosition";
 
 export class SavedRepertoireTag {
-  id: number;
+  id: string;
   forSide: Side;
   name: string;
   positionId: number;
@@ -12,12 +14,12 @@ export class SavedRepertoireTag {
   children: SavedRepertoireTag[];
 
   constructor(
-    id: number,
     forSide: Side,
     name: string,
     positionId: number,
     fen: FEN,
-    children: SavedRepertoireTag[]
+    children: SavedRepertoireTag[],
+    id: string
   ) {
     this.id = id;
     this.forSide = forSide;
@@ -29,22 +31,22 @@ export class SavedRepertoireTag {
 }
 
 export class RepertoireTag {
-  id: number;
   forSide: Side;
   name: string;
   position: RepertoirePosition;
   fen: FEN;
   children: RepertoireTag[];
+  id: string;
 
   constructor(
-    id: number,
     forSide: Side,
     name: string,
     position: RepertoirePosition,
     fen: FEN,
-    children: RepertoireTag[]
+    children: RepertoireTag[],
+    id?: string
   ) {
-    this.id = id;
+    this.id = id || Guid.create().toString();
     this.forSide = forSide;
     this.name = name;
     this.position = position;
@@ -65,24 +67,18 @@ export class RepertoireTag {
     }
   }
 
-  GetMaxId(): number {
-    const ids = [this.id];
-    ids.push(..._.map(this.children, child => child.GetMaxId()));
-    return _.max(ids) || -1;
-  }
-
   AsSaved(positionSource: RepertoirePosition[]): SavedRepertoireTag {
     const children = _.map(this.children, child =>
       child.AsSaved(positionSource)
     );
 
     return new SavedRepertoireTag(
-      this.id,
       this.forSide,
       this.name,
       _.indexOf(positionSource, this.position),
       this.fen,
-      children
+      children,
+      this.id.toString()
     );
   }
 
@@ -95,12 +91,12 @@ export class RepertoireTag {
     );
 
     return new RepertoireTag(
-      saved.id,
       saved.forSide,
       saved.name,
       positionSource[saved.positionId],
       saved.fen,
-      children
+      children,
+      saved.id
     );
   }
 }

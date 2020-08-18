@@ -112,38 +112,42 @@ export function ResetTestRepertoire() {
   );
 
   VariationAB = new RepertoireTag(
-    3,
     Side.White,
     "Variation AB",
     e3e6.position,
     e3e6.position.fen,
-    []
+    [],
+    "3"
   );
 
   VariationA = new RepertoireTag(
-    2,
     Side.White,
     "Variation A",
     e3e6.position,
     e3e6.position.fen,
-    [VariationAB]
+    [VariationAB],
+    "2"
   );
 
   VariationC = new RepertoireTag(
-    4,
     Side.White,
     "Variation C",
     e3e6.position,
     e3e6.position.fen,
-    []
+    [],
+    "4"
   );
 
-  White = new RepertoireTag(0, Side.White, "White", start, start.fen, [
-    VariationA,
-    VariationC
-  ]);
+  White = new RepertoireTag(
+    Side.White,
+    "White",
+    start,
+    start.fen,
+    [VariationA, VariationC],
+    "0"
+  );
 
-  Black = new RepertoireTag(1, Side.Black, "Black", start, start.fen, []);
+  Black = new RepertoireTag(Side.Black, "Black", start, start.fen, [], "1");
 
   repertoire = new Repertoire([start], [White, Black]);
 }
@@ -228,46 +232,46 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
   ],
   [
     new SavedRepertoireTag(
-      0,
       Side.White,
       "White",
       0,
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
       [
         new SavedRepertoireTag(
-          2,
           Side.White,
           "Variation A",
           2,
           "rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
           [
             new SavedRepertoireTag(
-              3,
               Side.White,
               "Variation AB",
               2,
               "rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
-              []
+              [],
+              "3"
             )
-          ]
+          ],
+          "2"
         ),
         new SavedRepertoireTag(
-          4,
           Side.White,
           "Variation C",
           2,
           "rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
-          []
+          [],
+          "4"
         )
-      ]
+      ],
+      "0"
     ),
     new SavedRepertoireTag(
-      1,
       Side.Black,
       "Black",
       0,
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-      []
+      [],
+      "1"
     )
   ]
 );

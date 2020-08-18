@@ -85,16 +85,6 @@ describe("Repertoire", () => {
     });
   });
 
-  describe("NextRepertoireTagId", () => {
-    it("gets an incrementing id", () => {
-      LinkTestPositions();
-
-      const nextId = repertoire.NextRepertoireTagId();
-
-      expect(nextId).toBe(5);
-    });
-  });
-
   describe("RemoveRepertoireTag", () => {
     it("should unlink a repertoire tag", () => {
       LinkTestPositions();
