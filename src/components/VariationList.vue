@@ -1,5 +1,6 @@
 <template lang="pug">
-  v-container
+  v-container(v-if="variations.length > 0")
+    h2 Saved moves
     v-btn.ma-2.original-case(
       v-for="move in variations",
       @click="onSelectMove(move.position)",
