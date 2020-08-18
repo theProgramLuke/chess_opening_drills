@@ -49,13 +49,28 @@ export class Repertoire {
     });
   }
 
-  RemoveRepertoireTag(tagToRemove: RepertoireTag) {
+  RemoveRepertoireTag(tagToRemove: RepertoireTag): void {
     _.forEach(this.tags, tag => tag.RemoveChild(tagToRemove));
   }
 
-  NextRepertoireTagId(): number {
-    const maxIds = _.map(this.tags, tag => tag.GetMaxId());
-    return (_.max(maxIds) || -2) + 1;
+  RemoveMove(parent: RepertoirePosition, move: Move): void {
+    move.position.RemoveParent(parent);
+    this.RemoveOrphanPositions();
+  }
+
+  private RemoveOrphanPositions(): void {
+    let anyRemainingOrphans = true;
+    while (anyRemainingOrphans) {
+      anyRemainingOrphans = this.RemoveOrphanPositionsOnce();
+    }
+  }
+
+  private RemoveOrphanPositionsOnce(): boolean {
+    const removedOrphans = _.remove(
+      this.positions,
+      (position, index, array) => index !== 0 && _.isEmpty(position.parents)
+    );
+    return !_.isEmpty(removedOrphans);
   }
 
   AsSaved(): SavedRepertoire {

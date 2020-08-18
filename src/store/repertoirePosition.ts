@@ -66,6 +66,14 @@ export class RepertoirePosition {
     }
   }
 
+  RemoveParent(parentToRemove: RepertoirePosition): void {
+    _.remove(this.parents, (parent, index, array) => parent === parentToRemove);
+    _.remove(
+      parentToRemove.children,
+      (child, index, array) => child.position === this
+    );
+  }
+
   private RootPaths(): Move[][] {
     const collector: Move[][] = [];
 

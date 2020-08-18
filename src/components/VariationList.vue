@@ -6,7 +6,10 @@
         v-btn.original-case(
           @click="onSelectMove(move.position)",
           color="primary") {{ move.san }}
-        v-btn(icon, color="error", @onDeleteMove="onDeleteMove(move.position)")
+        v-btn(
+          @click="onDeleteMove(move)"
+          icon,
+          color="error",)
           v-icon mdi-delete
 </template>
 
@@ -16,6 +19,7 @@ import { mapState, mapMutations } from "vuex";
 import { RepertoireTag } from "@/store/repertoireTag";
 import { Turn } from "@/store/turn";
 import { RepertoirePosition } from "@/store/repertoirePosition";
+import { Move } from "@/store/move";
 
 export default Vue.extend({
   props: {
@@ -30,8 +34,9 @@ export default Vue.extend({
       this.$emit("onSelectMove", position);
     },
 
-    onDeleteMove(position: RepertoirePosition) {
-      this.$emit("onDeleteMove", position);
+    onDeleteMove(move: Move) {
+      this.$emit("onDeleteMove", move);
+      this.$forceUpdate();
     }
   }
 });

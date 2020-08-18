@@ -20,7 +20,10 @@
       v-divider(vertical)
       v-col(cols=3)
         move-list(:turnLists="turnLists", @onSelectMove="updateBoard")
-        variation-list(:variations="nextMoves", @onSelectMove="updateBoard", @onDeleteMove="deleteMove")
+        variation-list(
+          :variations="nextMoves",
+          @onSelectMove="updateBoard",
+          @onDeleteMove="removeRepertoireMoveFromPosition")
 </template>
 
 <script lang="ts">
@@ -74,7 +77,7 @@ export default Vue.extend({
       "addRepertoirePosition",
       "addRepertoireTag",
       "removeRepertoireTag",
-      "deleteMove"
+      "removeRepertoireMove"
     ]),
 
     updateBoard(position: RepertoirePosition): void {
@@ -115,6 +118,10 @@ export default Vue.extend({
           []
         )
       });
+    },
+
+    removeRepertoireMoveFromPosition(move: Move): void {
+      this.removeRepertoireMove({ parent: this.activePosition, move: move });
     }
   },
 
