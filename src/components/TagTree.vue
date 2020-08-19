@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-treeview(:items="combinedTags", dense)
+  v-treeview(:items="combinedTags", dense, open-on-click)
     template(v-slot:label="item")
       v-btn.original-case(@click="onSelect(item.item.position)", text) {{ item.item.name }}
     template(v-slot:append="item")
