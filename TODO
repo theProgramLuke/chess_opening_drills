@@ -3,6 +3,7 @@ training
 scheduling
 import/export pgn
 persist training options
+implement reset appearance
 add +- etc annotation to position
 edit/view position comment
 only show add tag if position is child of tag

@@ -29,7 +29,7 @@ const maxPlaybackSpeed = 5;
 
 export default Vue.extend({
   data: () => ({
-    modes: ["Scheduled", "New", "Learned"],
+    modes: ["Scheduled", "New", "Common Mistakes"],
     selectedModes: ["Scheduled"],
     previewNewVariations: true,
     entireVariations: true,
