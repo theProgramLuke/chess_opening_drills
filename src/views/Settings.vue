@@ -18,7 +18,6 @@
             v-color-picker(
               v-if="selectedColor",
               v-model="selectedColorValue")
-            div {{ selectedColorValue }}
 
             v-btn(color="warning") Reset Appearance
 
