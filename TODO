@@ -1,11 +1,13 @@
 patch chess.js export # Blocked on yarn 2 failed install
-delete repertoire lines
-only show add tag if position is child of tag
 use vuetify theme for colors
 customizable vuetify theme colors
 training mode select
 training
 scheduling
+import/export pgn
+add +- etc annotation to position
+edit/view position comment
+only show add tag if position is child of tag
 usability: enter in tag-create input to add
 view of scheduled positions
 statistics with per tag breakdown
@@ -16,6 +18,5 @@ custom UCI engine
 stored engine suggested moves
 setting to allow multiple moves from the same position on my turn
 icon
-import/export pgn
 automatic backups
 multiple board tabs? in edit view
