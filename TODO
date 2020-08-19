@@ -2,6 +2,7 @@ patch chess.js export # Blocked on yarn 2 failed install
 training
 scheduling
 import/export pgn
+persist training options
 add +- etc annotation to position
 edit/view position comment
 only show add tag if position is child of tag
