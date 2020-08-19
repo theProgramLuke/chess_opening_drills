@@ -2,7 +2,14 @@
   v-container
     v-card.pa-4(min-width="550px")
       v-card-title Train
-      v-treeview(:items="combinedTags", dense, hoverable, selectable, open-on-click)
+      v-treeview(
+        :items="combinedTags",
+        v-model="selectedTopics",
+        return-object,
+        dense,
+        hoverable,
+        selectable,
+        open-on-click)
       v-select(
         v-model="selectedModes",
         :items="modes",
@@ -15,20 +22,32 @@
       v-checkbox(label="Review entire variations", v-model="entireVariations")
       v-slider(v-if="previewNewVariations", v-model="playbackSpeedSlideValue", :label="playbackSpeedLabel")
       v-card-actions
-        v-btn(color="primary", x-large) Start Training
+        v-btn(
+          @click="onStartTraining"
+          color="primary",
+          x-large) Start Training
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { mapState } from "vuex";
 import _ from "lodash";
 import { Repertoire } from "@/store/repertoire";
+import { RepertoireTag } from "@/store/repertoireTag";
 
 const minPlaybackSpeed = 0.2;
 const maxPlaybackSpeed = 5;
 
+export interface TrainingOptions {
+  topics: RepertoireTag[];
+  modes: string[];
+  previewNewVariations: boolean;
+  entireVariations: boolean;
+  playbackSpeed: number;
+}
+
 export default Vue.extend({
   data: () => ({
+    selectedTopics: [],
     modes: ["Scheduled", "New", "Common Mistakes"],
     selectedModes: ["Scheduled"],
     previewNewVariations: true,
@@ -41,6 +60,7 @@ export default Vue.extend({
       type: Repertoire,
       required: true
     },
+
     blackRepertoire: {
       type: Repertoire,
       required: true
@@ -70,6 +90,18 @@ export default Vue.extend({
           minPlaybackSpeed + (maxPlaybackSpeed - minPlaybackSpeed) * normalized
         );
       }
+    }
+  },
+
+  methods: {
+    onStartTraining() {
+      this.$emit("onStartTraining", {
+        topics: this.selectedTopics,
+        selectedModes: this.selectedModes,
+        previewNewVariations: this.previewNewVariations,
+        entireVariations: this.entireVariations,
+        playbackSpeed: this.coercedPlaybackSpeed
+      });
     }
   }
 });
