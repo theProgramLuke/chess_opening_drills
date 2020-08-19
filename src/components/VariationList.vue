@@ -6,16 +6,14 @@
         v-btn.original-case(
           @click="onSelectMove(move.position)",
           color="primary") {{ move.san }}
-        v-btn(
-          @click="onDeleteMove(move)"
-          icon,
-          color="error",)
-          v-icon mdi-delete
+        move-deleter(:move="move", @onDelete="onDeleteMove")
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { mapState, mapMutations } from "vuex";
+
+import MoveDeleter from "@/components/MoveDeleter.vue";
 import { RepertoireTag } from "@/store/repertoireTag";
 import { Turn } from "@/store/turn";
 import { RepertoirePosition } from "@/store/repertoirePosition";
@@ -27,6 +25,10 @@ export default Vue.extend({
       type: Array,
       required: true
     }
+  },
+
+  components: {
+    MoveDeleter
   },
 
   methods: {

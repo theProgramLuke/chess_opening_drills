@@ -1,13 +1,13 @@
 <template lang="pug">
   v-dialog(v-model="showDialog" max-width="500px")
     template(v-slot:activator="{on, attrs}")
-      v-btn(v-bind="attrs" v-on="on" icon, color="error", :disabled="disabled")
+      v-btn(v-bind="attrs" v-on="on" icon, color="error")
         v-icon mdi-delete
 
     v-card.pa-4
-      v-card-title Delete?
-      v-card-subtitle The tag "{{ tag.name }}" and all of its child tags will be permanently deleted.
-      v-btn.ma-2(@click="onDelete(), showDialog=false", color="error") Delete
+      v-card-title Delete move?
+      v-card-subtitle The move "{{ move.san }}", and all orphaned positions will be removed.
+      v-btn.ma-2(@click="onDelete(); showDialog=false", color="error") Delete
       v-btn.ma-2(@click="showDialog=false", color="secondary", text, outlined) Cancel
 </template>
 
@@ -15,6 +15,7 @@
 import Vue from "vue";
 import { mapState, mapMutations } from "vuex";
 import { RepertoireTag } from "@/store/repertoireTag";
+import { Move } from "@/store/move";
 
 export default Vue.extend({
   data: () => ({
@@ -22,19 +23,15 @@ export default Vue.extend({
   }),
 
   props: {
-    tag: {
-      type: RepertoireTag,
+    move: {
+      type: Move,
       required: true
-    },
-    disabled: {
-      type: Boolean,
-      default: false
     }
   },
 
   methods: {
     onDelete() {
-      this.$emit("onDelete", this.tag);
+      this.$emit("onDelete", this.move);
     }
   }
 });
