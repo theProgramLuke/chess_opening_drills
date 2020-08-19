@@ -12,9 +12,18 @@ Vue.use(Vuex);
 
 const storage = GetPersistantStorage();
 
+console.log(storage);
+
 export default new Vuex.Store({
   state: {
     darkMode: storage.get("darkMode"),
+    primary: storage.get("primary"),
+    secondary: storage.get("secondary"),
+    accent: storage.get("accent"),
+    error: storage.get("error"),
+    warning: storage.get("warning"),
+    info: storage.get("info"),
+    success: storage.get("success"),
     whiteRepertoire: Repertoire.FromSaved(storage.get("whiteRepertoire")),
     blackRepertoire: Repertoire.FromSaved(storage.get("blackRepertoire"))
   },
@@ -23,6 +32,24 @@ export default new Vuex.Store({
     setDarkMode: (state, darkMode): void => {
       state.darkMode = darkMode;
       storage.set("darkMode", darkMode);
+    },
+
+    setColor: function(
+      state,
+      payload: {
+        colorToSet:
+          | "primary"
+          | "secondary"
+          | "accent"
+          | "error"
+          | "warning"
+          | "info"
+          | "success";
+        color: string;
+      }
+    ): void {
+      state[payload.colorToSet] = payload.color;
+      storage.set(payload.colorToSet, payload.color);
     },
 
     addRepertoirePosition: (

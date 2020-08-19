@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-app#inspire
+  v-app
     v-navigation-drawer(app, v-model="drawer")
       v-list
         v-list-item(
@@ -11,7 +11,7 @@
           v-list-item-content
             v-list-item-title {{ item.name }}
 
-    v-app-bar(app color="blue")
+    v-app-bar(app color="primary")
       v-app-bar-nav-icon(@click.stop="drawer = !drawer")
       v-toolbar-title Application
 
@@ -28,6 +28,7 @@ export default Vue.extend({
   props: {
     source: String
   },
+
   data: () => ({
     drawer: null,
     menuItems: [
@@ -53,13 +54,45 @@ export default Vue.extend({
       }
     ]
   }),
-  computed: mapState(["darkMode"]),
+
+  computed: mapState([
+    "darkMode",
+    "primary",
+    "secondary",
+    "accent",
+    "error",
+    "warning",
+    "info",
+    "success"
+  ]),
+
+  methods: {
+    setThemeColors() {
+      this.$vuetify.theme.currentTheme.primary = this.primary;
+      this.$vuetify.theme.currentTheme.secondary = this.secondary;
+      this.$vuetify.theme.currentTheme.accent = this.accent;
+      this.$vuetify.theme.currentTheme.error = this.error;
+      this.$vuetify.theme.currentTheme.warning = this.warning;
+      this.$vuetify.theme.currentTheme.info = this.info;
+      this.$vuetify.theme.currentTheme.success = this.success;
+    }
+  },
+
   created() {
     this.$vuetify.theme.dark = this.darkMode;
+    this.setThemeColors();
 
     this.$store.subscribe((mutation, state) => {
-      if (mutation.type === "setDarkMode") {
-        this.$vuetify.theme.dark = state.darkMode;
+      switch (mutation.type) {
+        case "setDarkMode": {
+          this.$vuetify.theme.dark = state.darkMode;
+          break;
+        }
+
+        case "setColor": {
+          this.setThemeColors();
+          break;
+        }
       }
     });
   }

@@ -21,6 +21,13 @@ const blackStartPosition = new RepertoirePosition(
 
 interface Storage {
   darkMode: boolean;
+  primary: string;
+  secondary: string;
+  accent: string;
+  error: string;
+  warning: string;
+  info: string;
+  success: string;
   whiteRepertoire: SavedRepertoire;
   blackRepertoire: SavedRepertoire;
 }
@@ -29,6 +36,13 @@ export function GetPersistantStorage(): ElectronStore<Storage> {
   return new ElectronStore<Storage>({
     defaults: {
       darkMode: false,
+      primary: "#2196F3",
+      secondary: "#424242",
+      accent: "#FF4081",
+      error: "#FF5252",
+      warning: "#FFC107",
+      info: "#2196F3",
+      success: "#4CAF50",
       whiteRepertoire: new Repertoire(
         [whiteStartPosition],
         [
