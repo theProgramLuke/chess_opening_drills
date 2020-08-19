@@ -23,7 +23,7 @@
         variation-list(
           :variations="nextMoves",
           @onSelectMove="updateBoard",
-          @onDeleteMove="removeRepertoireMoveFromPosition")
+          @onDeleteMove="removeRepertoireMove")
 </template>
 
 <script lang="ts">
@@ -118,10 +118,6 @@ export default Vue.extend({
           []
         )
       });
-    },
-
-    removeRepertoireMoveFromPosition(move: Move): void {
-      this.removeRepertoireMove({ parent: this.activePosition, move: move });
     }
   },
 

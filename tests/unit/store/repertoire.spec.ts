@@ -41,15 +41,6 @@ describe("Repertoire", () => {
       expect(loaded).toEqual(repertoire);
       expect(loaded.positions[0].GetTurnLists).toBeDefined();
     });
-
-    it("wip", () => {
-      const rep = new Repertoire([start], []);
-
-      const loaded = Repertoire.FromSaved(rep.AsSaved());
-
-      expect(loaded).toEqual(rep);
-      expect(loaded.positions[0].GetTurnLists).toBeDefined();
-    });
   });
 
   describe("AddMoves", () => {
@@ -85,11 +76,21 @@ describe("Repertoire", () => {
     });
   });
 
+  describe("RemoveMove", () => {
+    beforeEach(LinkTestPositions);
+
+    it("deletes all orphaned child positions", () => {
+      repertoire.RemoveMove(d3);
+
+      expect(start.children.length).toBe(1);
+      expect(repertoire.positions.length).toBe(6);
+    });
+  });
+
   describe("RemoveRepertoireTag", () => {
     it("should unlink a repertoire tag", () => {
       LinkTestPositions();
 
-      const rep = repertoire;
       repertoire.RemoveRepertoireTag(VariationC);
 
       expect(repertoire.tags[0].children).toEqual([VariationA]);

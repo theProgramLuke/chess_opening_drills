@@ -53,8 +53,8 @@ export class Repertoire {
     _.forEach(this.tags, tag => tag.RemoveChild(tagToRemove));
   }
 
-  RemoveMove(parent: RepertoirePosition, move: Move): void {
-    move.position.RemoveParent(parent);
+  RemoveMove(move: Move): void {
+    move.position.Unlink();
     this.RemoveOrphanPositions();
   }
 

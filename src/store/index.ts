@@ -72,19 +72,16 @@ export default new Vuex.Store({
       storage.set(repertoireKey, repertoire.AsSaved());
     },
 
-    removeRepertoireMove: (
-      state,
-      payload: { parent: RepertoirePosition; move: Move }
-    ): void => {
+    removeRepertoireMove: (state, move: Move): void => {
       const repertoire =
-        payload.move.position.forSide === Side.White
+        move.position.forSide === Side.White
           ? state.whiteRepertoire
           : state.blackRepertoire;
       const repertoireKey =
-        payload.move.position.forSide === Side.White
+        move.position.forSide === Side.White
           ? "whiteRepertoire"
           : "blackRepertoire";
-      repertoire.RemoveMove(payload.parent, payload.move);
+      repertoire.RemoveMove(move);
       storage.set(repertoireKey, repertoire.AsSaved());
     },
 
