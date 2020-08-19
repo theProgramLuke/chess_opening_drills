@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-container.justify-center
-    v-card.pa-4(max-width="750px")
+  v-container
+    v-card.pa-4(min-width="550px")
       v-card-title Train
       v-treeview(:items="combinedTags", dense, hoverable, selectable, open-on-click)
       v-select(
@@ -11,9 +11,9 @@
       v-checkbox(
         v-if="showPreviewInput",
         v-model="previewNewVariations",
-        label="Preview variation for new positions")
+        label="Preview variations for new positions")
       v-checkbox(label="Review entire variations", v-model="entireVariations")
-      v-slider(v-model="playbackSpeedSlideValue", :label="playbackSpeedLabel")
+      v-slider(v-if="previewNewVariations", v-model="playbackSpeedSlideValue", :label="playbackSpeedLabel")
       v-card-actions
         v-btn(color="primary", x-large) Start Training
 </template>
