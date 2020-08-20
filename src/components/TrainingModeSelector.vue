@@ -10,36 +10,41 @@
         hoverable,
         selectable,
         open-on-click)
-      v-select(
+      v-select.ma-2(
         v-model="selectedModes",
         :items="modes",
-        hint="Positions to include",
-        multiple)
+        label="Positions to include",
+        multiple,
+        chips,
+        deletable-chips)
       v-checkbox(
         v-if="showPreviewInput",
         v-model="previewNewVariations",
         label="Preview variations for new positions")
-      v-checkbox(label="Review entire variations", v-model="entireVariations")
       v-slider(v-if="previewNewVariations", v-model="playbackSpeedSlideValue", :label="playbackSpeedLabel")
+      v-checkbox(label="Review entire variations", v-model="entireVariations")
       v-card-actions
         v-btn(
           @click="onStartTraining"
+          :disabled="trainingPositions.length < 1",
           color="primary",
-          x-large) Start Training
+          x-large) {{ startTrainingLabel }}
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import _ from "lodash";
 import { Repertoire } from "@/store/repertoire";
-import { RepertoireTag } from "@/store/repertoireTag";
+import { RepertoireTag, GetTrainingPositions } from "@/store/repertoireTag";
+import { RepertoirePosition } from "@/store/repertoirePosition";
+import { TrainingMode } from "@/store/trainingMode";
 
 const minPlaybackSpeed = 0.2;
 const maxPlaybackSpeed = 5;
 
 export interface TrainingOptions {
   topics: RepertoireTag[];
-  modes: string[];
+  modes: TrainingMode[];
   previewNewVariations: boolean;
   entireVariations: boolean;
   playbackSpeed: number;
@@ -48,8 +53,8 @@ export interface TrainingOptions {
 export default Vue.extend({
   data: () => ({
     selectedTopics: [],
-    modes: ["Scheduled", "New", "Common Mistakes"],
-    selectedModes: ["Scheduled"],
+    modes: [TrainingMode.Scheduled, TrainingMode.New, TrainingMode.Mistakes],
+    selectedModes: [TrainingMode.Scheduled],
     previewNewVariations: true,
     entireVariations: true,
     playbackSpeedSlideValue: 10
@@ -68,28 +73,32 @@ export default Vue.extend({
   },
 
   computed: {
-    combinedTags() {
+    combinedTags(): RepertoireTag[] {
       return _.concat(this.whiteRepertoire.tags, this.blackRepertoire.tags);
     },
 
-    showPreviewInput() {
-      return _.includes(this.selectedModes, "New");
+    showPreviewInput(): boolean {
+      return _.includes(this.selectedModes, TrainingMode.New);
     },
 
-    playbackSpeedLabel: {
-      get() {
-        const speed = Number(this.coercedPlaybackSpeed).toFixed(1);
-        return "Playback speed (" + speed + " moves per second)";
-      }
+    playbackSpeedLabel(): string {
+      const speed = Number(this.coercedPlaybackSpeed).toFixed(1);
+      return "Playback speed (" + speed + " moves per second)";
     },
 
-    coercedPlaybackSpeed: {
-      get(): number {
-        const normalized = this.playbackSpeedSlideValue / 100;
-        return (
-          minPlaybackSpeed + (maxPlaybackSpeed - minPlaybackSpeed) * normalized
-        );
-      }
+    coercedPlaybackSpeed(): number {
+      const normalized = this.playbackSpeedSlideValue / 100;
+      return (
+        minPlaybackSpeed + (maxPlaybackSpeed - minPlaybackSpeed) * normalized
+      );
+    },
+
+    trainingPositions(): RepertoirePosition[] {
+      return GetTrainingPositions(this.selectedModes, this.selectedTopics);
+    },
+
+    startTrainingLabel(): string {
+      return "Start Training (" + this.trainingPositions.length + " positions)";
     }
   },
 

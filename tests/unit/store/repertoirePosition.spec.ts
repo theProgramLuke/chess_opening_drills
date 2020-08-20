@@ -21,16 +21,15 @@ let d3e6e3: Move;
 beforeEach(() => {
   start = new RepertoirePosition(
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    true,
     "",
-    Side.White
+    Side.White,
+    true
   );
 
   e3 = new Move(
     "e3",
     new RepertoirePosition(
       "rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
-      false,
       "",
       Side.White
     )
@@ -40,7 +39,6 @@ beforeEach(() => {
     "e6",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
-      false,
       "",
       Side.White
     )
@@ -50,7 +48,6 @@ beforeEach(() => {
     "e4",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2",
-      false,
       "",
       Side.White
     )
@@ -60,7 +57,6 @@ beforeEach(() => {
     "e5",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3",
-      false,
       "",
       Side.White
     )
@@ -70,7 +66,6 @@ beforeEach(() => {
     "d3",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/3PP3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
-      false,
       "",
       Side.White
     )
@@ -80,7 +75,6 @@ beforeEach(() => {
     "d3",
     new RepertoirePosition(
       "rnbqkbnr/pppppppp/8/8/8/3P4/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
-      false,
       "",
       Side.White
     )
@@ -90,7 +84,6 @@ beforeEach(() => {
     "e6",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/3P4/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
-      false,
       "",
       Side.White
     )
@@ -100,7 +93,6 @@ beforeEach(() => {
     "e3",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/3PP3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
-      false,
       "This transposes to e3, e6, d3",
       Side.White
     )
@@ -135,12 +127,7 @@ describe("RepertoirePosition", () => {
       ["rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", Side.White],
       ["rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1", Side.Black]
     ])("for FEN %s return %s", (fen: FEN, expected: Side) => {
-      const side = new RepertoirePosition(
-        fen,
-        false,
-        "",
-        Side.White
-      ).SideToMove();
+      const side = new RepertoirePosition(fen, "", Side.White).SideToMove();
 
       expect(side).toBe(expected);
     });

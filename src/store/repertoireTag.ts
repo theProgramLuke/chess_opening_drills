@@ -4,6 +4,8 @@ import { Guid } from "guid-typescript";
 import { Side } from "./side";
 import { FEN } from "chessground/types";
 import { RepertoirePosition } from "./repertoirePosition";
+import { Turn } from "./turn";
+import { TrainingMode } from "./trainingMode";
 
 export class SavedRepertoireTag {
   id: string;
@@ -99,4 +101,39 @@ export class RepertoireTag {
       saved.id
     );
   }
+}
+
+export function GetTrainingPositions(
+  modes: TrainingMode[],
+  tags: RepertoireTag[]
+): RepertoirePosition[] {
+  const positions: RepertoirePosition[] = [];
+
+  _.forEach(tags, tag => {
+    tag.position.VisitChildren((position: RepertoirePosition) => {
+      const anyChildren = !_.isEmpty(position.children);
+      const modesMatch = !_.isEmpty(
+        _.intersection(position.trainingModes, modes)
+      );
+      if (position.myTurn && anyChildren && modesMatch) {
+        positions.push(position);
+      }
+    });
+  });
+
+  return positions;
+}
+
+export function GetTrainingTurnLists(
+  modes: TrainingMode[],
+  tags: RepertoireTag[]
+): Turn[][] {
+  const turnLists: Turn[][] = [];
+
+  _.forEach(GetTrainingPositions(modes, tags), position =>
+    turnLists.push(...position.GetTurnLists())
+  );
+
+  // TODO remove common prefixes
+  return turnLists;
 }

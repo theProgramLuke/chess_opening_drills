@@ -6,6 +6,7 @@ import { Move, SavedMove } from "@/store/move";
 import { Side } from "@/store/side";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire";
 import { RepertoireTag, SavedRepertoireTag } from "@/store/repertoireTag";
+import { TrainingMode } from "@/store/trainingMode";
 
 export let repertoire: Repertoire;
 export let start: RepertoirePosition;
@@ -26,16 +27,15 @@ export let VariationC: RepertoireTag;
 export function ResetTestRepertoire() {
   start = new RepertoirePosition(
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    true,
     "",
-    Side.White
+    Side.White,
+    true
   );
 
   e3 = new Move(
     "e3",
     new RepertoirePosition(
       "rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
-      false,
       "",
       Side.White
     )
@@ -45,7 +45,6 @@ export function ResetTestRepertoire() {
     "e6",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
-      false,
       "",
       Side.White
     )
@@ -55,7 +54,6 @@ export function ResetTestRepertoire() {
     "e4",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2",
-      false,
       "",
       Side.White
     )
@@ -65,7 +63,6 @@ export function ResetTestRepertoire() {
     "e5",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3",
-      false,
       "",
       Side.White
     )
@@ -75,7 +72,6 @@ export function ResetTestRepertoire() {
     "d3",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/3PP3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
-      false,
       "",
       Side.White
     )
@@ -85,7 +81,6 @@ export function ResetTestRepertoire() {
     "d3",
     new RepertoirePosition(
       "rnbqkbnr/pppppppp/8/8/8/3P4/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
-      false,
       "",
       Side.White
     )
@@ -95,7 +90,6 @@ export function ResetTestRepertoire() {
     "e6",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/3P4/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
-      false,
       "",
       Side.White
     )
@@ -105,7 +99,6 @@ export function ResetTestRepertoire() {
     "e3",
     new RepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/3PP3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
-      false,
       "",
       Side.White
     )
@@ -171,7 +164,8 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [],
       [new SavedMove("e3", 1), new SavedMove("d3", 6)],
       true,
-      Side.White
+      Side.White,
+      [TrainingMode.New]
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
@@ -179,15 +173,17 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [0],
       [new SavedMove("e6", 2)],
       false,
-      Side.White
+      Side.White,
+      [TrainingMode.New]
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
       "",
       [1],
       [new SavedMove("d3", 3), new SavedMove("e4", 4)],
-      false,
-      Side.White
+      true,
+      Side.White,
+      [TrainingMode.New]
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/3PP3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
@@ -195,7 +191,8 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [2, 7],
       [],
       false,
-      Side.White
+      Side.White,
+      [TrainingMode.New]
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2",
@@ -203,15 +200,17 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [2],
       [new SavedMove("e5", 5)],
       false,
-      Side.White
+      Side.White,
+      [TrainingMode.New]
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3",
       "",
       [4],
       [],
-      false,
-      Side.White
+      true,
+      Side.White,
+      [TrainingMode.New]
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppppppp/8/8/8/3P4/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
@@ -219,15 +218,17 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [0],
       [new SavedMove("e6", 7)],
       false,
-      Side.White
+      Side.White,
+      [TrainingMode.New]
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/3P4/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
       "",
       [6],
       [new SavedMove("e3", 3)],
-      false,
-      Side.White
+      true,
+      Side.White,
+      [TrainingMode.New]
     )
   ],
   [

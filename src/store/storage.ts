@@ -7,16 +7,16 @@ import { Repertoire, SavedRepertoire } from "./repertoire";
 
 const whiteStartPosition = new RepertoirePosition(
   "rnbqkbnr/pppppppr/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-  true,
   "",
-  Side.White
+  Side.White,
+  true
 );
 
 const blackStartPosition = new RepertoirePosition(
   "rnbqkbnr/pppppppr/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-  false,
   "",
-  Side.Black
+  Side.Black,
+  false
 );
 
 interface Storage {

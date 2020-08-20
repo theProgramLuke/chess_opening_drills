@@ -46,7 +46,6 @@ export default Vue.extend({
   data: () => ({
     activePosition: new RepertoirePosition(
       "8/8/8/8/8/8/8/8 w KQkq - 0 1",
-      true,
       "",
       Side.White
     ),
@@ -91,7 +90,6 @@ export default Vue.extend({
       if (threats.fen && threats.fen !== this.activePosition.fen) {
         const position = new RepertoirePosition(
           threats.fen,
-          true,
           "",
           this.activePosition.forSide
         );

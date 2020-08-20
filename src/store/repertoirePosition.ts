@@ -5,6 +5,7 @@ import { Chess } from "chess.js";
 import { Move, SavedMove } from "@/store/move";
 import { Side } from "@/store/side";
 import { Turn } from "@/store/turn";
+import { TrainingMode } from "./trainingMode";
 
 export class SavedRepertoirePosition {
   fen: FEN;
@@ -13,6 +14,7 @@ export class SavedRepertoirePosition {
   children: SavedMove[];
   myTurn: boolean;
   forSide: Side;
+  trainingModes: TrainingMode[];
 
   constructor(
     fen: FEN,
@@ -20,7 +22,8 @@ export class SavedRepertoirePosition {
     parentIds: number[],
     children: SavedMove[],
     myTurn: boolean,
-    forSide: Side
+    forSide: Side,
+    trainingModes: TrainingMode[]
   ) {
     this.fen = fen;
     this.comment = comment;
@@ -28,6 +31,7 @@ export class SavedRepertoirePosition {
     this.children = children;
     this.myTurn = myTurn;
     this.forSide = forSide;
+    this.trainingModes = trainingModes;
   }
 }
 
@@ -38,14 +42,22 @@ export class RepertoirePosition {
   children: Move[];
   myTurn: boolean;
   forSide: Side;
+  trainingModes: TrainingMode[];
 
-  constructor(fen: FEN, myTurn: boolean, comment: string, forSide: Side) {
+  constructor(
+    fen: FEN,
+    comment: string,
+    forSide: Side,
+    myTurn?: boolean,
+    trainingModes?: TrainingMode[]
+  ) {
     this.fen = fen;
     this.comment = comment;
-    this.myTurn = myTurn;
     this.forSide = forSide;
     this.parents = [];
     this.children = [];
+    this.myTurn = myTurn || false;
+    this.trainingModes = trainingModes || [TrainingMode.New];
   }
 
   SideToMove(): Side {
@@ -63,6 +75,7 @@ export class RepertoirePosition {
     if (!samePosition && !alreadyChild) {
       this.children.push(move);
       move.position.parents.push(this);
+      move.position.myTurn = !this.myTurn;
     }
   }
 
@@ -80,6 +93,22 @@ export class RepertoirePosition {
 
     this.parents = [];
     this.children = [];
+  }
+
+  VisitChildren(visit: { (child: RepertoirePosition): void }): void {
+    this.VisitChildrenRecursive(visit, []);
+  }
+
+  private VisitChildrenRecursive(
+    visit: { (child: RepertoirePosition): void },
+    alreadyVisited: RepertoirePosition[]
+  ): void {
+    if (!_.includes(alreadyVisited, this)) {
+      visit(this);
+      _.forEach(this.children, child =>
+        child.position.VisitChildrenRecursive(visit, alreadyVisited)
+      );
+    }
   }
 
   private RootPaths(): Move[][] {
@@ -195,16 +224,18 @@ export class RepertoirePosition {
       parentIds,
       savedChildren,
       this.myTurn,
-      this.forSide
+      this.forSide,
+      this.trainingModes
     );
   }
 
   static FromSaved(saved: SavedRepertoirePosition): RepertoirePosition {
     return new RepertoirePosition(
       saved.fen,
-      saved.myTurn,
       saved.comment,
-      saved.forSide
+      saved.forSide,
+      saved.myTurn,
+      saved.trainingModes
     );
   }
 }

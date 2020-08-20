@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    v-overlay(:value="selectionOverlay")
+    v-overlay(:value="selectionOverlay", :dark="darkMode")
       training-mode-selector(
         :whiteRepertoire="whiteRepertoire", 
         :blackRepertoire="blackRepertoire",
@@ -25,12 +25,11 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(["whiteRepertoire", "blackRepertoire"])
+    ...mapState(["whiteRepertoire", "blackRepertoire", "darkMode"])
   },
 
   methods: {
     startTraining(options: TrainingOptions) {
-      console.log(options);
       this.selectionOverlay = false;
     }
   }

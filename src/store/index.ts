@@ -12,8 +12,6 @@ Vue.use(Vuex);
 
 const storage = GetPersistantStorage();
 
-console.log(storage);
-
 export default new Vuex.Store({
   state: {
     darkMode: storage.get("darkMode"),
