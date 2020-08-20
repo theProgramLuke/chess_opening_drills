@@ -2,6 +2,9 @@ patch chess.js export # Blocked on yarn 2 failed install
 training
 scheduling
 import/export pgn
+common mistakes
+hard positions
+training mode explanations
 persist training options
 implement reset appearance
 add +- etc annotation to position
