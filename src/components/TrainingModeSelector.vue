@@ -42,13 +42,13 @@ import { TrainingMode } from "@/store/trainingMode";
 const minPlaybackSpeed = 0.2;
 const maxPlaybackSpeed = 5;
 
-export interface TrainingOptions {
+export type TrainingOptions = {
   topics: RepertoireTag[];
   modes: TrainingMode[];
   previewNewVariations: boolean;
   entireVariations: boolean;
   playbackSpeed: number;
-}
+};
 
 export default Vue.extend({
   data: () => ({

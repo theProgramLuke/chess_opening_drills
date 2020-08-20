@@ -5,6 +5,8 @@
         :whiteRepertoire="whiteRepertoire", 
         :blackRepertoire="blackRepertoire",
         @onStartTraining="startTraining")
+    
+    trainer(:options="trainingOptions")
 </template>
 
 <script lang="ts">
@@ -14,14 +16,17 @@ import { mapState } from "vuex";
 import TrainingModeSelector, {
   TrainingOptions
 } from "@/components/TrainingModeSelector.vue";
+import Trainer from "@/components/Trainer.vue";
 
 export default Vue.extend({
   data: () => ({
-    selectionOverlay: true
+    selectionOverlay: true,
+    trainingOptions: {}
   }),
 
   components: {
-    TrainingModeSelector
+    TrainingModeSelector,
+    Trainer
   },
 
   computed: {
@@ -31,6 +36,7 @@ export default Vue.extend({
   methods: {
     startTraining(options: TrainingOptions) {
       this.selectionOverlay = false;
+      this.trainingOptions = options;
     }
   }
 });
