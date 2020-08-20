@@ -1,21 +1,16 @@
 import _, { isEmpty } from "lodash";
 
-import { RepertoireTag, GetTrainingPositions } from "@/store/repertoireTag";
+import { GetTrainingPositions } from "@/store/repertoireTag";
 import {
   ResetTestRepertoire,
   LinkTestPositions,
   White,
   Black,
   start,
-  repertoire,
   e3e6,
-  d3e6,
-  e3
+  d3e6
 } from "./testDataRepertoire";
 import { TrainingMode } from "@/store/trainingMode";
-import { Side } from "@/store/side";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Move } from "@/store/move";
 
 beforeEach(() => {
   ResetTestRepertoire();
