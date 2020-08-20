@@ -111,7 +111,7 @@ export class RepertoirePosition {
     }
   }
 
-  private RootPaths(): Move[][] {
+  RootPaths(): Move[][] {
     const collector: Move[][] = [];
 
     if (!_.isEmpty(this.parents)) {

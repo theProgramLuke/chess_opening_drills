@@ -6,7 +6,7 @@
         :blackRepertoire="blackRepertoire",
         @onStartTraining="startTraining")
     
-    trainer(:options="trainingOptions")
+    trainer(v-if="!selectionOverlay", :options="trainingOptions")
 </template>
 
 <script lang="ts">

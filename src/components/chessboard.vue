@@ -226,7 +226,10 @@ export default Vue.extend({
       this.board.set({
         movable: { events: { after: this.changeTurn() } }
       });
-      this.afterMove();
+
+      if (fen) {
+        this.afterMove();
+      }
     }
   },
   mounted() {

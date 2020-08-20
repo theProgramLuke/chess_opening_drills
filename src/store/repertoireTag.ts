@@ -6,6 +6,7 @@ import { FEN } from "chessground/types";
 import { RepertoirePosition } from "./repertoirePosition";
 import { Turn } from "./turn";
 import { TrainingMode } from "./trainingMode";
+import { Move } from "./move";
 
 export class SavedRepertoireTag {
   id: string;
@@ -116,7 +117,7 @@ export function GetTrainingPositions(
         _.intersection(position.trainingModes, modes)
       );
       if (position.myTurn && anyChildren && modesMatch) {
-        positions.push(position);
+        positions.push(position.children[0].position);
       }
     });
   });
@@ -124,16 +125,13 @@ export function GetTrainingPositions(
   return positions;
 }
 
-export function GetTrainingTurnLists(
-  modes: TrainingMode[],
-  tags: RepertoireTag[]
-): Turn[][] {
-  const turnLists: Turn[][] = [];
+export function GetTrainingMoveLists(
+  positions: RepertoirePosition[]
+): Move[][] {
+  const moveLists: Move[][] = [];
 
-  _.forEach(GetTrainingPositions(modes, tags), position =>
-    turnLists.push(...position.GetTurnLists())
-  );
+  _.forEach(positions, position => moveLists.push(...position.RootPaths()));
 
   // TODO remove common prefixes
-  return turnLists;
+  return moveLists;
 }

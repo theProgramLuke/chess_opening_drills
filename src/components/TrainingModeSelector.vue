@@ -35,20 +35,40 @@
 import Vue from "vue";
 import _ from "lodash";
 import { Repertoire } from "@/store/repertoire";
-import { RepertoireTag, GetTrainingPositions } from "@/store/repertoireTag";
+import {
+  RepertoireTag,
+  GetTrainingPositions,
+  GetTrainingMoveLists
+} from "@/store/repertoireTag";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { TrainingMode } from "@/store/trainingMode";
+import { Turn } from "@/store/turn";
+import { Move } from "@/store/move";
 
 const minPlaybackSpeed = 0.2;
 const maxPlaybackSpeed = 5;
 
-export type TrainingOptions = {
+export class TrainingOptions {
   topics: RepertoireTag[];
-  modes: TrainingMode[];
+  variations: Move[][];
   previewNewVariations: boolean;
   entireVariations: boolean;
   playbackSpeed: number;
-};
+
+  constructor(
+    topics: RepertoireTag[],
+    variations: Move[][],
+    previewNewVariations: boolean,
+    entireVariations: boolean,
+    playbackSpeed: number
+  ) {
+    this.topics = topics;
+    (this.variations = variations),
+      (this.previewNewVariations = previewNewVariations);
+    this.entireVariations = entireVariations;
+    this.playbackSpeed = playbackSpeed;
+  }
+}
 
 export default Vue.extend({
   data: () => ({
@@ -104,13 +124,16 @@ export default Vue.extend({
 
   methods: {
     onStartTraining() {
-      this.$emit("onStartTraining", {
-        topics: this.selectedTopics,
-        selectedModes: this.selectedModes,
-        previewNewVariations: this.previewNewVariations,
-        entireVariations: this.entireVariations,
-        playbackSpeed: this.coercedPlaybackSpeed
-      });
+      this.$emit(
+        "onStartTraining",
+        new TrainingOptions(
+          this.selectedTopics,
+          GetTrainingMoveLists(this.trainingPositions),
+          this.previewNewVariations,
+          this.entireVariations,
+          this.coercedPlaybackSpeed
+        )
+      );
     }
   }
 });
