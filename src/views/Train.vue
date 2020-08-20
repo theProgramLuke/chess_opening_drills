@@ -6,7 +6,10 @@
         :blackRepertoire="blackRepertoire",
         @onStartTraining="startTraining")
     
-    trainer(v-if="!selectionOverlay", :options="trainingOptions")
+    trainer(
+      v-if="!selectionOverlay",
+      :options="trainingOptions",
+      @onCompleted="onCompleted")
 </template>
 
 <script lang="ts">
@@ -37,6 +40,10 @@ export default Vue.extend({
     startTraining(options: TrainingOptions) {
       this.selectionOverlay = false;
       this.trainingOptions = options;
+    },
+
+    onCompleted() {
+      this.selectionOverlay = true;
     }
   }
 });

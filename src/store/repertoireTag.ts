@@ -117,7 +117,7 @@ export function GetTrainingPositions(
         _.intersection(position.trainingModes, modes)
       );
       if (position.myTurn && anyChildren && modesMatch) {
-        positions.push(position.children[0].position);
+        positions.push(position);
       }
     });
   });
@@ -126,11 +126,15 @@ export function GetTrainingPositions(
 }
 
 export function GetTrainingMoveLists(
-  positions: RepertoirePosition[]
+  modes: TrainingMode[],
+  tags: RepertoireTag[]
 ): Move[][] {
   const moveLists: Move[][] = [];
+  const parents = GetTrainingPositions(modes, tags);
 
-  _.forEach(positions, position => moveLists.push(...position.RootPaths()));
+  _.forEach(parents, parent =>
+    moveLists.push(...parent.children[0].position.RootPaths())
+  );
 
   // TODO remove common prefixes
   return moveLists;

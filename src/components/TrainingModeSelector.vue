@@ -128,7 +128,7 @@ export default Vue.extend({
         "onStartTraining",
         new TrainingOptions(
           this.selectedTopics,
-          GetTrainingMoveLists(this.trainingPositions),
+          GetTrainingMoveLists(this.selectedModes, this.selectedTopics),
           this.previewNewVariations,
           this.entireVariations,
           this.coercedPlaybackSpeed
