@@ -1,13 +1,15 @@
 import _ from "lodash";
 
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import {
+  RepertoirePosition,
+  millisecondsPerDay
+} from "@/store/repertoirePosition";
 import { Side } from "@/store/side";
 import { Turn } from "@/store/turn";
 import { FEN } from "chessground/types";
 import {
   ResetTestRepertoire,
   LinkTestPositions,
-  repertoire,
   e3,
   start,
   e3e6e4e5,
@@ -117,9 +119,9 @@ describe("RepertoirePosition", () => {
 
     it("should be included in mistakes mode when there is a recent mistake", () => {
       const position = new RepertoirePosition("", "", Side.White);
-      position.AddTrainingEvent(new TrainingEvent(true, 0));
-      position.AddTrainingEvent(new TrainingEvent(false, 0));
-      position.AddTrainingEvent(new TrainingEvent(true, 0));
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.AddTrainingEvent(new TrainingEvent(3, 0));
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
 
       const include = position.IncludeForTrainingMode(TrainingMode.Mistakes);
 
@@ -128,16 +130,119 @@ describe("RepertoirePosition", () => {
 
     it("should not be included in mistakes mode when there are no recent mistakes", () => {
       const position = new RepertoirePosition("", "", Side.White);
-      position.AddTrainingEvent(new TrainingEvent(false, 0));
-      position.AddTrainingEvent(new TrainingEvent(true, 0));
-      position.AddTrainingEvent(new TrainingEvent(true, 0));
-      position.AddTrainingEvent(new TrainingEvent(true, 0));
-      position.AddTrainingEvent(new TrainingEvent(true, 0));
-      position.AddTrainingEvent(new TrainingEvent(true, 0));
+      position.AddTrainingEvent(new TrainingEvent(2, 0));
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
 
       const include = position.IncludeForTrainingMode(TrainingMode.Mistakes);
 
       expect(include).toBeFalsy();
+    });
+  });
+
+  describe("AddTrainingEvent", () => {
+    it("should add events to the training history", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+      const events = [
+        new TrainingEvent(0, 1),
+        new TrainingEvent(1, 2),
+        new TrainingEvent(2, 3)
+      ];
+
+      _.forEach(events, event => position.AddTrainingEvent(event));
+
+      expect(position.trainingHistory).toEqual(events);
+    });
+
+    it("should schedule 1 day later for the first repitition", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+
+      const nowBefore = _.now();
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      const nowAfter = _.now();
+
+      expect(position.nextRepititionTimestamp).toBeGreaterThanOrEqual(
+        nowBefore + millisecondsPerDay
+      );
+      expect(position.nextRepititionTimestamp).toBeLessThanOrEqual(
+        nowAfter + millisecondsPerDay
+      );
+    });
+
+    it("should schedule 4 days later for the second repitition", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+
+      const nowBefore = _.now();
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      const nowAfter = _.now();
+
+      expect(position.nextRepititionTimestamp).toBeGreaterThanOrEqual(
+        nowBefore + 4 * millisecondsPerDay
+      );
+      expect(position.nextRepititionTimestamp).toBeLessThanOrEqual(
+        nowAfter + 4 * millisecondsPerDay
+      );
+    });
+
+    it("should reset the repitition index after a bad grade", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+
+      const nowBefore = _.now();
+      position.AddTrainingEvent(new TrainingEvent(2, 0)); // grade 3
+      const nowAfter = _.now();
+
+      expect(position.nextRepititionTimestamp).toBeGreaterThanOrEqual(
+        nowBefore + millisecondsPerDay
+      );
+      expect(position.nextRepititionTimestamp).toBeLessThanOrEqual(
+        nowAfter + millisecondsPerDay
+      );
+    });
+
+    it("should set the interval by easiness after the second repitition", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      const expectedIntervalDays = 32;
+
+      const nowBefore = _.now();
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      const nowAfter = _.now();
+
+      expect(position.nextRepititionTimestamp).toBeGreaterThanOrEqual(
+        nowBefore + expectedIntervalDays * millisecondsPerDay
+      );
+      expect(position.nextRepititionTimestamp).toBeLessThanOrEqual(
+        nowAfter + expectedIntervalDays * millisecondsPerDay
+      );
+    });
+
+    it("should set a low easiness for an often missed position", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+
+      position.AddTrainingEvent(new TrainingEvent(3, 0));
+      position.AddTrainingEvent(new TrainingEvent(3, 0));
+      position.AddTrainingEvent(new TrainingEvent(3, 0));
+
+      expect(position.easinessFactor).toBe(1.8999999999999997);
+    });
+
+    it("should set not reduce the easiness below 1", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+
+      _.forEach(_.range(10), _index => {
+        position.AddTrainingEvent(new TrainingEvent(3, 0)); // Grade 0
+      });
+
+      expect(position.easinessFactor).toBe(1);
     });
   });
 });

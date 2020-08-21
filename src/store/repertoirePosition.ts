@@ -8,6 +8,8 @@ import { Turn } from "@/store/turn";
 import { TrainingMode } from "./trainingMode";
 import { TrainingEvent } from "./TrainingEvent";
 
+export const millisecondsPerDay = 86400000;
+
 export class SavedRepertoirePosition {
   fen: FEN;
   comment: string;
@@ -16,6 +18,7 @@ export class SavedRepertoirePosition {
   myTurn: boolean;
   forSide: Side;
   trainingHistory: TrainingEvent[];
+  nextRepititionTimestamp?: number;
 
   constructor(
     fen: FEN,
@@ -24,7 +27,8 @@ export class SavedRepertoirePosition {
     children: SavedMove[],
     myTurn: boolean,
     forSide: Side,
-    trainingHistory: TrainingEvent[]
+    trainingHistory: TrainingEvent[],
+    nextRepititionTimestamp?: number
   ) {
     this.fen = fen;
     this.comment = comment;
@@ -33,8 +37,11 @@ export class SavedRepertoirePosition {
     this.myTurn = myTurn;
     this.forSide = forSide;
     this.trainingHistory = trainingHistory;
+    this.nextRepititionTimestamp = nextRepititionTimestamp;
   }
 }
+
+type Grade = 0 | 1 | 2 | 3 | 4 | 5;
 
 export class RepertoirePosition {
   fen: FEN;
@@ -44,6 +51,10 @@ export class RepertoirePosition {
   myTurn: boolean;
   forSide: Side;
   trainingHistory: TrainingEvent[];
+  nextRepititionTimestamp?: number;
+  previousIntervalDays: number;
+  intervalIndex: number;
+  easinessFactor: number;
 
   constructor(
     fen: FEN,
@@ -59,6 +70,9 @@ export class RepertoirePosition {
     this.children = [];
     this.myTurn = myTurn || false;
     this.trainingHistory = trainingHistory || [];
+    this.previousIntervalDays = 0;
+    this.intervalIndex = 0;
+    this.easinessFactor = 2.5;
   }
 
   SideToMove(): Side {
@@ -120,13 +134,75 @@ export class RepertoirePosition {
 
   private IncludeForMistakesMode(): boolean {
     const recentTraining = _.takeRight(this.trainingHistory, 5);
-    const recentIncorrect = _.filter(recentTraining, event => !event.correct);
+    const recentIncorrect = _.filter(
+      recentTraining,
+      event => event.attempts > 1
+    );
     return !_.isEmpty(recentIncorrect);
   }
 
   AddTrainingEvent(event: TrainingEvent): void {
     this.trainingHistory.push(event);
-    _.noop(); // TODO
+
+    const grade = this.CalculateGrade(event);
+    this.easinessFactor = this.NextEasinessFactor(grade);
+    const nextIntervalDays = this.NextIntervalDays(grade);
+
+    const nextIntervalMilliseconds = nextIntervalDays * 86400000;
+    this.nextRepititionTimestamp = _.now() + nextIntervalMilliseconds;
+    this.previousIntervalDays = nextIntervalDays;
+  }
+
+  private CalculateGrade(event: TrainingEvent): Grade {
+    switch (event.attempts) {
+      case 1: {
+        if (event.responseTimeSeconds < 2) {
+          return 5;
+        } else if (event.responseTimeSeconds < 10) {
+          return 4;
+        } else {
+          return 3;
+        }
+      }
+      case 2: {
+        if (event.responseTimeSeconds < 10) {
+          return 2;
+        } else {
+          return 1;
+        }
+      }
+      case 3:
+      default: {
+        return 0;
+      }
+    }
+  }
+
+  private NextEasinessFactor(grade: Grade): number {
+    let next =
+      this.easinessFactor + (0.1 - (5 - grade) * 0.08 + (5 - grade) * 0.02);
+    if (next < 1) {
+      next = 1;
+    }
+    return next;
+  }
+
+  private NextIntervalDays(grade: Grade): number {
+    if (grade < 3) {
+      this.intervalIndex = 1;
+      return 1;
+    }
+
+    if (this.intervalIndex === 0) {
+      this.intervalIndex++;
+      return 1;
+    }
+    if (this.intervalIndex === 1) {
+      this.intervalIndex++;
+      return 4; // SM-2 wants 6, but that is really long
+    }
+
+    return _.round(this.easinessFactor * this.previousIntervalDays, 0);
   }
 
   VisitChildren(visit: { (child: RepertoirePosition): void }): void {
@@ -259,7 +335,8 @@ export class RepertoirePosition {
       savedChildren,
       this.myTurn,
       this.forSide,
-      this.trainingHistory
+      this.trainingHistory,
+      this.nextRepititionTimestamp
     );
   }
 

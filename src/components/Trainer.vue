@@ -30,7 +30,8 @@ export default Vue.extend({
   data: () => ({
     variationIndex: 0,
     plyCount: 0,
-    startTime: _.now()
+    startTime: _.now(),
+    attempts: 0
   }),
 
   components: {
@@ -90,11 +91,12 @@ export default Vue.extend({
 
     onBoardMove(threats: Threats): void {
       if (threats.fen && threats.fen !== this.activePosition.fen) {
+        this.attempts++;
         const correct = this.moveIsCorrect(threats.fen);
 
         this.addTrainingEvent({
           position: this.activePosition,
-          event: new TrainingEvent(correct, this.getElapsed())
+          event: new TrainingEvent(this.attempts, this.getElapsed())
         });
 
         if (correct) {
@@ -110,6 +112,7 @@ export default Vue.extend({
     },
 
     nextTrainingPosition(): void {
+      this.attempts = 0;
       do {
         this.plyCount++;
         if (this.plyCount >= this.activeVariation.length) {

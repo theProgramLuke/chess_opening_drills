@@ -1,12 +1,12 @@
 import _ from "lodash";
 
 export class TrainingEvent {
-  correct: boolean;
+  attempts: number;
   responseTimeSeconds: number;
   timestamp: number;
 
-  constructor(correct: boolean, responseTimeSeconds: number) {
-    this.correct = correct;
+  constructor(attempts: number, responseTimeSeconds: number) {
+    this.attempts = attempts;
     this.responseTimeSeconds = responseTimeSeconds;
     this.timestamp = _.now();
   }
