@@ -23,11 +23,14 @@ import { TrainingOptions } from "@/components/TrainingModeSelector.vue";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Side } from "@/store/side";
 import { Move } from "@/store/move";
+import { mapMutations } from "vuex";
+import { TrainingEvent } from "@/store/TrainingEvent";
 
 export default Vue.extend({
   data: () => ({
     variationIndex: 0,
-    plyCount: 0
+    plyCount: 0,
+    startTime: _.now()
   }),
 
   components: {
@@ -83,9 +86,18 @@ export default Vue.extend({
   },
 
   methods: {
+    ...mapMutations(["addTrainingEvent"]),
+
     onBoardMove(threats: Threats): void {
       if (threats.fen && threats.fen !== this.activePosition.fen) {
-        if (this.moveIsCorrect(threats.fen)) {
+        const correct = this.moveIsCorrect(threats.fen);
+
+        this.addTrainingEvent({
+          position: this.activePosition,
+          event: new TrainingEvent(correct, this.getElapsed())
+        });
+
+        if (correct) {
           this.nextTrainingPosition();
         } else {
           this.$refs.board.loadPosition();
@@ -104,6 +116,7 @@ export default Vue.extend({
           this.nextVariation();
         }
       } while (!this.complete && !this.activePosition.myTurn);
+      this.startTime = _.now();
     },
 
     nextVariation(): void {
@@ -117,6 +130,10 @@ export default Vue.extend({
       if (this.complete) {
         this.$emit("onCompleted");
       }
+    },
+
+    getElapsed(): number {
+      return _.now() - this.startTime;
     }
   }
 });

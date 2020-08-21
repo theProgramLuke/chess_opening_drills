@@ -7,6 +7,7 @@ import { GetPersistantStorage } from "./storage";
 import { Repertoire } from "./repertoire";
 import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
+import { TrainingEvent } from "./TrainingEvent";
 
 Vue.use(Vuex);
 
@@ -82,6 +83,24 @@ export default new Vuex.Store({
             ? "whiteRepertoire"
             : "blackRepertoire";
         payload.parent.AddChild(payload.tag);
+        storage.set(repertoireKey, repertoire.AsSaved());
+      }
+    },
+
+    addTrainingEvent: (
+      state,
+      payload: { position: RepertoirePosition; event: TrainingEvent }
+    ): void => {
+      if (payload.position && payload.event) {
+        const repertoire =
+          payload.position.forSide === Side.White
+            ? state.whiteRepertoire
+            : state.blackRepertoire;
+        const repertoireKey =
+          payload.position.forSide === Side.White
+            ? "whiteRepertoire"
+            : "blackRepertoire";
+        payload.position.AddTrainingEvent(payload.event);
         storage.set(repertoireKey, repertoire.AsSaved());
       }
     },

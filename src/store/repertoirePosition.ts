@@ -6,6 +6,7 @@ import { Move, SavedMove } from "@/store/move";
 import { Side } from "@/store/side";
 import { Turn } from "@/store/turn";
 import { TrainingMode } from "./trainingMode";
+import { TrainingEvent } from "./TrainingEvent";
 
 export class SavedRepertoirePosition {
   fen: FEN;
@@ -15,6 +16,7 @@ export class SavedRepertoirePosition {
   myTurn: boolean;
   forSide: Side;
   trainingModes: TrainingMode[];
+  trainingHistory: TrainingEvent[];
 
   constructor(
     fen: FEN,
@@ -23,7 +25,8 @@ export class SavedRepertoirePosition {
     children: SavedMove[],
     myTurn: boolean,
     forSide: Side,
-    trainingModes: TrainingMode[]
+    trainingModes: TrainingMode[],
+    trainingHistory: TrainingEvent[]
   ) {
     this.fen = fen;
     this.comment = comment;
@@ -32,6 +35,7 @@ export class SavedRepertoirePosition {
     this.myTurn = myTurn;
     this.forSide = forSide;
     this.trainingModes = trainingModes;
+    this.trainingHistory = trainingHistory;
   }
 }
 
@@ -43,13 +47,15 @@ export class RepertoirePosition {
   myTurn: boolean;
   forSide: Side;
   trainingModes: TrainingMode[];
+  trainingHistory: TrainingEvent[];
 
   constructor(
     fen: FEN,
     comment: string,
     forSide: Side,
     myTurn?: boolean,
-    trainingModes?: TrainingMode[]
+    trainingModes?: TrainingMode[],
+    trainingHistory?: TrainingEvent[]
   ) {
     this.fen = fen;
     this.comment = comment;
@@ -58,6 +64,7 @@ export class RepertoirePosition {
     this.children = [];
     this.myTurn = myTurn || false;
     this.trainingModes = trainingModes || [TrainingMode.New];
+    this.trainingHistory = trainingHistory || [];
   }
 
   SideToMove(): Side {
@@ -93,6 +100,11 @@ export class RepertoirePosition {
 
     this.parents = [];
     this.children = [];
+  }
+
+  AddTrainingEvent(event: TrainingEvent): void {
+    this.trainingHistory.push(event);
+    _.noop(); // TODO
   }
 
   VisitChildren(visit: { (child: RepertoirePosition): void }): void {
@@ -225,7 +237,8 @@ export class RepertoirePosition {
       savedChildren,
       this.myTurn,
       this.forSide,
-      this.trainingModes
+      this.trainingModes,
+      this.trainingHistory
     );
   }
 
@@ -235,7 +248,8 @@ export class RepertoirePosition {
       saved.comment,
       saved.forSide,
       saved.myTurn,
-      saved.trainingModes
+      saved.trainingModes,
+      saved.trainingHistory
     );
   }
 }
