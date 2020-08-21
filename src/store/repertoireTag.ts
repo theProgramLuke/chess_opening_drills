@@ -125,6 +125,33 @@ export function GetTrainingPositions(
   return positions;
 }
 
+function IsPrefix<T>(list: T[], potentialPrefix: T[]): boolean {
+  if (potentialPrefix.length > list.length) {
+    return false;
+  }
+
+  let foundMismatch = false;
+  _.forEach(potentialPrefix, (entry, index) => {
+    if (!foundMismatch && entry !== list[index]) {
+      foundMismatch = true;
+    }
+  });
+
+  return !foundMismatch;
+}
+
+function RemovePrefixes<T>(moveLists: T[][]): T[][] {
+  return _.filter(moveLists, potentialPrefix => {
+    let foundAsPrefix = false;
+    _.forEach(moveLists, moveList => {
+      if (moveList !== potentialPrefix) {
+        foundAsPrefix = foundAsPrefix || IsPrefix(moveList, potentialPrefix);
+      }
+    });
+    return !foundAsPrefix;
+  });
+}
+
 export function GetTrainingMoveLists(
   modes: TrainingMode[],
   tags: RepertoireTag[]
@@ -136,6 +163,5 @@ export function GetTrainingMoveLists(
     moveLists.push(...parent.children[0].position.RootPaths())
   );
 
-  // TODO remove common prefixes
-  return moveLists;
+  return RemovePrefixes(_.uniqWith(moveLists, _.isEqual));
 }

@@ -1,6 +1,11 @@
 import _, { isEmpty } from "lodash";
 
-import { GetTrainingPositions } from "@/store/repertoireTag";
+import {
+  GetTrainingPositions,
+  GetTrainingMoveLists,
+  IsPrefix,
+  RemovePrefixes
+} from "@/store/repertoireTag";
 import {
   ResetTestRepertoire,
   LinkTestPositions,
@@ -8,7 +13,11 @@ import {
   Black,
   start,
   e3e6,
-  d3e6
+  d3e6,
+  e3,
+  e3e6d3,
+  d3,
+  d3e6e3
 } from "./testDataRepertoire";
 import { TrainingMode } from "@/store/trainingMode";
 
@@ -34,13 +43,36 @@ describe("RepertoireTag", () => {
       expect(isEmpty(trainingPositions)).toBeTruthy();
     });
 
-    it("should get the matching positions for the my turn", () => {
+    it("should get the matching positions for my turn", () => {
       const trainingPositions = GetTrainingPositions(
         [TrainingMode.New],
         [White]
       );
 
       expect(trainingPositions).toEqual([start, e3e6.position, d3e6.position]);
+    });
+  });
+
+  describe("GetTrainingMoveLists", () => {
+    it("should get no move lists when no tags are specified", () => {
+      const trainingMoveLists = GetTrainingMoveLists(
+        [TrainingMode.New, TrainingMode.Scheduled, TrainingMode.Mistakes],
+        []
+      );
+
+      expect(isEmpty(trainingMoveLists)).toBeTruthy();
+    });
+
+    it("should get the full move lists matching the mode", () => {
+      const trainingMoveLists = GetTrainingMoveLists(
+        [TrainingMode.New],
+        [White]
+      );
+
+      expect(trainingMoveLists).toEqual([
+        [e3, e3e6, e3e6d3],
+        [d3, d3e6, d3e6e3]
+      ]);
     });
   });
 });
