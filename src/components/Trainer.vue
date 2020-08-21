@@ -65,6 +65,10 @@ export default Vue.extend({
       return this.activeVariationPositions[this.plyCount];
     },
 
+    expectedMove(): Move {
+      return this.activeVariation[this.plyCount];
+    },
+
     boardOrientation(): Side {
       return this.activePosition.forSide;
     },
@@ -83,12 +87,14 @@ export default Vue.extend({
       if (threats.fen && threats.fen !== this.activePosition.fen) {
         if (this.moveIsCorrect(threats.fen)) {
           this.nextTrainingPosition();
+        } else {
+          this.$refs.board.loadPosition();
         }
       }
     },
 
     moveIsCorrect(fen: string): boolean {
-      return true;
+      return fen === this.expectedMove.position.fen;
     },
 
     nextTrainingPosition(): void {
