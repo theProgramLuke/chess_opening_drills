@@ -124,7 +124,7 @@ export class RepertoirePosition {
     this.children = [];
   }
 
-  IncludeForTrainingMode(mode: TrainingMode): boolean {
+  IncludeForTrainingMode(mode: TrainingMode, difficultyModeLimit = 0): boolean {
     switch (mode) {
       case TrainingMode.New: {
         return this.IncludeForNewMode();
@@ -132,8 +132,8 @@ export class RepertoirePosition {
       case TrainingMode.Scheduled: {
         return this.IncludeForScheduledMode();
       }
-      case TrainingMode.Mistakes: {
-        return this.IncludeForMistakesMode();
+      case TrainingMode.Difficult: {
+        return this.IncludeForDifficultMode(difficultyModeLimit);
       }
     }
   }
@@ -157,13 +157,8 @@ export class RepertoirePosition {
     }
   }
 
-  private IncludeForMistakesMode(): boolean {
-    const recentTraining = _.takeRight(this.trainingHistory, 5);
-    const recentIncorrect = _.filter(
-      recentTraining,
-      event => event.attempts > 1
-    );
-    return !_.isEmpty(recentIncorrect);
+  private IncludeForDifficultMode(limit: number): boolean {
+    return this.easinessFactor < limit;
   }
 
   AddTrainingEvent(event: TrainingEvent): void {

@@ -2,9 +2,7 @@ import _, { isEmpty } from "lodash";
 
 import {
   GetTrainingPositions,
-  GetTrainingMoveLists,
-  IsPrefix,
-  RemovePrefixes
+  GetTrainingMoveLists
 } from "@/store/repertoireTag";
 import {
   ResetTestRepertoire,
@@ -36,7 +34,7 @@ describe("RepertoireTag", () => {
 
     it("should get no moves when no tags are specified", () => {
       const trainingPositions = GetTrainingPositions(
-        [TrainingMode.New, TrainingMode.Scheduled, TrainingMode.Mistakes],
+        [TrainingMode.New, TrainingMode.Scheduled, TrainingMode.Difficult],
         []
       );
 
@@ -56,7 +54,7 @@ describe("RepertoireTag", () => {
   describe("GetTrainingMoveLists", () => {
     it("should get no move lists when no tags are specified", () => {
       const trainingMoveLists = GetTrainingMoveLists(
-        [TrainingMode.New, TrainingMode.Scheduled, TrainingMode.Mistakes],
+        [TrainingMode.New, TrainingMode.Scheduled, TrainingMode.Difficult],
         []
       );
 

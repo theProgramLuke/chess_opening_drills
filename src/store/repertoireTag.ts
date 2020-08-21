@@ -106,7 +106,8 @@ export class RepertoireTag {
 
 export function GetTrainingPositions(
   modes: TrainingMode[],
-  tags: RepertoireTag[]
+  tags: RepertoireTag[],
+  difficultyModeLimit = 0
 ): RepertoirePosition[] {
   const positions: RepertoirePosition[] = [];
 
@@ -114,7 +115,9 @@ export function GetTrainingPositions(
     tag.position.VisitChildren((position: RepertoirePosition) => {
       let matchingMode = false;
       _.forEach(modes, mode => {
-        matchingMode = matchingMode || position.IncludeForTrainingMode(mode);
+        matchingMode =
+          matchingMode ||
+          position.IncludeForTrainingMode(mode, difficultyModeLimit);
       });
 
       const anyChildren = !_.isEmpty(position.children);
@@ -157,10 +160,11 @@ function RemovePrefixes<T>(moveLists: T[][]): T[][] {
 
 export function GetTrainingMoveLists(
   modes: TrainingMode[],
-  tags: RepertoireTag[]
+  tags: RepertoireTag[],
+  difficultyModeLimit = 0
 ): Move[][] {
   const moveLists: Move[][] = [];
-  const parents = GetTrainingPositions(modes, tags);
+  const parents = GetTrainingPositions(modes, tags, difficultyModeLimit);
 
   _.forEach(parents, parent =>
     moveLists.push(...parent.children[0].position.RootPaths())

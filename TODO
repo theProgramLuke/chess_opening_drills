@@ -1,5 +1,6 @@
 patch chess.js export # Blocked on yarn 2 failed install
 bug: Start training count is wrong
+bug: make first white move when training as black
 max attempts
 import/export pgn
 hard positions

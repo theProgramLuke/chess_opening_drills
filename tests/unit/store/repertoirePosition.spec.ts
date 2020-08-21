@@ -137,7 +137,7 @@ describe("RepertoirePosition", () => {
       expect(include).toBeTruthy();
     });
 
-    it("should not be include in scheduled mode when scheduled in the past", () => {
+    it("should not be included in scheduled mode when scheduled in the past", () => {
       const position = new RepertoirePosition("", "", Side.White);
       position.AddTrainingEvent(new TrainingEvent(1, 0));
       position.nextRepititionTimestamp = _.now() - millisecondsPerDay;
@@ -147,37 +147,30 @@ describe("RepertoirePosition", () => {
       expect(include).toBeTruthy();
     });
 
-    it("should not be include in mistakes mode when there is no training history", () => {
+    it("should not be included in difficult mode when the limit is lower than the easiness", () => {
+      const limit = 1.5;
       const position = new RepertoirePosition("", "", Side.White);
+      position.easinessFactor = 3;
 
-      const include = position.IncludeForTrainingMode(TrainingMode.Mistakes);
+      const include = position.IncludeForTrainingMode(
+        TrainingMode.Difficult,
+        limit
+      );
 
       expect(include).toBeFalsy();
     });
 
-    it("should be included in mistakes mode when there is a recent mistake", () => {
+    it("should be included in difficult mode when the limit is higher than the easiness", () => {
+      const limit = 3;
       const position = new RepertoirePosition("", "", Side.White);
-      position.AddTrainingEvent(new TrainingEvent(1, 0));
-      position.AddTrainingEvent(new TrainingEvent(3, 0));
-      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.easinessFactor = 1.5;
 
-      const include = position.IncludeForTrainingMode(TrainingMode.Mistakes);
+      const include = position.IncludeForTrainingMode(
+        TrainingMode.Difficult,
+        limit
+      );
 
       expect(include).toBeTruthy();
-    });
-
-    it("should not be included in mistakes mode when there are no recent mistakes", () => {
-      const position = new RepertoirePosition("", "", Side.White);
-      position.AddTrainingEvent(new TrainingEvent(2, 0));
-      position.AddTrainingEvent(new TrainingEvent(1, 0));
-      position.AddTrainingEvent(new TrainingEvent(1, 0));
-      position.AddTrainingEvent(new TrainingEvent(1, 0));
-      position.AddTrainingEvent(new TrainingEvent(1, 0));
-      position.AddTrainingEvent(new TrainingEvent(1, 0));
-
-      const include = position.IncludeForTrainingMode(TrainingMode.Mistakes);
-
-      expect(include).toBeFalsy();
     });
   });
 
