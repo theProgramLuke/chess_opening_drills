@@ -19,7 +19,7 @@
 
           div(v-if="activePosition.trainingHistory.length > 0")
             div Next repetition scheduled for {{ nextScheduled }}
-            div Training difficulty: {{ activePosition.easinessFactor }}
+            div Training difficulty: {{ easiness }}
 
       v-divider(vertical)
       v-col(cols=3)
@@ -78,6 +78,10 @@ export default Vue.extend({
       }
 
       return undefined;
+    },
+
+    easiness(): number {
+      return _.round(this.activePosition.easinessFactor, 3);
     },
 
     nextMoves(): Array<Move> {

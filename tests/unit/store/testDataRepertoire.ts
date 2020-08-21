@@ -165,7 +165,11 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("e3", 1), new SavedMove("d3", 6)],
       true,
       Side.White,
-      []
+      [],
+      undefined,
+      0,
+      0,
+      2.5
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
@@ -174,7 +178,11 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("e6", 2)],
       false,
       Side.White,
-      []
+      [],
+      undefined,
+      0,
+      0,
+      2.5
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
@@ -183,7 +191,11 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("d3", 3), new SavedMove("e4", 4)],
       true,
       Side.White,
-      []
+      [],
+      undefined,
+      0,
+      0,
+      2.5
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/3PP3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
@@ -192,7 +204,11 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [],
       false,
       Side.White,
-      []
+      [],
+      undefined,
+      0,
+      0,
+      2.5
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2",
@@ -201,7 +217,11 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("e5", 5)],
       false,
       Side.White,
-      []
+      [],
+      undefined,
+      0,
+      0,
+      2.5
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3",
@@ -210,7 +230,11 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [],
       true,
       Side.White,
-      []
+      [],
+      undefined,
+      0,
+      0,
+      2.5
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppppppp/8/8/8/3P4/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
@@ -219,7 +243,11 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("e6", 7)],
       false,
       Side.White,
-      []
+      [],
+      undefined,
+      0,
+      0,
+      2.5
     ),
     new SavedRepertoirePosition(
       "rnbqkbnr/pppp1ppp/4p3/8/8/3P4/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
@@ -228,7 +256,11 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("e3", 3)],
       true,
       Side.White,
-      []
+      [],
+      undefined,
+      0,
+      0,
+      2.5
     )
   ],
   [

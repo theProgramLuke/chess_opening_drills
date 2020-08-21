@@ -144,7 +144,14 @@ export class RepertoirePosition {
 
   private IncludeForScheduledMode(): boolean {
     if (this.nextRepititionTimestamp !== undefined) {
-      return _.now() + millisecondsPerDay < this.nextRepititionTimestamp;
+      const now = new Date(_.now());
+      const scheduled = new Date(this.nextRepititionTimestamp);
+
+      // strip time portion
+      now.setHours(0, 0, 0, 0);
+      scheduled.setHours(0, 0, 0, 0);
+
+      return now >= scheduled;
     } else {
       return false;
     }

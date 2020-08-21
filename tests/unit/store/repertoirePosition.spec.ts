@@ -109,6 +109,44 @@ describe("RepertoirePosition", () => {
       expect(include).toBeTruthy();
     });
 
+    it("should not be include in scheduled mode when there is no training history", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+
+      const include = position.IncludeForTrainingMode(TrainingMode.Scheduled);
+
+      expect(include).toBeFalsy();
+    });
+
+    it("should not be include in scheduled mode when scheduled for more than a day away", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.nextRepititionTimestamp = _.now() + 2 * millisecondsPerDay;
+
+      const include = position.IncludeForTrainingMode(TrainingMode.Scheduled);
+
+      expect(include).toBeFalsy();
+    });
+
+    it("should be included in scheduled mode when scheduled for today", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.nextRepititionTimestamp = _.now();
+
+      const include = position.IncludeForTrainingMode(TrainingMode.Scheduled);
+
+      expect(include).toBeTruthy();
+    });
+
+    it("should not be include in scheduled mode when scheduled in the past", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+      position.AddTrainingEvent(new TrainingEvent(1, 0));
+      position.nextRepititionTimestamp = _.now() - millisecondsPerDay;
+
+      const include = position.IncludeForTrainingMode(TrainingMode.Scheduled);
+
+      expect(include).toBeTruthy();
+    });
+
     it("should not be include in mistakes mode when there is no training history", () => {
       const position = new RepertoirePosition("", "", Side.White);
 
