@@ -2,124 +2,24 @@ import _ from "lodash";
 
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Side } from "@/store/side";
-import { Move } from "@/store/move";
-import { Repertoire } from "@/store/repertoire";
 import { Turn } from "@/store/turn";
 import { FEN } from "chessground/types";
+import {
+  ResetTestRepertoire,
+  LinkTestPositions,
+  repertoire,
+  e3,
+  start,
+  e3e6e4e5,
+  e3e6,
+  e3e6e4,
+  e3e6d3,
+  d3,
+  d3e6,
+  d3e6e3
+} from "./testDataRepertoire";
 
-let repertoire: Repertoire;
-let start: RepertoirePosition;
-let e3: Move;
-let e3e6: Move;
-let e3e6e4: Move;
-let e3e6e4e5: Move;
-let e3e6d3: Move;
-let d3: Move;
-let d3e6: Move;
-let d3e6e3: Move;
-
-beforeEach(() => {
-  start = new RepertoirePosition(
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    "",
-    Side.White,
-    true
-  );
-
-  e3 = new Move(
-    "e3",
-    new RepertoirePosition(
-      "rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
-      "",
-      Side.White
-    )
-  );
-
-  e3e6 = new Move(
-    "e6",
-    new RepertoirePosition(
-      "rnbqkbnr/pppp1ppp/4p3/8/8/4P3/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
-      "",
-      Side.White
-    )
-  );
-
-  e3e6e4 = new Move(
-    "e4",
-    new RepertoirePosition(
-      "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2",
-      "",
-      Side.White
-    )
-  );
-
-  e3e6e4e5 = new Move(
-    "e5",
-    new RepertoirePosition(
-      "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3",
-      "",
-      Side.White
-    )
-  );
-
-  e3e6d3 = new Move(
-    "d3",
-    new RepertoirePosition(
-      "rnbqkbnr/pppp1ppp/4p3/8/8/3PP3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
-      "",
-      Side.White
-    )
-  );
-
-  d3 = new Move(
-    "d3",
-    new RepertoirePosition(
-      "rnbqkbnr/pppppppp/8/8/8/3P4/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
-      "",
-      Side.White
-    )
-  );
-
-  d3e6 = new Move(
-    "e6",
-    new RepertoirePosition(
-      "rnbqkbnr/pppp1ppp/4p3/8/8/3P4/PPP1PPPP/RNBQKBNR w KQkq - 0 2",
-      "",
-      Side.White
-    )
-  );
-
-  d3e6e3 = new Move(
-    "e3",
-    new RepertoirePosition(
-      "rnbqkbnr/pppp1ppp/4p3/8/8/3PP3/PPP2PPP/RNBQKBNR b KQkq - 0 2",
-      "This transposes to e3, e6, d3",
-      Side.White
-    )
-  );
-});
-
-function LinkMoves(): void {
-  /*
-   * 1. e3 e6
-   * 2. d3
-   *
-   * 1. d3 e6
-   * 2. e3
-   *
-   * 1. e3 e6
-   * 2. e4 e5
-   */
-  repertoire = new Repertoire([start], []);
-  repertoire.AddMove(start, e3);
-  repertoire.AddMove(e3.position, e3e6);
-  repertoire.AddMove(e3e6.position, e3e6d3);
-  repertoire.AddMove(e3e6.position, e3e6e4);
-  repertoire.AddMove(e3e6e4.position, e3e6e4e5);
-  repertoire.AddMove(start, d3);
-  repertoire.AddMove(d3.position, d3e6);
-  repertoire.AddMove(d3e6.position, d3e6e3);
-}
+beforeEach(ResetTestRepertoire);
 
 describe("RepertoirePosition", () => {
   describe("SideToMove", () => {
@@ -160,7 +60,7 @@ describe("RepertoirePosition", () => {
   });
 
   describe("GetTurnLists", () => {
-    beforeEach(LinkMoves);
+    beforeEach(LinkTestPositions);
 
     it("returns an empty array given a position with no parents", () => {
       const paths = start.GetTurnLists();
@@ -185,7 +85,7 @@ describe("RepertoirePosition", () => {
   });
 
   describe("AsPgnMoveText", () => {
-    beforeEach(LinkMoves);
+    beforeEach(LinkTestPositions);
 
     it("generates the pgn of position", () => {
       const pgnMoveText = start.AsPgnMoveText();
