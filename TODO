@@ -3,7 +3,6 @@ bug: Start training count is wrong
 bug: make first white move when training as black
 max attempts
 import/export pgn
-hard positions
 training mode explanations
 persist training options
 implement reset appearance
