@@ -1,5 +1,5 @@
 patch chess.js export # Blocked on yarn 2 failed install
-training
+undo wrong training moves
 scheduling
 import/export pgn
 common mistakes
