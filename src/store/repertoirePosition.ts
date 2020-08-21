@@ -19,6 +19,9 @@ export class SavedRepertoirePosition {
   forSide: Side;
   trainingHistory: TrainingEvent[];
   nextRepititionTimestamp?: number;
+  previousIntervalDays: number;
+  intervalIndex: number;
+  easinessFactor: number;
 
   constructor(
     fen: FEN,
@@ -28,7 +31,10 @@ export class SavedRepertoirePosition {
     myTurn: boolean,
     forSide: Side,
     trainingHistory: TrainingEvent[],
-    nextRepititionTimestamp?: number
+    nextRepititionTimestamp: number | undefined,
+    previousIntervalDays: number,
+    intervalIndex: number,
+    easinessFactor: number
   ) {
     this.fen = fen;
     this.comment = comment;
@@ -38,6 +44,9 @@ export class SavedRepertoirePosition {
     this.forSide = forSide;
     this.trainingHistory = trainingHistory;
     this.nextRepititionTimestamp = nextRepititionTimestamp;
+    this.previousIntervalDays = previousIntervalDays;
+    this.intervalIndex = intervalIndex;
+    this.easinessFactor = easinessFactor;
   }
 }
 
@@ -61,7 +70,11 @@ export class RepertoirePosition {
     comment: string,
     forSide: Side,
     myTurn?: boolean,
-    trainingHistory?: TrainingEvent[]
+    trainingHistory?: TrainingEvent[],
+    nextRepititionTimestamp?: number,
+    previousIntervalDays?: number,
+    intervalIndex?: number,
+    easinessFactor?: number
   ) {
     this.fen = fen;
     this.comment = comment;
@@ -70,9 +83,10 @@ export class RepertoirePosition {
     this.children = [];
     this.myTurn = myTurn || false;
     this.trainingHistory = trainingHistory || [];
-    this.previousIntervalDays = 0;
-    this.intervalIndex = 0;
-    this.easinessFactor = 2.5;
+    this.nextRepititionTimestamp = nextRepititionTimestamp;
+    this.previousIntervalDays = previousIntervalDays || 0;
+    this.intervalIndex = intervalIndex || 0;
+    this.easinessFactor = easinessFactor || 2.5;
   }
 
   SideToMove(): Side {
@@ -129,7 +143,11 @@ export class RepertoirePosition {
   }
 
   private IncludeForScheduledMode(): boolean {
-    return false; // TODO
+    if (this.nextRepititionTimestamp !== undefined) {
+      return _.now() + millisecondsPerDay < this.nextRepititionTimestamp;
+    } else {
+      return false;
+    }
   }
 
   private IncludeForMistakesMode(): boolean {
@@ -148,7 +166,7 @@ export class RepertoirePosition {
     this.easinessFactor = this.NextEasinessFactor(grade);
     const nextIntervalDays = this.NextIntervalDays(grade);
 
-    const nextIntervalMilliseconds = nextIntervalDays * 86400000;
+    const nextIntervalMilliseconds = nextIntervalDays * millisecondsPerDay;
     this.nextRepititionTimestamp = _.now() + nextIntervalMilliseconds;
     this.previousIntervalDays = nextIntervalDays;
   }
@@ -336,7 +354,10 @@ export class RepertoirePosition {
       this.myTurn,
       this.forSide,
       this.trainingHistory,
-      this.nextRepititionTimestamp
+      this.nextRepititionTimestamp,
+      this.previousIntervalDays,
+      this.intervalIndex,
+      this.easinessFactor
     );
   }
 
@@ -346,7 +367,11 @@ export class RepertoirePosition {
       saved.comment,
       saved.forSide,
       saved.myTurn,
-      saved.trainingHistory
+      saved.trainingHistory,
+      saved.nextRepititionTimestamp,
+      saved.previousIntervalDays,
+      saved.intervalIndex,
+      saved.easinessFactor
     );
   }
 }

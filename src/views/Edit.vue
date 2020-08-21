@@ -17,6 +17,10 @@
             :orientation="boardOrientation",
             @onMove="onBoardMove")
 
+          div(v-if="activePosition.trainingHistory.length > 0")
+            div Next repetition scheduled for {{ nextScheduled }}
+            div Training difficulty: {{ activePosition.easinessFactor }}
+
       v-divider(vertical)
       v-col(cols=3)
         move-list(:turnLists="turnLists", @onSelectMove="updateBoard")
@@ -64,6 +68,16 @@ export default Vue.extend({
 
     turnLists(): Turn[][] {
       return this.activePosition.GetTurnLists() || [[]];
+    },
+
+    nextScheduled(): string | undefined {
+      if (this.activePosition.nextRepititionTimestamp) {
+        return new Date(
+          this.activePosition.nextRepititionTimestamp
+        ).toLocaleDateString();
+      }
+
+      return undefined;
     },
 
     nextMoves(): Array<Move> {
