@@ -18,6 +18,8 @@ import {
   d3e6,
   d3e6e3
 } from "./testDataRepertoire";
+import { TrainingMode } from "@/store/trainingMode";
+import { TrainingEvent } from "@/store/TrainingEvent";
 
 beforeEach(ResetTestRepertoire);
 
@@ -93,6 +95,49 @@ describe("RepertoirePosition", () => {
         "1. e3 ( 1. d3 e6 2. e3 ) e6 2. d3 ( 2. e4 e5 )";
 
       expect(pgnMoveText).toEqual(expectedPgnMoveText);
+    });
+  });
+
+  describe("IncludeForTrainingMode", () => {
+    it("should be included as new when there is no training history", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+
+      const include = position.IncludeForTrainingMode(TrainingMode.New);
+
+      expect(include).toBeTruthy();
+    });
+
+    it("should not be include in mistakes mode when there is no training history", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+
+      const include = position.IncludeForTrainingMode(TrainingMode.Mistakes);
+
+      expect(include).toBeFalsy();
+    });
+
+    it("should be included in mistakes mode when there is a recent mistake", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+      position.AddTrainingEvent(new TrainingEvent(true, 0));
+      position.AddTrainingEvent(new TrainingEvent(false, 0));
+      position.AddTrainingEvent(new TrainingEvent(true, 0));
+
+      const include = position.IncludeForTrainingMode(TrainingMode.Mistakes);
+
+      expect(include).toBeTruthy();
+    });
+
+    it("should not be included in mistakes mode when there are no recent mistakes", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+      position.AddTrainingEvent(new TrainingEvent(false, 0));
+      position.AddTrainingEvent(new TrainingEvent(true, 0));
+      position.AddTrainingEvent(new TrainingEvent(true, 0));
+      position.AddTrainingEvent(new TrainingEvent(true, 0));
+      position.AddTrainingEvent(new TrainingEvent(true, 0));
+      position.AddTrainingEvent(new TrainingEvent(true, 0));
+
+      const include = position.IncludeForTrainingMode(TrainingMode.Mistakes);
+
+      expect(include).toBeFalsy();
     });
   });
 });
