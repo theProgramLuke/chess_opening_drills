@@ -15,7 +15,6 @@ export class SavedRepertoirePosition {
   children: SavedMove[];
   myTurn: boolean;
   forSide: Side;
-  trainingModes: TrainingMode[];
   trainingHistory: TrainingEvent[];
 
   constructor(
@@ -25,7 +24,6 @@ export class SavedRepertoirePosition {
     children: SavedMove[],
     myTurn: boolean,
     forSide: Side,
-    trainingModes: TrainingMode[],
     trainingHistory: TrainingEvent[]
   ) {
     this.fen = fen;
@@ -34,7 +32,6 @@ export class SavedRepertoirePosition {
     this.children = children;
     this.myTurn = myTurn;
     this.forSide = forSide;
-    this.trainingModes = trainingModes;
     this.trainingHistory = trainingHistory;
   }
 }
@@ -46,7 +43,6 @@ export class RepertoirePosition {
   children: Move[];
   myTurn: boolean;
   forSide: Side;
-  trainingModes: TrainingMode[];
   trainingHistory: TrainingEvent[];
 
   constructor(
@@ -54,7 +50,6 @@ export class RepertoirePosition {
     comment: string,
     forSide: Side,
     myTurn?: boolean,
-    trainingModes?: TrainingMode[],
     trainingHistory?: TrainingEvent[]
   ) {
     this.fen = fen;
@@ -63,7 +58,6 @@ export class RepertoirePosition {
     this.parents = [];
     this.children = [];
     this.myTurn = myTurn || false;
-    this.trainingModes = trainingModes || [TrainingMode.New];
     this.trainingHistory = trainingHistory || [];
   }
 
@@ -100,6 +94,34 @@ export class RepertoirePosition {
 
     this.parents = [];
     this.children = [];
+  }
+
+  IncludeForTrainingMode(mode: TrainingMode): boolean {
+    switch (mode) {
+      case TrainingMode.New: {
+        return this.IncludeForNewMode();
+      }
+      case TrainingMode.Scheduled: {
+        return this.IncludeForScheduledMode();
+      }
+      case TrainingMode.Mistakes: {
+        return this.IncludeForMistakesMode();
+      }
+    }
+  }
+
+  private IncludeForNewMode(): boolean {
+    return _.isEmpty(this.trainingHistory);
+  }
+
+  private IncludeForScheduledMode(): boolean {
+    return false; // TODO
+  }
+
+  private IncludeForMistakesMode(): boolean {
+    const recentTraining = _.takeRight(this.trainingHistory, 5);
+    const recentIncorrect = _.filter(recentTraining, event => !event.correct);
+    return !_.isEmpty(recentIncorrect);
   }
 
   AddTrainingEvent(event: TrainingEvent): void {
@@ -237,7 +259,6 @@ export class RepertoirePosition {
       savedChildren,
       this.myTurn,
       this.forSide,
-      this.trainingModes,
       this.trainingHistory
     );
   }
@@ -248,7 +269,6 @@ export class RepertoirePosition {
       saved.comment,
       saved.forSide,
       saved.myTurn,
-      saved.trainingModes,
       saved.trainingHistory
     );
   }

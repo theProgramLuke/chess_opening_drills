@@ -165,7 +165,6 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("e3", 1), new SavedMove("d3", 6)],
       true,
       Side.White,
-      [TrainingMode.New],
       []
     ),
     new SavedRepertoirePosition(
@@ -175,7 +174,6 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("e6", 2)],
       false,
       Side.White,
-      [TrainingMode.New],
       []
     ),
     new SavedRepertoirePosition(
@@ -185,7 +183,6 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("d3", 3), new SavedMove("e4", 4)],
       true,
       Side.White,
-      [TrainingMode.New],
       []
     ),
     new SavedRepertoirePosition(
@@ -195,7 +192,6 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [],
       false,
       Side.White,
-      [TrainingMode.New],
       []
     ),
     new SavedRepertoirePosition(
@@ -205,7 +201,6 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("e5", 5)],
       false,
       Side.White,
-      [TrainingMode.New],
       []
     ),
     new SavedRepertoirePosition(
@@ -215,7 +210,6 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [],
       true,
       Side.White,
-      [TrainingMode.New],
       []
     ),
     new SavedRepertoirePosition(
@@ -225,7 +219,6 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("e6", 7)],
       false,
       Side.White,
-      [TrainingMode.New],
       []
     ),
     new SavedRepertoirePosition(
@@ -235,7 +228,6 @@ export const ExpectedSavedRepertoire = new SavedRepertoire(
       [new SavedMove("e3", 3)],
       true,
       Side.White,
-      [TrainingMode.New],
       []
     )
   ],

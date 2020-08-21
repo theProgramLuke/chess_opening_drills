@@ -2,7 +2,6 @@ patch chess.js export # Blocked on yarn 2 failed install
 bug: Start training count is wrong
 scheduling
 import/export pgn
-common mistakes
 hard positions
 training mode explanations
 persist training options

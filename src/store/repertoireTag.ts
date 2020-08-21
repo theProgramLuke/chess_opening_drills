@@ -112,11 +112,14 @@ export function GetTrainingPositions(
 
   _.forEach(tags, tag => {
     tag.position.VisitChildren((position: RepertoirePosition) => {
+      let matchingMode = false;
+      _.forEach(modes, mode => {
+        matchingMode = matchingMode || position.IncludeForTrainingMode(mode);
+      });
+
       const anyChildren = !_.isEmpty(position.children);
-      const modesMatch = !_.isEmpty(
-        _.intersection(position.trainingModes, modes)
-      );
-      if (position.myTurn && anyChildren && modesMatch) {
+
+      if (position.myTurn && anyChildren && matchingMode) {
         positions.push(position);
       }
     });
