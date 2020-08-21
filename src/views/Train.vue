@@ -1,15 +1,22 @@
 <template lang="pug">
   v-container
-    v-overlay(:value="selectionOverlay", :dark="darkMode")
+    v-overlay(:value="isSelecting", :dark="darkMode")
       training-mode-selector(
         :whiteRepertoire="whiteRepertoire", 
         :blackRepertoire="blackRepertoire",
         @onStartTraining="startTraining")
     
     trainer(
-      v-if="!selectionOverlay",
+      v-if="isTraining",
       :options="trainingOptions",
       @onCompleted="onCompleted")
+
+    v-overlay(:value="isComplete", :dark="darkMode")
+      v-container
+        v-card.pa-4(min-width="550px")
+          v-card-title Training Complete!
+          v-card-actions
+            v-btn(@click="reset", color="success") Train different positions
 </template>
 
 <script lang="ts">
@@ -21,9 +28,15 @@ import TrainingModeSelector, {
 } from "@/components/TrainingModeSelector.vue";
 import Trainer from "@/components/Trainer.vue";
 
+enum TrainingState {
+  Selecting,
+  Training,
+  Complete
+}
+
 export default Vue.extend({
   data: () => ({
-    selectionOverlay: true,
+    state: TrainingState.Selecting,
     trainingOptions: {}
   }),
 
@@ -33,17 +46,33 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(["whiteRepertoire", "blackRepertoire", "darkMode"])
+    ...mapState(["whiteRepertoire", "blackRepertoire", "darkMode"]),
+
+    isSelecting(): boolean {
+      return this.state === TrainingState.Selecting;
+    },
+
+    isTraining(): boolean {
+      return this.state === TrainingState.Training;
+    },
+
+    isComplete(): boolean {
+      return this.state === TrainingState.Complete;
+    }
   },
 
   methods: {
     startTraining(options: TrainingOptions) {
-      this.selectionOverlay = false;
+      this.state = TrainingState.Training;
       this.trainingOptions = options;
     },
 
     onCompleted() {
-      this.selectionOverlay = true;
+      this.state = TrainingState.Complete;
+    },
+
+    reset() {
+      this.state = TrainingState.Selecting;
     }
   }
 });

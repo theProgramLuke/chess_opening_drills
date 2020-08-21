@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container
+  v-container(v-if="!complete")
     chessboard(
         ref="board"
         :fen="activePosition.fen",
@@ -51,10 +51,14 @@ export default Vue.extend({
     },
 
     activeVariationPositions(): RepertoirePosition[] {
-      const positions: RepertoirePosition[] = [];
-      positions.push(this.activeVariation[0].position.parents[0]);
-      _.forEach(this.activeVariation, move => positions.push(move.position));
-      return positions;
+      if (this.activeVariation) {
+        const positions: RepertoirePosition[] = [];
+        positions.push(this.activeVariation[0].position.parents[0]);
+        _.forEach(this.activeVariation, move => positions.push(move.position));
+        return positions;
+      } else {
+        return [];
+      }
     },
 
     activePosition(): RepertoirePosition {
@@ -93,7 +97,7 @@ export default Vue.extend({
         if (this.plyCount >= this.activeVariation.length) {
           this.nextVariation();
         }
-      } while (!this.activePosition.myTurn && !this.complete);
+      } while (!this.complete && !this.activePosition.myTurn);
     },
 
     nextVariation(): void {
