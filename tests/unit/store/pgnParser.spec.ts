@@ -51,9 +51,9 @@ describe("parse", () => {
   });
 
   it("should fail for invalid PGN", () => {
-    const parsed = parsePgn("invalid");
+    const parse = () => parsePgn("invalid");
 
-    expect(parsed).toEqual(
+    expect(parse).toThrowError(
       'Expected " ", "*", ".", "0-1", "1-0", "1/2-1/2", ";", "O-O", "O-O-O", "[", "\\n", "\\r", "\\t", "\\x0C", "{", [1-9], [N,K,Q,R,B], or [a-h] but "i" found.'
     );
   });

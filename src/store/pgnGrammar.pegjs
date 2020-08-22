@@ -2,7 +2,7 @@
 {
     interface PgnMove {
         moveNumber?: number;
-        move?: PgnMove;
+        move?: string;
         nags?: string[];
         ravs?: string[];
         comments?: string;

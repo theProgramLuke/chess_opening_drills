@@ -8,6 +8,7 @@ import { Repertoire } from "./repertoire";
 import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
 import { TrainingEvent } from "./TrainingEvent";
+import { PgnGame } from "./pgnParser";
 
 Vue.use(Vuex);
 
@@ -64,7 +65,9 @@ export default new Vuex.Store({
           payload.parent.forSide === Side.White
             ? "whiteRepertoire"
             : "blackRepertoire";
+
         repertoire.AddMove(payload.parent, payload.newMove);
+
         storage.set(repertoireKey, repertoire.AsSaved());
       }
     },
@@ -82,7 +85,9 @@ export default new Vuex.Store({
           payload.parent.forSide === Side.White
             ? "whiteRepertoire"
             : "blackRepertoire";
+
         payload.parent.AddChild(payload.tag);
+
         storage.set(repertoireKey, repertoire.AsSaved());
       }
     },
@@ -100,7 +105,9 @@ export default new Vuex.Store({
           payload.position.forSide === Side.White
             ? "whiteRepertoire"
             : "blackRepertoire";
+
         payload.position.AddTrainingEvent(payload.event);
+
         storage.set(repertoireKey, repertoire.AsSaved());
       }
     },
@@ -112,7 +119,9 @@ export default new Vuex.Store({
           : state.blackRepertoire;
       const repertoireKey =
         tag.forSide === Side.White ? "whiteRepertoire" : "blackRepertoire";
+
       repertoire.RemoveRepertoireTag(tag);
+
       storage.set(repertoireKey, repertoire.AsSaved());
     },
 
@@ -125,8 +134,30 @@ export default new Vuex.Store({
         move.position.forSide === Side.White
           ? "whiteRepertoire"
           : "blackRepertoire";
+
       repertoire.RemoveMove(move);
+
       storage.set(repertoireKey, repertoire.AsSaved());
+    },
+
+    addPositionsFromGame(
+      state,
+      payload: { position: RepertoirePosition; game: PgnGame }
+    ): void {
+      if (payload.position && payload.game) {
+        const repertoire =
+          payload.position.forSide === Side.White
+            ? state.whiteRepertoire
+            : state.blackRepertoire;
+        const repertoireKey =
+          payload.position.forSide === Side.White
+            ? "whiteRepertoire"
+            : "blackRepertoire";
+
+        payload.position.AddFromGame(payload.game);
+
+        storage.set(repertoireKey, repertoire.AsSaved());
+      }
     },
 
     clearStorage: (state): void => {

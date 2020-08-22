@@ -8,12 +8,15 @@
       v-card-title Import PGN for {{ tag.name }}
       v-form(ref="form", v-model="valid")
         v-file-input(
-          label="PGN",
-          placeholder="Select a PGN file"
           v-model="inputFile",
           :rules="inputFileRules",
-          accept=".pgn,.txt")
-          
+          :error-messages="inputFileErrors",
+          accept=".pgn,.txt",
+          @change="inputFileErrors=[]",
+          label="PGN",
+          placeholder="Select a PGN file",
+          prepend-icon="mdi-file-document")
+
         v-card-actions
           v-btn.ma-2(
             @click="onImport",
@@ -32,15 +35,19 @@
 
 <script lang="ts">
 import Vue from "vue";
+import _ from "lodash";
 import { saveAs } from "file-saver";
-import { mapState, mapMutations } from "vuex";
+import { mapMutations } from "vuex";
 
+import { parsePgn, PgnGame } from "@/store/pgnParser";
 import { RepertoireTag } from "@/store/repertoireTag";
+import { RepertoirePosition } from "@/store/repertoirePosition";
 
 declare interface ImporterComponentData {
   showDialog: boolean;
   inputFile?: File;
   inputFileRules: ((value: File) => true | string)[];
+  inputFileErrors: string | string[];
   loading: boolean;
   valid: boolean;
 }
@@ -55,6 +62,7 @@ export default Vue.extend({
           return !!value || "Must specify a file to import.";
         }
       ],
+      inputFileErrors: [],
       loading: false,
       valid: false
     };
@@ -68,12 +76,26 @@ export default Vue.extend({
   },
 
   methods: {
+    ...mapMutations(["addPositionsFromGame"]),
+
     onImport(): void {
       if (this.inputFile) {
         this.loading = true;
         this.inputFile.text().then(pgnText => {
-          console.log(pgnText);
-          this.loading = false;
+          try {
+            const pgn = parsePgn(pgnText);
+            _.forEach(pgn, game =>
+              this.addPositionsFromGame({
+                position: this.tag.position,
+                game: game
+              })
+            );
+            this.showDialog = false;
+          } catch (error) {
+            this.inputFileErrors = [`Invalid PGN: ${error.message}`];
+          } finally {
+            this.loading = false;
+          }
         });
       }
     }

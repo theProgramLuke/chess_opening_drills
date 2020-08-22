@@ -2,9 +2,9 @@ import { parse } from "@/store/pgnGrammar";
 
 export interface PgnMove {
   moveNumber?: number;
-  move?: PgnMove;
+  move?: string;
   nags?: string[];
-  ravs?: string[];
+  ravs?: PgnRav[];
   comments?: string;
 }
 
@@ -26,10 +26,6 @@ export interface PgnGame {
   result: string;
 }
 
-export function parsePgn(pgnText: string): PgnGame | string {
-  try {
-    return parse(pgnText) as PgnGame;
-  } catch (error) {
-    return error.message;
-  }
+export function parsePgn(pgnText: string): PgnGame[] {
+  return parse(pgnText) as PgnGame[];
 }
