@@ -2,7 +2,7 @@
   v-dialog(v-model="showDialog" max-width="750px")
     template(v-slot:activator="{on, attrs}")
       v-btn(v-bind="attrs", v-on="on", icon, color="info",)
-        v-icon mdi-code-tags
+        v-icon mdi-download
 
     v-card.pa-4
       v-card-title PGN of "{{ tag.name }}"

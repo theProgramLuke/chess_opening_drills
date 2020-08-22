@@ -4,17 +4,21 @@
     dense,
     open-on-click)
     template(v-slot:label="item")
-      v-btn.original-case(@click="onSelect(item.item.position)", text) {{ item.item.name }}
+      v-btn.mr-12.original-case(@click="onSelect(item.item.position)", text) {{ item.item.name }}
 
     template(v-slot:append="item")
+      tag-importer(
+        v-if="(item.item.id === 'whiteStart'|| item.item.id === 'blackStart')",
+        :tag="item.item")
+
       tag-creator(
         :parentTag="item.item",
         @onCreate="onCreate")
 
       tag-deleter(
         :tag="item.item",
-        @onDelete="onDelete",
-        :disabled="(item.item.id === 'whiteStart'|| item.item.id === 'blackStart')")
+        :disabled="(item.item.id === 'whiteStart'|| item.item.id === 'blackStart')",
+        @onDelete="onDelete")
 
       tag-exporter(
         :tag="item.item")
@@ -28,11 +32,12 @@ import { RepertoireTag } from "@/store/repertoireTag";
 import TagDeleter from "@/components/TagDeleter.vue";
 import TagCreator from "@/components/TagCreator.vue";
 import TagExporter from "@/components/TagExporter.vue";
+import TagImporter from "@/components/TagImporter.vue";
 import { Repertoire } from "@/store/repertoire";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 
 export default Vue.extend({
-  components: { TagDeleter, TagCreator, TagExporter },
+  components: { TagDeleter, TagCreator, TagExporter, TagImporter },
 
   props: {
     whiteRepertoire: {
@@ -67,3 +72,9 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style lang="scss" scoped>
+.v-btn.original-case {
+  text-transform: none;
+}
+</style>

@@ -22,14 +22,16 @@ export default Vue.extend({
     showDialog: false,
     valid: false,
     name: "",
-    nameRules: [(v: string) => !!v || "Name is required"]
+    nameRules: [(value: string) => !!value || "Name is required"]
   }),
+
   props: {
     parentTag: {
       type: RepertoireTag,
       required: true
     }
   },
+
   methods: {
     onCreate() {
       if (this.$refs.form.validate()) {

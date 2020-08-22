@@ -29,7 +29,7 @@
         v-btn(v-if="showMoves", @click="showMoves = false", icon)
           v-icon mdi-chevron-double-right
 
-      v-col(v-if="showMoves", cols="auto")
+      v-col(v-if="showMoves", cols=3)
         move-list(:turnLists="turnLists", @onSelectMove="updateBoard")
 
         variation-list(
