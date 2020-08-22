@@ -26,6 +26,8 @@ import { Move } from "@/store/move";
 import { mapMutations } from "vuex";
 import { TrainingEvent } from "@/store/TrainingEvent";
 
+const maxAttempts = 3;
+
 export default Vue.extend({
   data: () => ({
     variationIndex: 0,
@@ -101,13 +103,14 @@ export default Vue.extend({
       if (threats.fen && threats.fen !== this.activePosition.fen) {
         this.attempts++;
         const correct = this.moveIsCorrect(threats.fen);
+        const shouldContinue = correct || this.attempts >= maxAttempts;
 
-        this.addTrainingEvent({
-          position: this.activePosition,
-          event: new TrainingEvent(this.attempts, this.getElapsedSeconds())
-        });
+        if (shouldContinue) {
+          this.addTrainingEvent({
+            position: this.activePosition,
+            event: new TrainingEvent(this.attempts, this.getElapsedSeconds())
+          });
 
-        if (correct) {
           this.nextTrainingPosition();
         } else {
           this.$refs.board.loadPosition();
