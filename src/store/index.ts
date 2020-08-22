@@ -8,7 +8,7 @@ import { Repertoire } from "./repertoire";
 import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
 import { TrainingEvent } from "./TrainingEvent";
-import { PgnGame } from "./pgnParser";
+import { PgnGame, parsePgn } from "./pgnParser";
 
 Vue.use(Vuex);
 
@@ -142,19 +142,19 @@ export default new Vuex.Store({
 
     addPositionsFromGame(
       state,
-      payload: { position: RepertoirePosition; game: PgnGame }
+      payload: { forSide: Side; game: PgnGame }
     ): void {
-      if (payload.position && payload.game) {
+      if (payload.game) {
         const repertoire =
-          payload.position.forSide === Side.White
+          payload.forSide === Side.White
             ? state.whiteRepertoire
             : state.blackRepertoire;
         const repertoireKey =
-          payload.position.forSide === Side.White
+          payload.forSide === Side.White
             ? "whiteRepertoire"
             : "blackRepertoire";
 
-        payload.position.AddFromGame(payload.game);
+        repertoire.AddFromGame(payload.game);
 
         storage.set(repertoireKey, repertoire.AsSaved());
       }

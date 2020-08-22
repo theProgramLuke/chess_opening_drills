@@ -6,14 +6,14 @@ import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Repertoire, SavedRepertoire } from "./repertoire";
 
 const whiteStartPosition = new RepertoirePosition(
-  "rnbqkbnr/pppppppr/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
   "",
   Side.White,
   true
 );
 
 const blackStartPosition = new RepertoirePosition(
-  "rnbqkbnr/pppppppr/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
   "",
   Side.Black,
   false

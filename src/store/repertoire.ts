@@ -1,5 +1,8 @@
 import _ from "lodash";
 import { FEN } from "chessground/types";
+import { Chess } from "chess.js";
+
+import { PgnGame, PgnMove } from "@/store/pgnParser";
 
 import {
   RepertoirePosition,
@@ -70,7 +73,67 @@ export class Repertoire {
       this.positions,
       (position, index, array) => index !== 0 && _.isEmpty(position.parents)
     );
+    _.forEach(removedOrphans, orphan => orphan.Unlink());
     return !_.isEmpty(removedOrphans);
+  }
+
+  AddFromGame(game: PgnGame): void {
+    const variations: PgnMove[][] = [];
+    this.VariationsFromGame(game.moves, variations);
+
+    _.forEach(variations, variation =>
+      this.AddFromVariation(this.positions[0], variation)
+    );
+  }
+
+  private VariationsFromGame(
+    pgnMoves: PgnMove[],
+    collector: PgnMove[][],
+    history: PgnMove[] = []
+  ): void {
+    _.forEach(pgnMoves, pgnMove => {
+      if (pgnMove.ravs) {
+        _.forEach(pgnMove.ravs, rav => {
+          this.VariationsFromGame(rav.moves, collector, _.clone(history));
+        });
+      }
+
+      history.push(_.omit(pgnMove, "ravs"));
+    });
+
+    collector.push(history);
+  }
+
+  private AddFromVariation(
+    parentPosition: RepertoirePosition,
+    variation: PgnMove[]
+  ): void {
+    const game = new Chess();
+
+    _.forEach(variation, move => {
+      if (move.move) {
+        const trimmedMove = _.trimStart(move.move, ".");
+        game.move(trimmedMove);
+
+        const existingChild = _.find(
+          parentPosition.children,
+          child => child.san === trimmedMove
+        );
+
+        if (existingChild) {
+          parentPosition = existingChild.position;
+        } else {
+          const nextPosition = new RepertoirePosition(
+            game.fen(),
+            move.comments || "",
+            parentPosition.forSide
+          );
+
+          this.AddMove(parentPosition, new Move(trimmedMove, nextPosition));
+          parentPosition = nextPosition;
+        }
+      }
+    });
   }
 
   AsSaved(): SavedRepertoire {

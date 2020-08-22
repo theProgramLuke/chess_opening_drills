@@ -78,7 +78,7 @@ export default Vue.extend({
   methods: {
     ...mapMutations(["addPositionsFromGame"]),
 
-    onImport(): void {
+    async onImport() {
       if (this.inputFile) {
         this.loading = true;
         this.inputFile.text().then(pgnText => {
@@ -86,7 +86,7 @@ export default Vue.extend({
             const pgn = parsePgn(pgnText);
             _.forEach(pgn, game =>
               this.addPositionsFromGame({
-                position: this.tag.position,
+                forSide: this.tag.forSide,
                 game: game
               })
             );

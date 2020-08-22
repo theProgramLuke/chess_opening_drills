@@ -2,6 +2,7 @@ import _ from "lodash";
 
 import { Repertoire } from "@/store/repertoire";
 import { RepertoirePosition } from "@/store/repertoirePosition";
+import { parsePgn } from "@/store/pgnParser";
 import {
   ResetTestRepertoire,
   repertoire,
@@ -94,6 +95,34 @@ describe("Repertoire", () => {
       repertoire.RemoveRepertoireTag(VariationC);
 
       expect(repertoire.tags[0].children).toEqual([VariationA]);
+    });
+  });
+
+  describe("AddFromGame", () => {
+    it("adds all game variations", () => {
+      const parsedGame = parsePgn(
+        '[White "me"]\n[Black "you"]\n1. e4 e5 (1. ...c5) *'
+      )[0];
+      const repertoire = new Repertoire([start], []);
+
+      repertoire.AddFromGame(parsedGame);
+
+      expect(_.map(start.children, child => child.san)).toEqual(["e4"]);
+      expect(
+        _.map(start.children[0].position.children, child => child.san)
+      ).toEqual(["c5", "e5"]);
+    });
+
+    it("added positions can be removed", () => {
+      const parsedGame = parsePgn(
+        '[White "me"]\n[Black "you"]\n1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 (3... Nf6) *'
+      )[0];
+      const repertoire = new Repertoire([start], []);
+
+      repertoire.AddFromGame(parsedGame);
+      repertoire.RemoveMove(start.children[0]);
+
+      expect(repertoire.positions.length).toEqual(1);
     });
   });
 });

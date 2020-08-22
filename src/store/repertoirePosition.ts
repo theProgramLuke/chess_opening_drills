@@ -1,7 +1,6 @@
 import _ from "lodash";
 import { FEN } from "chessground/types";
 import { Chess } from "chess.js";
-import { PgnGame, PgnMove } from "@/store/pgnParser";
 
 import { EOL } from "os";
 import { Move, SavedMove } from "@/store/move";
@@ -369,66 +368,6 @@ export class RepertoirePosition {
     }
 
     return _.trim(pgnMoveText);
-  }
-
-  AddFromGame(game: PgnGame): void {
-    // Only attempt this for the starting position
-    if (_.isEmpty(this.parents)) {
-      const variations: PgnMove[][] = [];
-      this.VariationsFromGame(game.moves, variations);
-
-      _.forEach(variations, variation =>
-        this.AddFromVariation(this, variation)
-      );
-    }
-  }
-
-  private VariationsFromGame(
-    pgnMoves: PgnMove[],
-    collector: PgnMove[][],
-    history: PgnMove[] = []
-  ): void {
-    _.forEach(pgnMoves, pgnMove => {
-      if (pgnMove.ravs) {
-        _.forEach(pgnMove.ravs, rav => {
-          this.VariationsFromGame(rav.moves, collector, _.clone(history));
-        });
-      }
-
-      history.push(_.omit(pgnMove, "ravs"));
-    });
-
-    collector.push(history);
-  }
-
-  private AddFromVariation(
-    parentPosition: RepertoirePosition,
-    variation: PgnMove[]
-  ): void {
-    const game = new Chess();
-    _.forEach(variation, move => {
-      if (move.move) {
-        game.move(move.move);
-
-        const existingChild = _.find(
-          parentPosition.children,
-          child => child.san === move.move
-        );
-
-        if (existingChild) {
-          parentPosition = existingChild.position;
-        } else {
-          const nextPosition = new RepertoirePosition(
-            game.fen(),
-            move.comments || "",
-            parentPosition.forSide
-          );
-
-          parentPosition.AddChild(new Move(move.move, nextPosition));
-          parentPosition = nextPosition;
-        }
-      }
-    });
   }
 
   AsSaved(childParentSource: RepertoirePosition[]): SavedRepertoirePosition {
