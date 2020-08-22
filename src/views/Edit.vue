@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-container.fill-height
-    v-row.fill-height
+  v-container.fill-height.ma-0(fluid)
+    v-row.fill-height(no-gutters)
       v-col(cols="auto", v-if="showTree")
         tag-tree(
           :whiteRepertoire="whiteRepertoire",
