@@ -17,15 +17,11 @@
           v-icon mdi-chevron-double-left
 
       v-col
-        div(v-if="activePosition.fen")
+        div.d-flex.justify-center(v-if="activePosition.fen")
           chessboard(
             :fen="activePosition.fen",
             :orientation="boardOrientation",
             @onMove="onBoardMove")
-
-          div(v-if="activePosition.trainingHistory.length > 0")
-            div Next repetition scheduled for {{ nextScheduled }}
-            div Training difficulty: {{ easiness }}
 
       v-col(cols="auto")
         v-btn(v-if="!showMoves", @click="showMoves = true", icon)
@@ -33,13 +29,18 @@
         v-btn(v-if="showMoves", @click="showMoves = false", icon)
           v-icon mdi-chevron-double-right
 
-
       v-col(v-if="showMoves", cols="auto")
         move-list(:turnLists="turnLists", @onSelectMove="updateBoard")
+
         variation-list(
           :variations="nextMoves",
           @onSelectMove="updateBoard",
           @onDeleteMove="removeRepertoireMove")
+
+        br
+        div(v-if="activePosition.trainingHistory.length > 0")
+            div Next repetition scheduled for {{ nextScheduled }}
+            div Training difficulty: {{ easiness }}
 </template>
 
 <script lang="ts">

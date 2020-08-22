@@ -5,14 +5,17 @@
     open-on-click)
     template(v-slot:label="item")
       v-btn.original-case(@click="onSelect(item.item.position)", text) {{ item.item.name }}
+
     template(v-slot:append="item")
       tag-creator(
         :parentTag="item.item",
         @onCreate="onCreate")
+
       tag-deleter(
         :tag="item.item",
         @onDelete="onDelete",
         :disabled="(item.item.id === 'whiteStart'|| item.item.id === 'blackStart')")
+
       tag-exporter(
         :tag="item.item")
 </template>
