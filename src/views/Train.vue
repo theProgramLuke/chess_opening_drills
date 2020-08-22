@@ -11,7 +11,7 @@
       :options="trainingOptions",
       @onCompleted="onCompleted")
 
-    v-container(v-if="isComplete")
+    v-overlay(v-model="isComplete", :darkMode="darkMode")
       v-card.pa-4(min-width="550px")
         v-card-title Training Complete!
         v-card-actions
@@ -45,7 +45,7 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(["whiteRepertoire", "blackRepertoire"]),
+    ...mapState(["whiteRepertoire", "blackRepertoire", "darkMode"]),
 
     isSelecting(): boolean {
       return this.state === TrainingState.Selecting;
