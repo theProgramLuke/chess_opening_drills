@@ -57,7 +57,11 @@ export default Vue.extend({
     activeVariationPositions(): RepertoirePosition[] {
       if (this.activeVariation) {
         const positions: RepertoirePosition[] = [];
-        positions.push(this.activeVariation[0].position.parents[0]);
+
+        if (this.activeVariation[0].position.forSide === Side.White) {
+          positions.push(this.activeVariation[0].position.parents[0]);
+        }
+
         _.forEach(this.activeVariation, move => positions.push(move.position));
         return positions;
       } else {
@@ -70,7 +74,11 @@ export default Vue.extend({
     },
 
     expectedMove(): Move {
-      return this.activeVariation[this.plyCount];
+      let offset = 0;
+      if (this.activeVariation[0].position.forSide === Side.Black) {
+        offset = 1;
+      }
+      return this.activeVariation[this.plyCount + offset];
     },
 
     boardOrientation(): Side {
