@@ -5,6 +5,7 @@
       v-treeview(
         :items="combinedTags",
         v-model="selectedTopics",
+        selection-type="independent",
         return-object,
         dense,
         hoverable,
@@ -62,6 +63,7 @@ const minPlaybackSpeed = 0.2;
 const maxPlaybackSpeed = 5;
 
 const minDifficulty = 1;
+const maxDifficulty = 5;
 
 export class TrainingOptions {
   topics: RepertoireTag[];
@@ -133,11 +135,7 @@ export default Vue.extend({
 
     coercedDifficultyModeLimit(): number {
       const normalized = this.difficultyModeLimit / 100;
-      return minDifficulty + (this.maxDifficulty - minDifficulty) * normalized;
-    },
-
-    maxDifficulty(): number {
-      return 5;
+      return minDifficulty + (maxDifficulty - minDifficulty) * normalized;
     },
 
     trainingPositions(): RepertoirePosition[] {

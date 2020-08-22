@@ -4,7 +4,6 @@ import { Guid } from "guid-typescript";
 import { Side } from "./side";
 import { FEN } from "chessground/types";
 import { RepertoirePosition } from "./repertoirePosition";
-import { Turn } from "./turn";
 import { TrainingMode } from "./trainingMode";
 import { Move } from "./move";
 
