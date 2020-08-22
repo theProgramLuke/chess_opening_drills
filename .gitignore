@@ -1,3 +1,7 @@
+# Pegjs results
+src/store/pgnGrammar.ts
+
+# Common files
 .DS_Store
 node_modules
 /dist
