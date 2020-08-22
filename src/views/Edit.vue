@@ -11,9 +11,9 @@
           @onCreate="addNewRepertoireTag")
 
       v-col(cols="auto")
-        v-btn(v-if="!showTree", @click="showTree = true")
+        v-btn(v-if="!showTree", @click="showTree = true", icon)
           v-icon mdi-chevron-double-right
-        v-btn(v-if="showTree", @click="showTree = false")
+        v-btn(v-if="showTree", @click="showTree = false", icon)
           v-icon mdi-chevron-double-left
 
       v-col
@@ -28,9 +28,9 @@
             div Training difficulty: {{ easiness }}
 
       v-col(cols="auto")
-        v-btn(v-if="!showMoves", @click="showMoves = true")
+        v-btn(v-if="!showMoves", @click="showMoves = true", icon)
           v-icon mdi-chevron-double-left
-        v-btn(v-if="showMoves", @click="showMoves = false")
+        v-btn(v-if="showMoves", @click="showMoves = false", icon)
           v-icon mdi-chevron-double-right
 
 
