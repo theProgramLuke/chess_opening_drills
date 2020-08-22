@@ -2,6 +2,7 @@ import _ from "lodash";
 import { FEN } from "chessground/types";
 import { Chess } from "chess.js";
 
+import { EOL } from "os";
 import { Move, SavedMove } from "@/store/move";
 import { Side } from "@/store/side";
 import { Turn } from "@/store/turn";
@@ -295,6 +296,36 @@ export class RepertoirePosition {
     });
 
     return moveLists;
+  }
+
+  AsPgn() {
+    return this.GetPgnHeaders() + EOL + this.AsPgnMoveText();
+  }
+
+  private GetPgnHeaders(): string {
+    let headers = "";
+    const now = new Date(_.now());
+
+    headers += '[Event "N/A"]';
+    headers += EOL;
+    headers += '[Site "N/A"]';
+    headers += EOL;
+    headers += `[Date ${now.getUTCFullYear()}.${now.getUTCMonth()}.${now.getUTCDate()}"`;
+    headers += EOL;
+    headers += '[Round "N/A]"';
+    headers += EOL;
+    headers += '[White "N/A"]';
+    headers += EOL;
+    headers += '[Black "N/A"]';
+    headers += EOL;
+    headers += '[Result "*"]';
+    headers += EOL;
+    headers += '[SetUp "1"]';
+    headers += EOL;
+    headers += `[SetUp "${this.fen}"]`;
+    headers += EOL;
+
+    return headers;
   }
 
   AsPgnMoveText(turnCount = 1): string {
