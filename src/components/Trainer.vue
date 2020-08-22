@@ -113,6 +113,7 @@ export default Vue.extend({
 
           this.nextTrainingPosition();
         } else {
+          // forces a reload of the previous position
           this.$refs.board.loadPosition();
         }
       }
