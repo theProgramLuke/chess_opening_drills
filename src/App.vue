@@ -13,7 +13,7 @@
 
     v-app-bar(app color="primary")
       v-app-bar-nav-icon(@click.stop="drawer = !drawer")
-      v-toolbar-title Application
+      v-toolbar-title Chess Opening Drills
 
     v-main
       v-container.fill-height(fluid)

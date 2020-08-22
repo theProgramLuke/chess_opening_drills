@@ -1,15 +1,21 @@
 <template lang="pug">
   v-container.fill-height
     v-row.fill-height
-      v-col(cols=3, dense)
+      v-col(cols="auto", v-if="showTree")
         tag-tree(
           :whiteRepertoire="whiteRepertoire",
           :blackRepertoire="blackRepertoire",
+          :showTree="showTree",
           @onSelect="updateBoard"
           @onDelete="removeRepertoireTag",
           @onCreate="addNewRepertoireTag")
 
-      v-divider(vertical)
+      v-col(cols="auto")
+        v-btn(v-if="!showTree", @click="showTree = true")
+          v-icon mdi-chevron-double-right
+        v-btn(v-if="showTree", @click="showTree = false")
+          v-icon mdi-chevron-double-left
+
       v-col
         div(v-if="activePosition.fen")
           chessboard(
@@ -21,8 +27,14 @@
             div Next repetition scheduled for {{ nextScheduled }}
             div Training difficulty: {{ easiness }}
 
-      v-divider(vertical)
-      v-col(cols=3)
+      v-col(cols="auto")
+        v-btn(v-if="!showMoves", @click="showMoves = true")
+          v-icon mdi-chevron-double-left
+        v-btn(v-if="showMoves", @click="showMoves = false")
+          v-icon mdi-chevron-double-right
+
+
+      v-col(v-if="showMoves", cols="auto")
         move-list(:turnLists="turnLists", @onSelectMove="updateBoard")
         variation-list(
           :variations="nextMoves",
@@ -53,7 +65,9 @@ export default Vue.extend({
       "",
       Side.White
     ),
-    boardOrientation: Side.White
+    boardOrientation: Side.White,
+    showTree: true,
+    showMoves: true
   }),
 
   components: {
