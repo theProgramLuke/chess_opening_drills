@@ -4,7 +4,7 @@
         moveNumber?: number;
         move?: string;
         nags?: string[];
-        ravs?: string[];
+        ravs?: PgnRav[];
         comments?: string;
     }
 
@@ -44,7 +44,7 @@
         };
     }
 
-    function make_move(moveNumber: number, move: PgnMove, nags: string[], ravs: string[], comments: string): PgnMove {
+    function make_move(moveNumber: number, move: string, nags: string[], ravs: PgnRav[], comments: string): PgnMove {
         var m: PgnMove = {};
         if (moveNumber) m.moveNumber = moveNumber;
         if (move) m.move = move;
