@@ -104,7 +104,7 @@ export default Vue.extend({
 
         this.addTrainingEvent({
           position: this.activePosition,
-          event: new TrainingEvent(this.attempts, this.getElapsed())
+          event: new TrainingEvent(this.attempts, this.getElapsedSeconds())
         });
 
         if (correct) {
@@ -143,8 +143,8 @@ export default Vue.extend({
       }
     },
 
-    getElapsed(): number {
-      return _.now() - this.startTime;
+    getElapsedSeconds(): number {
+      return (_.now() - this.startTime) / 1000;
     }
   }
 });
