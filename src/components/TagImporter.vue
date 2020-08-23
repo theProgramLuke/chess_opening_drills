@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-dialog(v-model="showDialog" max-width="750px")
+  v-dialog(v-model="showDialog" max-width="750px", :persistent="loading")
     template(v-slot:activator="{on: dialog, attrs}")
       v-tooltip(bottom)
         template(v-slot:activator="{on: tooltip }")
