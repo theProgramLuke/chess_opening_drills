@@ -67,7 +67,6 @@ export default Vue.extend({
         this.variationIndex
       );
 
-      console.log(anyNew, alreadyPreviewed);
       return anyNew && !alreadyPreviewed;
     },
 
@@ -195,7 +194,6 @@ export default Vue.extend({
     },
 
     advancePreview() {
-      console.log("advancing preview");
       this.previewIndex++;
       if (this.previewIndex < this.activeVariation.length) {
         setTimeout(() => this.advancePreview(), this.previewPlaybackDelay);
