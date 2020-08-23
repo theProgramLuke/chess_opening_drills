@@ -202,6 +202,7 @@ export default Vue.extend({
       } else {
         this.previewedVariations.push(this.variationIndex);
         this.previewIndex = 0;
+        this.startTime = _.now();
       }
     }
   },
