@@ -13,6 +13,7 @@
 
       tag-creator(
         :parentTag="item.item",
+        :orientation="orientation",
         @onCreate="onCreate")
 
       tag-deleter(
@@ -35,6 +36,7 @@ import TagExporter from "@/components/TagExporter.vue";
 import TagImporter from "@/components/TagImporter.vue";
 import { Repertoire } from "@/store/repertoire";
 import { RepertoirePosition } from "@/store/repertoirePosition";
+import { Side } from "@/store/side";
 
 export default Vue.extend({
   components: { TagDeleter, TagCreator, TagExporter, TagImporter },
@@ -47,6 +49,11 @@ export default Vue.extend({
 
     blackRepertoire: {
       type: Repertoire,
+      required: true
+    },
+
+    orientation: {
+      type: Number,
       required: true
     }
   },

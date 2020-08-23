@@ -6,7 +6,8 @@
           :whiteRepertoire="whiteRepertoire",
           :blackRepertoire="blackRepertoire",
           :showTree="showTree",
-          @onSelect="updateBoard"
+          :orientation="boardOrientation",
+          @onSelect="updateBoard",
           @onDelete="removeRepertoireTag",
           @onCreate="addNewRepertoireTag")
 

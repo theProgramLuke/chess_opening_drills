@@ -3,7 +3,12 @@
     template(v-slot:activator="{on: dialog, attrs}")
       v-tooltip(bottom)
         template(v-slot:activator="{on: tooltip }")
-          v-btn(v-bind="attrs", v-on="{ ...tooltip, ...dialog }", icon, color="info")
+          v-btn(
+            :disabled="disabled",
+            v-bind="attrs",
+            v-on="{ ...tooltip, ...dialog }",
+            icon,
+            color="info")
             v-icon mdi-source-merge
         
         span Tag position
@@ -47,6 +52,17 @@ export default Vue.extend({
     parentTag: {
       type: RepertoireTag,
       required: true
+    },
+
+    orientation: {
+      type: Number,
+      required: true
+    }
+  },
+
+  computed: {
+    disabled(): boolean {
+      return this.parentTag.forSide !== this.orientation;
     }
   },
 
