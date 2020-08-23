@@ -14,6 +14,7 @@ custom UCI engine
 stored engine suggested moves
 setting to allow multiple moves from the same position on my turn
 icon
+persist edit position annotations (arrows etc)
 automatic backups
 configurable max attempts
 add training stats to training complete!
