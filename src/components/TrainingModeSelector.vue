@@ -148,7 +148,7 @@ export default Vue.extend({
 
     playbackSpeedLabel(): string {
       const speed = Number(this.coercedPlaybackSpeed).toFixed(1);
-      return "Playback speed (" + speed + " moves per second)";
+      return "Playback speed (" + speed + " seconds per move)";
     },
 
     startTrainingLabel(): string {

@@ -1,10 +1,15 @@
 <template lang="pug">
   v-container(v-if="!complete")
     chessboard(
-        ref="board"
-        :fen="activePosition.fen",
-        :orientation="boardOrientation",
-        @onMove="onBoardMove")
+      v-if="!previewing"
+      ref="board",
+      :fen="activePosition.fen",
+      :orientation="boardOrientation",
+      @onMove="onBoardMove")
+    chessboard(
+      v-else,
+      :fen="previewPositionFen",
+      :orientation="boardOrientation")
 
     v-progress-linear.mb-10(
       :value="completionPercent",
@@ -25,6 +30,7 @@ import { Side } from "@/store/side";
 import { Move } from "@/store/move";
 import { mapMutations } from "vuex";
 import { TrainingEvent } from "@/store/TrainingEvent";
+import { TrainingMode } from "@/store/trainingMode";
 
 const maxAttempts = 3;
 
@@ -33,7 +39,9 @@ export default Vue.extend({
     variationIndex: 0,
     plyCount: 0,
     startTime: _.now(),
-    attempts: 0
+    attempts: 0,
+    previewIndex: 0,
+    previewedVariations: [-1] // -1 as type hint
   }),
 
   components: {
@@ -48,6 +56,25 @@ export default Vue.extend({
   },
 
   computed: {
+    previewing(): boolean {
+      const anyNew =
+        _.find(this.activeVariationPositions, position =>
+          position.IncludeForTrainingMode(TrainingMode.New)
+        ) || false;
+
+      const alreadyPreviewed = _.includes(
+        this.previewedVariations,
+        this.variationIndex
+      );
+
+      console.log(anyNew, alreadyPreviewed);
+      return anyNew && !alreadyPreviewed;
+    },
+
+    previewPositionFen(): string {
+      return this.activeVariationPositions[this.previewIndex].fen;
+    },
+
     variationProgress(): string {
       return this.variationIndex + " / " + this.options.variations.length;
     },
@@ -80,6 +107,7 @@ export default Vue.extend({
       if (this.activeVariation[0].position.forSide === Side.Black) {
         offset = 1;
       }
+
       return this.activeVariation[this.plyCount + offset];
     },
 
@@ -93,13 +121,25 @@ export default Vue.extend({
 
     completionPercent(): number {
       return (100 * this.variationIndex) / this.options.variations.length;
+    },
+
+    previewPlaybackDelay(): number {
+      return this.options.playbackSpeed * 1000;
+    }
+  },
+
+  watch: {
+    previewing(newPreviewing: boolean, oldPreviewing: boolean) {
+      if (newPreviewing) {
+        this.advancePreview();
+      }
     }
   },
 
   methods: {
     ...mapMutations(["addTrainingEvent"]),
 
-    onBoardMove(threats: Threats): void {
+    onBoardMove(threats: Threats) {
       if (threats.fen && threats.fen !== this.activePosition.fen) {
         this.attempts++;
         const correct = this.moveIsCorrect(threats.fen);
@@ -125,16 +165,19 @@ export default Vue.extend({
 
     nextTrainingPosition(): void {
       this.attempts = 0;
+
       do {
         this.plyCount++;
+
         if (this.plyCount >= this.activeVariation.length) {
           this.nextVariation();
         }
       } while (!this.complete && !this.activePosition.myTurn);
+
       this.startTime = _.now();
     },
 
-    nextVariation(): void {
+    nextVariation() {
       if (this.activeVariation.length === 1) {
         // force reset of board since fen was the same
         this.$refs.board.loadPosition();
@@ -149,6 +192,23 @@ export default Vue.extend({
 
     getElapsedSeconds(): number {
       return (_.now() - this.startTime) / 1000;
+    },
+
+    advancePreview() {
+      console.log("advancing preview");
+      this.previewIndex++;
+      if (this.previewIndex < this.activeVariation.length) {
+        setTimeout(() => this.advancePreview(), this.previewPlaybackDelay);
+      } else {
+        this.previewedVariations.push(this.variationIndex);
+        this.previewIndex = 0;
+      }
+    }
+  },
+
+  created(): void {
+    if (this.previewing) {
+      this.advancePreview();
     }
   }
 });
