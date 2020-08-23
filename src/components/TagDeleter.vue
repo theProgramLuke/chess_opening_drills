@@ -1,8 +1,12 @@
 <template lang="pug">
-  v-dialog(v-model="showDialog" max-width="500px")
-    template(v-slot:activator="{on, attrs}")
-      v-btn(v-bind="attrs" v-on="on" icon, color="error", :disabled="disabled")
-        v-icon mdi-delete
+  v-dialog(v-model="showDialog" max-width="750px")
+    template(v-slot:activator="{on: dialog, attrs}")
+      v-tooltip(bottom)
+        template(v-slot:activator="{on: tooltip }")
+          v-btn(v-bind="attrs", v-on="{ ...tooltip, ...dialog }", icon, color="error", :disabled="disabled")
+            v-icon mdi-delete
+
+        span Delete tag
 
     v-card.pa-4
       v-card-title Delete tag?

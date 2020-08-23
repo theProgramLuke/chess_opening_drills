@@ -1,8 +1,12 @@
 <template lang="pug">
   v-dialog(v-model="showDialog" max-width="750px")
-    template(v-slot:activator="{on, attrs}")
-      v-btn(v-bind="attrs", v-on="on", icon, color="info",)
-        v-icon mdi-download
+    template(v-slot:activator="{on: dialog, attrs}")
+      v-tooltip(bottom)
+        template(v-slot:activator="{on: tooltip }")
+          v-btn(v-bind="attrs", v-on="{ ...tooltip, ...dialog }", icon, color="info",)
+            v-icon mdi-download
+
+        span Export PGN
 
     v-card.pa-4
       v-card-title PGN of "{{ tag.name }}"
