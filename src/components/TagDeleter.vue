@@ -11,10 +11,12 @@
     v-card.pa-4
       v-card-title Delete tag?
       v-card-subtitle The tag "{{ tag.name }}" and all of its child tags will be permanently deleted.
-      v-btn.ma-2(@click="onDelete(); showDialog=false", color="error")
-        | Delete
-      v-btn.ma-2(@click="showDialog=false", color="secondary", text, outlined)
-       | Cancel
+      v-form(@submit.prevent="onDelete")
+        v-card-actions
+          v-btn.ma-2(type="submit", color="error")
+            | Delete
+          v-btn.ma-2(@click="showDialog=false", color="secondary")
+            | Cancel
 </template>
 
 <script lang="ts">
@@ -40,6 +42,7 @@ export default Vue.extend({
 
   methods: {
     onDelete() {
+      this.showDialog = false;
       this.$emit("onDelete", this.tag);
     }
   }

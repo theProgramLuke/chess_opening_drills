@@ -10,7 +10,7 @@
 
     v-card.pa-4
       v-card-title Import PGN for {{ tag.name }}
-      v-form(ref="form", v-model="valid")
+      v-form(ref="form", v-model="valid", @submit.prevent="loading = true; onImport()")
         v-file-input(
           v-model="inputFile",
           :rules="inputFileRules",
@@ -23,7 +23,7 @@
 
         v-card-actions
           v-btn.ma-2(
-            @click="loading = true; onImport()",
+            type="submit"
             :disabled="!valid",
             :loading="loading",
             color="primary")
@@ -31,9 +31,7 @@
 
           v-btn.ma-2(
             @click="showDialog=false",
-            color="secondary",
-            text,
-            outlined)
+            color="secondary")
             | Cancel
 </template>
 

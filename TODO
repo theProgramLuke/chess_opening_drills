@@ -1,12 +1,10 @@
 patch chess.js export # Blocked on yarn 2 failed install
 bug: Start training count is wrong
-statistics with per tag breakdown
-usability: enter in tag-create input to add
+customizable board theming
 persist training options
 implement reset appearance
-add +- etc annotation to position
 edit error/warning for multiple choices from same position on my turn
-customizable board theming
+add +- etc annotation to position
 don't reset edit position on enter route
 custom UCI engine
 stored engine suggested moves

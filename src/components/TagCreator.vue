@@ -15,7 +15,7 @@
 
     v-card.pa-4
       v-card-title Adding tag at current position as variation of "{{ parentTag.name }}".
-      v-form(ref="form", v-model="valid")
+      v-form(ref="form", v-model="valid", @submit.prevent="onCreate")
         v-text-field(
           label="Name",
           autofocus,
@@ -23,15 +23,13 @@
           :rules="nameRules",
           required)
         v-btn.ma-2(
-          @click="onCreate",
+          type="submit"
           color="primary",
           :disabled="!valid")
           | Add
         v-btn.ma-2(
-          @click="showDialog=false",
-          color="secondary",
-          text,
-          outlined)
+          @click="showDialog=false; name=''",
+          color="secondary")
           | Cancel
 </template>
 
@@ -71,6 +69,7 @@ export default Vue.extend({
       if (this.$refs.form.validate()) {
         this.$emit("onCreate", this.parentTag, this.name);
         this.showDialog = false;
+        this.name = "";
       }
     }
   }
