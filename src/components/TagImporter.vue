@@ -3,7 +3,7 @@
     template(v-slot:activator="{on: dialog, attrs}")
       v-tooltip(bottom)
         template(v-slot:activator="{on: tooltip }")
-          v-btn(v-bind="attrs", v-on="{ ...tooltip, ...dialog }", icon, color="info",)
+          v-btn(v-bind="attrs", v-on="{ ...tooltip, ...dialog }", icon, color="info")
             v-icon mdi-upload
 
         span Import PGN

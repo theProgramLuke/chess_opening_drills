@@ -12,9 +12,12 @@
       v-card-title PGN of "{{ tag.name }}"
       v-textarea(:value="pgnText", outlined, no-resize)
       v-card-actions
-        v-btn.ma-2(@click="save", color="primary") Save
-        v-btn.ma-2(@click="copy", color="primary") Copy
-        v-btn.ma-2(@click="showDialog=false", color="secondary", text, outlined) Done
+        v-btn.ma-2(@click="save", color="primary")
+          | Save
+        v-btn.ma-2(@click="copy", color="primary")
+          | Copy
+        v-btn.ma-2(@click="showDialog=false", color="secondary", text, outlined)
+          | Done
 </template>
 
 <script lang="ts">
