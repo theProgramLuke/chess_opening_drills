@@ -1,7 +1,6 @@
 <template lang="pug">
-  div.blue-tile.merida
-    div.cg-board-wrap(ref="board")
-    br
+  div.wood2
+    div.cg-board.is2d.california(ref="board")
 </template>
 
 <script lang="ts">
@@ -241,4 +240,4 @@ export default Vue.extend({
 });
 </script>
 
-<style src="@/assets/theme.css"></style>
+<style lang="scss" src="@/assets/chessground/chessground.scss"></style>
