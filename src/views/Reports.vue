@@ -1,39 +1,27 @@
 <template lang="pug">
-  plot(:data="data", :layout="layout", :options="options", :dark="darkMode")
+  v-container
+    v-select(v-model="selectedReportType", :items="reportTypes")
+    difficulty-report(v-if="selectedReportType === 'Difficulty'")
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/camelcase */
 import Vue from "vue";
-import { mapState } from "vuex";
+import DifficultyReport from "@/components/reports/DifficultyReport.vue";
 
-import Plot from "@/components/Plot.vue";
+enum ReportToShow {
+  Difficulty = "Difficulty"
+}
 
 export default Vue.extend({
   data: () => {
     return {
-      options: {},
-      layout: {}
+      selectedReportType: ReportToShow.Difficulty,
+      reportTypes: [ReportToShow.Difficulty]
     };
   },
 
-  computed: {
-    ...mapState(["darkMode"]),
-
-    data() {
-      return [
-        {
-          x: ["Zebras", "Lions", "Pelicans"],
-          y: [90, 40, 60],
-          type: "bar",
-          name: "New York Zoo"
-        }
-      ];
-    }
-  },
-
   components: {
-    Plot
+    DifficultyReport
   }
 });
 </script>
