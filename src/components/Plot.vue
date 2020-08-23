@@ -6,8 +6,11 @@
 
 <script>
 import Plotly from "plotly.js";
+import _ from "lodash";
 import debounce from "lodash/debounce";
 import defaults from "lodash/defaults";
+
+import { PlotlyWhite, PlotlyDark } from "@/views/PlotlyLayouts";
 
 const events = [
   "click",
@@ -59,15 +62,29 @@ export default {
     },
     layout: {
       type: Object
+    },
+    dark: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      internalLayout: {
-        ...this.layout,
-        datarevision: 1
-      }
+      datarevision: 1
     };
+  },
+  computed: {
+    internalLayout() {
+      return {
+        ...(this.dark ? PlotlyDark.layout : PlotlyWhite.layout),
+        ...this.layout
+      };
+    },
+    internalData() {
+      return _.map(this.data, datum => {
+        return _.merge(datum, this.dark ? PlotlyDark.data : PlotlyWhite.data);
+      });
+    }
   },
   mounted() {
     this.react();
@@ -140,7 +157,7 @@ export default {
     plot() {
       return Plotly.plot(
         this.$refs.container,
-        this.data,
+        this.internalData,
         this.internalLayout,
         this.getOptions()
       );
@@ -161,7 +178,7 @@ export default {
     newPlot() {
       return Plotly.newPlot(
         this.$refs.container,
-        this.data,
+        this.internalData,
         this.internalLayout,
         this.getOptions()
       );
@@ -169,7 +186,7 @@ export default {
     react() {
       return Plotly.react(
         this.$refs.container,
-        this.data,
+        this.internalData,
         this.internalLayout,
         this.getOptions()
       );

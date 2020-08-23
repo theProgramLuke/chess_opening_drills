@@ -1,5 +1,5 @@
 <template lang="pug">
-  plot(:data="data", :layout="layout", :options="options")
+  plot(:data="data", :layout="layout", :options="options", :dark="darkMode")
 </template>
 
 <script lang="ts">
@@ -8,12 +8,12 @@ import Vue from "vue";
 import { mapState } from "vuex";
 
 import Plot from "@/components/Plot.vue";
-import colors from "vuetify/lib/util/colors";
 
 export default Vue.extend({
   data: () => {
     return {
-      options: { displayModeBar: false }
+      options: {},
+      layout: {}
     };
   },
 
@@ -29,13 +29,6 @@ export default Vue.extend({
           name: "New York Zoo"
         }
       ];
-    },
-
-    layout() {
-      return {
-        paper_bgcolor: "#0000",
-        plot_bgcolor: "#0000"
-      };
     }
   },
 
