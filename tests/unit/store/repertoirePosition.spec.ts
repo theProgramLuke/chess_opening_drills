@@ -120,7 +120,7 @@ describe("RepertoirePosition", () => {
     it("should not be include in scheduled mode when scheduled for more than a day away", () => {
       const position = new RepertoirePosition("", "", Side.White);
       position.AddTrainingEvent(new TrainingEvent(1, 0));
-      position.nextRepititionTimestamp = _.now() + 2 * millisecondsPerDay;
+      position.nextRepetitionTimestamp = _.now() + 2 * millisecondsPerDay;
 
       const include = position.IncludeForTrainingMode(TrainingMode.Scheduled);
 
@@ -130,7 +130,7 @@ describe("RepertoirePosition", () => {
     it("should be included in scheduled mode when scheduled for today", () => {
       const position = new RepertoirePosition("", "", Side.White);
       position.AddTrainingEvent(new TrainingEvent(1, 0));
-      position.nextRepititionTimestamp = _.now();
+      position.nextRepetitionTimestamp = _.now();
 
       const include = position.IncludeForTrainingMode(TrainingMode.Scheduled);
 
@@ -140,7 +140,7 @@ describe("RepertoirePosition", () => {
     it("should not be included in scheduled mode when scheduled in the past", () => {
       const position = new RepertoirePosition("", "", Side.White);
       position.AddTrainingEvent(new TrainingEvent(1, 0));
-      position.nextRepititionTimestamp = _.now() - millisecondsPerDay;
+      position.nextRepetitionTimestamp = _.now() - millisecondsPerDay;
 
       const include = position.IncludeForTrainingMode(TrainingMode.Scheduled);
 
@@ -188,22 +188,22 @@ describe("RepertoirePosition", () => {
       expect(position.trainingHistory).toEqual(events);
     });
 
-    it("should schedule 1 day later for the first repitition", () => {
+    it("should schedule 1 day later for the first repetition", () => {
       const position = new RepertoirePosition("", "", Side.White);
 
       const nowBefore = _.now();
       position.AddTrainingEvent(new TrainingEvent(1, 0));
       const nowAfter = _.now();
 
-      expect(position.nextRepititionTimestamp).toBeGreaterThanOrEqual(
+      expect(position.nextRepetitionTimestamp).toBeGreaterThanOrEqual(
         nowBefore + millisecondsPerDay
       );
-      expect(position.nextRepititionTimestamp).toBeLessThanOrEqual(
+      expect(position.nextRepetitionTimestamp).toBeLessThanOrEqual(
         nowAfter + millisecondsPerDay
       );
     });
 
-    it("should schedule 4 days later for the second repitition", () => {
+    it("should schedule 4 days later for the second repetition", () => {
       const position = new RepertoirePosition("", "", Side.White);
       position.AddTrainingEvent(new TrainingEvent(1, 0));
 
@@ -211,15 +211,15 @@ describe("RepertoirePosition", () => {
       position.AddTrainingEvent(new TrainingEvent(1, 0));
       const nowAfter = _.now();
 
-      expect(position.nextRepititionTimestamp).toBeGreaterThanOrEqual(
+      expect(position.nextRepetitionTimestamp).toBeGreaterThanOrEqual(
         nowBefore + 4 * millisecondsPerDay
       );
-      expect(position.nextRepititionTimestamp).toBeLessThanOrEqual(
+      expect(position.nextRepetitionTimestamp).toBeLessThanOrEqual(
         nowAfter + 4 * millisecondsPerDay
       );
     });
 
-    it("should reset the repitition index after a bad grade", () => {
+    it("should reset the repetition index after a bad grade", () => {
       const position = new RepertoirePosition("", "", Side.White);
       position.AddTrainingEvent(new TrainingEvent(1, 0));
       position.AddTrainingEvent(new TrainingEvent(1, 0));
@@ -229,15 +229,15 @@ describe("RepertoirePosition", () => {
       position.AddTrainingEvent(new TrainingEvent(2, 0)); // grade 3
       const nowAfter = _.now();
 
-      expect(position.nextRepititionTimestamp).toBeGreaterThanOrEqual(
+      expect(position.nextRepetitionTimestamp).toBeGreaterThanOrEqual(
         nowBefore + millisecondsPerDay
       );
-      expect(position.nextRepititionTimestamp).toBeLessThanOrEqual(
+      expect(position.nextRepetitionTimestamp).toBeLessThanOrEqual(
         nowAfter + millisecondsPerDay
       );
     });
 
-    it("should set the interval by easiness after the second repitition", () => {
+    it("should set the interval by easiness after the second repetition", () => {
       const position = new RepertoirePosition("", "", Side.White);
       position.AddTrainingEvent(new TrainingEvent(1, 0));
       position.AddTrainingEvent(new TrainingEvent(1, 0));
@@ -248,10 +248,10 @@ describe("RepertoirePosition", () => {
       position.AddTrainingEvent(new TrainingEvent(1, 0));
       const nowAfter = _.now();
 
-      expect(position.nextRepititionTimestamp).toBeGreaterThanOrEqual(
+      expect(position.nextRepetitionTimestamp).toBeGreaterThanOrEqual(
         nowBefore + expectedIntervalDays * millisecondsPerDay
       );
-      expect(position.nextRepititionTimestamp).toBeLessThanOrEqual(
+      expect(position.nextRepetitionTimestamp).toBeLessThanOrEqual(
         nowAfter + expectedIntervalDays * millisecondsPerDay
       );
     });

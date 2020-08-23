@@ -86,9 +86,9 @@ export default Vue.extend({
     },
 
     nextScheduled(): string | undefined {
-      if (this.activePosition.nextRepititionTimestamp) {
+      if (this.activePosition.nextRepetitionTimestamp) {
         return new Date(
-          this.activePosition.nextRepititionTimestamp
+          this.activePosition.nextRepetitionTimestamp
         ).toLocaleDateString();
       }
 

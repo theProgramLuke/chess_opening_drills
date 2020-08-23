@@ -19,7 +19,7 @@ export class SavedRepertoirePosition {
   myTurn: boolean;
   forSide: Side;
   trainingHistory: TrainingEvent[];
-  nextRepititionTimestamp?: number;
+  nextRepetitionTimestamp?: number;
   previousIntervalDays: number;
   intervalIndex: number;
   easinessFactor: number;
@@ -32,7 +32,7 @@ export class SavedRepertoirePosition {
     myTurn: boolean,
     forSide: Side,
     trainingHistory: TrainingEvent[],
-    nextRepititionTimestamp: number | undefined,
+    nextRepetitionTimestamp: number | undefined,
     previousIntervalDays: number,
     intervalIndex: number,
     easinessFactor: number
@@ -44,7 +44,7 @@ export class SavedRepertoirePosition {
     this.myTurn = myTurn;
     this.forSide = forSide;
     this.trainingHistory = trainingHistory;
-    this.nextRepititionTimestamp = nextRepititionTimestamp;
+    this.nextRepetitionTimestamp = nextRepetitionTimestamp;
     this.previousIntervalDays = previousIntervalDays;
     this.intervalIndex = intervalIndex;
     this.easinessFactor = easinessFactor;
@@ -61,7 +61,7 @@ export class RepertoirePosition {
   myTurn: boolean;
   forSide: Side;
   trainingHistory: TrainingEvent[];
-  nextRepititionTimestamp?: number;
+  nextRepetitionTimestamp?: number;
   previousIntervalDays: number;
   intervalIndex: number;
   easinessFactor: number;
@@ -72,7 +72,7 @@ export class RepertoirePosition {
     forSide: Side,
     myTurn?: boolean,
     trainingHistory?: TrainingEvent[],
-    nextRepititionTimestamp?: number,
+    nextRepetitionTimestamp?: number,
     previousIntervalDays?: number,
     intervalIndex?: number,
     easinessFactor?: number
@@ -84,7 +84,7 @@ export class RepertoirePosition {
     this.children = [];
     this.myTurn = myTurn || false;
     this.trainingHistory = trainingHistory || [];
-    this.nextRepititionTimestamp = nextRepititionTimestamp;
+    this.nextRepetitionTimestamp = nextRepetitionTimestamp;
     this.previousIntervalDays = previousIntervalDays || 0;
     this.intervalIndex = intervalIndex || 0;
     this.easinessFactor = easinessFactor || 2.5;
@@ -146,9 +146,9 @@ export class RepertoirePosition {
   }
 
   private IncludeForScheduledMode(): boolean {
-    if (this.nextRepititionTimestamp !== undefined) {
+    if (this.nextRepetitionTimestamp !== undefined) {
       const now = new Date(_.now());
-      const scheduled = new Date(this.nextRepititionTimestamp);
+      const scheduled = new Date(this.nextRepetitionTimestamp);
 
       // strip time portion
       now.setHours(0, 0, 0, 0);
@@ -172,7 +172,7 @@ export class RepertoirePosition {
     const nextIntervalDays = this.NextIntervalDays(grade);
 
     const nextIntervalMilliseconds = nextIntervalDays * millisecondsPerDay;
-    this.nextRepititionTimestamp = _.now() + nextIntervalMilliseconds;
+    this.nextRepetitionTimestamp = _.now() + nextIntervalMilliseconds;
     this.previousIntervalDays = nextIntervalDays;
   }
 
@@ -389,7 +389,7 @@ export class RepertoirePosition {
       this.myTurn,
       this.forSide,
       this.trainingHistory,
-      this.nextRepititionTimestamp,
+      this.nextRepetitionTimestamp,
       this.previousIntervalDays,
       this.intervalIndex,
       this.easinessFactor
@@ -403,7 +403,7 @@ export class RepertoirePosition {
       saved.forSide,
       saved.myTurn,
       saved.trainingHistory,
-      saved.nextRepititionTimestamp,
+      saved.nextRepetitionTimestamp,
       saved.previousIntervalDays,
       saved.intervalIndex,
       saved.easinessFactor
