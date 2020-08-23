@@ -10,20 +10,20 @@
           @onDelete="removeRepertoireTag",
           @onCreate="addNewRepertoireTag")
 
-      v-col(cols="auto")
+      v-col.d-flex.align-center(cols="auto")
         v-btn(v-if="!showTree", @click="showTree = true", icon)
           v-icon mdi-chevron-double-right
         v-btn(v-if="showTree", @click="showTree = false", icon)
           v-icon mdi-chevron-double-left
 
-      v-col
-        div.d-flex.justify-center(v-if="activePosition.fen")
-          chessboard(
-            :fen="activePosition.fen",
-            :orientation="boardOrientation",
-            @onMove="onBoardMove")
+      v-col.d-flex.justify-center
+        chessboard(
+          v-if="activePosition.fen",
+          :fen="activePosition.fen",
+          :orientation="boardOrientation",
+          @onMove="onBoardMove")
 
-      v-col(cols="auto")
+      v-col.d-flex.align-center(cols="auto")
         v-btn(v-if="!showMoves", @click="showMoves = true", icon)
           v-icon mdi-chevron-double-left
         v-btn(v-if="showMoves", @click="showMoves = false", icon)
