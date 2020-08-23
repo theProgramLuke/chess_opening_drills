@@ -19,6 +19,14 @@
         multiple,
         chips,
         deletable-chips)
+        template(v-slot:append-outer)
+          v-tooltip(bottom)
+            template(v-slot:activator="{on }")
+              v-chip(v-on="on", outlined) ?
+
+            div Scheduled - Positions planned for study today.
+            div New - Positions not studied before.
+            div Difficult - Positions historically hard to remember.
 
       v-slider(
         v-if="showDifficultyModeInput",
@@ -31,11 +39,11 @@
         label="Preview variations for new positions")
 
       v-slider(
-        v-if="previewNewVariations",
+        v-if="previewNewVariations && showPreviewInput",
         v-model="playbackSpeedSlideValue",
         :label="playbackSpeedLabel")
 
-      v-checkbox(label="Review entire variations", v-model="entireVariations")
+      v-checkbox(v-if="false", label="Review entire variations", v-model="entireVariations")
 
       v-card-actions
         v-btn(

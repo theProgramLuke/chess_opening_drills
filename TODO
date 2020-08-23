@@ -1,13 +1,12 @@
 patch chess.js export # Blocked on yarn 2 failed install
 bug: Start training count is wrong
-training mode explanations
-persist training options
-implement reset appearance
+only show add tag if position is child of tag
 add +- etc annotation to position
 edit/view position comment
-only show add tag if position is child of tag
-usability: enter in tag-create input to add
 view of scheduled positions
+usability: enter in tag-create input to add
+persist training options
+implement reset appearance
 statistics with per tag breakdown
 edit error/warning for multiple choices from same position on my turn
 customizable board theming
