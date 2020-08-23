@@ -43,8 +43,13 @@ export default Vue.extend({
         icon: "mdi-play"
       },
       {
-        name: "Statistics",
-        route: "/statistics",
+        name: "Schedule",
+        route: "/schedule",
+        icon: "mdi-calendar"
+      },
+      {
+        name: "Reports",
+        route: "/reports",
         icon: "mdi-chart-bar"
       },
       {
