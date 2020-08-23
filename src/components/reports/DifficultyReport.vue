@@ -1,20 +1,23 @@
 <template lang="pug">
   v-container
-    v-tooltip(bottom)
-      template(v-slot:activator="{ on }")
-        v-chip(v-on="on", label) What is difficulty
-          v-icon(right) mdi-comment-question-outline
+    template(v-if="showNoPositions")
+      v-alert(color="error") No positions have been trained
+    template(v-else)
+      v-tooltip(bottom)
+        template(v-slot:activator="{ on }")
+          v-chip(v-on="on", label) What is difficulty
+            v-icon(right) mdi-comment-question-outline
 
-      div Difficulty is the memory retention easiness factor from the SM-2 algorithm.
-      div An easiness factor of 1 indicates a very hard position to remember,
-      span higher easiness factors are easier to remember.
-      div The initial easiness factor for a position is 2.5.
+        div Difficulty is the memory retention easiness factor from the SM-2 algorithm.
+        div An easiness factor of 1 indicates a very hard position to remember,
+        span higher easiness factors are easier to remember.
+        div The initial easiness factor for a position is 2.5.
 
-    plot(
-      :data="data",
-      :layout="layout",
-      :options="options",
-      :dark="darkMode")
+      plot(
+        :data="data",
+        :layout="layout",
+        :options="options",
+        :dark="darkMode")
 </template>
 
 <script lang="ts">
@@ -44,20 +47,29 @@ export default Vue.extend({
       return { yaxis: { rangemode: "tozero" } };
     },
 
-    data() {
-      const white = this.easinessFromRepertoire(this.whiteRepertoire);
-      const black = this.easinessFromRepertoire(this.blackRepertoire);
+    whiteEasiness(): number[] {
+      return this.easinessFromRepertoire(this.whiteRepertoire);
+    },
 
+    blackEasiness(): number[] {
+      return this.easinessFromRepertoire(this.blackRepertoire);
+    },
+
+    showNoPositions(): boolean {
+      return _.isEmpty(this.whiteEasiness) && _.isEmpty(this.blackEasiness);
+    },
+
+    data() {
       return [
         {
           type: "histogram",
           name: "White",
-          x: white
+          x: this.whiteEasiness
         },
         {
           type: "histogram",
           name: "Black",
-          x: black
+          x: this.blackEasiness
         }
       ];
     }
