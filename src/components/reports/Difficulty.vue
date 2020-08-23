@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container
+  v-container.fill-height.ma-0(fluid)
     template(v-if="showNoPositions")
       v-alert(color="error") No positions have been trained
     template(v-else)
@@ -17,7 +17,7 @@
         :data="data",
         :layout="layout",
         :options="options",
-        :dark="darkMode")
+          :dark="darkMode")
 </template>
 
 <script lang="ts">
@@ -30,11 +30,12 @@ import { Repertoire } from "@/store/repertoire";
 import { TrainingMode } from "@/store/trainingMode";
 
 export default Vue.extend({
-  data: () => {
-    return {
-      options: { displayModeBar: false }
-    };
-  },
+  name: "DifficultyReport",
+
+  data: () => ({
+    options: { displayModeBar: false },
+    layout: { yaxis: { rangemode: "tozero" } }
+  }),
 
   components: {
     Plot
@@ -42,10 +43,6 @@ export default Vue.extend({
 
   computed: {
     ...mapState(["darkMode", "whiteRepertoire", "blackRepertoire"]),
-
-    layout() {
-      return { yaxis: { rangemode: "tozero" } };
-    },
 
     whiteEasiness(): number[] {
       return this.easinessFromRepertoire(this.whiteRepertoire);

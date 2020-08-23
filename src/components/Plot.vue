@@ -49,7 +49,10 @@ const methods = functions.reduce((all, funcName) => {
 
 export default {
   props: {
-    autoResize: Boolean,
+    autoResize: {
+      type: Boolean,
+      default: true
+    },
     watchShallow: {
       type: Boolean,
       default: false
