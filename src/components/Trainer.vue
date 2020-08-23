@@ -6,7 +6,7 @@
       :fen="activePosition.fen",
       :orientation="boardOrientation",
       @onMove="onBoardMove")
-    chessboard(
+    chessboard.grayscale(
       v-else,
       :fen="previewPositionFen",
       :orientation="boardOrientation")
@@ -213,3 +213,9 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style lang="scss" scoped>
+.grayscale {
+  filter: grayscale(100%);
+}
+</style>
