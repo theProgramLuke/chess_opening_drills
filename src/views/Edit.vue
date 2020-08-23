@@ -16,12 +16,17 @@
         v-btn(v-if="showTree", @click="showTree = false", icon)
           v-icon mdi-chevron-double-left
 
-      v-col.d-flex.justify-center
-        chessboard(
-          v-if="activePosition.fen",
-          :fen="activePosition.fen",
-          :orientation="boardOrientation",
-          @onMove="onBoardMove")
+      v-col
+        v-container
+          v-row.d-flex.justify-center
+            chessboard(
+              v-if="activePosition.fen",
+              :fen="activePosition.fen",
+              :orientation="boardOrientation",
+              @onMove="onBoardMove")
+
+          v-row
+            v-textarea(v-model="activePosition.comment", outlined, no-resize)
 
       v-col.d-flex.align-center(cols="auto")
         v-btn(v-if="!showMoves", @click="showMoves = true", icon)
@@ -36,11 +41,6 @@
           :variations="nextMoves",
           @onSelectMove="updateBoard",
           @onDeleteMove="removeRepertoireMove")
-
-        br
-        div(v-if="activePosition.trainingHistory.length > 0")
-            div Next repetition scheduled for {{ nextScheduled }}
-            div Training difficulty: {{ easiness }}
 </template>
 
 <script lang="ts">

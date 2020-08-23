@@ -23,7 +23,7 @@
 
         v-card-actions
           v-btn.ma-2(
-            @click="onImport",
+            @click="loading = true; onImport()",
             :disabled="!valid",
             :loading="loading",
             color="primary")
@@ -84,7 +84,6 @@ export default Vue.extend({
 
     async onImport() {
       if (this.inputFile) {
-        this.loading = true;
         this.inputFile.text().then(pgnText => {
           try {
             const pgn = parsePgn(pgnText);
