@@ -1,6 +1,7 @@
 # chess_opening_drills
 
 [![Build Status](https://travis-ci.org/theProgramLuke/chess_opening_drills.svg?branch=main)](https://travis-ci.org/theProgramLuke/chess_opening_drills)
+[![CodeFactor](https://www.codefactor.io/repository/github/theprogramluke/chess_opening_drills/badge)](https://www.codefactor.io/repository/github/theprogramluke/chess_opening_drills)
 
 A cross platform chess opening preparation tool.
 
