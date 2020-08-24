@@ -24,6 +24,8 @@ export default new Vuex.Store({
     warning: storage.get("warning"),
     info: storage.get("info"),
     success: storage.get("success"),
+    boardTheme: storage.get("boardTheme"),
+    pieceTheme: storage.get("pieceTheme"),
     whiteRepertoire: Repertoire.FromSaved(storage.get("whiteRepertoire")),
     blackRepertoire: Repertoire.FromSaved(storage.get("blackRepertoire"))
   },
@@ -32,6 +34,16 @@ export default new Vuex.Store({
     setDarkMode: (state, darkMode): void => {
       state.darkMode = darkMode;
       storage.set("darkMode", darkMode);
+    },
+
+    setBoardTheme: (state, boardTheme): void => {
+      state.boardTheme = boardTheme;
+      storage.set("boardTheme", boardTheme);
+    },
+
+    setPieceTheme: (state, pieceTheme): void => {
+      state.pieceTheme = pieceTheme;
+      storage.set("pieceTheme", pieceTheme);
     },
 
     setColor: function(

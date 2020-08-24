@@ -1,12 +1,14 @@
 <template lang="pug">
-  div.wood2
-    div.cg-board.is2d.california(ref="board")
+  div.chessboard(:class="boardTheme")
+    div.cg-board.is2d(ref="board", :class="pieceTheme")
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { PropType } from "vue";
+import { mapState, mapMutations } from "vuex";
 import _ from "lodash";
+
 import { Chessground } from "chessground";
 import { Chess, Move, ChessInstance, Square, PieceType } from "chess.js";
 import { Api } from "chessground/api";
@@ -47,6 +49,7 @@ class ChessBoardData {
 
 export default Vue.extend({
   name: "chessboard",
+
   props: {
     fen: {
       type: String,
@@ -66,6 +69,11 @@ export default Vue.extend({
       default: Side.White
     }
   },
+
+  computed: {
+    ...mapState(["boardTheme", "pieceTheme"])
+  },
+
   watch: {
     fen: function(newFen: string) {
       this.loadPosition(newFen);
@@ -77,8 +85,12 @@ export default Vue.extend({
       if (this.showThreats) {
         this.paintThreats();
       }
+    },
+    pieceTheme: function(_newTheme: string) {
+      setTimeout(this.$forceUpdate, 1000);
     }
   },
+
   methods: {
     possibleMoves(): Dests {
       const dests: Dests = new Map();
@@ -231,9 +243,11 @@ export default Vue.extend({
       }
     }
   },
+
   mounted() {
     this.loadPosition();
   },
+
   data: function() {
     return new ChessBoardData(new Chess(""), []);
   }

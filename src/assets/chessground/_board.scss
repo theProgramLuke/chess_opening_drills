@@ -31,4 +31,8 @@ $board-files: (
   .#{$color} .is2d cg-board {
     background-image: url(board/#{$file});
   }
+
+  .chessboard.#{$color} {
+    background-color: transparent !important;
+  }
 }
