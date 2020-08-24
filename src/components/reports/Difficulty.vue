@@ -29,6 +29,22 @@ import Plot from "@/components/Plot.vue";
 import { Repertoire } from "@/store/repertoire";
 import { TrainingMode } from "@/store/trainingMode";
 
+function easinessFromRepertoire(repertoire: Repertoire): number[] {
+  const easiness: number[] = [];
+
+  _.forEach(
+    _.filter(
+      repertoire.positions,
+      position => !position.IncludeForTrainingMode(TrainingMode.New)
+    ),
+    position => {
+      easiness.push(position.easinessFactor);
+    }
+  );
+
+  return easiness;
+}
+
 export default Vue.extend({
   name: "DifficultyReport",
 
@@ -45,11 +61,11 @@ export default Vue.extend({
     ...mapState(["darkMode", "whiteRepertoire", "blackRepertoire"]),
 
     whiteEasiness(): number[] {
-      return this.easinessFromRepertoire(this.whiteRepertoire);
+      return easinessFromRepertoire(this.whiteRepertoire);
     },
 
     blackEasiness(): number[] {
-      return this.easinessFromRepertoire(this.blackRepertoire);
+      return easinessFromRepertoire(this.blackRepertoire);
     },
 
     showNoPositions(): boolean {
@@ -69,24 +85,6 @@ export default Vue.extend({
           x: this.blackEasiness
         }
       ];
-    }
-  },
-
-  methods: {
-    easinessFromRepertoire(repertoire: Repertoire): number[] {
-      const easiness: number[] = [];
-
-      _.forEach(
-        _.filter(
-          repertoire.positions,
-          position => !position.IncludeForTrainingMode(TrainingMode.New)
-        ),
-        position => {
-          easiness.push(position.easinessFactor);
-        }
-      );
-
-      return easiness;
     }
   }
 });

@@ -72,8 +72,8 @@ export default Vue.extend({
   },
 
   methods: {
-    onCreate() {
-      if (this.$refs.form.validate()) {
+    onCreate(): void {
+      if ((this.$refs.form as Vue & { validate: () => boolean }).validate()) {
         this.$emit("onCreate", this.parentTag, this.name);
         this.showDialog = false;
         this.name = "";

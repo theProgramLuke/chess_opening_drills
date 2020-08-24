@@ -154,7 +154,9 @@ export default Vue.extend({
           this.nextTrainingPosition();
         } else {
           // forces a reload of the previous position
-          this.$refs.board.loadPosition();
+          (this.$refs.board as Vue & {
+            loadPosition: () => void;
+          }).loadPosition();
         }
       }
     },
@@ -180,7 +182,7 @@ export default Vue.extend({
     nextVariation() {
       if (this.activeVariation.length === 1) {
         // force reset of board since fen was the same
-        this.$refs.board.loadPosition();
+        (this.$refs.board as Vue & { loadPosition: () => void }).loadPosition();
       }
       this.variationIndex++;
       this.plyCount = 0;

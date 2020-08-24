@@ -47,11 +47,12 @@ export default Vue.extend({
   },
 
   methods: {
-    copy(): void {
+    copy() {
       navigator.clipboard.writeText(this.pgnText);
     },
 
     save(): void {
+      const pgnText = this.pgnText;
       saveAs(
         new Blob([this.pgnText], { type: "text/plain;charset=utf-8" }),
         `Exported ${this.tag.name}.pgn`
