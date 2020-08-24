@@ -1,5 +1,7 @@
 # chess_opening_drills
 
+[![Build Status](https://travis-ci.org/theProgramLuke/chess_opening_drills.svg?branch=main)](https://travis-ci.org/theProgramLuke/chess_opening_drills)
+
 A cross platform chess opening preparation tool.
 
 **This is an unfinished tool under active development and should be considered unstable. Saved repertoires may be incompatible with future versions. Keep PGN backups of your repertoire.**
