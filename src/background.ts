@@ -3,7 +3,9 @@
 import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
+import path from "path";
 const isDevelopment = process.env.NODE_ENV !== "production";
+declare const __static: string; // https://github.com/electron-userland/electron-webpack/issues/172
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -21,10 +23,11 @@ function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true
-    }
+    },
+    icon: path.join(__static, "icon.png")
   });
 
-  // win.setMenu(null);
+  win.setMenu(null);
   win.maximize();
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
