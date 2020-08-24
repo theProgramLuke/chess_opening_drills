@@ -180,6 +180,7 @@ cg-board piece.fading {
   pointer-events: none;
   opacity: 0.8;
   font-size: 9px;
+  background-color: transparent !important;
 }
 .cg-wrap coords.ranks {
   right: -15px;
