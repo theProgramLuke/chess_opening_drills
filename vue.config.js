@@ -2,7 +2,10 @@ module.exports = {
   transpileDependencies: ["vuetify"],
   configureWebpack: {
     devtool: "source-map",
-    target: "electron-renderer"
+    target: "electron-renderer",
+    module: {
+      rules: [{ test: /chess.js/, parser: { amd: false } }]
+    }
   },
   pluginOptions: {
     electronBuilder: {
