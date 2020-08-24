@@ -13,7 +13,7 @@
 
       tag-creator(
         :parentTag="item.item",
-        :orientation="orientation",
+        :activePosition="activePosition",
         @onCreate="onCreate")
 
       tag-deleter(
@@ -52,8 +52,8 @@ export default Vue.extend({
       required: true
     },
 
-    orientation: {
-      type: Number,
+    activePosition: {
+      type: RepertoirePosition,
       required: true
     }
   },

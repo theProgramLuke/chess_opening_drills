@@ -37,6 +37,7 @@
 import Vue from "vue";
 import { mapState, mapMutations } from "vuex";
 import { RepertoireTag } from "@/store/repertoireTag";
+import { RepertoirePosition } from "@/store/repertoirePosition";
 
 export default Vue.extend({
   data: () => ({
@@ -52,15 +53,21 @@ export default Vue.extend({
       required: true
     },
 
-    orientation: {
-      type: Number,
+    activePosition: {
+      type: RepertoirePosition,
       required: true
     }
   },
 
   computed: {
     disabled(): boolean {
-      return this.parentTag.forSide !== this.orientation;
+      let isChildPosition = false;
+
+      this.parentTag.position.VisitChildren(child => {
+        isChildPosition = isChildPosition || child === this.activePosition;
+      });
+
+      return !isChildPosition;
     }
   },
 

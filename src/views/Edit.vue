@@ -5,8 +5,8 @@
         tag-tree(
           :whiteRepertoire="whiteRepertoire",
           :blackRepertoire="blackRepertoire",
+          :activePosition="activePosition",
           :showTree="showTree",
-          :orientation="boardOrientation",
           @onSelect="updateBoard",
           @onDelete="removeRepertoireTag",
           @onCreate="addNewRepertoireTag")
