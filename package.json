@@ -1,5 +1,7 @@
 {
   "name": "chess_opening_drills",
+  "description": "A cross platform chess opening preparation tool.",
+  "author": "theProgramLuke",
   "version": "0.1.0",
   "private": true,
   "scripts": {

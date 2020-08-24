@@ -1,0 +1,15 @@
+linux:
+  category: Game
+  target:
+    - AppImage
+
+win:
+  target:
+    - target: portable
+      arch:
+        - x64
+        - ia32
+    - target: nsis
+      arch:
+        - x64
+        - ia32
