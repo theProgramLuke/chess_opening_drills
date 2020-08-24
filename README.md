@@ -5,8 +5,6 @@
 
 A cross platform chess opening preparation tool.
 
-I do not have access to a Mac, so I haven't tested that build.
-
 **This is an unfinished tool under active development and should be considered unstable. Saved repertoires may be incompatible with future versions. Keep PGN backups of your repertoire.**
 
 ## Features

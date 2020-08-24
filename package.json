@@ -13,6 +13,7 @@
     "lint": "yarn pegjs && vue-cli-service lint",
     "electron:build": "yarn pegjs && vue-cli-service electron:build",
     "electron:serve": "yarn pegjs && vue-cli-service electron:serve",
+    "release": "yarn electron:build -p onTagOrDraft",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
