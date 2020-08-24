@@ -27,7 +27,7 @@ function createWindow() {
     icon: path.join(__static, "icon.png")
   });
 
-  // win.setMenu(null);
+  win.setMenu(null);
   win.maximize();
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
