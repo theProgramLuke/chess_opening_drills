@@ -24,7 +24,6 @@
 <script lang="ts">
 import Vue from "vue";
 import { saveAs } from "file-saver";
-import { mapState, mapMutations } from "vuex";
 
 import { RepertoireTag } from "@/store/repertoireTag";
 
