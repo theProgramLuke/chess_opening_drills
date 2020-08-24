@@ -15,19 +15,18 @@ describe("parse", () => {
           { name: "Black", value: "you" }
         ],
         moves: [
-          { comments: [], move: "e4", moveNumber: 1 },
-          { comments: [], move: "e5" },
-          { comments: [], move: "Nf3", moveNumber: 2 },
-          { comments: [], move: "Nc6" },
-          { comments: [], move: "Bc4", moveNumber: 3 },
+          { move: "e4", moveNumber: 1 },
+          { move: "e5" },
+          { move: "Nf3", moveNumber: 2 },
+          { move: "Nc6" },
+          { move: "Bc4", moveNumber: 3 },
           {
-            comments: [],
             move: "Bc5",
             ravs: [
               {
                 moves: [
                   {
-                    comments: [{ text: "is the two knights" }],
+                    comments: "is the two knights",
                     move: "...Nf6",
                     moveNumber: 3
                   }
@@ -36,14 +35,14 @@ describe("parse", () => {
               }
             ]
           },
-          { comments: [], move: "b4", moveNumber: 4 },
-          { comments: [], move: "Bxb4" },
-          { comments: [], move: "c3", moveNumber: 5 },
-          { comments: [], move: "Ba5" },
-          { comments: [], move: "d4", moveNumber: 6 },
-          { comments: [], move: "exd4" },
-          { comments: [], move: "O-O", moveNumber: 7 },
-          { comments: [], move: "Nge7", nags: ["$1"] }
+          { move: "b4", moveNumber: 4 },
+          { move: "Bxb4" },
+          { move: "c3", moveNumber: 5 },
+          { move: "Ba5" },
+          { move: "d4", moveNumber: 6 },
+          { move: "exd4" },
+          { move: "O-O", moveNumber: 7 },
+          { move: "Nge7", nags: ["$1"] }
         ],
         result: "*"
       }

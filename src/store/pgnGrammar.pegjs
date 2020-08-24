@@ -44,17 +44,24 @@
         };
     }
 
-    function make_move(moveNumber: number, move: string, nags: string[], ravs: PgnRav[], comments: string[], comments2: string[]): PgnMove {
+    function make_move(
+        moveNumber: number,
+        move: string,
+        nags: string[],
+        ravs: PgnRav[],
+        comments: {text: string, command: string}[],
+        comments2: {text: string, command: string}[]
+    ): PgnMove {
         var m: PgnMove = {};
         if (moveNumber) m.moveNumber = moveNumber;
         if (move) m.move = move;
         if (nags && nags.length) m.nags = nags;
         if (ravs && ravs.length) m.ravs = ravs;
-        if (comments.length > 0 && comments[0]["text"]) {
+        if (comments.length) {
             m.comments = comments[0].text;
         }
-        if (comments2.length > 0 && comments2[0]["text"]) {
-            m.comments = comments2[0].text;
+        if (comments2.length) {
+            m.comments = comments[0].text;
         }
         return m;
     }
