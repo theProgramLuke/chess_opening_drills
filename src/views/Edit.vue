@@ -150,11 +150,31 @@ export default Vue.extend({
           []
         )
       });
+    },
+
+    goToNextPosition() {
+      if (!_.isEmpty(this.activePosition.children)) {
+        this.updateBoard(this.activePosition.children[0].position);
+      }
+    },
+
+    goToPreviousPosition() {
+      if (!_.isEmpty(this.activePosition.parents)) {
+        this.updateBoard(this.activePosition.parents[0]);
+      }
     }
   },
 
   created() {
     this.updateBoard(this.whiteRepertoire.tags[0].position);
+
+    window.addEventListener("wheel", event => {
+      if (event.deltaY > 0) {
+        this.goToNextPosition();
+      } else {
+        this.goToPreviousPosition();
+      }
+    });
   }
 });
 </script>
