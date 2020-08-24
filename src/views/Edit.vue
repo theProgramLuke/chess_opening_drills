@@ -26,7 +26,7 @@
               :orientation="boardOrientation",
               @onMove="onBoardMove")
 
-          v-row
+          v-row.mt-10
             v-textarea(v-model="activePosition.comment", outlined, no-resize)
 
       v-col.d-flex.align-center(cols="auto")
