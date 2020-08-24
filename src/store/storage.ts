@@ -45,7 +45,7 @@ export function GetPersistantStorage(): ElectronStore<Storage> {
       warning: "#FFC107",
       info: "#2196F3",
       success: "#4CAF50",
-      boardTheme: "wood",
+      boardTheme: "maple",
       pieceTheme: "staunty",
       whiteRepertoire: new Repertoire(
         [whiteStartPosition],

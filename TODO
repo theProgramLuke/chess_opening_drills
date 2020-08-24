@@ -1,6 +1,6 @@
 patch chess.js export # Blocked on yarn 2 failed install
-bug: Start training count is wrong
-customizable board theming
+bug: board covers screen on changing piece theme
+board fill width/height
 persist training options
 implement reset appearance
 edit error/warning for multiple choices from same position on my turn
