@@ -28,15 +28,14 @@
 <script lang="ts">
 import Vue from "vue";
 import _ from "lodash";
-import { mapState, mapMutations } from "vuex";
-import { RepertoireTag } from "@/store/repertoireTag";
+
 import TagDeleter from "@/components/TagDeleter.vue";
 import TagCreator from "@/components/TagCreator.vue";
 import TagExporter from "@/components/TagExporter.vue";
 import TagImporter from "@/components/TagImporter.vue";
+import { RepertoireTag } from "@/store/repertoireTag";
 import { Repertoire } from "@/store/repertoire";
 import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Side } from "@/store/side";
 
 export default Vue.extend({
   components: { TagDeleter, TagCreator, TagExporter, TagImporter },

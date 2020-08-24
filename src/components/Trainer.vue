@@ -129,7 +129,7 @@ export default Vue.extend({
   },
 
   watch: {
-    previewing(newPreviewing: boolean, oldPreviewing: boolean) {
+    previewing(newPreviewing: boolean, _oldPreviewing: boolean) {
       if (newPreviewing) {
         this.advancePreview();
       }

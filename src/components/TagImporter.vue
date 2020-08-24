@@ -38,12 +38,10 @@
 <script lang="ts">
 import Vue from "vue";
 import _ from "lodash";
-import { saveAs } from "file-saver";
 import { mapMutations } from "vuex";
 
-import { parsePgn, PgnGame } from "@/store/pgnParser";
+import { parsePgn } from "@/store/pgnParser";
 import { RepertoireTag } from "@/store/repertoireTag";
-import { RepertoirePosition } from "@/store/repertoirePosition";
 
 declare interface ImporterComponentData {
   showDialog: boolean;

@@ -1,5 +1,3 @@
-import _ from "lodash";
-
 import { RepertoirePosition } from "@/store/repertoirePosition";
 
 export class SavedMove {

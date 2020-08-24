@@ -6,7 +6,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { PropType } from "vue";
-import { mapState, mapMutations } from "vuex";
+import { mapState } from "vuex";
 import _ from "lodash";
 
 import { Chessground } from "chessground";
@@ -78,7 +78,7 @@ export default Vue.extend({
     fen: function(newFen: string) {
       this.loadPosition(newFen);
     },
-    orientation: function(orientation) {
+    orientation: function() {
       this.loadPosition();
     },
     showThreats: function(st) {

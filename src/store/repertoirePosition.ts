@@ -113,7 +113,7 @@ export class RepertoirePosition {
 
   Unlink(): void {
     _.forEach(this.parents, parent =>
-      _.remove(parent.children, (child, _index, _array) => {
+      _.remove(parent.children, child => {
         const match = child.position === this;
         return match;
       })

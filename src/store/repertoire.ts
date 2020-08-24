@@ -71,7 +71,7 @@ export class Repertoire {
   private RemoveOrphanPositionsOnce(): boolean {
     const removedOrphans = _.remove(
       this.positions,
-      (position, index, array) => index !== 0 && _.isEmpty(position.parents)
+      (position, index) => index !== 0 && _.isEmpty(position.parents)
     );
     _.forEach(removedOrphans, orphan => orphan.Unlink());
     return !_.isEmpty(removedOrphans);

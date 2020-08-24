@@ -11,11 +11,8 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { mapState, mapMutations } from "vuex";
 
 import MoveDeleter from "@/components/MoveDeleter.vue";
-import { RepertoireTag } from "@/store/repertoireTag";
-import { Turn } from "@/store/turn";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Move } from "@/store/move";
 

@@ -26,9 +26,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { mapState, mapMutations } from "vuex";
-import { RepertoireTag } from "@/store/repertoireTag";
-import { Turn } from "@/store/turn";
+
 import { RepertoirePosition } from "@/store/repertoirePosition";
 
 export default Vue.extend({

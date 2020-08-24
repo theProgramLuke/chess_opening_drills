@@ -14,7 +14,6 @@
 <script lang="ts">
 import Vue from "vue";
 
-import { RepertoireTag } from "@/store/repertoireTag";
 import { Move } from "@/store/move";
 
 export default Vue.extend({
