@@ -13,7 +13,7 @@ import { Chessground } from "chessground";
 import { Chess, Move, ChessInstance, Square, PieceType } from "chess.js";
 import { Api } from "chessground/api";
 import { DrawShape } from "chessground/draw";
-import { Color, Dests, MoveMetadata, Key } from "chessground/types";
+import { Color, Dests, Key } from "chessground/types";
 import { Side } from "@/store/side";
 
 export declare type Threats = {
@@ -81,13 +81,10 @@ export default Vue.extend({
     orientation: function() {
       this.loadPosition();
     },
-    showThreats: function(st) {
+    showThreats: function() {
       if (this.showThreats) {
         this.paintThreats();
       }
-    },
-    pieceTheme: function(_newTheme: string) {
-      setTimeout(this.$forceUpdate, 1000);
     }
   },
 
@@ -153,7 +150,7 @@ export default Vue.extend({
       return filteredPromotions.length > 0; // The current movement is a promotion
     },
     changeTurn() {
-      return (orig: Key, dest: Key, metadata: MoveMetadata): void => {
+      return (orig: Key, dest: Key): void => {
         if (this.isPromotion(orig, dest)) {
           this.promoteTo = this.onPromotion;
         }

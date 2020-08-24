@@ -8,7 +8,7 @@ import { Repertoire } from "./repertoire";
 import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
 import { TrainingEvent } from "./TrainingEvent";
-import { PgnGame, parsePgn } from "./pgnParser";
+import { PgnGame } from "./pgnParser";
 
 Vue.use(Vuex);
 
@@ -172,7 +172,7 @@ export default new Vuex.Store({
       }
     },
 
-    clearStorage: (state): void => {
+    clearStorage(): void {
       storage.clear();
     }
   },

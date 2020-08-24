@@ -64,7 +64,6 @@ import {
 } from "@/store/repertoireTag";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { TrainingMode } from "@/store/trainingMode";
-import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";
 
 const minPlaybackSpeed = 0.2;
