@@ -41,18 +41,17 @@ export default Vue.extend({
   },
 
   computed: {
-    pgnText() {
+    pgnText(): string {
       return this.tag.position.AsPgn();
     }
   },
 
   methods: {
-    copy() {
+    copy(): void {
       navigator.clipboard.writeText(this.pgnText);
     },
 
     save(): void {
-      const pgnText = this.pgnText;
       saveAs(
         new Blob([this.pgnText], { type: "text/plain;charset=utf-8" }),
         `Exported ${this.tag.name}.pgn`
