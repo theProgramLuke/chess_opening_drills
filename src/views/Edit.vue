@@ -17,7 +17,7 @@
         v-btn(v-if="showTree", @click="showTree = false", icon)
           v-icon mdi-chevron-double-left
 
-      v-col
+      v-col(@wheel="onScroll")
         v-container
           v-row.d-flex.justify-center
             chessboard(
@@ -162,19 +162,19 @@ export default Vue.extend({
       if (!_.isEmpty(this.activePosition.parents)) {
         this.updateBoard(this.activePosition.parents[0]);
       }
-    }
-  },
+    },
 
-  created() {
-    this.updateBoard(this.whiteRepertoire.tags[0].position);
-
-    window.addEventListener("wheel", event => {
+    onScroll(event: WheelEvent) {
       if (event.deltaY > 0) {
         this.goToNextPosition();
       } else {
         this.goToPreviousPosition();
       }
-    });
+    }
+  },
+
+  created() {
+    this.updateBoard(this.whiteRepertoire.tags[0].position);
   }
 });
 </script>
