@@ -1,4 +1,3 @@
-patch chess.js export # Blocked on yarn 2 failed install
 bug: board covers screen on changing piece theme
 board fill width/height
 persist training options
