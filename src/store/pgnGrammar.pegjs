@@ -44,13 +44,18 @@
         };
     }
 
-    function make_move(moveNumber: number, move: string, nags: string[], ravs: PgnRav[], comments: string): PgnMove {
+    function make_move(moveNumber: number, move: string, nags: string[], ravs: PgnRav[], comments: string[], comments2: string[]): PgnMove {
         var m: PgnMove = {};
         if (moveNumber) m.moveNumber = moveNumber;
         if (move) m.move = move;
         if (nags && nags.length) m.nags = nags;
         if (ravs && ravs.length) m.ravs = ravs;
-        if (comments) m.comments = comments;
+        if (comments.length > 0 && comments[0]["text"]) {
+            m.comments = comments[0].text;
+        }
+        if (comments2.length > 0 && comments2[0]["text"]) {
+            m.comments = comments2[0].text;
+        }
         return m;
     }
 
@@ -148,7 +153,8 @@ move = mn:move_number?
        nags:(whitespace+ n:nag {return n})*
        com:(whitespace+ c2:comment {return c2})* 
        ravs:(whitespace+ r:rav {return r})*
-       {return make_move(mn, m, nags, ravs, com)}
+       com2:(whitespace+ c3:comment {return c3})* 
+       {return make_move(mn, m, nags, ravs, com, com2)}
 
 movetext = first:move rest:(whitespace+ move)* {return first ? [first].concat(rest.map(function(m: string[]) {return m[1]})) : []}
 
