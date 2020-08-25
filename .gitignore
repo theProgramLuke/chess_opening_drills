@@ -1,6 +1,9 @@
 # Pegjs results
 src/store/pgnGrammar.ts
 
+# Code coverage reports
+coverage
+
 # Common files
 .DS_Store
 node_modules
