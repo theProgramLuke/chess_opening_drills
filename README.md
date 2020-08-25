@@ -16,7 +16,7 @@ A cross platform chess opening preparation tool.
 
 ## Roadmap
 
-See [TODO](https://github.com/theProgramLuke/chess_opening_drills/blob/main/TODO).
+See [Roadmap.md](https://github.com/theProgramLuke/chess_opening_drills/blob/main/Roadmap.md).
 
 ## Project setup
 
