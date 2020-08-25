@@ -21,15 +21,20 @@ script:
         -v ~/.cache/electron:/root/.cache/electron \
         -v ~/.cache/electron-builder:/root/.cache/electron-builder \
         electronuserland/builder:wine \
-        /bin/bash -c "yarn global add codecov && yarn --link-duplicates --freeze-lockfile && yarn test:unit && yarn release --linux --win && codecov" &&
+        /bin/bash -c "yarn --link-duplicates --freeze-lockfile && yarn test:unit && yarn release --linux --win" &&
       TRAVIS_CMD=$ORIG_CMD &&
       unset ORIG_CMD
     else
       yarn test:unit
       yarn release
     fi
+    npm install codecov -g
+
 before_cache:
   - rm -rf $HOME/.cache/electron-builder/wine
+
+after_success:
+  - codecov
 
 branches:
   except:
