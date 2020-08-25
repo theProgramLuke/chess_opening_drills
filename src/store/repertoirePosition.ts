@@ -286,7 +286,7 @@ export class RepertoirePosition {
       _.forEach(_.range(0, path.length, 2), (i: number) => {
         const whiteMove = path[i];
 
-        if (path.length === i) {
+        if (path.length === i + 1) {
           turns.push(new Turn(whiteMove));
         } else {
           const blackMove = path[i + 1];
