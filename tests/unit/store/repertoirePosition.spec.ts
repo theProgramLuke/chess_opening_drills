@@ -78,6 +78,12 @@ describe("RepertoirePosition", () => {
       expect(paths).toEqual([[new Turn(e3, e3e6), new Turn(e3e6e4, e3e6e4e5)]]);
     });
 
+    it("returns a half move when white had the last move", () => {
+      const paths = e3e6e4.position.GetTurnLists();
+
+      expect(paths).toEqual([[new Turn(e3, e3e6), new Turn(e3e6e4)]]);
+    });
+
     it("returns multiple turn lists when there are tranpositions", () => {
       const paths = e3e6d3.position.GetTurnLists();
 
