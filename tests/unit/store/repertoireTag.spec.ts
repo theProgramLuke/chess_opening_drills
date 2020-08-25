@@ -2,7 +2,8 @@ import _, { isEmpty } from "lodash";
 
 import {
   GetTrainingPositions,
-  GetTrainingMoveLists
+  GetTrainingMoveLists,
+  RepertoireTag
 } from "@/store/repertoireTag";
 import {
   ResetTestRepertoire,
@@ -18,6 +19,7 @@ import {
   d3e6e3
 } from "./testDataRepertoire";
 import { TrainingMode } from "@/store/trainingMode";
+import { Side } from "@/store/side";
 
 beforeEach(() => {
   ResetTestRepertoire();
@@ -25,6 +27,23 @@ beforeEach(() => {
 });
 
 describe("RepertoireTag", () => {
+  describe("AddChild", () => {
+    it("should add the tag as a child", () => {
+      const tag = new RepertoireTag(Side.White, "", start, start.fen, []);
+      const childTag = new RepertoireTag(
+        Side.White,
+        "",
+        e3.position,
+        e3.position.fen,
+        []
+      );
+
+      tag.AddChild(childTag);
+
+      expect(tag.children).toEqual([childTag]);
+    });
+  });
+
   describe("GetTrainingPositions", () => {
     it("should get no moves when no training modes are specified", () => {
       const trainingPositions = GetTrainingPositions([], [White, Black]);
