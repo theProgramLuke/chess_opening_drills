@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { EOL } from "os";
 
 import {
   RepertoirePosition,
@@ -94,10 +95,22 @@ describe("RepertoirePosition", () => {
     });
   });
 
+  describe("AsPgn", () => {
+    beforeEach(LinkTestPositions);
+
+    it("generates the pgn from a position", () => {
+      const expected = `[Event "N/A"]${EOL}[Site "N/A"]${EOL}[Date 2020.7.25"${EOL}[Round "N/A]"${EOL}[White "N/A"]${EOL}[Black "N/A"]${EOL}[Result "*"]${EOL}[SetUp "1"]${EOL}[SetUp "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"]${EOL}${EOL}1. e3 ( 1. d3 e6 2. e3 ) e6 2. d3 ( 2. e4 e5 )`;
+
+      const pgn = start.AsPgn();
+
+      expect(pgn).toEqual(expected);
+    });
+  });
+
   describe("AsPgnMoveText", () => {
     beforeEach(LinkTestPositions);
 
-    it("generates the pgn of position", () => {
+    it("generates the pgn moves of position", () => {
       const pgnMoveText = start.AsPgnMoveText();
       const expectedPgnMoveText =
         "1. e3 ( 1. d3 e6 2. e3 ) e6 2. d3 ( 2. e4 e5 )";
