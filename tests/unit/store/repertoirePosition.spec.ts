@@ -188,6 +188,26 @@ describe("RepertoirePosition", () => {
       expect(position.trainingHistory).toEqual(events);
     });
 
+    it.each([
+      [1, 0, 2.6],
+      [1, 5, 2.54],
+      [1, 10, 2.48],
+      [2, 0, 2.42],
+      [2, 10, 2.36],
+      [3, 0, 2.3]
+    ])(
+      "adding an event with %s attempts and response time of %s to a new position should give an easiness factor of %s",
+      (attempts, responseTimeSeconds, easiness) => {
+        const position = new RepertoirePosition("", "", Side.White);
+
+        position.AddTrainingEvent(
+          new TrainingEvent(attempts, responseTimeSeconds)
+        );
+
+        expect(position.easinessFactor).toBe(easiness);
+      }
+    );
+
     it("should schedule 1 day later for the first repetition", () => {
       const position = new RepertoirePosition("", "", Side.White);
 
