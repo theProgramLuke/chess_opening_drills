@@ -28,8 +28,13 @@ script:
       yarn test:unit
       yarn release
     fi
+    npm install codecov -g
+
 before_cache:
   - rm -rf $HOME/.cache/electron-builder/wine
+
+after_success:
+  - codecov
 
 branches:
   except:

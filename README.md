@@ -1,7 +1,11 @@
 # chess_opening_drills
 
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![Build Status](https://travis-ci.org/theProgramLuke/chess_opening_drills.svg?branch=main)](https://travis-ci.org/theProgramLuke/chess_opening_drills)
 [![CodeFactor](https://www.codefactor.io/repository/github/theprogramluke/chess_opening_drills/badge)](https://www.codefactor.io/repository/github/theprogramluke/chess_opening_drills)
+
+[![Dependency Status](https://david-dm.org/theProgramLuke/chess_opening_drills.svg)](https://david-dm.org/theProgramLuke/chess_opening_drills)
+[![devDependency Status](https://david-dm.org/theProgramLuke/chess_opening_drills/dev-status.svg)](https://david-dm.org/theProgramLuke/chess_opening_drills#info=devDependencies)
 
 A cross platform chess opening preparation tool.
 
