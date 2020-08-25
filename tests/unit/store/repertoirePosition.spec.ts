@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { EOL } from "os";
 
 import {
   RepertoirePosition,
@@ -78,6 +79,12 @@ describe("RepertoirePosition", () => {
       expect(paths).toEqual([[new Turn(e3, e3e6), new Turn(e3e6e4, e3e6e4e5)]]);
     });
 
+    it("returns a half move when white had the last move", () => {
+      const paths = e3e6e4.position.GetTurnLists();
+
+      expect(paths).toEqual([[new Turn(e3, e3e6), new Turn(e3e6e4)]]);
+    });
+
     it("returns multiple turn lists when there are tranpositions", () => {
       const paths = e3e6d3.position.GetTurnLists();
 
@@ -88,10 +95,22 @@ describe("RepertoirePosition", () => {
     });
   });
 
+  describe("AsPgn", () => {
+    beforeEach(LinkTestPositions);
+
+    it("generates the pgn from a position", () => {
+      const expected = `[Event "N/A"]${EOL}[Site "N/A"]${EOL}[Date 2020.7.25"${EOL}[Round "N/A]"${EOL}[White "N/A"]${EOL}[Black "N/A"]${EOL}[Result "*"]${EOL}[SetUp "1"]${EOL}[SetUp "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"]${EOL}${EOL}1. e3 ( 1. d3 e6 2. e3 ) e6 2. d3 ( 2. e4 e5 )`;
+
+      const pgn = start.AsPgn();
+
+      expect(pgn).toEqual(expected);
+    });
+  });
+
   describe("AsPgnMoveText", () => {
     beforeEach(LinkTestPositions);
 
-    it("generates the pgn of position", () => {
+    it("generates the pgn moves of position", () => {
       const pgnMoveText = start.AsPgnMoveText();
       const expectedPgnMoveText =
         "1. e3 ( 1. d3 e6 2. e3 ) e6 2. d3 ( 2. e4 e5 )";
@@ -187,6 +206,26 @@ describe("RepertoirePosition", () => {
 
       expect(position.trainingHistory).toEqual(events);
     });
+
+    it.each([
+      [1, 0, 2.6],
+      [1, 5, 2.54],
+      [1, 10, 2.48],
+      [2, 0, 2.42],
+      [2, 10, 2.36],
+      [3, 0, 2.3]
+    ])(
+      "adding an event with %s attempts and response time of %s to a new position should give an easiness factor of %s",
+      (attempts, responseTimeSeconds, easiness) => {
+        const position = new RepertoirePosition("", "", Side.White);
+
+        position.AddTrainingEvent(
+          new TrainingEvent(attempts, responseTimeSeconds)
+        );
+
+        expect(position.easinessFactor).toBe(easiness);
+      }
+    );
 
     it("should schedule 1 day later for the first repetition", () => {
       const position = new RepertoirePosition("", "", Side.White);
