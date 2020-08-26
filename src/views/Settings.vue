@@ -17,7 +17,8 @@
               v-if="selectedColor",
               v-model="selectedColorValue")
 
-            v-btn(v-if="false", color="warning") Reset Appearance
+            v-btn(v-if="false", color="warning")
+              | Reset Appearance
 
         v-expansion-panel
           v-expansion-panel-header Board Appearance
@@ -33,12 +34,14 @@
               label="Pieces",
               solo)
 
-            chessboard(fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+            v-col(cols=4)
+              chessboard(fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
         v-expansion-panel
           v-expansion-panel-header Development
           v-expansion-panel-content.pa-2
-            v-btn(@click="clearStorage", color="error") Clear All Storage
+            v-btn(@click="clearStorage", color="error")
+             | Clear All Storage
 </template>
 
 <script lang="ts">
