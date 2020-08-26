@@ -43,7 +43,7 @@
         v-model="playbackSpeedSlideValue",
         :label="playbackSpeedLabel")
 
-      v-checkbox(v-if="false", label="Review entire variations", v-model="entireVariations")
+      v-checkbox(label="Review entire variations", v-model="entireVariations")
 
       v-card-actions
         v-btn(
@@ -177,7 +177,8 @@ export default Vue.extend({
           GetTrainingMoveLists(
             this.selectedModes,
             this.selectedTopics,
-            this.coercedDifficultyModeLimit
+            this.coercedDifficultyModeLimit,
+            this.entireVariations
           ),
           this.previewNewVariations,
           this.entireVariations,

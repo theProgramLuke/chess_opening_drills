@@ -160,14 +160,23 @@ function RemovePrefixes<T>(moveLists: T[][]): T[][] {
 export function GetTrainingMoveLists(
   modes: TrainingMode[],
   tags: RepertoireTag[],
-  difficultyModeLimit = 0
+  difficultyModeLimit = 0,
+  entireVariations = true
 ): Move[][] {
   const moveLists: Move[][] = [];
   const parents = GetTrainingPositions(modes, tags, difficultyModeLimit);
 
-  _.forEach(parents, parent =>
-    moveLists.push(...parent.children[0].position.RootPaths())
-  );
+  _.forEach(parents, parent => {
+    const paths = parent.children[0].position.RootPaths();
+
+    if (entireVariations) {
+      moveLists.push(...paths);
+    } else {
+      moveLists.push(..._.map(paths, p => _.takeRight(p, 2)));
+    }
+  });
+
+  console.log(moveLists);
 
   return RemovePrefixes(_.uniqWith(moveLists, _.isEqual));
 }
