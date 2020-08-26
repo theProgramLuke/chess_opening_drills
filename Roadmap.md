@@ -2,7 +2,6 @@
 
 _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/issues)._
 
-- bug: board covers screen on changing piece theme
 - option to not replay entire line for training
 - implement reset appearance
 - edit error/warning for multiple choices from same position on my turn
