@@ -59,6 +59,8 @@ export default Vue.extend({
 
   computed: {
     previewing(): boolean {
+      const previewingEnabled = this.options.previewNewVariations;
+
       const anyNew =
         _.find(this.activeVariationPositions, position =>
           position.IncludeForTrainingMode(TrainingMode.New)
@@ -69,7 +71,7 @@ export default Vue.extend({
         this.variationIndex
       );
 
-      return anyNew && !alreadyPreviewed;
+      return previewingEnabled && anyNew && !alreadyPreviewed;
     },
 
     previewPositionFen(): string {
