@@ -312,7 +312,7 @@ export class RepertoirePosition {
     headers += EOL;
     headers += '[Site "N/A"]';
     headers += EOL;
-    headers += `[Date ${now.getUTCFullYear()}.${now.getUTCMonth()}.${now.getUTCDate()}"`;
+    headers += `[Date ${now.getUTCFullYear()}.${now.getUTCMonth()}.${now.getUTCDate()}"]`;
     headers += EOL;
     headers += '[Round "N/A]"';
     headers += EOL;

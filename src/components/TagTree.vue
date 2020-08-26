@@ -1,28 +1,26 @@
 <template lang="pug">
-  v-treeview(
-    :items="combinedTags",
-    dense,
-    open-on-click)
-    template(v-slot:label="item")
-      v-btn.mr-12.original-case(@click="onSelect(item.item.position)", text) {{ item.item.name }}
+  v-treeview.float-left(:items="combinedTags", dense, open-on-click)
+    template(v-slot:label="{ item }")
+      div
+        v-btn.original-case(@click="onSelect(item.position)", text, left) {{ item.name }}
 
-    template(v-slot:append="item")
-      tag-importer(
-        v-if="(item.item.id === 'whiteStart'|| item.item.id === 'blackStart')",
-        :tag="item.item")
+        br.d-none.d-sm-flex.d-md-none
 
-      tag-creator(
-        :parentTag="item.item",
-        :activePosition="activePosition",
-        @onCreate="onCreate")
+        tag-importer(
+          v-if="(item.id === 'whiteStart'|| item.id === 'blackStart')",
+          :tag="item")
 
-      tag-deleter(
-        :tag="item.item",
-        :disabled="(item.item.id === 'whiteStart'|| item.item.id === 'blackStart')",
-        @onDelete="onDelete")
+        tag-creator(
+          :parentTag="item",
+          :activePosition="activePosition",
+          @onCreate="onCreate")
 
-      tag-exporter(
-        :tag="item.item")
+        tag-deleter(
+          :tag="item",
+          :disabled="(item.id === 'whiteStart'|| item.id === 'blackStart')",
+          @onDelete="onDelete")
+
+        tag-exporter(:tag="item")
 </template>
 
 <script lang="ts">

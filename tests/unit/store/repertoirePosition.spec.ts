@@ -99,7 +99,8 @@ describe("RepertoirePosition", () => {
     beforeEach(LinkTestPositions);
 
     it("generates the pgn from a position", () => {
-      const expected = `[Event "N/A"]${EOL}[Site "N/A"]${EOL}[Date 2020.7.25"${EOL}[Round "N/A]"${EOL}[White "N/A"]${EOL}[Black "N/A"]${EOL}[Result "*"]${EOL}[SetUp "1"]${EOL}[SetUp "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"]${EOL}${EOL}1. e3 ( 1. d3 e6 2. e3 ) e6 2. d3 ( 2. e4 e5 )`;
+      const now = new Date(_.now());
+      const expected = `[Event "N/A"]${EOL}[Site "N/A"]${EOL}[Date ${now.getUTCFullYear()}.${now.getUTCMonth()}.${now.getUTCDate()}"]${EOL}[Round "N/A]"${EOL}[White "N/A"]${EOL}[Black "N/A"]${EOL}[Result "*"]${EOL}[SetUp "1"]${EOL}[SetUp "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"]${EOL}${EOL}1. e3 ( 1. d3 e6 2. e3 ) e6 2. d3 ( 2. e4 e5 )`;
 
       const pgn = start.AsPgn();
 

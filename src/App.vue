@@ -11,12 +11,12 @@
           v-list-item-content
             v-list-item-title {{ item.name }}
 
-    v-app-bar(app color="primary")
+    v-app-bar(app, color="primary")
       v-app-bar-nav-icon(@click.stop="drawer = !drawer")
       v-toolbar-title Chess Opening Drills
 
     v-main
-      v-container.fill-height(fluid).ma-0
+      v-container.fill-height.ma-0.px-0
         router-view
 </template>
 
