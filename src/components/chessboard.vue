@@ -1,6 +1,7 @@
 <template lang="pug">
   div.chessboard(:class="boardTheme")
-    div.cg-board.is2d(ref="board", :class="pieceTheme")
+    div(:class="pieceTheme")
+      div.cg-board.is2d(ref="board")
 </template>
 
 <script lang="ts">
@@ -85,6 +86,10 @@ export default Vue.extend({
       if (this.showThreats) {
         this.paintThreats();
       }
+    },
+    pieceTheme(newTheme, oldTheme) {
+      console.log(this.$refs.board);
+      console.log(newTheme, oldTheme);
     }
   },
 
