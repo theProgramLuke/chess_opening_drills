@@ -24,7 +24,9 @@ function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true
     },
-    icon: path.join(__static, "icon.png")
+    icon: path.join(__static, "icon.png"),
+    minHeight: 550,
+    minWidth: 700
   });
 
   win.setMenu(null);
