@@ -43,7 +43,8 @@ export default Vue.extend({
     startTime: _.now(),
     attempts: 0,
     previewIndex: 0,
-    previewedVariations: [-1] // -1 as type hint
+    previewedVariations: [-1], // -1 as type hint,
+    mistakeInVariation: false
   }),
 
   components: {
@@ -148,6 +149,11 @@ export default Vue.extend({
       if (threats.fen && threats.fen !== this.activePosition.fen) {
         this.attempts++;
         const correct = this.moveIsCorrect(threats.fen);
+
+        if (!correct) {
+          this.mistakeInVariation = true;
+        }
+
         const shouldContinue = correct || this.attempts >= maxAttempts;
 
         if (shouldContinue) {
@@ -189,7 +195,12 @@ export default Vue.extend({
         // force reset of board since fen was the same
         (this.$refs.board as Vue & { loadPosition: () => void }).loadPosition();
       }
-      this.variationIndex++;
+
+      if (!this.mistakeInVariation) {
+        this.variationIndex++;
+      }
+
+      this.mistakeInVariation = false;
       this.plyCount = 0;
 
       if (this.complete) {

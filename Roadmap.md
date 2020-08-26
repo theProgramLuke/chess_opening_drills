@@ -2,7 +2,6 @@
 
 _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/issues)._
 
-- repeat training variation on mistakes
 - implement reset appearance
 - edit error/warning for multiple choices from same position on my turn
 - add +- etc annotation to position
