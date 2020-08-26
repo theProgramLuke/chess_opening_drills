@@ -1,16 +1,17 @@
 <template lang="pug">
   v-container(v-if="!complete")
     v-row.d-flex.justify-center
-      chessboard(
-        v-if="!previewing"
-        ref="board",
-        :fen="activePosition.fen",
-        :orientation="boardOrientation",
-        @onMove="onBoardMove")
-      chessboard.grayscale(
-        v-else,
-        :fen="previewPositionFen",
-        :orientation="boardOrientation")
+      v-col(cols=6)
+        chessboard(
+          v-if="!previewing"
+          ref="board",
+          :fen="activePosition.fen",
+          :orientation="boardOrientation",
+          @onMove="onBoardMove")
+        chessboard.grayscale(
+          v-else,
+          :fen="previewPositionFen",
+          :orientation="boardOrientation")
 
     v-progress-linear.mt-10(
       :value="completionPercent",
