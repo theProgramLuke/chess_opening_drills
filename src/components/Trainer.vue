@@ -62,8 +62,10 @@ export default Vue.extend({
       const previewingEnabled = this.options.previewNewVariations;
 
       const anyNew =
-        _.find(this.activeVariationPositions, position =>
-          position.IncludeForTrainingMode(TrainingMode.New)
+        _.find(
+          this.activeVariationPositions,
+          position =>
+            position.IncludeForTrainingMode(TrainingMode.New) && position.myTurn
         ) || false;
 
       const alreadyPreviewed = _.includes(

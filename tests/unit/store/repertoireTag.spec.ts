@@ -91,5 +91,16 @@ describe("RepertoireTag", () => {
         [d3, d3e6, d3e6e3]
       ]);
     });
+
+    it("should get only the matching positions when not generating the entire move list", () => {
+      const trainingMoveLists = GetTrainingMoveLists(
+        [TrainingMode.New],
+        [White],
+        0,
+        false
+      );
+
+      expect(trainingMoveLists).toEqual([[e3], [e3e6, e3e6d3], [d3e6, d3e6e3]]);
+    });
   });
 });
