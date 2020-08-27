@@ -153,7 +153,7 @@ export default Vue.extend({
     },
 
     showMistakeArrow(): boolean {
-      return this.attempts > maxAttempts;
+      return this.attempts >= maxAttempts;
     }
   },
 
