@@ -176,7 +176,5 @@ export function GetTrainingMoveLists(
     }
   });
 
-  console.log(moveLists);
-
   return RemovePrefixes(_.uniqWith(moveLists, _.isEqual));
 }
