@@ -142,10 +142,7 @@ export default Vue.extend({
         const move = board.move(this.activeVariation[this.plyCount + 1].san);
 
         if (move) {
-          return [
-            // { orig: move.from, brush: "red" },
-            { orig: move.from, dest: move.to, brush: "red" }
-          ];
+          return [{ orig: move.from, dest: move.to, brush: "red" }];
         }
       }
 
