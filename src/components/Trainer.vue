@@ -173,10 +173,6 @@ export default Vue.extend({
         this.attempts++;
         const correct = this.moveIsCorrect(threats.fen);
 
-        if (!correct) {
-          this.mistakeInVariation = true;
-        }
-
         if (correct) {
           this.addTrainingEvent({
             position: this.activePosition,
@@ -185,6 +181,8 @@ export default Vue.extend({
 
           this.nextTrainingPosition();
         } else {
+          this.mistakeInVariation = true;
+
           // forces a reload of the previous position
           (this.$refs.board as Vue & {
             loadPosition: () => void;
