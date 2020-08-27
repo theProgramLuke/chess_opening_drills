@@ -56,14 +56,18 @@ export default Vue.extend({
       type: String,
       default: ""
     },
+    free: {
+      type: Boolean,
+      default: false
+    },
+    showThreats: {
+      type: Boolean,
+      default: false
+    },
     onPromotion: Object as PropType<Exclude<PieceType, "p">>,
     orientation: {
       type: Number,
       default: Side.White
-    },
-    shapes: {
-      type: Array,
-      default: () => []
     }
   },
 
@@ -77,6 +81,15 @@ export default Vue.extend({
     },
     orientation: function() {
       this.loadPosition();
+    },
+    showThreats: function() {
+      if (this.showThreats) {
+        this.paintThreats();
+      }
+    },
+    pieceTheme(newTheme, oldTheme) {
+      console.log(this.$refs.board);
+      console.log(newTheme, oldTheme);
     }
   },
 
@@ -93,7 +106,6 @@ export default Vue.extend({
       });
       return dests;
     },
-
     opponentMoves(): Array<Move> {
       const originalPGN = this.game.pgn();
       const tokens = this.game.fen().split(" ");
@@ -108,11 +120,9 @@ export default Vue.extend({
         return [];
       }
     },
-
     toColor(): Color {
       return this.game.turn() === "w" ? "white" : "black";
     },
-
     paintThreats() {
       const moves = this.game.moves({ verbose: true });
       const threats: Array<DrawShape> = [];
@@ -129,7 +139,6 @@ export default Vue.extend({
         this.board.setShapes(threats);
       }
     },
-
     calculatePromotions() {
       const moves = this.game.moves({ verbose: true });
       this.promotions = [];
@@ -139,14 +148,12 @@ export default Vue.extend({
         }
       }
     },
-
     isPromotion(orig: Key, dest: Key): boolean {
       const filteredPromotions = this.promotions.filter(
         (move: Move) => move.from === orig && move.to === dest
       );
       return filteredPromotions.length > 0; // The current movement is a promotion
     },
-
     changeTurn() {
       return (orig: Key, dest: Key): void => {
         if (this.isPromotion(orig, dest)) {
@@ -171,15 +178,16 @@ export default Vue.extend({
         this.afterMove();
       };
     },
-
     afterMove() {
+      if (this.showThreats) {
+        this.paintThreats();
+      }
       const threats: Threats = this.countThreats(this.toColor()) || {};
       threats["history"] = this.game.history();
       threats["fen"] = this.game.fen();
 
       this.$emit("onMove", threats);
     },
-
     countThreats(color: Color) {
       const threats: Threats = {};
       let captures = 0;
@@ -212,7 +220,6 @@ export default Vue.extend({
       threats[`turn`] = color;
       return threats;
     },
-
     loadPosition(fen?: string): void {
       if (fen === this.game.fen()) {
         return;
@@ -224,6 +231,7 @@ export default Vue.extend({
         turnColor: this.toColor(),
         movable: {
           color: this.toColor(),
+          free: this.free,
           dests: this.possibleMoves()
         },
         orientation: this.orientation === Side.White ? "white" : "black"
