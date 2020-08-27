@@ -7,6 +7,7 @@
           ref="board",
           :fen="activePosition.fen",
           :orientation="boardOrientation",
+          :drawShapes="mistakeArrow",
           @onMove="onBoardMove")
         chessboard.grayscale(
           v-else,
@@ -24,6 +25,8 @@
 <script lang="ts">
 import Vue from "vue";
 import _ from "lodash";
+import { Chess } from "chess.js";
+import { DrawShape } from "chessground/draw";
 
 import chessboard, { Threats } from "@/components/chessboard.vue";
 import { TrainingOptions } from "@/components/TrainingModeSelector.vue";
@@ -131,6 +134,26 @@ export default Vue.extend({
 
     previewPlaybackDelay(): number {
       return this.options.playbackSpeed * 1000;
+    },
+
+    mistakeArrow(): DrawShape[] {
+      if (this.showMistakeArrow) {
+        const board = new Chess(this.activePosition.fen);
+        const move = board.move(this.activeVariation[this.plyCount + 1].san);
+
+        if (move) {
+          return [
+            // { orig: move.from, brush: "red" },
+            { orig: move.from, dest: move.to, brush: "red" }
+          ];
+        }
+      }
+
+      return [];
+    },
+
+    showMistakeArrow(): boolean {
+      return this.attempts > maxAttempts;
     }
   },
 
@@ -154,9 +177,7 @@ export default Vue.extend({
           this.mistakeInVariation = true;
         }
 
-        const shouldContinue = correct || this.attempts >= maxAttempts;
-
-        if (shouldContinue) {
+        if (correct) {
           this.addTrainingEvent({
             position: this.activePosition,
             event: new TrainingEvent(this.attempts, this.getElapsedSeconds())
