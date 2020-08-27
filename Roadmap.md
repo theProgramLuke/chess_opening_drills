@@ -8,6 +8,7 @@ _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/i
 - don't reset edit position on enter route
 - custom UCI engine
 - stored engine suggested moves
+- blunder/mistake checks in repertoire moves
 - persist edit position annotations (arrows etc)
 - automatic backups
 - configurable max training attempts
@@ -15,7 +16,7 @@ _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/i
 - per position training history
 - upload anonymous training history
 - multiple board tabs? in edit view
-- server mode?
+- server mode? Would be good for mobile use
 - use vuetify color scheme for plots
 - reference database?
 - import from lichess public study
