@@ -96,7 +96,6 @@ export default Vue.extend({
     drawShapes(shapes: DrawShape[]) {
       if (this.board) {
         this.board.setShapes(shapes);
-        console.log(shapes);
       }
     }
   },
@@ -238,7 +237,6 @@ export default Vue.extend({
       });
 
       this.board.setShapes(this.drawShapes);
-      console.log(this.drawShapes);
 
       if (fen) {
         this.afterMove();

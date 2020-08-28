@@ -139,7 +139,11 @@ export default Vue.extend({
     mistakeArrow(): DrawShape[] {
       if (this.showMistakeArrow) {
         const board = new Chess(this.activePosition.fen);
-        const move = board.move(this.activeVariation[this.plyCount + 1].san);
+        const index =
+          this.boardOrientation === Side.White
+            ? this.plyCount
+            : this.plyCount + 1;
+        const move = board.move(this.activeVariation[index].san);
 
         if (move) {
           return [{ orig: move.from, dest: move.to, brush: "red" }];
