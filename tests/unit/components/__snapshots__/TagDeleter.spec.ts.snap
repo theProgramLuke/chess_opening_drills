@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TagDeleter renders correctly 1`] = `
+<v-dialog-stub
+  closedelay="0"
+  contentclass=""
+  maxwidth="750px"
+  opendelay="0"
+  origin="center center"
+  retainfocus="true"
+  transition="dialog-transition"
+  width="auto"
+>
+  <v-card-stub
+    class="pa-4"
+    loaderheight="4"
+    tag="div"
+  >
+    <v-card-title-stub>
+      Delete tag?
+    </v-card-title-stub>
+    <v-card-subtitle-stub>
+      The tag "tag name" and all of its child tags will be permanently deleted.
+    </v-card-subtitle-stub>
+    <v-form-stub>
+      <v-card-actions-stub>
+        <v-btn-stub
+          activeclass=""
+          class="ma-2"
+          color="error"
+          tag="button"
+          type="submit"
+        >
+          Delete
+        </v-btn-stub>
+        <v-btn-stub
+          activeclass=""
+          class="ma-2"
+          color="secondary"
+          tag="button"
+          type="button"
+        >
+          Cancel
+        </v-btn-stub>
+      </v-card-actions-stub>
+    </v-form-stub>
+  </v-card-stub>
+</v-dialog-stub>
+`;

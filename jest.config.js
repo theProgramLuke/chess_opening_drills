@@ -26,5 +26,6 @@ module.exports = {
     "vue-jest": {
       pug: { doctype: "html" }
     }
-  }
+  },
+  snapshotSerializers: ["jest-serializer-vue"]
 };
