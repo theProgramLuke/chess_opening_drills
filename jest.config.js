@@ -14,7 +14,9 @@ module.exports = {
     // Generated pegjs file
     "!src/store/pgnGrammar.ts",
     // Generated Plotly themes
-    "!src/views/PlotlyLayouts.ts"
+    "!src/views/PlotlyLayouts.ts",
+    // List of themes
+    "!src/views/ChessgroundThemes.ts"
   ],
   moduleFileExtensions: ["ts", "vue", "js"],
   transform: {
@@ -24,5 +26,6 @@ module.exports = {
     "vue-jest": {
       pug: { doctype: "html" }
     }
-  }
+  },
+  snapshotSerializers: ["jest-serializer-vue"]
 };
