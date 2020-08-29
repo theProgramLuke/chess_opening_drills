@@ -13,7 +13,6 @@ import {
   d3,
   d3e6,
   LinkTestPositions,
-  ExpectedSavedRepertoire,
   VariationC,
   VariationA
 } from "./testDataRepertoire";
