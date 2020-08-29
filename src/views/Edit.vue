@@ -37,11 +37,11 @@ import Vue from "vue";
 import _ from "lodash";
 import { mapState, mapMutations } from "vuex";
 
-import chessboard from "@/components/chessboard.vue";
-import { Threats } from "@/components/chessboard.vue";
-import TagTree from "@/components/TagTree.vue";
-import MoveList from "@/components/MoveList.vue";
-import VariationList from "@/components/VariationList.vue";
+import chessboard from "@/components/common/chessboard.vue";
+import { Threats } from "@/components/common/chessboard.vue";
+import TagTree from "@/components/edit/TagTree.vue";
+import MoveList from "@/components/edit/MoveList.vue";
+import VariationList from "@/components/edit/VariationList.vue";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";

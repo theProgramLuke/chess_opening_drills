@@ -24,8 +24,8 @@ import { mapState } from "vuex";
 
 import TrainingModeSelector, {
   TrainingOptions
-} from "@/components/TrainingModeSelector.vue";
-import Trainer from "@/components/Trainer.vue";
+} from "@/components/train/TrainingModeSelector.vue";
+import Trainer from "@/components/train/Trainer.vue";
 
 enum TrainingState {
   Selecting,

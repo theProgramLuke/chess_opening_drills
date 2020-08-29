@@ -10,6 +10,7 @@
 import Vue from "vue";
 import { mapState } from "vuex";
 import _ from "lodash";
+
 import { RepertoirePosition } from "@/store/repertoirePosition";
 
 interface CalendarEvent {

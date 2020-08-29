@@ -27,10 +27,10 @@
 import Vue from "vue";
 import _ from "lodash";
 
-import TagDeleter from "@/components/TagDeleter.vue";
-import TagCreator from "@/components/TagCreator.vue";
-import TagExporter from "@/components/TagExporter.vue";
-import TagImporter from "@/components/TagImporter.vue";
+import TagDeleter from "@/components/edit/TagDeleter.vue";
+import TagCreator from "@/components/edit/TagCreator.vue";
+import TagExporter from "@/components/edit/TagExporter.vue";
+import TagImporter from "@/components/edit/TagImporter.vue";
 import { RepertoireTag } from "@/store/repertoireTag";
 import { Repertoire } from "@/store/repertoire";
 import { RepertoirePosition } from "@/store/repertoirePosition";
