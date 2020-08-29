@@ -12,7 +12,7 @@
 <script lang="ts">
 import Vue from "vue";
 
-import MoveDeleter from "@/components/MoveDeleter.vue";
+import MoveDeleter from "@/components/edit/MoveDeleter.vue";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Move } from "@/store/move";
 

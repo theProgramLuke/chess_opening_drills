@@ -48,7 +48,7 @@
 import Vue from "vue";
 import { mapState, mapMutations } from "vuex";
 
-import chessboard from "@/components/chessboard.vue";
+import chessboard from "@/components/common/chessboard.vue";
 import { BoardThemes, PieceThemes } from "@/views/ChessgroundThemes";
 
 export default Vue.extend({

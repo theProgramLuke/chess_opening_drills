@@ -29,7 +29,7 @@ import { Chess } from "chess.js";
 import { DrawShape } from "chessground/draw";
 
 import chessboard, { Threats } from "@/components/chessboard.vue";
-import { TrainingOptions } from "@/components/TrainingModeSelector.vue";
+import { TrainingOptions } from "@/components/train/TrainingModeSelector.vue";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Side } from "@/store/side";
 import { Move } from "@/store/move";
