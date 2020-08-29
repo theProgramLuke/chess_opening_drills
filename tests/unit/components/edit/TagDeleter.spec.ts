@@ -3,7 +3,6 @@ import vuetify from "vuetify";
 import Vue from "vue";
 
 import TagDeleter from "@/components/edit/TagDeleter.vue";
-import TagDeleterViewModel from "@/components/edit/TagDeleterViewModel";
 import { RepertoireTag } from "@/store/repertoireTag";
 import { Side } from "@/store/side";
 import { RepertoirePosition } from "@/store/repertoirePosition";
