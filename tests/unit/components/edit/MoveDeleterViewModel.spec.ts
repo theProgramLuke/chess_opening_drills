@@ -13,7 +13,7 @@ describe("MoveDeleterViewModel", () => {
   });
 
   describe("showDialog", () => {
-    it("should start by not showing the dialog", async () => {
+    it("should start by not showing the dialog", () => {
       const component = shallowMount(MoveDeleterViewModel, {
         render: jest.fn(),
         propsData: {

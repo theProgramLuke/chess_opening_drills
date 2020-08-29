@@ -6,7 +6,7 @@ import { Side } from "@/store/side";
 
 describe("MoveListViewModel", () => {
   describe("pageIndex", () => {
-    it("should start at 1", async () => {
+    it("should start at 1", () => {
       const component = shallowMount(MoveListViewModel, {
         render: jest.fn(),
         propsData: {

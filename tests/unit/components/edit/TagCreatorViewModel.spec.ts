@@ -22,7 +22,7 @@ describe("TagCreatorViewModel", () => {
   });
 
   describe("showDialog", () => {
-    it("should start by not showing the dialog", async () => {
+    it("should start by not showing the dialog", () => {
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
@@ -36,7 +36,7 @@ describe("TagCreatorViewModel", () => {
   });
 
   describe("disabled", () => {
-    it("should be disabled if the position is not a child of the tag", async () => {
+    it("should be disabled if the position is not a child of the tag", () => {
       tag.position.IsChildPosition = jest.fn(() => false);
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
@@ -49,7 +49,7 @@ describe("TagCreatorViewModel", () => {
       expect(component.vm.disabled).toBeTruthy();
     });
 
-    it("should not be disabled if the position is a child of the tag", async () => {
+    it("should not be disabled if the position is a child of the tag", () => {
       tag.position.IsChildPosition = jest.fn(() => true);
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
@@ -64,7 +64,7 @@ describe("TagCreatorViewModel", () => {
   });
 
   describe("onCreate", () => {
-    it("should emit onCreate when onCreate invoked given a valid form", async () => {
+    it("should emit onCreate when onCreate invoked given a valid form", () => {
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
@@ -81,7 +81,7 @@ describe("TagCreatorViewModel", () => {
       ]);
     });
 
-    it("should not emit onCreate when onCreate invoked given an invalid form", async () => {
+    it("should not emit onCreate when onCreate invoked given an invalid form", () => {
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
@@ -98,7 +98,7 @@ describe("TagCreatorViewModel", () => {
   });
 
   describe("nameRules", () => {
-    it("invalidates an empty name", async () => {
+    it("invalidates an empty name", () => {
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
@@ -112,7 +112,7 @@ describe("TagCreatorViewModel", () => {
       expect(valid).toEqual("Name is required");
     });
 
-    it("validates a non empty name", async () => {
+    it("validates a non empty name", () => {
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {

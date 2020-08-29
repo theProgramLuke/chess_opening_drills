@@ -19,7 +19,7 @@ describe("TagDeleterViewModel", () => {
   });
 
   describe("showDialog", () => {
-    it("should start by not showing the dialog", async () => {
+    it("should start by not showing the dialog", () => {
       const component = shallowMount(TagDeleterViewModel, {
         render: jest.fn(),
         propsData: {
