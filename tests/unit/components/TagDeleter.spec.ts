@@ -62,4 +62,25 @@ describe("TagDeleter", () => {
 
     expect(component.emitted().onDelete).toEqual([[tag]]);
   });
+
+  it("should hide the dialog after onDelete", async () => {
+    const component = shallowMount(TagDeleter, {
+      propsData: {
+        tag: new RepertoireTag(
+          Side.White,
+          "tag name",
+          new RepertoirePosition("", "", Side.White),
+          "",
+          []
+        )
+      }
+    });
+    (component.vm as any & { showDialog: boolean }).showDialog = true;
+
+    (component.vm as any & { onDelete: () => void }).onDelete();
+
+    expect(
+      (component.vm as any & { showDialog: boolean }).showDialog
+    ).toBeFalsy();
+  });
 });
