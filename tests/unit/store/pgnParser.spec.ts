@@ -6,47 +6,7 @@ describe("parse", () => {
       '[White "me"]\n[Black "you"]\n1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 (3. ...Nf6 {is the two knights}) 4. b4 Bxb4 5. c3 Ba5 6. d4 exd4 7. O-O Nge7 $1 *'
     );
 
-    expect(parsed).toEqual([
-      {
-        comments: null,
-        commentsAboveHeader: null,
-        headers: [
-          { name: "White", value: "me" },
-          { name: "Black", value: "you" }
-        ],
-        moves: [
-          { move: "e4", moveNumber: 1 },
-          { move: "e5" },
-          { move: "Nf3", moveNumber: 2 },
-          { move: "Nc6" },
-          { move: "Bc4", moveNumber: 3 },
-          {
-            move: "Bc5",
-            ravs: [
-              {
-                moves: [
-                  {
-                    comments: "is the two knights",
-                    move: "...Nf6",
-                    moveNumber: 3
-                  }
-                ],
-                result: null
-              }
-            ]
-          },
-          { move: "b4", moveNumber: 4 },
-          { move: "Bxb4" },
-          { move: "c3", moveNumber: 5 },
-          { move: "Ba5" },
-          { move: "d4", moveNumber: 6 },
-          { move: "exd4" },
-          { move: "O-O", moveNumber: 7 },
-          { move: "Nge7", nags: ["$1"] }
-        ],
-        result: "*"
-      }
-    ]);
+    expect(parsed).toMatchSnapshot();
   });
 
   it("should fail for invalid PGN", () => {

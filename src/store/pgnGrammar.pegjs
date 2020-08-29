@@ -61,7 +61,7 @@
             m.comments = comments[0].text;
         }
         if (comments2.length) {
-            m.comments = comments[0].text;
+            m.comments = comments2[0].text;
         }
         return m;
     }

@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parse should get the PGN of a game 1`] = `
+Array [
+  Object {
+    "comments": null,
+    "commentsAboveHeader": null,
+    "headers": Array [
+      Object {
+        "name": "White",
+        "value": "me",
+      },
+      Object {
+        "name": "Black",
+        "value": "you",
+      },
+    ],
+    "moves": Array [
+      Object {
+        "move": "e4",
+        "moveNumber": 1,
+      },
+      Object {
+        "move": "e5",
+      },
+      Object {
+        "move": "Nf3",
+        "moveNumber": 2,
+      },
+      Object {
+        "move": "Nc6",
+      },
+      Object {
+        "move": "Bc4",
+        "moveNumber": 3,
+      },
+      Object {
+        "move": "Bc5",
+        "ravs": Array [
+          Object {
+            "moves": Array [
+              Object {
+                "comments": "is the two knights",
+                "move": "...Nf6",
+                "moveNumber": 3,
+              },
+            ],
+            "result": null,
+          },
+        ],
+      },
+      Object {
+        "move": "b4",
+        "moveNumber": 4,
+      },
+      Object {
+        "move": "Bxb4",
+      },
+      Object {
+        "move": "c3",
+        "moveNumber": 5,
+      },
+      Object {
+        "move": "Ba5",
+      },
+      Object {
+        "move": "d4",
+        "moveNumber": 6,
+      },
+      Object {
+        "move": "exd4",
+      },
+      Object {
+        "move": "O-O",
+        "moveNumber": 7,
+      },
+      Object {
+        "move": "Nge7",
+        "nags": Array [
+          "$1",
+        ],
+      },
+    ],
+    "result": "*",
+  },
+]
+`;
