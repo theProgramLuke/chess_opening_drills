@@ -13,7 +13,6 @@ import {
   d3,
   d3e6,
   LinkTestPositions,
-  ExpectedSavedRepertoire,
   VariationC,
   VariationA
 } from "./testDataRepertoire";
@@ -29,7 +28,7 @@ describe("Repertoire", () => {
 
       const saved = repertoire.AsSaved();
 
-      expect(saved).toEqual(ExpectedSavedRepertoire);
+      expect(saved).toMatchSnapshot();
     });
   });
 
@@ -37,7 +36,7 @@ describe("Repertoire", () => {
     it("generates a real repertoire from a saved one", () => {
       LinkTestPositions();
 
-      const loaded = Repertoire.FromSaved(ExpectedSavedRepertoire);
+      const loaded = Repertoire.FromSaved(repertoire.AsSaved());
 
       expect(loaded).toEqual(repertoire);
       expect(loaded.positions[0].GetTurnLists).toBeDefined();
