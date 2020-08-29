@@ -16,7 +16,7 @@ import Vue from "vue";
 import _ from "lodash";
 import { mapState } from "vuex";
 
-import Plot from "@/components/Plot.vue";
+import Plot from "@/components/common/Plot.vue";
 import { Repertoire } from "@/store/repertoire";
 import { RepertoireTag } from "@/store/repertoireTag";
 

@@ -244,6 +244,16 @@ export class RepertoirePosition {
     }
   }
 
+  IsChildPosition(maybeChild: RepertoirePosition) {
+    let isChildPosition = false;
+
+    this.VisitChildren(child => {
+      isChildPosition = isChildPosition || child === maybeChild;
+    });
+
+    return isChildPosition;
+  }
+
   RootPaths(): Move[][] {
     const collector: Move[][] = [];
 
