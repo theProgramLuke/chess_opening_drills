@@ -11,27 +11,4 @@
       v-btn.ma-2(@click="showDialog=false", color="secondary", text, outlined) Cancel
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-
-import { Move } from "@/store/move";
-
-export default Vue.extend({
-  data: () => ({
-    showDialog: false
-  }),
-
-  props: {
-    move: {
-      type: Move,
-      required: true
-    }
-  },
-
-  methods: {
-    onDelete() {
-      this.$emit("onDelete", this.move);
-    }
-  }
-});
-</script>
+<script lang="ts" src="./MoveDeleterViewModel.ts">
