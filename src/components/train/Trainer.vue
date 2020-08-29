@@ -28,7 +28,7 @@ import _ from "lodash";
 import { Chess } from "chess.js";
 import { DrawShape } from "chessground/draw";
 
-import chessboard, { Threats } from "@/components/chessboard.vue";
+import chessboard, { Threats } from "@/components/common/chessboard.vue";
 import { TrainingOptions } from "@/components/train/TrainingModeSelector.vue";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Side } from "@/store/side";

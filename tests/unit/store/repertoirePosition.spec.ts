@@ -194,6 +194,22 @@ describe("RepertoirePosition", () => {
     });
   });
 
+  describe("IsChildPosition", () => {
+    beforeEach(LinkTestPositions);
+
+    it("should be true if the position is a child", () => {
+      const isChild = e3.position.IsChildPosition(e3e6.position);
+
+      expect(isChild).toBeTruthy();
+    });
+
+    it("should be false if the position is not a child", () => {
+      const isChild = e3e6.position.IsChildPosition(e3.position);
+
+      expect(isChild).toBeFalsy();
+    });
+  });
+
   describe("AddTrainingEvent", () => {
     it("should add events to the training history", () => {
       const position = new RepertoirePosition("", "", Side.White);
