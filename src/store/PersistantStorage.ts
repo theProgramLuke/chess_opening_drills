@@ -35,16 +35,7 @@ export interface Storage {
   blackRepertoire: Repertoire;
 }
 
-export interface Store {
-  get<Key extends keyof SavedStorage>(key: Key): SavedStorage[Key];
-  set<Key extends keyof SavedStorage>(
-    key: Key,
-    value?: SavedStorage[Key]
-  ): void;
-  clear(): void;
-}
-
-function GetDefaultStorage(): Store {
+function GetDefaultStorage() {
   const whiteStartPosition = new RepertoirePosition(
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     "",
@@ -102,9 +93,9 @@ function GetDefaultStorage(): Store {
 }
 
 export class PersistantStorage implements Storage {
-  storage: Store;
+  storage: ElectronStore<SavedStorage>;
 
-  constructor(storage?: Store) {
+  constructor(storage?: ElectronStore<SavedStorage>) {
     this.storage = storage || GetDefaultStorage();
   }
 
