@@ -48,7 +48,6 @@ export default Vue.extend({
           try {
             const pgn = this.pgnParser(pgnText);
             _.forEach(pgn, game => {
-              console.log("adding");
               this.addPositionsFromGame({
                 forSide: this.tag.forSide,
                 game: game
@@ -57,7 +56,6 @@ export default Vue.extend({
             this.showDialog = false;
           } catch (error) {
             this.inputFileErrors = [`Invalid PGN: ${error.message}`];
-            console.log(error);
           } finally {
             this.loading = false;
           }
