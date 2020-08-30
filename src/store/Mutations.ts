@@ -5,9 +5,28 @@ import { TrainingEvent } from "./TrainingEvent";
 import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
 import { PgnGame } from "./pgnParser";
+import { Repertoire } from "./repertoire";
 
 export interface MutationState extends Storage {
   persisted: PersistantStorage;
+}
+
+function getRepertoireForSide(state: MutationState, forSide: Side) {
+  return forSide === Side.White ? state.whiteRepertoire : state.blackRepertoire;
+}
+
+function setRepertoireForSide(
+  state: MutationState,
+  forSide: Side,
+  repertoire: Repertoire
+) {
+  if (forSide === Side.White) {
+    state.whiteRepertoire = repertoire;
+    state.persisted.whiteRepertoire = repertoire;
+  } else {
+    state.blackRepertoire = repertoire;
+    state.persisted.blackRepertoire = repertoire;
+  }
 }
 
 export const mutations = {
@@ -49,18 +68,12 @@ export const mutations = {
     payload: { parent: RepertoirePosition; newMove: Move }
   ): void {
     if (payload.parent && payload.newMove) {
-      const repertoire =
-        payload.parent.forSide === Side.White
-          ? state.whiteRepertoire
-          : state.blackRepertoire;
-      const repertoireKey =
-        payload.parent.forSide === Side.White
-          ? "whiteRepertoire"
-          : "blackRepertoire";
+      const side = payload.parent.forSide;
+      const repertoire = getRepertoireForSide(state, side);
 
       repertoire.AddMove(payload.parent, payload.newMove);
 
-      state.persisted[repertoireKey] = repertoire;
+      setRepertoireForSide(state, side, repertoire);
     }
   },
 
@@ -69,18 +82,12 @@ export const mutations = {
     payload: { parent: RepertoireTag; tag: RepertoireTag }
   ): void {
     if (payload.parent && payload.tag) {
-      const repertoire =
-        payload.parent.forSide === Side.White
-          ? state.whiteRepertoire
-          : state.blackRepertoire;
-      const repertoireKey =
-        payload.parent.forSide === Side.White
-          ? "whiteRepertoire"
-          : "blackRepertoire";
+      const side = payload.parent.forSide;
+      const repertoire = getRepertoireForSide(state, side);
 
       payload.parent.AddChild(payload.tag);
 
-      state.persisted[repertoireKey] = repertoire;
+      setRepertoireForSide(state, side, repertoire);
     }
   },
 
@@ -89,47 +96,31 @@ export const mutations = {
     payload: { position: RepertoirePosition; event: TrainingEvent }
   ): void {
     if (payload.position && payload.event) {
-      const repertoire =
-        payload.position.forSide === Side.White
-          ? state.whiteRepertoire
-          : state.blackRepertoire;
-      const repertoireKey =
-        payload.position.forSide === Side.White
-          ? "whiteRepertoire"
-          : "blackRepertoire";
+      const side = payload.position.forSide;
+      const repertoire = getRepertoireForSide(state, side);
 
       payload.position.AddTrainingEvent(payload.event);
 
-      state.persisted[repertoireKey] = repertoire;
+      setRepertoireForSide(state, side, repertoire);
     }
   },
 
   removeRepertoireTag(state: MutationState, tag: RepertoireTag): void {
-    const repertoire =
-      tag.forSide === Side.White
-        ? state.whiteRepertoire
-        : state.blackRepertoire;
-    const repertoireKey =
-      tag.forSide === Side.White ? "whiteRepertoire" : "blackRepertoire";
+    const side = tag.forSide;
+    const repertoire = getRepertoireForSide(state, side);
 
     repertoire.RemoveRepertoireTag(tag);
 
-    state.persisted[repertoireKey] = repertoire;
+    setRepertoireForSide(state, side, repertoire);
   },
 
   removeRepertoireMove(state: MutationState, move: Move): void {
-    const repertoire =
-      move.position.forSide === Side.White
-        ? state.whiteRepertoire
-        : state.blackRepertoire;
-    const repertoireKey =
-      move.position.forSide === Side.White
-        ? "whiteRepertoire"
-        : "blackRepertoire";
+    const side = move.position.forSide;
+    const repertoire = getRepertoireForSide(state, side);
 
     repertoire.RemoveMove(move);
 
-    state.persisted[repertoireKey] = repertoire;
+    setRepertoireForSide(state, side, repertoire);
   },
 
   addPositionsFromGame(
@@ -137,16 +128,12 @@ export const mutations = {
     payload: { forSide: Side; game: PgnGame }
   ): void {
     if (payload.game) {
-      const repertoire =
-        payload.forSide === Side.White
-          ? state.whiteRepertoire
-          : state.blackRepertoire;
-      const repertoireKey =
-        payload.forSide === Side.White ? "whiteRepertoire" : "blackRepertoire";
+      const side = payload.forSide;
+      const repertoire = getRepertoireForSide(state, side);
 
       repertoire.AddFromGame(payload.game);
 
-      state.persisted[repertoireKey] = repertoire;
+      setRepertoireForSide(state, side, repertoire);
     }
   },
 
