@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import * as mutations from "@/store/Mutations";
+import { mutations } from "@/store/Mutations";
 import { PersistantStorage } from "./PersistantStorage";
 
 Vue.use(Vuex);

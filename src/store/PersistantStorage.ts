@@ -35,11 +35,77 @@ export interface Storage {
   blackRepertoire: Repertoire;
 }
 
-export class PersistantStorage implements Storage {
-  storage: ElectronStore<SavedStorage>;
+export interface Store {
+  get<Key extends keyof SavedStorage>(key: Key): SavedStorage[Key];
+  set<Key extends keyof SavedStorage>(
+    key: Key,
+    value?: SavedStorage[Key]
+  ): void;
+  clear(): void;
+}
 
-  constructor(storage?: ElectronStore<SavedStorage>) {
-    this.storage = storage || this.GetDefaultstorage();
+function GetDefaultStorage(): Store {
+  const whiteStartPosition = new RepertoirePosition(
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "",
+    Side.White,
+    true
+  );
+
+  const blackStartPosition = new RepertoirePosition(
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "",
+    Side.Black,
+    false
+  );
+
+  return new ElectronStore<SavedStorage>({
+    defaults: {
+      darkMode: false,
+      primary: "#2196F3",
+      secondary: "#424242",
+      accent: "#FF4081",
+      error: "#FF5252",
+      warning: "#FFC107",
+      info: "#2196F3",
+      success: "#4CAF50",
+      boardTheme: "maple",
+      pieceTheme: "staunty",
+      whiteRepertoire: new Repertoire(
+        [whiteStartPosition],
+        [
+          new RepertoireTag(
+            Side.White,
+            "White",
+            whiteStartPosition,
+            whiteStartPosition.fen,
+            [],
+            "whiteStart"
+          )
+        ]
+      ).AsSaved(),
+      blackRepertoire: new Repertoire(
+        [blackStartPosition],
+        [
+          new RepertoireTag(
+            Side.Black,
+            "Black",
+            blackStartPosition,
+            blackStartPosition.fen,
+            [],
+            "blackStart"
+          )
+        ]
+      ).AsSaved()
+    }
+  });
+}
+
+export class PersistantStorage implements Storage {
+  storage: Store;
+
+  constructor(storage?: Store) {
+    this.storage = storage || GetDefaultStorage();
   }
 
   get darkMode(): boolean {
@@ -140,62 +206,5 @@ export class PersistantStorage implements Storage {
 
   clear(): void {
     this.storage.clear();
-  }
-
-  private GetDefaultstorage() {
-    const whiteStartPosition = new RepertoirePosition(
-      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-      "",
-      Side.White,
-      true
-    );
-
-    const blackStartPosition = new RepertoirePosition(
-      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-      "",
-      Side.Black,
-      false
-    );
-
-    return new ElectronStore<SavedStorage>({
-      defaults: {
-        darkMode: false,
-        primary: "#2196F3",
-        secondary: "#424242",
-        accent: "#FF4081",
-        error: "#FF5252",
-        warning: "#FFC107",
-        info: "#2196F3",
-        success: "#4CAF50",
-        boardTheme: "maple",
-        pieceTheme: "staunty",
-        whiteRepertoire: new Repertoire(
-          [whiteStartPosition],
-          [
-            new RepertoireTag(
-              Side.White,
-              "White",
-              whiteStartPosition,
-              whiteStartPosition.fen,
-              [],
-              "whiteStart"
-            )
-          ]
-        ).AsSaved(),
-        blackRepertoire: new Repertoire(
-          [blackStartPosition],
-          [
-            new RepertoireTag(
-              Side.Black,
-              "Black",
-              blackStartPosition,
-              blackStartPosition.fen,
-              [],
-              "blackStart"
-            )
-          ]
-        ).AsSaved()
-      }
-    });
   }
 }
