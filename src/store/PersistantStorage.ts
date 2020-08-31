@@ -5,7 +5,7 @@ import { Side } from "./side";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Repertoire, SavedRepertoire } from "./repertoire";
 
-interface SavedStorage {
+export interface SavedStorage {
   darkMode: boolean;
   primary: string;
   secondary: string;
