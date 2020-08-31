@@ -2,13 +2,13 @@
 
 _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/issues)._
 
-- implement reset appearance
-- edit error/warning for multiple choices from same position on my turn
+- Repertoire health
+  - warning for multiple choices from same position on my turn
+  - blunder detection
+  - custom UCI engine
 - add +- etc annotation to position
+- reset appearance
 - don't reset edit position on enter route
-- custom UCI engine
-- stored engine suggested moves
-- blunder/mistake checks in repertoire moves
 - persist edit position annotations (arrows etc)
 - automatic backups
 - configurable max training attempts
