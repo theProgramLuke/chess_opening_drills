@@ -3,7 +3,7 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: "coverage",
   collectCoverageFrom: [
-    "src/**/*.{js,ts,vue}",
+    "src/**/*.{ts}",
     // vue CLI files
     "!src/shims-*.d.ts",
     "!src/registerServiceWorker.ts",
@@ -18,10 +18,7 @@ module.exports = {
     // List of themes
     "!src/views/ChessgroundThemes.ts"
   ],
-  moduleFileExtensions: ["ts", "vue", "js"],
-  transform: {
-    ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest"
-  },
+  moduleFileExtensions: ["ts", "js"],
   globals: {
     "vue-jest": {
       pug: { doctype: "html" }
