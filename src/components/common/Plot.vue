@@ -80,7 +80,8 @@ export default {
     internalLayout() {
       return {
         ...(this.dark ? PlotlyDark.layout : PlotlyWhite.layout),
-        ...this.layout
+        ...this.layout,
+        datarevision: 0
       };
     },
     internalData() {
@@ -197,4 +198,3 @@ export default {
   }
 };
 </script>
-<style></style>

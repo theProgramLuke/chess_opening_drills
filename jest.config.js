@@ -3,7 +3,7 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: "coverage",
   collectCoverageFrom: [
-    "src/**/*.{ts}",
+    "src/**/*.ts",
     // vue CLI files
     "!src/shims-*.d.ts",
     "!src/registerServiceWorker.ts",
