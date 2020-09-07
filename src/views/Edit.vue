@@ -25,7 +25,6 @@
               @onSelectMove="updateBoard",
               @onDeleteMove="removeRepertoireMove")
 
-          
           v-tab-item(key=2, value="tab-2")
             v-textarea(v-model="activePosition.comment", outlined, no-resize)
 
