@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container
+  v-container.fill-height.ma-0.pa-0
     training-mode-selector(
       v-if="isSelecting"
       :whiteRepertoire="whiteRepertoire", 

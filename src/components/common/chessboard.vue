@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(:class="boardTheme", ref="wrapper", v-resize="onResize")
+  div.chessboard(:class="boardTheme", ref="wrapper", v-resize="onResize")
     div(:class="pieceTheme")
       div.cg-board.is2d(ref="board")
 </template>
