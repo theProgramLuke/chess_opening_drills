@@ -2,7 +2,7 @@ import Vue from "vue";
 import _ from "lodash";
 import { mapState, mapMutations } from "vuex";
 import vgl from "vue-golden-layout";
-import "golden-layout/src/css/goldenlayout-light-theme.css";
+import "golden-layout/src/css/goldenlayout-dark-theme.css";
 
 import chessboard from "@/components/common/chessboard.vue";
 import TagTree from "@/components/edit/TagTree.vue";
@@ -24,9 +24,7 @@ export default Vue.extend({
       "",
       Side.White
     ),
-    boardOrientation: Side.White,
-    showTree: true,
-    showMoves: true
+    boardOrientation: Side.White
   }),
 
   components: {

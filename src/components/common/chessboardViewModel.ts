@@ -1,7 +1,7 @@
 import Vue from "vue";
 import { PropType } from "vue";
 import { mapState } from "vuex";
-import _ from "lodash";
+import _, { min } from "lodash";
 
 import { Chessground } from "chessground";
 import { Chess, Move, ChessInstance, Square, PieceType } from "chess.js";
@@ -94,6 +94,25 @@ export default Vue.extend({
   },
 
   methods: {
+    onResize(): void {
+      const wrapper = this.$refs.wrapper as HTMLElement;
+      let minDimension = _.min([
+        wrapper.parentElement?.offsetHeight,
+        wrapper.parentElement?.offsetWidth,
+        window.innerHeight,
+        window.innerWidth
+      ]);
+
+      minDimension = minDimension || 500;
+      minDimension = minDimension * 0.95; // room for coordinates
+
+      wrapper.style.width = `${minDimension}px`;
+      wrapper.style.height = `${minDimension}px`;
+      wrapper.style.padding = `${minDimension}px 0 0 0`;
+
+      console.log(minDimension);
+    },
+
     possibleMoves(): Dests {
       const dests: Dests = new Map();
       this.game.SQUARES.forEach(s => {
