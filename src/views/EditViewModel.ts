@@ -1,6 +1,8 @@
 import Vue from "vue";
 import _ from "lodash";
 import { mapState, mapMutations } from "vuex";
+import vgl from "vue-golden-layout";
+import "golden-layout/src/css/goldenlayout-light-theme.css";
 
 import chessboard from "@/components/common/chessboard.vue";
 import TagTree from "@/components/edit/TagTree.vue";
@@ -12,6 +14,8 @@ import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";
 import { Side } from "@/store/side";
 import { RepertoireTag } from "@/store/repertoireTag";
+
+Vue.use(vgl);
 
 export default Vue.extend({
   data: () => ({
