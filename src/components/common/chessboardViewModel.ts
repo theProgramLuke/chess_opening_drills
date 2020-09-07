@@ -108,7 +108,7 @@ export default Vue.extend({
 
       wrapper.style.width = `${minDimension}px`;
       wrapper.style.height = `${minDimension}px`;
-      wrapper.style.padding = `${minDimension}px 0 0 0`;
+      wrapper.style.padding = `${minDimension + 5}px 0 0 0`;
 
       console.log(minDimension);
     },
