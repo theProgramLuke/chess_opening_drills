@@ -27,6 +27,7 @@
 <script lang="ts" src="./TagTreeViewModel.ts" />
 
 <style lang="scss" scoped>
-.v-btn.original-case {
-  text-transform: none;
+.original-case {
+  text-transform: none !important;
 }
+</style>

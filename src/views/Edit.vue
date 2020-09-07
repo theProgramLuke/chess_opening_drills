@@ -40,9 +40,3 @@
 </template>
 
 <script lang="ts" src="./EditViewModel.ts" />
-
-<style lang="scss" scoped>
-.v-btn.original-case {
-  text-transform: none;
-}
-</style>
