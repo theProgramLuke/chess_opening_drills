@@ -31,7 +31,7 @@
           v-tab-item.pa-2(key=3, value="tab-3")
             h1 Under construction
 
-      v-col.ma-0.py-0(cols="8", @wheel="onScroll")
+      v-col.ma-0(cols="8", @wheel="onScroll")
         chessboard(
           v-if="activePosition.fen",
           :fen="activePosition.fen",
