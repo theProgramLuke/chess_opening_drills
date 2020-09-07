@@ -94,6 +94,23 @@ export default Vue.extend({
   },
 
   methods: {
+    onResize(): void {
+      const wrapper = this.$refs.wrapper as HTMLElement;
+      let minDimension = _.min([
+        wrapper.parentElement?.offsetHeight,
+        wrapper.parentElement?.offsetWidth,
+        window.innerHeight,
+        window.innerWidth
+      ]);
+
+      minDimension = minDimension || 500;
+      minDimension = minDimension * 0.95; // room for coordinates
+
+      wrapper.style.width = `${minDimension}px`;
+      wrapper.style.height = `${minDimension}px`;
+      wrapper.style.padding = `${minDimension}px 0 0 0`;
+    },
+
     possibleMoves(): Dests {
       const dests: Dests = new Map();
       this.game.SQUARES.forEach(s => {
@@ -238,6 +255,7 @@ export default Vue.extend({
   },
 
   mounted() {
+    this.onResize();
     this.loadPosition();
   },
 
