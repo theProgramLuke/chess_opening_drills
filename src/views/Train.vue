@@ -18,4 +18,4 @@
           v-btn(@click="reset", color="success") Train different positions
 </template>
 
-<script lang="ts" src="./TrainViewModel.ts">
+<script lang="ts" src="./TrainViewModel.ts" />
