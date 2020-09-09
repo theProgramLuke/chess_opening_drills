@@ -38,6 +38,43 @@
               chessboard(fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
         v-expansion-panel
+          v-expansion-panel-header Engine
+          v-expansion-panel-content
+            v-file-input(
+              v-model="engine",
+              label="Select an engine",
+              prepend-icon="mdi-robot")
+
+            v-container
+              v-row(dense)
+                v-col(cols=3, v-for="option in engineOptions")
+                  v-slider(
+                    v-if="option.type === 'spin'",
+                    :label="option.name",
+                    :min="option.min",
+                    :max="option.max",
+                    v-model="option.default",
+                    thumb-label=true,
+                    dense)
+                  v-switch(
+                    v-if="option.type === 'check'",
+                    :label="option.name",
+                    v-model="option.default"
+                    dense)
+                  v-select(
+                    v-if="option.type === 'combo'"
+                    :label="option.name",
+                    :items="option.options",
+                    v-model="option.default",
+                    disable-lookup,
+                    dense)
+                  v-text-field(
+                    v-if="option.type === 'string'"
+                    :label="option.name",
+                    v-model="option.default",
+                    dense)
+
+        v-expansion-panel
           v-expansion-panel-header Development
           v-expansion-panel-content.pa-2
             v-btn(@click="clearStorage", color="error")

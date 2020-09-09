@@ -3,24 +3,40 @@ import { mapState, mapMutations } from "vuex";
 
 import chessboard from "@/components/common/chessboard.vue";
 import { BoardThemes, PieceThemes } from "@/views/ChessgroundThemes";
+import { EngineOption, GetEngineOptions } from "@/store/EngineHelpers";
+
+interface SettingsViewModelData {
+  panels?: number;
+  colorPanels?: number;
+  colorOptions: string[];
+  selectedColor: string;
+  boardThemes: string[];
+  pieceThemes: string[];
+  engine?: File;
+  engineOptions: EngineOption[];
+}
 
 export default Vue.extend({
-  data: () => ({
-    panels: [],
-    colorPanels: [],
-    colorOptions: [
-      "primary",
-      "secondary",
-      "accent",
-      "error",
-      "warning",
-      "info",
-      "success"
-    ],
-    selectedColor: "",
-    boardThemes: BoardThemes,
-    pieceThemes: PieceThemes
-  }),
+  data(): SettingsViewModelData {
+    return {
+      panels: undefined,
+      colorPanels: undefined,
+      colorOptions: [
+        "primary",
+        "secondary",
+        "accent",
+        "error",
+        "warning",
+        "info",
+        "success"
+      ],
+      selectedColor: "",
+      boardThemes: BoardThemes,
+      pieceThemes: PieceThemes,
+      engine: undefined,
+      engineOptions: []
+    };
+  },
 
   components: {
     chessboard
@@ -75,5 +91,11 @@ export default Vue.extend({
     "setBoardTheme",
     "setPieceTheme",
     "clearStorage"
-  ])
+  ]),
+
+  watch: {
+    async engine(newEngine: File) {
+      this.engineOptions = await GetEngineOptions(newEngine.path);
+    }
+  }
 });
