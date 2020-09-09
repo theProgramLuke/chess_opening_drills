@@ -12,8 +12,6 @@ interface SettingsViewModelData {
   selectedColor: string;
   boardThemes: string[];
   pieceThemes: string[];
-  engine?: File;
-  engineMetadata?: EngineMetadata;
 }
 
 export default Vue.extend({
@@ -32,9 +30,7 @@ export default Vue.extend({
       ],
       selectedColor: "",
       boardThemes: BoardThemes,
-      pieceThemes: PieceThemes,
-      engine: undefined,
-      engineMetadata: undefined
+      pieceThemes: PieceThemes
     };
   },
 
@@ -43,7 +39,7 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(["darkMode", "boardTheme", "pieceTheme"]),
+    ...mapState(["darkMode", "boardTheme", "pieceTheme", "engineMetadata"]),
 
     selectedDarkMode: {
       get() {
@@ -82,6 +78,34 @@ export default Vue.extend({
       set(pieceTheme: string) {
         this.setPieceTheme(pieceTheme);
       }
+    },
+
+    selectedEngineMetadata: {
+      get(): EngineMetadata {
+        return this.engineMetadata;
+      },
+      set(engineMetadata: EngineMetadata) {
+        this.setEngineMetadata(engineMetadata);
+      }
+    },
+
+    selectedEngine: {
+      get(): File | undefined {
+        if (this.selectedEngineMetadata) {
+          return new File([], this.selectedEngineMetadata.filePath);
+        }
+
+        return undefined;
+      },
+      async set(newEngine?: File) {
+        if (newEngine) {
+          this.selectedEngineMetadata = await GetMetadataFromEngine(
+            newEngine.path
+          );
+        } else {
+          this.selectedEngineMetadata = undefined;
+        }
+      }
     }
   },
 
@@ -90,12 +114,7 @@ export default Vue.extend({
     "setColor",
     "setBoardTheme",
     "setPieceTheme",
+    "setEngineMetadata",
     "clearStorage"
-  ]),
-
-  watch: {
-    async engine(newEngine: File) {
-      this.engineMetadata = await GetMetadataFromEngine(newEngine.path);
-    }
-  }
+  ])
 });

@@ -41,18 +41,19 @@
           v-expansion-panel-header Engine
           v-expansion-panel-content
             v-file-input(
-              v-model="engine",
+              v-model="selectedEngine",
               label="Select an engine",
-              prepend-icon="mdi-robot")
+              prepend-icon="mdi-robot",
+              clearable)
 
-            template(v-if="engineMetadata")
-              h2 {{ engineMetadata.name }}
+            template(v-if="selectedEngineMetadata")
+              h2 {{ selectedEngineMetadata.name }}
               v-container
                 v-row(dense)  
                   v-col(
                     cols=3,
                     align-self="center",
-                    v-for="option in engineMetadata.options")
+                    v-for="option in selectedEngineMetadata.options")
                     v-card
                       v-responsive(:aspect-ratio="5/1")
                         v-card-actions.pa-2

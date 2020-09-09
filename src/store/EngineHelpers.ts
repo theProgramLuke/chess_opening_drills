@@ -9,7 +9,7 @@ interface SourceEngineOption {
   options?: string[];
 }
 
-export interface EngineOption extends SourceEngineOption {
+interface EngineOption extends SourceEngineOption {
   name: string;
 }
 
