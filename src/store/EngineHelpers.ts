@@ -29,7 +29,7 @@ export async function GetEngineOptions(
 
   const options: EngineOption[] = [];
   sourceOptions.forEach((value, key) => {
-    if (value.type !== "button") {
+    if (value.type !== "button" && key !== "MultiPV") {
       options.push({
         name: key,
         ...value

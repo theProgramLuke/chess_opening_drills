@@ -47,32 +47,46 @@
 
             v-container
               v-row(dense)
-                v-col(cols=3, v-for="option in engineOptions")
-                  v-slider(
-                    v-if="option.type === 'spin'",
-                    :label="option.name",
-                    :min="option.min",
-                    :max="option.max",
-                    v-model="option.default",
-                    thumb-label=true,
-                    dense)
-                  v-switch(
-                    v-if="option.type === 'check'",
-                    :label="option.name",
-                    v-model="option.default"
-                    dense)
-                  v-select(
-                    v-if="option.type === 'combo'"
-                    :label="option.name",
-                    :items="option.options",
-                    v-model="option.default",
-                    disable-lookup,
-                    dense)
-                  v-text-field(
-                    v-if="option.type === 'string'"
-                    :label="option.name",
-                    v-model="option.default",
-                    dense)
+                v-col(
+                  cols=3,
+                  align-self="center",
+                  v-for="option in engineOptions")
+                  v-card
+                    v-responsive(:aspect-ratio="5/1")
+                      v-card-actions.pa-2
+                        v-slider(
+                          v-if="option.type === 'spin'",
+                          :label="option.name",
+                          :min="option.min",
+                          :max="option.max",
+                          v-model="option.default",
+                          thumb-label=true,
+                          hide-details,
+                          dense)
+                          template(v-slot:append)
+                            v-text-field.my-0.py-0(
+                              v-model="option.default",
+                              type="number",
+                              hide-details,
+                              single-line)
+                        v-switch(
+                          v-if="option.type === 'check'",
+                          :label="option.name",
+                          v-model="option.default"
+                          dense)
+                        v-select(
+                          v-if="option.type === 'combo'"
+                          :label="option.name",
+                          :items="option.options",
+                          v-model="option.default",
+                          disable-lookup,
+                          dense)
+                        v-text-field(
+                          v-if="option.type === 'string'"
+                          :label="option.name",
+                          v-model="option.default",
+                          hide-details,
+                          dense)
 
         v-expansion-panel
           v-expansion-panel-header Development
