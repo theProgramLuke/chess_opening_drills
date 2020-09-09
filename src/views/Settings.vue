@@ -59,35 +59,40 @@
                         v-card-actions.pa-2
                           v-slider.mt-4(
                             v-if="option.type === 'spin'",
+                            @change="updateEngineMetadata",
                             :label="option.name",
                             :min="option.min",
                             :max="option.max",
-                            v-model="option.default",
+                            v-model="option.value",
                             thumb-label=false,
                             hide-details,
                             dense)
                             template(v-slot:append)
                               v-text-field.my-0.py-0(
-                                v-model="option.default",
+                                v-model="option.value",
+                                @change="updateEngineMetadata",
                                 type="number",
                                 hide-details,
                                 single-line)
                           v-switch(
                             v-if="option.type === 'check'",
+                            @change="updateEngineMetadata",
                             :label="option.name",
-                            v-model="option.default"
+                            v-model="option.value"
                             dense)
                           v-select.mt-4(
                             v-if="option.type === 'combo'"
+                            @change="updateEngineMetadata",
                             :label="option.name",
                             :items="option.options",
-                            v-model="option.default",
+                            v-model="option.value",
                             disable-lookup,
                             dense)
                           v-text-field.mt-4(
                             v-if="option.type === 'string'"
+                            @change="updateEngineMetadata",
                             :label="option.name",
-                            v-model="option.default",
+                            v-model="option.value",
                             hide-details,
                             dense)
 

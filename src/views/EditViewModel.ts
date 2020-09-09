@@ -12,6 +12,8 @@ import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";
 import { Side } from "@/store/side";
 import { RepertoireTag } from "@/store/repertoireTag";
+import { Engine } from "node-uci";
+import { EngineOption } from "@/store/EngineHelpers";
 
 export default Vue.extend({
   data: () => ({
@@ -20,7 +22,10 @@ export default Vue.extend({
       "",
       Side.White
     ),
-    boardOrientation: Side.White
+    boardOrientation: Side.White,
+    activeEngine: false,
+    engineOutput: "",
+    engine: new Engine("")
   }),
 
   components: {
@@ -31,24 +36,10 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(["whiteRepertoire", "blackRepertoire"]),
+    ...mapState(["whiteRepertoire", "blackRepertoire", "engineMetadata"]),
 
     turnLists(): Turn[][] {
       return this.activePosition.GetTurnLists() || [[]];
-    },
-
-    nextScheduled(): string | undefined {
-      if (this.activePosition.nextRepetitionTimestamp) {
-        return new Date(
-          this.activePosition.nextRepetitionTimestamp
-        ).toLocaleDateString();
-      }
-
-      return undefined;
-    },
-
-    easiness(): number {
-      return _.round(this.activePosition.easinessFactor, 3);
     },
 
     nextMoves(): Array<Move> {
@@ -121,6 +112,31 @@ export default Vue.extend({
       } else {
         this.goToPreviousPosition();
       }
+    },
+
+    async activateEngine(active: boolean) {
+      if (active) {
+        this.getEngineRecommendations();
+      } else {
+        this.engine.quit().catch();
+      }
+    },
+
+    async getEngineRecommendations() {
+      this.engine = new Engine(this.engineMetadata.filePath);
+
+      await this.engine.init();
+      _.forEach(this.engineMetadata.options, async (option: EngineOption) => {
+        if (option.value) {
+          await this.engine.setoption(option.name, option.value.toString());
+        }
+      });
+
+      await this.engine.position(this.activePosition.fen);
+
+      this.engine.goInfinite({}).on("data", data => {
+        this.engineOutput = data;
+      });
     }
   },
 

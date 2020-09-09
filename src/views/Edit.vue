@@ -29,7 +29,8 @@
             v-textarea(v-model="activePosition.comment", outlined, no-resize)
 
           v-tab-item.pa-2(key=3, value="tab-3")
-            h1 Under construction
+            v-switch(v-model="activeEngine", label="Enable engine", @change="activateEngine")
+            div(v-if="activeEngine") {{ engineOutput }}
 
       v-col.ma-0(cols="8", @wheel="onScroll")
         chessboard(

@@ -1,5 +1,6 @@
 import Vue from "vue";
 import { mapState, mapMutations } from "vuex";
+import _ from "lodash";
 
 import chessboard from "@/components/common/chessboard.vue";
 import { BoardThemes, PieceThemes } from "@/views/ChessgroundThemes";
@@ -80,13 +81,8 @@ export default Vue.extend({
       }
     },
 
-    selectedEngineMetadata: {
-      get(): EngineMetadata {
-        return this.engineMetadata;
-      },
-      set(engineMetadata: EngineMetadata) {
-        this.setEngineMetadata(engineMetadata);
-      }
+    selectedEngineMetadata(): EngineMetadata {
+      return _.cloneDeep(this.engineMetadata);
     },
 
     selectedEngine: {
@@ -109,21 +105,18 @@ export default Vue.extend({
     }
   },
 
-  watch: {
-    selectedEngineMetadata: {
-      deep: true,
-      handler(updatedMetadata) {
-        this.setEngineMetadata(updatedMetadata);
-      }
-    }
-  },
+  methods: {
+    ...mapMutations([
+      "setDarkMode",
+      "setColor",
+      "setBoardTheme",
+      "setPieceTheme",
+      "setEngineMetadata",
+      "clearStorage"
+    ]),
 
-  methods: mapMutations([
-    "setDarkMode",
-    "setColor",
-    "setBoardTheme",
-    "setPieceTheme",
-    "setEngineMetadata",
-    "clearStorage"
-  ])
+    updateEngineMetadata(): void {
+      this.setEngineMetadata(this.selectedEngineMetadata);
+    }
+  }
 });

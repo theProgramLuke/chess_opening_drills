@@ -3,13 +3,14 @@ import { Engine } from "node-uci";
 
 interface SourceEngineOption {
   type: "spin" | "check" | "combo" | "string" | "button";
+  default: number | boolean | string;
   value: number | boolean | string;
   min?: number;
   max?: number;
   options?: string[];
 }
 
-interface EngineOption extends SourceEngineOption {
+export interface EngineOption extends SourceEngineOption {
   name: string;
 }
 
@@ -34,15 +35,14 @@ export async function GetMetadataFromEngine(
   await engine.position("7K/8/8/8/8/8/8/7k");
   await engine.go({ depth: 1 });
 
-  console.log(engine);
-
   if (engine.options && engine.id) {
     const options: EngineOption[] = [];
-    engine.options.forEach((value, key) => {
-      if (value.type !== "button" && key !== "MultiPV") {
+    engine.options.forEach((option, key) => {
+      if (option.type !== "button" && key !== "MultiPV") {
+        option.value = option.default;
         options.push({
           name: key,
-          ...value
+          ...option
         });
       }
     });
