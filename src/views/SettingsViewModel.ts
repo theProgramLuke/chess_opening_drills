@@ -109,6 +109,15 @@ export default Vue.extend({
     }
   },
 
+  watch: {
+    selectedEngineMetadata: {
+      deep: true,
+      handler(updatedMetadata) {
+        this.setEngineMetadata(updatedMetadata);
+      }
+    }
+  },
+
   methods: mapMutations([
     "setDarkMode",
     "setColor",
