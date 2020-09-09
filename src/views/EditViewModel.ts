@@ -55,9 +55,12 @@ export default Vue.extend({
       "removeRepertoireMove"
     ]),
 
-    updateBoard(position: RepertoirePosition): void {
+    updateBoard(position: RepertoirePosition) {
       this.activePosition = position;
       this.boardOrientation = position.forSide;
+      if (this.activeEngine) {
+        this.engine.stop().then(() => this.getEngineRecommendations());
+      }
     },
 
     onBoardMove(threats: Threats) {

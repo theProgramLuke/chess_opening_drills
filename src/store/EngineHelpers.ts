@@ -28,30 +28,32 @@ interface MetadataEngine extends Engine {
 export async function GetMetadataFromEngine(
   enginePath: string
 ): Promise<EngineMetadata | undefined> {
-  // Launch the engine with a dummy position to get the available options.
-  const engine: MetadataEngine = new Engine(enginePath);
+  if (enginePath) {
+    // Launch the engine with a dummy position to get the available options.
+    const engine: MetadataEngine = new Engine(enginePath);
 
-  await engine.init();
-  await engine.position("7K/8/8/8/8/8/8/7k");
-  await engine.go({ depth: 1 });
+    await engine.init();
+    await engine.position("7K/8/8/8/8/8/8/7k");
+    await engine.go({ depth: 1 });
 
-  if (engine.options && engine.id) {
-    const options: EngineOption[] = [];
-    engine.options.forEach((option, key) => {
-      if (option.type !== "button" && key !== "MultiPV") {
-        option.value = option.default;
-        options.push({
-          name: key,
-          ...option
-        });
-      }
-    });
+    if (engine.options && engine.id) {
+      const options: EngineOption[] = [];
+      engine.options.forEach((option, key) => {
+        if (option.type !== "button") {
+          option.value = option.default;
+          options.push({
+            name: key,
+            ...option
+          });
+        }
+      });
 
-    return {
-      name: engine.id.name,
-      filePath: enginePath,
-      options
-    };
+      return {
+        name: engine.id.name,
+        filePath: enginePath,
+        options
+      };
+    }
   }
 
   return undefined;

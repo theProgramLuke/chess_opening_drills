@@ -95,11 +95,9 @@ export default Vue.extend({
       },
       async set(newEngine?: File) {
         if (newEngine) {
-          this.selectedEngineMetadata = await GetMetadataFromEngine(
-            newEngine.path
-          );
+          this.setEngineMetadata(await GetMetadataFromEngine(newEngine.path));
         } else {
-          this.selectedEngineMetadata = undefined;
+          this.setEngineMetadata(undefined);
         }
       }
     }
