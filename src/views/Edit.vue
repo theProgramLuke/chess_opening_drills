@@ -35,9 +35,6 @@
                 | {{ recommendation.evaluation }}
                 | {{ recommendation.variation[0] }}
                 | Depth {{ recommendation.depth }}
-            
-            v-btn.primary.mt-8 Create Position Report
-            v-slider(min=5, max=99, :label="positionReportLabel")
 
       v-col.ma-0(cols="8", @wheel="onScroll")
         chessboard(
