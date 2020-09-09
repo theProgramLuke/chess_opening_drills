@@ -76,14 +76,14 @@
                             :label="option.name",
                             v-model="option.default"
                             dense)
-                          v-select(
+                          v-select.mt-4(
                             v-if="option.type === 'combo'"
                             :label="option.name",
                             :items="option.options",
                             v-model="option.default",
                             disable-lookup,
                             dense)
-                          v-text-field(
+                          v-text-field.mt-4(
                             v-if="option.type === 'string'"
                             :label="option.name",
                             v-model="option.default",
