@@ -58,3 +58,23 @@ export async function GetMetadataFromEngine(
 
   return undefined;
 }
+
+export interface EngineOutput {
+  evaluation: number;
+  depth: number;
+  variation: string[];
+  id: number;
+}
+
+export function ProcessAnalysis(engineData: any): EngineOutput | undefined {
+  if (engineData.depth && engineData.score && engineData.pv) {
+    return {
+      evaluation: engineData.score.value / 100,
+      depth: engineData.depth,
+      variation: engineData.pv.split(" "),
+      id: engineData.multipv
+    };
+  }
+
+  return undefined;
+}

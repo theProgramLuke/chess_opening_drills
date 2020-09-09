@@ -30,7 +30,14 @@
 
           v-tab-item.pa-2(key=3, value="tab-3")
             v-switch(v-model="activeEngine", label="Enable engine", @change="activateEngine")
-            div(v-if="activeEngine") {{ engineOutput }}
+            template(v-if="activeEngine")
+              p(v-for="recommendation in sortedEngineRecommendations")
+                | {{ recommendation.evaluation }}
+                | {{ recommendation.variation[0] }}
+                | Depth {{ recommendation.depth }}
+            
+            v-btn.primary.mt-8 Create Position Report
+            v-slider(min=5, max=99, :label="positionReportLabel")
 
       v-col.ma-0(cols="8", @wheel="onScroll")
         chessboard(

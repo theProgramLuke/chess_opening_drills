@@ -13,20 +13,38 @@ import { Move } from "@/store/move";
 import { Side } from "@/store/side";
 import { RepertoireTag } from "@/store/repertoireTag";
 import { Engine } from "node-uci";
-import { EngineOption } from "@/store/EngineHelpers";
+import {
+  EngineOption,
+  ProcessAnalysis,
+  EngineOutput
+} from "@/store/EngineHelpers";
+
+interface EditViewModelData {
+  activePosition: RepertoirePosition;
+  boardOrientation: Side;
+  activeEngine: boolean;
+  engineRecommendations: Array<EngineOutput | undefined>;
+  sortedEngineRecommendations: Array<EngineOutput | undefined>;
+  engine?: Engine;
+  positionReportDepth: number;
+}
 
 export default Vue.extend({
-  data: () => ({
-    activePosition: new RepertoirePosition(
-      "8/8/8/8/8/8/8/8 w KQkq - 0 1",
-      "",
-      Side.White
-    ),
-    boardOrientation: Side.White,
-    activeEngine: false,
-    engineOutput: "",
-    engine: new Engine("")
-  }),
+  data(): EditViewModelData {
+    return {
+      activePosition: new RepertoirePosition(
+        "8/8/8/8/8/8/8/8 w KQkq - 0 1",
+        "",
+        Side.White
+      ),
+      boardOrientation: Side.White,
+      activeEngine: false,
+      engineRecommendations: [],
+      sortedEngineRecommendations: [],
+      engine: undefined,
+      positionReportDepth: 25
+    };
+  },
 
   components: {
     chessboard,
@@ -42,8 +60,12 @@ export default Vue.extend({
       return this.activePosition.GetTurnLists() || [[]];
     },
 
-    nextMoves(): Array<Move> {
+    nextMoves(): Move[] {
       return this.activePosition.children;
+    },
+
+    positionReportLabel(): string {
+      return `Depth (${this.positionReportDepth})`;
     }
   },
 
@@ -59,7 +81,7 @@ export default Vue.extend({
       this.activePosition = position;
       this.boardOrientation = position.forSide;
       if (this.activeEngine) {
-        this.engine.stop().then(() => this.getEngineRecommendations());
+        this.engine?.stop().then(this.startGettingEngineRecommendations);
       }
     },
 
@@ -119,27 +141,61 @@ export default Vue.extend({
 
     async activateEngine(active: boolean) {
       if (active) {
-        this.getEngineRecommendations();
+        this.engine = new Engine(this.engineMetadata.filePath);
+
+        await this.engine?.init();
+        _.forEach(this.engineMetadata.options, async (option: EngineOption) => {
+          if (option.value) {
+            await this.engine?.setoption(option.name, option.value.toString());
+          }
+        });
+
+        this.startGettingEngineRecommendations();
       } else {
-        this.engine.quit().catch();
+        this.engine
+          ?.quit()
+          .then(() => (this.engine = undefined))
+          .catch();
       }
     },
 
-    async getEngineRecommendations() {
-      this.engine = new Engine(this.engineMetadata.filePath);
+    async startGettingEngineRecommendations() {
+      this.sortedEngineRecommendations = [];
+      await this.engine?.position(this.activePosition.fen);
 
-      await this.engine.init();
-      _.forEach(this.engineMetadata.options, async (option: EngineOption) => {
-        if (option.value) {
-          await this.engine.setoption(option.name, option.value.toString());
+      const throttledSort = _.throttle(this.sortEngineRecommendations, 100);
+
+      this.engine?.goInfinite({}).on("data", data => {
+        const processed = ProcessAnalysis(data);
+        if (processed) {
+          while (this.engineRecommendations.length < processed.id) {
+            this.engineRecommendations.push(undefined);
+          }
+
+          this.engineRecommendations[processed.id] = processed;
+          throttledSort();
+        }
+      });
+    },
+
+    sortEngineRecommendations(): void {
+      const recommendations: EngineOutput[] = [];
+
+      _.forEach(this.engineRecommendations, recommendation => {
+        if (recommendation) {
+          recommendations.push(recommendation);
         }
       });
 
-      await this.engine.position(this.activePosition.fen);
-
-      this.engine.goInfinite({}).on("data", data => {
-        this.engineOutput = data;
-      });
+      this.sortedEngineRecommendations = _.reverse(
+        _.sortBy(recommendations, recommendation => {
+          let evaluation = recommendation.evaluation;
+          if (this.activePosition.SideToMove() === Side.Black) {
+            evaluation = 0 - evaluation;
+          }
+          return 255 * recommendation.depth + evaluation;
+        })
+      );
     }
   },
 
@@ -148,6 +204,6 @@ export default Vue.extend({
   },
 
   destroyed(): void {
-    this.engine.quit().catch();
+    this.engine?.quit().catch();
   }
 });
