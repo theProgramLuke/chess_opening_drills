@@ -145,5 +145,9 @@ export default Vue.extend({
 
   created() {
     this.updateBoard(this.whiteRepertoire.tags[0].position);
+  },
+
+  destroyed(): void {
+    this.engine.quit().catch();
   }
 });
