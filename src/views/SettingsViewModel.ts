@@ -3,7 +3,7 @@ import { mapState, mapMutations } from "vuex";
 
 import chessboard from "@/components/common/chessboard.vue";
 import { BoardThemes, PieceThemes } from "@/views/ChessgroundThemes";
-import { EngineOption, GetEngineOptions } from "@/store/EngineHelpers";
+import { GetMetadataFromEngine, EngineMetadata } from "@/store/EngineHelpers";
 
 interface SettingsViewModelData {
   panels?: number;
@@ -13,7 +13,7 @@ interface SettingsViewModelData {
   boardThemes: string[];
   pieceThemes: string[];
   engine?: File;
-  engineOptions: EngineOption[];
+  engineMetadata?: EngineMetadata;
 }
 
 export default Vue.extend({
@@ -34,7 +34,7 @@ export default Vue.extend({
       boardThemes: BoardThemes,
       pieceThemes: PieceThemes,
       engine: undefined,
-      engineOptions: []
+      engineMetadata: undefined
     };
   },
 
@@ -95,7 +95,7 @@ export default Vue.extend({
 
   watch: {
     async engine(newEngine: File) {
-      this.engineOptions = await GetEngineOptions(newEngine.path);
+      this.engineMetadata = await GetMetadataFromEngine(newEngine.path);
     }
   }
 });
