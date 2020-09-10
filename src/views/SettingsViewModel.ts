@@ -43,19 +43,19 @@ export default Vue.extend({
     ...mapState(["darkMode", "boardTheme", "pieceTheme", "engineMetadata"]),
 
     selectedDarkMode: {
-      get() {
+      get(): boolean {
         return this.darkMode;
       },
-      set(darkMode: boolean) {
+      set(darkMode: boolean): void {
         this.setDarkMode(darkMode);
       }
     },
 
     selectedColorValue: {
-      get() {
+      get(): string {
         return this.$vuetify.theme.currentTheme[this.selectedColor] as string;
       },
-      set(color: string) {
+      set(color: string): void {
         this.setColor({
           colorToSet: this.selectedColor,
           color: color
@@ -64,19 +64,19 @@ export default Vue.extend({
     },
 
     selectedBoardTheme: {
-      get() {
+      get(): string {
         return this.boardTheme;
       },
-      set(boardTheme: string) {
+      set(boardTheme: string): void {
         this.setBoardTheme(boardTheme);
       }
     },
 
     selectedPieceTheme: {
-      get() {
+      get(): string {
         return this.pieceTheme;
       },
-      set(pieceTheme: string) {
+      set(pieceTheme: string): void {
         this.setPieceTheme(pieceTheme);
       }
     },
@@ -93,7 +93,7 @@ export default Vue.extend({
 
         return undefined;
       },
-      async set(newEngine?: File) {
+      async set(newEngine?: File): Promise<void> {
         if (newEngine) {
           this.setEngineMetadata(await GetMetadataFromEngine(newEngine.path));
         } else {
