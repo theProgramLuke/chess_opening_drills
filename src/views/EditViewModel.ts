@@ -6,6 +6,7 @@ import chessboard from "@/components/common/chessboard.vue";
 import TagTree from "@/components/edit/TagTree.vue";
 import MoveList from "@/components/edit/MoveList.vue";
 import VariationList from "@/components/edit/VariationList.vue";
+import EngineRecommendations from "@/components/edit/EngineRecommendations.vue";
 import { Threats } from "@/components/common/chessboardViewModel";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Turn } from "@/store/turn";
@@ -50,7 +51,8 @@ export default Vue.extend({
     chessboard,
     TagTree,
     MoveList,
-    VariationList
+    VariationList,
+    EngineRecommendations
   },
 
   computed: {
