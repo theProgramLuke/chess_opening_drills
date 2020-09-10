@@ -40,43 +40,51 @@ export default Vue.extend({
   },
 
   methods: {
+    getNewEngine(): Engine {
+      return new Engine(this.engineMetadata.filePath);
+    },
+
     async activateEngine(active: boolean) {
       if (active) {
-        this.engine = new Engine(this.engineMetadata.filePath);
+        this.engine = this.getNewEngine();
 
-        await this.engine?.init();
+        await this.engine.init();
         _.forEach(this.engineMetadata.options, async (option: EngineOption) => {
-          if (option.value) {
-            await this.engine?.setoption(option.name, option.value.toString());
+          if (option.value && this.engine) {
+            await this.engine.setoption(option.name, option.value.toString());
           }
         });
 
         this.startGettingEngineRecommendations();
       } else {
-        this.engine
-          ?.quit()
-          .then(() => (this.engine = undefined))
-          .catch();
+        if (this.engine) {
+          await this.engine
+            .quit()
+            .then(() => (this.engine = undefined))
+            .catch();
+        }
       }
     },
 
     async startGettingEngineRecommendations() {
-      this.sortedEngineRecommendations = [];
-      await this.engine?.position(this.activePosition.fen);
+      if (this.engine) {
+        this.sortedEngineRecommendations = [];
+        await this.engine.position(this.activePosition.fen);
 
-      const throttledSort = _.throttle(this.sortEngineRecommendations, 100);
+        const throttledSort = _.throttle(this.sortEngineRecommendations, 100);
 
-      this.engine?.goInfinite({}).on("data", data => {
-        const processed = ProcessAnalysis(data);
-        if (processed) {
-          while (this.engineRecommendations.length < processed.id) {
-            this.engineRecommendations.push(undefined);
+        this.engine.goInfinite({}).on("data", data => {
+          const processed = ProcessAnalysis(data);
+          if (processed) {
+            while (this.engineRecommendations.length < processed.id) {
+              this.engineRecommendations.push(undefined);
+            }
+
+            this.engineRecommendations[processed.id] = processed;
+            throttledSort();
           }
-
-          this.engineRecommendations[processed.id] = processed;
-          throttledSort();
-        }
-      });
+        });
+      }
     },
 
     sortEngineRecommendations(): void {
@@ -101,6 +109,8 @@ export default Vue.extend({
   },
 
   destroyed(): void {
-    this.engine?.quit();
+    if (this.engine) {
+      this.engine.quit();
+    }
   }
 });
