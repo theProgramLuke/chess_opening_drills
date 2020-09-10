@@ -40,17 +40,16 @@ export default Vue.extend({
   },
 
   methods: {
-    getNewEngine(): Engine {
-      return new Engine(this.engineMetadata.filePath);
-    },
-
-    async activateEngine(active: boolean) {
+    async activateEngine(
+      active: boolean,
+      engineCreator = (filePath: string) => new Engine(filePath)
+    ) {
       if (active) {
-        this.engine = this.getNewEngine();
+        this.engine = engineCreator(this.engineMetadata.filePath);
 
         await this.engine.init();
         _.forEach(this.engineMetadata.options, async (option: EngineOption) => {
-          if (option.value && this.engine) {
+          if (this.engine) {
             await this.engine.setoption(option.name, option.value.toString());
           }
         });
@@ -73,17 +72,25 @@ export default Vue.extend({
 
         const throttledSort = _.throttle(this.sortEngineRecommendations, 100);
 
-        this.engine.goInfinite({}).on("data", data => {
-          const processed = ProcessAnalysis(data);
-          if (processed) {
-            while (this.engineRecommendations.length < processed.id) {
-              this.engineRecommendations.push(undefined);
-            }
+        this.engine
+          .goInfinite({})
+          .on("data", data => this.receiveRecommendation(data, throttledSort));
+      }
+    },
 
-            this.engineRecommendations[processed.id] = processed;
-            throttledSort();
-          }
-        });
+    receiveRecommendation(
+      data: any,
+      sorter: Function,
+      processor = ProcessAnalysis
+    ): void {
+      const processed = processor(data);
+      if (processed) {
+        while (this.engineRecommendations.length < processed.id) {
+          this.engineRecommendations.push(undefined);
+        }
+
+        this.engineRecommendations[processed.id - 1] = processed;
+        sorter();
       }
     },
 
