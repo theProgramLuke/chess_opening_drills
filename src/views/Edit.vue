@@ -29,7 +29,7 @@
             v-textarea(v-model="activePosition.comment", outlined, no-resize)
 
           v-tab-item.pa-2(key=3, value="tab-3")
-            h1 Under construction
+            engine-recommendations(:activePosition="activePosition")
 
       v-col.ma-0(cols="8", @wheel="onScroll")
         chessboard(

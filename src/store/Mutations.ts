@@ -6,6 +6,7 @@ import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
 import { PgnGame } from "./pgnParser";
 import { Repertoire } from "./repertoire";
+import { EngineMetadata } from "./EngineHelpers";
 
 export interface MutationState extends Storage {
   persisted: PersistantStorage;
@@ -135,6 +136,14 @@ export const mutations = {
 
       setRepertoireForSide(state, side, repertoire);
     }
+  },
+
+  setEngineMetadata(
+    state: MutationState,
+    engineMetadata?: EngineMetadata
+  ): void {
+    state.engineMetadata = engineMetadata;
+    state.persisted.engineMetadata = engineMetadata;
   },
 
   clearStorage(state: MutationState): void {

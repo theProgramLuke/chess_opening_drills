@@ -6,52 +6,53 @@ import chessboard from "@/components/common/chessboard.vue";
 import TagTree from "@/components/edit/TagTree.vue";
 import MoveList from "@/components/edit/MoveList.vue";
 import VariationList from "@/components/edit/VariationList.vue";
+import EngineRecommendations from "@/components/edit/EngineRecommendations.vue";
 import { Threats } from "@/components/common/chessboardViewModel";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";
 import { Side } from "@/store/side";
 import { RepertoireTag } from "@/store/repertoireTag";
+import { Engine } from "node-uci";
+import {
+  EngineOption,
+  ProcessAnalysis,
+  EngineOutput
+} from "@/store/EngineHelpers";
+
+interface EditViewModelData {
+  activePosition: RepertoirePosition;
+  boardOrientation: Side;
+}
 
 export default Vue.extend({
-  data: () => ({
-    activePosition: new RepertoirePosition(
-      "8/8/8/8/8/8/8/8 w KQkq - 0 1",
-      "",
-      Side.White
-    ),
-    boardOrientation: Side.White
-  }),
+  data(): EditViewModelData {
+    return {
+      activePosition: new RepertoirePosition(
+        "8/8/8/8/8/8/8/8 w KQkq - 0 1",
+        "",
+        Side.White
+      ),
+      boardOrientation: Side.White
+    };
+  },
 
   components: {
     chessboard,
     TagTree,
     MoveList,
-    VariationList
+    VariationList,
+    EngineRecommendations
   },
 
   computed: {
-    ...mapState(["whiteRepertoire", "blackRepertoire"]),
+    ...mapState(["whiteRepertoire", "blackRepertoire", "engineMetadata"]),
 
     turnLists(): Turn[][] {
       return this.activePosition.GetTurnLists() || [[]];
     },
 
-    nextScheduled(): string | undefined {
-      if (this.activePosition.nextRepetitionTimestamp) {
-        return new Date(
-          this.activePosition.nextRepetitionTimestamp
-        ).toLocaleDateString();
-      }
-
-      return undefined;
-    },
-
-    easiness(): number {
-      return _.round(this.activePosition.easinessFactor, 3);
-    },
-
-    nextMoves(): Array<Move> {
+    nextMoves(): Move[] {
       return this.activePosition.children;
     }
   },
@@ -64,7 +65,7 @@ export default Vue.extend({
       "removeRepertoireMove"
     ]),
 
-    updateBoard(position: RepertoirePosition): void {
+    updateBoard(position: RepertoirePosition) {
       this.activePosition = position;
       this.boardOrientation = position.forSide;
     },

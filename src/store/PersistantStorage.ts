@@ -4,6 +4,7 @@ import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Repertoire, SavedRepertoire } from "./repertoire";
+import { EngineMetadata } from "./EngineHelpers";
 
 export interface SavedStorage {
   darkMode: boolean;
@@ -18,6 +19,7 @@ export interface SavedStorage {
   pieceTheme: string;
   whiteRepertoire: SavedRepertoire;
   blackRepertoire: SavedRepertoire;
+  engineMetadata?: EngineMetadata;
 }
 
 export interface Storage {
@@ -33,6 +35,7 @@ export interface Storage {
   pieceTheme: string;
   whiteRepertoire: Repertoire;
   blackRepertoire: Repertoire;
+  engineMetadata?: EngineMetadata;
 }
 
 function GetDefaultStorage() {
@@ -193,6 +196,18 @@ export class PersistantStorage implements Storage {
 
   set blackRepertoire(value: Repertoire) {
     this.storage.set("blackRepertoire", value.AsSaved());
+  }
+
+  get engineMetadata(): EngineMetadata | undefined {
+    return this.storage.get("engineMetadata");
+  }
+
+  set engineMetadata(engineMetadata: EngineMetadata | undefined) {
+    if (engineMetadata) {
+      this.storage.set("engineMetadata", engineMetadata);
+    } else {
+      this.storage.delete("engineMetadata");
+    }
   }
 
   clear(): void {

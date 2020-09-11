@@ -22,7 +22,8 @@ export default new Vuex.Store({
     boardTheme: storage.boardTheme,
     pieceTheme: storage.pieceTheme,
     whiteRepertoire: storage.whiteRepertoire,
-    blackRepertoire: storage.blackRepertoire
+    blackRepertoire: storage.blackRepertoire,
+    engineMetadata: storage.engineMetadata
   },
 
   mutations,
