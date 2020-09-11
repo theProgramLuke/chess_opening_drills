@@ -1,7 +1,7 @@
-import _ from "lodash";
+import _, { create } from "lodash";
 import { Engine } from "node-uci";
 
-interface SourceEngineOption {
+export interface SourceEngineOption {
   type: "spin" | "check" | "combo" | "string" | "button";
   default: number | boolean | string;
   value: number | boolean | string;
@@ -20,17 +20,18 @@ export interface EngineMetadata {
   options: EngineOption[];
 }
 
-interface MetadataEngine extends Engine {
+export interface MetadataEngine extends Engine {
   options?: Map<string, SourceEngineOption>;
   id?: { name: string };
 }
 
 export async function GetMetadataFromEngine(
-  enginePath: string
+  enginePath: string,
+  createEngine = (filePath: string) => new Engine(filePath)
 ): Promise<EngineMetadata | undefined> {
   if (enginePath) {
     // Launch the engine with a dummy position to get the available options.
-    const engine: MetadataEngine = new Engine(enginePath);
+    const engine: MetadataEngine = createEngine(enginePath);
 
     await engine.init();
     await engine.position("7K/8/8/8/8/8/8/7k");
@@ -48,11 +49,15 @@ export async function GetMetadataFromEngine(
         }
       });
 
-      return {
+      const result = {
         name: engine.id.name,
         filePath: enginePath,
         options
       };
+
+      await engine.quit();
+
+      return result;
     }
   }
 
