@@ -1,4 +1,5 @@
 import ElectronStore from "electron-store";
+import _ from "lodash";
 
 import { SavedStorage, PersistantStorage } from "@/store/PersistantStorage";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire";
@@ -253,6 +254,26 @@ describe("PersistantStorage", () => {
       persistantStorage.blackRepertoire = repertoire;
 
       expect(store.set).toBeCalledWith("blackRepertoire", savedRepertoire);
+    });
+  });
+
+  describe("lastBackupTime", () => {
+    it("should get the last backup time", () => {
+      const last = _.now();
+      store.get = jest.fn(() => last);
+
+      const actual = persistantStorage.lastBackupTime;
+
+      expect(store.get).toBeCalledWith("lastBackupTime");
+      expect(actual).toBe(last);
+    });
+
+    it("should set last backup time", () => {
+      const last = _.now();
+
+      persistantStorage.lastBackupTime = last;
+
+      expect(store.set).toBeCalledWith("lastBackupTime", last);
     });
   });
 
