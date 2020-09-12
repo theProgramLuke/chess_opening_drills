@@ -36,24 +36,22 @@ describe("BackupManager", () => {
       directoryBackups[dailyDirectory] = ["daily-0", "daily-1"];
       directoryBackups[monthlyDirectory] = ["monthly-0"];
       directoryBackups[yearlyDirectory] = [];
-      const expectedDailyBackups = _.map(
-        directoryBackups[dailyDirectory],
-        name => new Backup(name)
-      );
-      const expectedMonthlyBackups = _.map(
-        directoryBackups[monthlyDirectory],
-        name => new Backup(name)
-      );
-      const expectedYearlyBackups = _.map(
-        directoryBackups[yearlyDirectory],
-        name => new Backup(name)
-      );
 
-      const manager = new BackupManager(backupFolder, 0, 0, 0, listDirectory);
+      const manager = new BackupManager(
+        backupFolder,
+        0,
+        0,
+        0,
+        listDirectory,
+        createMockedBackup
+      );
+      const dailyBackups = getBackupFiles(manager.dailyBackups);
+      const monthlyBackups = getBackupFiles(manager.monthlyBackups);
+      const yearlyBackups = getBackupFiles(manager.yearlyBackups);
 
-      expect(manager.dailyBackups).toEqual(expectedDailyBackups);
-      expect(manager.monthlyBackups).toEqual(expectedMonthlyBackups);
-      expect(manager.yearlyBackups).toEqual(expectedYearlyBackups);
+      expect(dailyBackups).toEqual(directoryBackups[dailyDirectory]);
+      expect(monthlyBackups).toEqual(directoryBackups[monthlyDirectory]);
+      expect(yearlyBackups).toEqual(directoryBackups[yearlyDirectory]);
     });
   });
 
@@ -73,7 +71,8 @@ describe("BackupManager", () => {
         1,
         1,
         1,
-        jest.fn(() => [])
+        jest.fn(() => []),
+        createMockedBackup
       );
 
       manager.SaveBackup(
@@ -99,7 +98,8 @@ describe("BackupManager", () => {
         0,
         0,
         0,
-        jest.fn(() => [])
+        jest.fn(() => []),
+        createMockedBackup
       );
       const createBackup = jest.fn(() => createMockedBackup(""));
 
@@ -119,7 +119,14 @@ describe("BackupManager", () => {
       const old = `settings-${now - day}.json`;
       const expectedNew = path.join(dailyDirectory, `settings-${now}.json`);
       directoryBackups[dailyDirectory] = [old];
-      const manager = new BackupManager(backupFolder, 2, 0, 0, listDirectory);
+      const manager = new BackupManager(
+        backupFolder,
+        2,
+        0,
+        0,
+        listDirectory,
+        createMockedBackup
+      );
 
       manager.SaveBackup(content, () => now, createMockedBackup);
       const backupFiles = getBackupFiles(manager.dailyBackups);
@@ -131,7 +138,14 @@ describe("BackupManager", () => {
       const old = `settings-${now - month}.json`;
       const expectedNew = path.join(monthlyDirectory, `settings-${now}.json`);
       directoryBackups[monthlyDirectory] = [old];
-      const manager = new BackupManager(backupFolder, 0, 2, 0, listDirectory);
+      const manager = new BackupManager(
+        backupFolder,
+        0,
+        2,
+        0,
+        listDirectory,
+        createMockedBackup
+      );
 
       manager.SaveBackup(content, () => now, createMockedBackup);
       const backupFiles = getBackupFiles(manager.monthlyBackups);
@@ -143,7 +157,14 @@ describe("BackupManager", () => {
       const old = `settings-${now - year}.json`;
       const expectedNew = path.join(yearlyDirectory, `settings-${now}.json`);
       directoryBackups[yearlyDirectory] = [old];
-      const manager = new BackupManager(backupFolder, 0, 0, 2, listDirectory);
+      const manager = new BackupManager(
+        backupFolder,
+        0,
+        0,
+        2,
+        listDirectory,
+        createMockedBackup
+      );
 
       manager.SaveBackup(content, () => now, createMockedBackup);
       const backupFiles = getBackupFiles(manager.yearlyBackups);
@@ -154,7 +175,14 @@ describe("BackupManager", () => {
     it("should not save a daily backup if it has less than a day since the last backup", () => {
       const old = `settings-${now - (day - 1)}.json`;
       directoryBackups[dailyDirectory] = [old];
-      const manager = new BackupManager(backupFolder, 2, 0, 0, listDirectory);
+      const manager = new BackupManager(
+        backupFolder,
+        2,
+        0,
+        0,
+        listDirectory,
+        createMockedBackup
+      );
 
       manager.SaveBackup(content, () => now, createMockedBackup);
       const backupFiles = getBackupFiles(manager.dailyBackups);
