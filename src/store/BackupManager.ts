@@ -33,6 +33,7 @@ export class BackupManager {
   dailyLimit: number;
   monthlyLimit: number;
   yearlyLimit: number;
+  createBackup: (filePath: string) => Backup;
 
   constructor(
     backupFolder: string,
@@ -43,6 +44,7 @@ export class BackupManager {
     createBackup = (filePath: string) => new Backup(filePath)
   ) {
     this.backupFolder = backupFolder;
+    this.createBackup = createBackup;
     this.dailyBackups = this.discoverBackups(
       "daily",
       listDirectory,
@@ -72,16 +74,14 @@ export class BackupManager {
     return _.map(files, createBackup);
   }
 
-  SaveBackup(
-    content: string,
-    now = _.now,
-    createBackup = (filePath: string) => new Backup(filePath)
-  ): void {
+  SaveBackup(content: string, now = _.now): void {
     const fileName = `settings-${now()}.json`;
     let backup: Backup;
 
     if (this.dailyLimit && now() - lastBackupAge(this.dailyBackups) >= day) {
-      backup = createBackup(path.join(this.backupFolder, "daily", fileName));
+      backup = this.createBackup(
+        path.join(this.backupFolder, "daily", fileName)
+      );
       this.dailyBackups.push(backup);
       backup.save(content);
     }
@@ -91,14 +91,18 @@ export class BackupManager {
       this.monthlyLimit &&
       now() - lastBackupAge(this.monthlyBackups) >= month
     ) {
-      backup = createBackup(path.join(this.backupFolder, "monthly", fileName));
+      backup = this.createBackup(
+        path.join(this.backupFolder, "monthly", fileName)
+      );
       this.monthlyBackups.push(backup);
       backup.save(content);
     }
     this.monthlyBackups = trimBackups(this.monthlyBackups, this.monthlyLimit);
 
     if (this.yearlyLimit && now() - lastBackupAge(this.yearlyBackups) >= year) {
-      backup = createBackup(path.join(this.backupFolder, "yearly", fileName));
+      backup = this.createBackup(
+        path.join(this.backupFolder, "yearly", fileName)
+      );
       this.yearlyBackups.push(backup);
       backup.save(content);
     }
