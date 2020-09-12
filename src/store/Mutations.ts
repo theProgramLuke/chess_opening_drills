@@ -146,6 +146,11 @@ export const mutations = {
     state.persisted.engineMetadata = engineMetadata;
   },
 
+  setBackupDirectory(state: MutationState, backupDirectory: string): void {
+    state.backupDirectory = backupDirectory;
+    state.persisted.backupDirectory = backupDirectory;
+  },
+
   clearStorage(state: MutationState): void {
     state.persisted.clear();
   }

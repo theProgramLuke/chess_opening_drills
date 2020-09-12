@@ -257,6 +257,25 @@ describe("PersistantStorage", () => {
     });
   });
 
+  describe("backupDirectory", () => {
+    it("should get the stored backup directory", () => {
+      const backupDirectory = "backups";
+      store.get = jest.fn(() => backupDirectory);
+
+      const actual = persistantStorage.backupDirectory;
+
+      expect(actual).toBe(backupDirectory);
+    });
+
+    it("should set the stored boardTheme color %s", () => {
+      const backupDirectory = "backups";
+
+      persistantStorage.backupDirectory = backupDirectory;
+
+      expect(store.set).toBeCalledWith("backupDirectory", backupDirectory);
+    });
+  });
+
   describe("clear", () => {
     it("should clear the store", () => {
       persistantStorage.clear();

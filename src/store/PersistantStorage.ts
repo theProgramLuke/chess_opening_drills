@@ -20,6 +20,7 @@ export interface SavedStorage {
   whiteRepertoire: SavedRepertoire;
   blackRepertoire: SavedRepertoire;
   engineMetadata?: EngineMetadata;
+  backupDirectory: string;
 }
 
 export interface Storage {
@@ -36,6 +37,7 @@ export interface Storage {
   whiteRepertoire: Repertoire;
   blackRepertoire: Repertoire;
   engineMetadata?: EngineMetadata;
+  backupDirectory: string;
 }
 
 function GetDefaultStorage() {
@@ -90,7 +92,8 @@ function GetDefaultStorage() {
             "blackStart"
           )
         ]
-      ).AsSaved()
+      ).AsSaved(),
+      backupDirectory: ""
     }
   });
 }
@@ -208,6 +211,14 @@ export class PersistantStorage implements Storage {
     } else {
       this.storage.delete("engineMetadata");
     }
+  }
+
+  get backupDirectory(): string {
+    return this.storage.get("backupDirectory");
+  }
+
+  set backupDirectory(backupDirectory: string) {
+    this.storage.set("backupDirectory", backupDirectory);
   }
 
   clear(): void {

@@ -32,7 +32,7 @@ describe("mutations", () => {
       pieceTheme: "",
       whiteRepertoire: new Repertoire([], []),
       blackRepertoire: new Repertoire([], []),
-      lastBackupTime: 0
+      backupDirectory: ""
     };
   });
 
@@ -198,6 +198,17 @@ describe("mutations", () => {
         expect(repertoire.AddFromGame).toBeCalledWith(game);
       }
     );
+  });
+
+  describe("setBackupDirectory", () => {
+    it("should set the backup directory", () => {
+      const backupDirectory = "backups";
+
+      mutations.setBackupDirectory(state, backupDirectory);
+
+      expect(state.backupDirectory).toBe(backupDirectory);
+      expect(state.persisted.backupDirectory).toBe(backupDirectory);
+    });
   });
 
   describe("clear", () => {
