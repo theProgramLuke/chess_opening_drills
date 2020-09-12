@@ -1,9 +1,11 @@
 import ElectronStore from "electron-store";
 import _ from "lodash";
+import { OnDidAnyChangeCallback } from "conf/dist/source/types";
 
 import { SavedStorage, PersistantStorage } from "@/store/PersistantStorage";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire";
 import { BackupManager } from "@/store/BackupManager";
+import { EventEmitter } from "events";
 
 jest.mock("electron-store");
 jest.mock("@/store/repertoire");
@@ -13,6 +15,21 @@ type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 describe("PersistantStorage", () => {
   const storagePath = "some/path.json";
+  const createMockBackupManager = (
+    filePath: string,
+    dailyBackupLimit: number,
+    monthlyBackupLimit: number,
+    yearlyBackupLimit: number
+  ) => {
+    const manager = new BackupManager(
+      filePath,
+      dailyBackupLimit,
+      monthlyBackupLimit,
+      yearlyBackupLimit
+    );
+    manager.backupFolder = filePath;
+    return manager;
+  };
 
   let store: ElectronStore<SavedStorage>;
   let persistantStorage: PersistantStorage;
@@ -20,24 +37,7 @@ describe("PersistantStorage", () => {
   beforeEach(() => {
     store = new ElectronStore<SavedStorage>();
     (store as Writeable<ElectronStore<SavedStorage>>).path = storagePath;
-    persistantStorage = new PersistantStorage(
-      store,
-      (
-        filePath: string,
-        dailyBackupLimit: number,
-        monthlyBackupLimit: number,
-        yearlyBackupLimit: number
-      ) => {
-        const manager = new BackupManager(
-          filePath,
-          dailyBackupLimit,
-          monthlyBackupLimit,
-          yearlyBackupLimit
-        );
-        manager.backupFolder = filePath;
-        return manager;
-      }
-    );
+    persistantStorage = new PersistantStorage(store, createMockBackupManager);
   });
 
   describe("dark mode", () => {
@@ -416,7 +416,43 @@ describe("PersistantStorage", () => {
   });
 
   describe("backup", () => {
-    it("should saveBackup", _.noop);
+    it("should saveBackup with the serialized storage", () => {
+      const serialized = "content";
+      const backupManager = new BackupManager("", 0, 0, 0);
+      persistantStorage.serialize = jest.fn(() => serialized);
+      persistantStorage.backupManager = backupManager;
+
+      persistantStorage.backup();
+
+      expect(backupManager.SaveBackup).toBeCalledWith(serialized);
+    });
+
+    it("should backup any changes", () => {
+      const serialized = "content";
+      const backupManager = new BackupManager("", 0, 0, 0);
+      let anyChangeCallback: OnDidAnyChangeCallback<SavedStorage> | undefined;
+      store.onDidAnyChange = jest.fn(
+        (callback: OnDidAnyChangeCallback<SavedStorage>) => {
+          anyChangeCallback = callback;
+          return () => new EventEmitter();
+        }
+      );
+      store.get = jest.fn(() => "backups");
+      const storage = new PersistantStorage(
+        store,
+        jest.fn(() => backupManager)
+      );
+      storage.serialize = jest.fn(() => {
+        return serialized;
+      });
+
+      if (anyChangeCallback) {
+        anyChangeCallback();
+      }
+
+      expect(anyChangeCallback).toBeDefined();
+      expect(backupManager.SaveBackup).toBeCalledWith(serialized);
+    });
   });
 
   describe("clear", () => {

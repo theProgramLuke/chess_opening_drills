@@ -137,9 +137,10 @@ export class PersistantStorage implements Storage {
     this.storage = storage || GetDefaultStorage();
     this.createBackupManager = createBackupManager;
     this.initializeBackupManagement();
+    this.storage.onDidAnyChange(() => this.backup());
   }
 
-  private initializeBackupManagement() {
+  private initializeBackupManagement(): void {
     if (this.backupDirectory) {
       this.backupManager = this.createBackupManager(
         this.backupDirectory,
@@ -147,6 +148,12 @@ export class PersistantStorage implements Storage {
         this.monthlyBackupLimit,
         this.yearlyBackupLimit
       );
+    }
+  }
+
+  backup(): void {
+    if (this.backupManager) {
+      this.backupManager.SaveBackup(this.serialize());
     }
   }
 
