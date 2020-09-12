@@ -246,8 +246,12 @@ export class PersistantStorage implements Storage {
       this.storage.set("backupDirectory", backupDirectory);
     } else {
       this.storage.delete("backupDirectory");
-      this.backupManager = undefined;
+      this.removeBackupManager();
     }
+  }
+
+  private removeBackupManager() {
+    this.backupManager = undefined;
   }
 
   get dailyBackupLimit(): number {
