@@ -267,12 +267,32 @@ describe("PersistantStorage", () => {
       expect(actual).toBe(backupDirectory);
     });
 
-    it("should set the stored boardTheme color %s", () => {
+    it("should set the stored backup directory", () => {
       const backupDirectory = "backups";
 
       persistantStorage.backupDirectory = backupDirectory;
 
       expect(store.set).toBeCalledWith("backupDirectory", backupDirectory);
+    });
+  });
+
+  describe("dailyBackupLimit", () => {
+    it("should get the stored daily backup limit", () => {
+      const limit = 2;
+      store.get = jest.fn(() => limit);
+
+      const actual = persistantStorage.dailyBackupLimit;
+
+      expect(store.get).toBeCalledWith("dailyBackupLimit");
+      expect(actual).toBe(limit);
+    });
+
+    it("should set the stored daily backup limit", () => {
+      const limit = 2;
+
+      persistantStorage.dailyBackupLimit = limit;
+
+      expect(store.set).toBeCalledWith("dailyBackupLimit", limit);
     });
   });
 

@@ -32,7 +32,8 @@ describe("mutations", () => {
       pieceTheme: "",
       whiteRepertoire: new Repertoire([], []),
       blackRepertoire: new Repertoire([], []),
-      backupDirectory: ""
+      backupDirectory: "",
+      dailyBackupLimit: 0
     };
   });
 
@@ -208,6 +209,17 @@ describe("mutations", () => {
 
       expect(state.backupDirectory).toBe(backupDirectory);
       expect(state.persisted.backupDirectory).toBe(backupDirectory);
+    });
+  });
+
+  describe("setDailyBackupLimit", () => {
+    it("should set the daily backup limit", () => {
+      const limit = 2;
+
+      mutations.setDailyBackupLimit(state, limit);
+
+      expect(state.dailyBackupLimit).toBe(limit);
+      expect(state.persisted.dailyBackupLimit).toBe(limit);
     });
   });
 

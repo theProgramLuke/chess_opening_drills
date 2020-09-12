@@ -151,6 +151,11 @@ export const mutations = {
     state.persisted.backupDirectory = backupDirectory;
   },
 
+  setDailyBackupLimit(state: MutationState, limit: number): void {
+    state.dailyBackupLimit = limit;
+    state.persisted.dailyBackupLimit = limit;
+  },
+
   clearStorage(state: MutationState): void {
     state.persisted.clear();
   }

@@ -21,6 +21,7 @@ export interface SavedStorage {
   blackRepertoire: SavedRepertoire;
   engineMetadata?: EngineMetadata;
   backupDirectory: string;
+  dailyBackupLimit: number;
 }
 
 export interface Storage {
@@ -38,6 +39,7 @@ export interface Storage {
   blackRepertoire: Repertoire;
   engineMetadata?: EngineMetadata;
   backupDirectory: string;
+  dailyBackupLimit: number;
 }
 
 function GetDefaultStorage() {
@@ -93,7 +95,8 @@ function GetDefaultStorage() {
           )
         ]
       ).AsSaved(),
-      backupDirectory: ""
+      backupDirectory: "",
+      dailyBackupLimit: 7
     }
   });
 }
@@ -219,6 +222,14 @@ export class PersistantStorage implements Storage {
 
   set backupDirectory(backupDirectory: string) {
     this.storage.set("backupDirectory", backupDirectory);
+  }
+
+  get dailyBackupLimit(): number {
+    return this.storage.get("dailyBackupLimit");
+  }
+
+  set dailyBackupLimit(limit: number) {
+    this.storage.set("dailyBackupLimit", limit);
   }
 
   clear(): void {
