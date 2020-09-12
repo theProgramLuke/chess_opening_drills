@@ -2,7 +2,7 @@ import fs from "graceful-fs";
 import path from "path";
 import _ from "lodash";
 
-import { Backup } from "./Backup";
+import { Backup } from "@/store/Backup";
 
 export const day = 24 * 60 * 60 * 1000;
 export const month = day * 31;
@@ -26,26 +26,37 @@ export class BackupManager {
     dailyLimit: number,
     monthlyLimit: number,
     yearlyLimit: number,
-    listDirectory = BackupManager.defaultListDirectory
+    listDirectory = (directory: string): string[] => fs.readdirSync(directory),
+    createBackup = (filePath: string) => new Backup(filePath)
   ) {
     this.backupFolder = backupFolder;
-    this.dailyBackups = this.discoverBackups("daily", listDirectory);
-    this.monthlyBackups = this.discoverBackups("monthly", listDirectory);
-    this.yearlyBackups = this.discoverBackups("yearly", listDirectory);
+    this.dailyBackups = this.discoverBackups(
+      "daily",
+      listDirectory,
+      createBackup
+    );
+    this.monthlyBackups = this.discoverBackups(
+      "monthly",
+      listDirectory,
+      createBackup
+    );
+    this.yearlyBackups = this.discoverBackups(
+      "yearly",
+      listDirectory,
+      createBackup
+    );
     this.dailyLimit = dailyLimit;
     this.monthlyLimit = monthlyLimit;
     this.yearlyLimit = yearlyLimit;
   }
 
-  private static defaultListDirectory = (directory: string): string[] =>
-    fs.readdirSync(directory);
-
   private discoverBackups(
     frequency: string,
-    listDirectory = BackupManager.defaultListDirectory
+    listDirectory: (directory: string) => string[],
+    createBackup: (filePath: string) => Backup
   ): Backup[] {
     const files = listDirectory(path.join(this.backupFolder, frequency));
-    return _.map(files, file => new Backup(file));
+    return _.map(files, createBackup);
   }
 
   SaveBackup(

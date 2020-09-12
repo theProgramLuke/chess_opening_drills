@@ -18,6 +18,7 @@ describe("BackupManager", () => {
   const createMockedBackup = (filePath: string): Backup => {
     const backup = new Backup(filePath);
     backup.save = jest.fn();
+    backup.delete = jest.fn();
     return backup;
   };
 
@@ -183,7 +184,7 @@ describe("BackupManager", () => {
       expect(backupFiles).toEqual([old]);
     });
 
-    it.each(["daily", "monthly", "yearly"])(
+    it(
       "should delete the oldest %s backups if there are more than the limit",
       _.noop
     );
