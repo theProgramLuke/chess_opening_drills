@@ -2,8 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 import { mutations } from "@/store/Mutations";
-import { PersistantStorage } from "./PersistantStorage";
-import { BackupManager } from "./BackupManager";
+import { PersistantStorage } from "@/store/PersistantStorage";
 
 Vue.use(Vuex);
 
@@ -28,13 +27,7 @@ export default new Vuex.Store({
     backupDirectory: storage.backupDirectory,
     dailyBackupLimit: storage.dailyBackupLimit,
     monthlyBackupLimit: storage.monthlyBackupLimit,
-    yearlyBackupLimit: storage.yearlyBackupLimit,
-    backupManager: new BackupManager(
-      storage.backupDirectory,
-      storage.dailyBackupLimit,
-      storage.monthlyBackupLimit,
-      storage.yearlyBackupLimit
-    )
+    yearlyBackupLimit: storage.yearlyBackupLimit
   },
 
   mutations,

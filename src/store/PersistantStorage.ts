@@ -1,10 +1,12 @@
 import ElectronStore from "electron-store";
+import fs, { readFileSync } from "graceful-fs";
 
 import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Repertoire, SavedRepertoire } from "./repertoire";
 import { EngineMetadata } from "./EngineHelpers";
+import { BackupManager } from "./BackupManager";
 
 export interface SavedStorage {
   darkMode: boolean;
@@ -20,7 +22,7 @@ export interface SavedStorage {
   whiteRepertoire: SavedRepertoire;
   blackRepertoire: SavedRepertoire;
   engineMetadata?: EngineMetadata;
-  backupDirectory: string;
+  backupDirectory?: string;
   dailyBackupLimit: number;
   monthlyBackupLimit: number;
   yearlyBackupLimit: number;
@@ -40,7 +42,7 @@ export interface Storage {
   whiteRepertoire: Repertoire;
   blackRepertoire: Repertoire;
   engineMetadata?: EngineMetadata;
-  backupDirectory: string;
+  backupDirectory?: string;
   dailyBackupLimit: number;
   monthlyBackupLimit: number;
   yearlyBackupLimit: number;
@@ -109,9 +111,22 @@ function GetDefaultStorage() {
 
 export class PersistantStorage implements Storage {
   storage: ElectronStore<SavedStorage>;
+  backupManager?: BackupManager;
+  backupRegistration = Function;
 
-  constructor(storage?: ElectronStore<SavedStorage>) {
+  constructor(
+    storage?: ElectronStore<SavedStorage>,
+    backupManagerType = BackupManager
+  ) {
     this.storage = storage || GetDefaultStorage();
+    if (this.backupDirectory) {
+      this.backupManager = new backupManagerType(
+        this.backupDirectory,
+        this.dailyBackupLimit,
+        this.monthlyBackupLimit,
+        this.yearlyBackupLimit
+      );
+    }
   }
 
   get darkMode(): boolean {
@@ -222,12 +237,16 @@ export class PersistantStorage implements Storage {
     }
   }
 
-  get backupDirectory(): string {
+  get backupDirectory(): string | undefined {
     return this.storage.get("backupDirectory");
   }
 
-  set backupDirectory(backupDirectory: string) {
-    this.storage.set("backupDirectory", backupDirectory);
+  set backupDirectory(backupDirectory: string | undefined) {
+    if (backupDirectory) {
+      this.storage.set("backupDirectory", backupDirectory);
+    } else {
+      this.storage.delete("backupDirectory");
+    }
   }
 
   get dailyBackupLimit(): number {
@@ -236,6 +255,9 @@ export class PersistantStorage implements Storage {
 
   set dailyBackupLimit(limit: number) {
     this.storage.set("dailyBackupLimit", limit);
+    if (this.backupManager) {
+      this.backupManager.dailyLimit = limit;
+    }
   }
 
   get monthlyBackupLimit(): number {
@@ -244,6 +266,9 @@ export class PersistantStorage implements Storage {
 
   set monthlyBackupLimit(limit: number) {
     this.storage.set("monthlyBackupLimit", limit);
+    if (this.backupManager) {
+      this.backupManager.monthlyLimit = limit;
+    }
   }
 
   get yearlyBackupLimit(): number {
@@ -252,6 +277,16 @@ export class PersistantStorage implements Storage {
 
   set yearlyBackupLimit(limit: number) {
     this.storage.set("yearlyBackupLimit", limit);
+    if (this.backupManager) {
+      this.backupManager.yearlyLimit = limit;
+    }
+  }
+
+  serialize(
+    readFile = (filePath: string): string =>
+      fs.readFileSync(filePath, { encoding: "utf8" })
+  ): string {
+    return readFile(this.storage.path);
   }
 
   clear(): void {

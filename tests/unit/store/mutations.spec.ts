@@ -37,8 +37,7 @@ describe("mutations", () => {
       backupDirectory: "",
       dailyBackupLimit: 0,
       monthlyBackupLimit: 0,
-      yearlyBackupLimit: 0,
-      backupManager: new BackupManager("", 0, 0, 0)
+      yearlyBackupLimit: 0
     };
   });
 
@@ -214,7 +213,6 @@ describe("mutations", () => {
 
       expect(state.backupDirectory).toBe(backupDirectory);
       expect(state.persisted.backupDirectory).toBe(backupDirectory);
-      expect(state.backupManager.backupFolder).toBe(backupDirectory);
     });
   });
 
@@ -226,7 +224,6 @@ describe("mutations", () => {
 
       expect(state.dailyBackupLimit).toBe(limit);
       expect(state.persisted.dailyBackupLimit).toBe(limit);
-      expect(state.backupManager.dailyLimit).toBe(limit);
     });
   });
 
@@ -238,7 +235,6 @@ describe("mutations", () => {
 
       expect(state.monthlyBackupLimit).toBe(limit);
       expect(state.persisted.monthlyBackupLimit).toBe(limit);
-      expect(state.backupManager.monthlyLimit).toBe(limit);
     });
   });
 
@@ -250,7 +246,6 @@ describe("mutations", () => {
 
       expect(state.yearlyBackupLimit).toBe(limit);
       expect(state.persisted.yearlyBackupLimit).toBe(limit);
-      expect(state.backupManager.yearlyLimit).toBe(limit);
     });
   });
 

@@ -11,7 +11,6 @@ import { BackupManager } from "./BackupManager";
 
 export interface MutationState extends Storage {
   persisted: PersistantStorage;
-  backupManager: BackupManager;
 }
 
 function getRepertoireForSide(state: MutationState, forSide: Side) {
@@ -151,25 +150,21 @@ export const mutations = {
   setBackupDirectory(state: MutationState, backupDirectory: string): void {
     state.backupDirectory = backupDirectory;
     state.persisted.backupDirectory = backupDirectory;
-    state.backupManager.backupFolder = backupDirectory;
   },
 
   setDailyBackupLimit(state: MutationState, limit: number): void {
     state.dailyBackupLimit = limit;
     state.persisted.dailyBackupLimit = limit;
-    state.backupManager.dailyLimit = limit;
   },
 
   setMonthlyBackupLimit(state: MutationState, limit: number): void {
     state.monthlyBackupLimit = limit;
     state.persisted.monthlyBackupLimit = limit;
-    state.backupManager.monthlyLimit = limit;
   },
 
   setYearlyBackupLimit(state: MutationState, limit: number): void {
     state.yearlyBackupLimit = limit;
     state.persisted.yearlyBackupLimit = limit;
-    state.backupManager.yearlyLimit = limit;
   },
 
   clearStorage(state: MutationState): void {

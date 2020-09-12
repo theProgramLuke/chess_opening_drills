@@ -3,17 +3,24 @@ import _ from "lodash";
 
 import { SavedStorage, PersistantStorage } from "@/store/PersistantStorage";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire";
+import { BackupManager } from "@/store/BackupManager";
 
 jest.mock("electron-store");
 jest.mock("@/store/repertoire");
+jest.mock("@/store/BackupManager");
+
+type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 describe("PersistantStorage", () => {
+  const storagePath = "some/path.json";
+
   let store: ElectronStore<SavedStorage>;
   let persistantStorage: PersistantStorage;
 
   beforeEach(() => {
     store = new ElectronStore<SavedStorage>();
-    persistantStorage = new PersistantStorage(store);
+    (store as Writeable<ElectronStore<SavedStorage>>).path = storagePath;
+    persistantStorage = new PersistantStorage(store, BackupManager);
   });
 
   describe("dark mode", () => {
@@ -284,6 +291,12 @@ describe("PersistantStorage", () => {
 
       expect(store.set).toBeCalledWith("backupDirectory", backupDirectory);
     });
+
+    it("should set the stored backup directory if undefined", () => {
+      persistantStorage.backupDirectory = undefined;
+
+      expect(store.delete).toBeCalledWith("backupDirectory");
+    });
   });
 
   describe("dailyBackupLimit", () => {
@@ -299,10 +312,12 @@ describe("PersistantStorage", () => {
 
     it("should set the stored daily backup limit", () => {
       const limit = 2;
+      persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
 
       persistantStorage.dailyBackupLimit = limit;
 
       expect(store.set).toBeCalledWith("dailyBackupLimit", limit);
+      expect(persistantStorage.backupManager.dailyLimit).toBe(limit);
     });
   });
 
@@ -319,10 +334,12 @@ describe("PersistantStorage", () => {
 
     it("should set the stored monthly backup limit", () => {
       const limit = 2;
+      persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
 
       persistantStorage.monthlyBackupLimit = limit;
 
       expect(store.set).toBeCalledWith("monthlyBackupLimit", limit);
+      expect(persistantStorage.backupManager.monthlyLimit).toBe(limit);
     });
   });
 
@@ -339,10 +356,23 @@ describe("PersistantStorage", () => {
 
     it("should set the stored yearly backup limit", () => {
       const limit = 2;
+      persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
 
       persistantStorage.yearlyBackupLimit = limit;
 
       expect(store.set).toBeCalledWith("yearlyBackupLimit", limit);
+      expect(persistantStorage.backupManager.yearlyLimit).toBe(limit);
+    });
+  });
+
+  describe("serialize", () => {
+    it("should get the persisted file content", () => {
+      const content = "content";
+      const readFileSync = jest.fn(() => content);
+
+      const serialized = persistantStorage.serialize(readFileSync);
+
+      expect(serialized).toBe(content);
     });
   });
 
