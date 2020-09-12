@@ -8,6 +8,10 @@ export const day = 24 * 60 * 60 * 1000;
 export const month = day * 31;
 export const year = day * 365;
 
+const lastBackupAge = (backups: Backup[]): number => {
+  return _.min(_.map(backups, backup => backup.age())) || 0;
+};
+
 export class BackupManager {
   backupFolder: string;
   dailyBackups: Backup[];
@@ -52,19 +56,22 @@ export class BackupManager {
     const fileName = `settings-${now()}.json`;
     let backup: Backup;
 
-    if (this.dailyLimit) {
+    if (this.dailyLimit && now() - lastBackupAge(this.dailyBackups) >= day) {
       backup = createBackup(path.join(this.backupFolder, "daily", fileName));
       this.dailyBackups.push(backup);
       backup.save(content);
     }
 
-    if (this.monthlyLimit) {
+    if (
+      this.monthlyLimit &&
+      now() - lastBackupAge(this.monthlyBackups) >= month
+    ) {
       backup = createBackup(path.join(this.backupFolder, "monthly", fileName));
       this.monthlyBackups.push(backup);
       backup.save(content);
     }
 
-    if (this.yearlyLimit) {
+    if (this.yearlyLimit && now() - lastBackupAge(this.yearlyBackups) >= year) {
       backup = createBackup(path.join(this.backupFolder, "yearly", fileName));
       this.yearlyBackups.push(backup);
       backup.save(content);

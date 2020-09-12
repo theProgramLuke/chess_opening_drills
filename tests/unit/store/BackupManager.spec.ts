@@ -1,16 +1,18 @@
 import path from "path";
 import _ from "lodash";
 
-import { BackupManager } from "@/store/BackupManager";
+import { BackupManager, day, month, year } from "@/store/BackupManager";
 import { Backup } from "@/store/Backup";
 
 describe("BackupManager", () => {
-  const now = 2001000;
+  const now = day + year + month;
   const backupFolder = "backups";
+  const content = "some content";
   const dailyDirectory = path.join(backupFolder, "daily");
   const monthlyDirectory = path.join(backupFolder, "monthly");
   const yearlyDirectory = path.join(backupFolder, "yearly");
   const directoryBackups: { [key: string]: string[] } = {};
+
   const listDirectory = (directory: string) => directoryBackups[directory];
 
   const createMockedBackup = (filePath: string): Backup => {
@@ -19,10 +21,19 @@ describe("BackupManager", () => {
     return backup;
   };
 
+  const getBackupFiles = (backups: Backup[]) =>
+    _.map(backups, backup => backup.filePath);
+
+  beforeEach(() => {
+    directoryBackups[dailyDirectory] = [];
+    directoryBackups[monthlyDirectory] = [];
+    directoryBackups[yearlyDirectory] = [];
+  });
+
   describe("constructor", () => {
     it("should discover any existing backups from the filesystem", () => {
-      directoryBackups[dailyDirectory] = ["daily0", "daily1"];
-      directoryBackups[monthlyDirectory] = ["monthly0"];
+      directoryBackups[dailyDirectory] = ["daily-0", "daily-1"];
+      directoryBackups[monthlyDirectory] = ["monthly-0"];
       directoryBackups[yearlyDirectory] = [];
       const expectedDailyBackups = _.map(
         directoryBackups[dailyDirectory],
@@ -63,18 +74,15 @@ describe("BackupManager", () => {
         1,
         jest.fn(() => [])
       );
-      const content = "some content";
 
       manager.SaveBackup(
         content,
         jest.fn(() => now),
         createMockedBackup
       );
-      const getActualFiles = (backups: Backup[]) =>
-        _.map(backups, backup => backup.filePath);
-      const dailyBackupFiles = getActualFiles(manager.dailyBackups);
-      const monthlyBackupFiles = getActualFiles(manager.monthlyBackups);
-      const yearlyBackupFiles = getActualFiles(manager.yearlyBackups);
+      const dailyBackupFiles = getBackupFiles(manager.dailyBackups);
+      const monthlyBackupFiles = getBackupFiles(manager.monthlyBackups);
+      const yearlyBackupFiles = getBackupFiles(manager.yearlyBackups);
 
       expect(dailyBackupFiles).toEqual(expectedDailyBackupFiles);
       expect(monthlyBackupFiles).toEqual(expectedMonthlyBackupFiles);
@@ -106,20 +114,74 @@ describe("BackupManager", () => {
       expect(createBackup).not.toBeCalled();
     });
 
-    it(
-      "should save a daily backup if it has been a day since the last backup",
-      _.noop
-    );
+    it("should save a daily backup if it has been a day since the last backup", () => {
+      const old = `settings-${now - day}.json`;
+      const expectedNew = path.join(dailyDirectory, `settings-${now}.json`);
+      directoryBackups[dailyDirectory] = [old];
+      const manager = new BackupManager(backupFolder, 2, 0, 0, listDirectory);
 
-    it(
-      "should save a month backup if it has been a month since the last backup",
-      _.noop
-    );
+      manager.SaveBackup(content, () => now, createMockedBackup);
+      const backupFiles = getBackupFiles(manager.dailyBackups);
 
-    it(
-      "should save a year backup if it has been a year since the last backup",
-      _.noop
-    );
+      expect(backupFiles).toEqual([old, expectedNew]);
+    });
+
+    it("should save a monthly backup if it has been a month since the last backup", () => {
+      const old = `settings-${now - month}.json`;
+      const expectedNew = path.join(monthlyDirectory, `settings-${now}.json`);
+      directoryBackups[monthlyDirectory] = [old];
+      const manager = new BackupManager(backupFolder, 0, 2, 0, listDirectory);
+
+      manager.SaveBackup(content, () => now, createMockedBackup);
+      const backupFiles = getBackupFiles(manager.monthlyBackups);
+
+      expect(backupFiles).toEqual([old, expectedNew]);
+    });
+
+    it("should save a yearly backup if it has been a year since the last backup", () => {
+      const old = `settings-${now - year}.json`;
+      const expectedNew = path.join(yearlyDirectory, `settings-${now}.json`);
+      directoryBackups[yearlyDirectory] = [old];
+      const manager = new BackupManager(backupFolder, 0, 0, 2, listDirectory);
+
+      manager.SaveBackup(content, () => now, createMockedBackup);
+      const backupFiles = getBackupFiles(manager.yearlyBackups);
+
+      expect(backupFiles).toEqual([old, expectedNew]);
+    });
+
+    it("should not save a daily backup if it has less than a day since the last backup", () => {
+      const old = `settings-${now - (day - 1)}.json`;
+      directoryBackups[dailyDirectory] = [old];
+      const manager = new BackupManager(backupFolder, 2, 0, 0, listDirectory);
+
+      manager.SaveBackup(content, () => now, createMockedBackup);
+      const backupFiles = getBackupFiles(manager.dailyBackups);
+
+      expect(backupFiles).toEqual([old]);
+    });
+
+    it("should not save a monthly backup if it has less a month since the last backup", () => {
+      const old = `settings-${now - (month - 1)}.json`;
+      directoryBackups[monthlyDirectory] = [old];
+      const manager = new BackupManager(backupFolder, 0, 2, 0, listDirectory);
+
+      manager.SaveBackup(content, () => now, createMockedBackup);
+      const backupFiles = getBackupFiles(manager.monthlyBackups);
+
+      expect(backupFiles).toEqual([old]);
+    });
+
+    it("should not save a yearly backup if it has less a year since the last backup", () => {
+      const old = `settings-${now - (year - 1)}.json`;
+      directoryBackups[yearlyDirectory] = [old];
+      const manager = new BackupManager(backupFolder, 0, 0, 2, listDirectory);
+
+      manager.SaveBackup(content, () => now, createMockedBackup);
+      const backupFiles = getBackupFiles(manager.yearlyBackups);
+
+      expect(backupFiles).toEqual([old]);
+    });
 
     it.each(["daily", "monthly", "yearly"])(
       "should delete the oldest %s backups if there are more than the limit",
