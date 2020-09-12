@@ -12,6 +12,19 @@ const lastBackupAge = (backups: Backup[]): number => {
   return _.min(_.map(backups, backup => backup.age())) || 0;
 };
 
+const trimBackups = (backups: Backup[], limit: number): Backup[] => {
+  const sorted = _.sortBy(backups, backup => 0 - backup.age());
+
+  while (sorted.length > limit) {
+    const toDelete = sorted.pop();
+    if (toDelete) {
+      toDelete.delete();
+    }
+  }
+
+  return sorted;
+};
+
 export class BackupManager {
   backupFolder: string;
   dailyBackups: Backup[];
@@ -72,6 +85,7 @@ export class BackupManager {
       this.dailyBackups.push(backup);
       backup.save(content);
     }
+    this.dailyBackups = trimBackups(this.dailyBackups, this.dailyLimit);
 
     if (
       this.monthlyLimit &&
@@ -81,11 +95,13 @@ export class BackupManager {
       this.monthlyBackups.push(backup);
       backup.save(content);
     }
+    this.monthlyBackups = trimBackups(this.monthlyBackups, this.monthlyLimit);
 
     if (this.yearlyLimit && now() - lastBackupAge(this.yearlyBackups) >= year) {
       backup = createBackup(path.join(this.backupFolder, "yearly", fileName));
       this.yearlyBackups.push(backup);
       backup.save(content);
     }
+    this.yearlyBackups = trimBackups(this.yearlyBackups, this.yearlyLimit);
   }
 }

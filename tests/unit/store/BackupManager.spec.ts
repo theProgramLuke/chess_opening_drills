@@ -131,7 +131,7 @@ describe("BackupManager", () => {
       manager.SaveBackup(content, () => now, createMockedBackup);
       const backupFiles = getBackupFiles(manager.dailyBackups);
 
-      expect(backupFiles).toEqual([old, expectedNew]);
+      expect(backupFiles).toEqual([expectedNew, old]);
     });
 
     it("should save a monthly backup if it has been a month since the last backup", () => {
@@ -150,7 +150,7 @@ describe("BackupManager", () => {
       manager.SaveBackup(content, () => now, createMockedBackup);
       const backupFiles = getBackupFiles(manager.monthlyBackups);
 
-      expect(backupFiles).toEqual([old, expectedNew]);
+      expect(backupFiles).toEqual([expectedNew, old]);
     });
 
     it("should save a yearly backup if it has been a year since the last backup", () => {
@@ -169,7 +169,7 @@ describe("BackupManager", () => {
       manager.SaveBackup(content, () => now, createMockedBackup);
       const backupFiles = getBackupFiles(manager.yearlyBackups);
 
-      expect(backupFiles).toEqual([old, expectedNew]);
+      expect(backupFiles).toEqual([expectedNew, old]);
     });
 
     it("should not save a daily backup if it has less than a day since the last backup", () => {
@@ -226,9 +226,37 @@ describe("BackupManager", () => {
       expect(backupFiles).toEqual([old]);
     });
 
-    it(
-      "should delete the oldest %s backups if there are more than the limit",
-      _.noop
-    );
+    it("should delete the oldest backups if the limit is exceeded", () => {
+      const old = [`settings-0.json`, `settings-1.json`];
+      directoryBackups[dailyDirectory] = old;
+      directoryBackups[monthlyDirectory] = old;
+      directoryBackups[yearlyDirectory] = old;
+      const expectedDailyBackupFiles = [
+        path.join(dailyDirectory, `settings-${now}.json`)
+      ];
+      const expectedMonthlyBackupFiles = [
+        path.join(monthlyDirectory, `settings-${now}.json`)
+      ];
+      const expectedYearlyBackupFiles = [
+        path.join(yearlyDirectory, `settings-${now}.json`)
+      ];
+      const manager = new BackupManager(
+        backupFolder,
+        1,
+        1,
+        1,
+        listDirectory,
+        createMockedBackup
+      );
+
+      manager.SaveBackup(content, () => now, createMockedBackup);
+      const dailyBackupFiles = getBackupFiles(manager.dailyBackups);
+      const monthlyBackupFiles = getBackupFiles(manager.monthlyBackups);
+      const yearlyBackupFiles = getBackupFiles(manager.yearlyBackups);
+
+      expect(dailyBackupFiles).toEqual(expectedDailyBackupFiles);
+      expect(monthlyBackupFiles).toEqual(expectedMonthlyBackupFiles);
+      expect(yearlyBackupFiles).toEqual(expectedYearlyBackupFiles);
+    });
   });
 });
