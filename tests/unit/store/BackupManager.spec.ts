@@ -77,8 +77,7 @@ describe("BackupManager", () => {
 
       manager.SaveBackup(
         content,
-        jest.fn(() => now),
-        createMockedBackup
+        jest.fn(() => now)
       );
       const dailyBackupFiles = getBackupFiles(manager.dailyBackups);
       const monthlyBackupFiles = getBackupFiles(manager.monthlyBackups);
@@ -93,20 +92,19 @@ describe("BackupManager", () => {
     });
 
     it("should not save a backup if the limit is 0", () => {
+      const createBackup = jest.fn(() => createMockedBackup(""));
       const manager = new BackupManager(
         backupFolder,
         0,
         0,
         0,
         jest.fn(() => []),
-        createMockedBackup
+        createBackup
       );
-      const createBackup = jest.fn(() => createMockedBackup(""));
 
       manager.SaveBackup(
         "",
-        jest.fn(() => now),
-        createBackup
+        jest.fn(() => now)
       );
 
       expect(manager.dailyBackups).toEqual([]);
@@ -128,7 +126,7 @@ describe("BackupManager", () => {
         createMockedBackup
       );
 
-      manager.SaveBackup(content, () => now, createMockedBackup);
+      manager.SaveBackup(content, () => now);
       const backupFiles = getBackupFiles(manager.dailyBackups);
 
       expect(backupFiles).toEqual([expectedNew, old]);
@@ -147,7 +145,7 @@ describe("BackupManager", () => {
         createMockedBackup
       );
 
-      manager.SaveBackup(content, () => now, createMockedBackup);
+      manager.SaveBackup(content, () => now);
       const backupFiles = getBackupFiles(manager.monthlyBackups);
 
       expect(backupFiles).toEqual([expectedNew, old]);
@@ -166,7 +164,7 @@ describe("BackupManager", () => {
         createMockedBackup
       );
 
-      manager.SaveBackup(content, () => now, createMockedBackup);
+      manager.SaveBackup(content, () => now);
       const backupFiles = getBackupFiles(manager.yearlyBackups);
 
       expect(backupFiles).toEqual([expectedNew, old]);
@@ -184,7 +182,7 @@ describe("BackupManager", () => {
         createMockedBackup
       );
 
-      manager.SaveBackup(content, () => now, createMockedBackup);
+      manager.SaveBackup(content, () => now);
       const backupFiles = getBackupFiles(manager.dailyBackups);
 
       expect(backupFiles).toEqual([old]);
@@ -202,7 +200,7 @@ describe("BackupManager", () => {
         createMockedBackup
       );
 
-      manager.SaveBackup(content, () => now, createMockedBackup);
+      manager.SaveBackup(content, () => now);
       const backupFiles = getBackupFiles(manager.monthlyBackups);
 
       expect(backupFiles).toEqual([old]);
@@ -220,7 +218,7 @@ describe("BackupManager", () => {
         createMockedBackup
       );
 
-      manager.SaveBackup(content, () => now, createMockedBackup);
+      manager.SaveBackup(content, () => now);
       const backupFiles = getBackupFiles(manager.yearlyBackups);
 
       expect(backupFiles).toEqual([old]);
@@ -249,7 +247,7 @@ describe("BackupManager", () => {
         createMockedBackup
       );
 
-      manager.SaveBackup(content, () => now, createMockedBackup);
+      manager.SaveBackup(content, () => now);
       const dailyBackupFiles = getBackupFiles(manager.dailyBackups);
       const monthlyBackupFiles = getBackupFiles(manager.monthlyBackups);
       const yearlyBackupFiles = getBackupFiles(manager.yearlyBackups);
