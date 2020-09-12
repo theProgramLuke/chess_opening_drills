@@ -193,7 +193,14 @@ describe("BackupManager", () => {
     it("should not save a monthly backup if it has less a month since the last backup", () => {
       const old = `settings-${now - (month - 1)}.json`;
       directoryBackups[monthlyDirectory] = [old];
-      const manager = new BackupManager(backupFolder, 0, 2, 0, listDirectory);
+      const manager = new BackupManager(
+        backupFolder,
+        0,
+        2,
+        0,
+        listDirectory,
+        createMockedBackup
+      );
 
       manager.SaveBackup(content, () => now, createMockedBackup);
       const backupFiles = getBackupFiles(manager.monthlyBackups);
@@ -204,7 +211,14 @@ describe("BackupManager", () => {
     it("should not save a yearly backup if it has less a year since the last backup", () => {
       const old = `settings-${now - (year - 1)}.json`;
       directoryBackups[yearlyDirectory] = [old];
-      const manager = new BackupManager(backupFolder, 0, 0, 2, listDirectory);
+      const manager = new BackupManager(
+        backupFolder,
+        0,
+        0,
+        2,
+        listDirectory,
+        createMockedBackup
+      );
 
       manager.SaveBackup(content, () => now, createMockedBackup);
       const backupFiles = getBackupFiles(manager.yearlyBackups);
