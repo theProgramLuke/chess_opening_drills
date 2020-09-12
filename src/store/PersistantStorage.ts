@@ -1,5 +1,5 @@
 import ElectronStore from "electron-store";
-import fs, { readFileSync } from "graceful-fs";
+import fs from "graceful-fs";
 
 import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
@@ -112,15 +112,36 @@ function GetDefaultStorage() {
 export class PersistantStorage implements Storage {
   storage: ElectronStore<SavedStorage>;
   backupManager?: BackupManager;
-  backupRegistration = Function;
+  createBackupManager: (
+    filePath: string,
+    dailyBackupLimit: number,
+    monthlyBackupLimit: number,
+    yearlyBackupLimit: number
+  ) => BackupManager;
 
   constructor(
     storage?: ElectronStore<SavedStorage>,
-    backupManagerType = BackupManager
+    createBackupManager = (
+      filePath: string,
+      dailyBackupLimit: number,
+      monthlyBackupLimit: number,
+      yearlyBackupLimit: number
+    ) =>
+      new BackupManager(
+        filePath,
+        dailyBackupLimit,
+        monthlyBackupLimit,
+        yearlyBackupLimit
+      )
   ) {
     this.storage = storage || GetDefaultStorage();
+    this.createBackupManager = createBackupManager;
+    this.initializeBackupManagement();
+  }
+
+  private initializeBackupManagement() {
     if (this.backupDirectory) {
-      this.backupManager = new backupManagerType(
+      this.backupManager = this.createBackupManager(
         this.backupDirectory,
         this.dailyBackupLimit,
         this.monthlyBackupLimit,
@@ -242,16 +263,13 @@ export class PersistantStorage implements Storage {
   }
 
   set backupDirectory(backupDirectory: string | undefined) {
+    this.backupManager = undefined;
     if (backupDirectory) {
       this.storage.set("backupDirectory", backupDirectory);
+      this.initializeBackupManagement();
     } else {
       this.storage.delete("backupDirectory");
-      this.removeBackupManager();
     }
-  }
-
-  private removeBackupManager() {
-    this.backupManager = undefined;
   }
 
   get dailyBackupLimit(): number {

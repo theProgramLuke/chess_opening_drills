@@ -20,7 +20,24 @@ describe("PersistantStorage", () => {
   beforeEach(() => {
     store = new ElectronStore<SavedStorage>();
     (store as Writeable<ElectronStore<SavedStorage>>).path = storagePath;
-    persistantStorage = new PersistantStorage(store, BackupManager);
+    persistantStorage = new PersistantStorage(
+      store,
+      (
+        filePath: string,
+        dailyBackupLimit: number,
+        monthlyBackupLimit: number,
+        yearlyBackupLimit: number
+      ) => {
+        const manager = new BackupManager(
+          filePath,
+          dailyBackupLimit,
+          monthlyBackupLimit,
+          yearlyBackupLimit
+        );
+        manager.backupFolder = filePath;
+        return manager;
+      }
+    );
   });
 
   describe("dark mode", () => {
@@ -292,6 +309,20 @@ describe("PersistantStorage", () => {
       expect(store.set).toBeCalledWith("backupDirectory", backupDirectory);
     });
 
+    it("should set the stored backupManager", () => {
+      const backupDirectory = "backups";
+      store.get = jest.fn(() => backupDirectory);
+
+      persistantStorage.backupDirectory = backupDirectory;
+
+      expect(persistantStorage.backupManager).toBeDefined();
+      if (persistantStorage.backupManager) {
+        expect(persistantStorage.backupManager.backupFolder).toBe(
+          backupDirectory
+        );
+      }
+    });
+
     it("should set the stored backup directory if undefined", () => {
       persistantStorage.backupDirectory = undefined;
 
@@ -382,6 +413,10 @@ describe("PersistantStorage", () => {
 
       expect(serialized).toBe(content);
     });
+  });
+
+  describe("backup", () => {
+    it("should saveBackup", _.noop);
   });
 
   describe("clear", () => {
