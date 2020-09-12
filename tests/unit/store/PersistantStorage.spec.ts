@@ -297,6 +297,14 @@ describe("PersistantStorage", () => {
 
       expect(store.delete).toBeCalledWith("backupDirectory");
     });
+
+    it("should unset the backup manager if undefined", () => {
+      persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
+
+      persistantStorage.backupDirectory = undefined;
+
+      expect(persistantStorage.backupManager).toBeUndefined();
+    });
   });
 
   describe("dailyBackupLimit", () => {
