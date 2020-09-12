@@ -20,7 +20,6 @@ export interface SavedStorage {
   whiteRepertoire: SavedRepertoire;
   blackRepertoire: SavedRepertoire;
   engineMetadata?: EngineMetadata;
-  lastBackupTime: number;
 }
 
 export interface Storage {
@@ -37,7 +36,6 @@ export interface Storage {
   whiteRepertoire: Repertoire;
   blackRepertoire: Repertoire;
   engineMetadata?: EngineMetadata;
-  lastBackupTime: number;
 }
 
 function GetDefaultStorage() {
@@ -92,8 +90,7 @@ function GetDefaultStorage() {
             "blackStart"
           )
         ]
-      ).AsSaved(),
-      lastBackupTime: 0
+      ).AsSaved()
     }
   });
 }
@@ -211,14 +208,6 @@ export class PersistantStorage implements Storage {
     } else {
       this.storage.delete("engineMetadata");
     }
-  }
-
-  get lastBackupTime(): number {
-    return this.storage.get("lastBackupTime");
-  }
-
-  set lastBackupTime(time: number) {
-    this.storage.set("lastBackupTime", time);
   }
 
   clear(): void {

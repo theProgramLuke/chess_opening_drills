@@ -23,8 +23,7 @@ export default new Vuex.Store({
     pieceTheme: storage.pieceTheme,
     whiteRepertoire: storage.whiteRepertoire,
     blackRepertoire: storage.blackRepertoire,
-    engineMetadata: storage.engineMetadata,
-    lastBackupTime: 0
+    engineMetadata: storage.engineMetadata
   },
 
   mutations,

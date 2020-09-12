@@ -257,26 +257,6 @@ describe("PersistantStorage", () => {
     });
   });
 
-  describe("lastBackupTime", () => {
-    it("should get the last backup time", () => {
-      const last = _.now();
-      store.get = jest.fn(() => last);
-
-      const actual = persistantStorage.lastBackupTime;
-
-      expect(store.get).toBeCalledWith("lastBackupTime");
-      expect(actual).toBe(last);
-    });
-
-    it("should set last backup time", () => {
-      const last = _.now();
-
-      persistantStorage.lastBackupTime = last;
-
-      expect(store.set).toBeCalledWith("lastBackupTime", last);
-    });
-  });
-
   describe("clear", () => {
     it("should clear the store", () => {
       persistantStorage.clear();
