@@ -31,7 +31,8 @@ describe("mutations", () => {
       boardTheme: "",
       pieceTheme: "",
       whiteRepertoire: new Repertoire([], []),
-      blackRepertoire: new Repertoire([], [])
+      blackRepertoire: new Repertoire([], []),
+      lastBackupTime: 0
     };
   });
 
@@ -117,8 +118,6 @@ describe("mutations", () => {
           []
         );
         parent.forSide = side;
-        const repertoire =
-          side === Side.White ? state.whiteRepertoire : state.blackRepertoire;
 
         mutations.addRepertoireTag(state, { parent, tag });
 
@@ -134,8 +133,6 @@ describe("mutations", () => {
         const position = new RepertoirePosition("", "", side);
         position.forSide = side;
         const event = new TrainingEvent(0, 0);
-        const repertoire =
-          side === Side.White ? state.whiteRepertoire : state.blackRepertoire;
 
         mutations.addTrainingEvent(state, { position, event });
 
