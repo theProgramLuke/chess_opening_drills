@@ -41,6 +41,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.primary;
 
+        expect(store.get).toBeCalledWith("primary");
         expect(actual).toBe(color);
       }
     );
@@ -63,6 +64,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.secondary;
 
+        expect(store.get).toBeCalledWith("secondary");
         expect(actual).toBe(color);
       }
     );
@@ -83,6 +85,7 @@ describe("PersistantStorage", () => {
 
       const actual = persistantStorage.accent;
 
+      expect(store.get).toBeCalledWith("accent");
       expect(actual).toBe(color);
     });
 
@@ -99,6 +102,7 @@ describe("PersistantStorage", () => {
 
       const actual = persistantStorage.error;
 
+      expect(store.get).toBeCalledWith("error");
       expect(actual).toBe(color);
     });
 
@@ -117,6 +121,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.warning;
 
+        expect(store.get).toBeCalledWith("warning");
         expect(actual).toBe(color);
       }
     );
@@ -137,6 +142,7 @@ describe("PersistantStorage", () => {
 
       const actual = persistantStorage.info;
 
+      expect(store.get).toBeCalledWith("info");
       expect(actual).toBe(color);
     });
 
@@ -155,6 +161,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.success;
 
+        expect(store.get).toBeCalledWith("success");
         expect(actual).toBe(color);
       }
     );
@@ -177,6 +184,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.boardTheme;
 
+        expect(store.get).toBeCalledWith("boardTheme");
         expect(actual).toBe(color);
       }
     );
@@ -199,6 +207,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.pieceTheme;
 
+        expect(store.get).toBeCalledWith("pieceTheme");
         expect(actual).toBe(color);
       }
     );
@@ -264,6 +273,7 @@ describe("PersistantStorage", () => {
 
       const actual = persistantStorage.backupDirectory;
 
+      expect(store.get).toBeCalledWith("backupDirectory");
       expect(actual).toBe(backupDirectory);
     });
 
