@@ -296,6 +296,46 @@ describe("PersistantStorage", () => {
     });
   });
 
+  describe("monthlyBackupLimit", () => {
+    it("should get the stored monthly backup limit", () => {
+      const limit = 2;
+      store.get = jest.fn(() => limit);
+
+      const actual = persistantStorage.monthlyBackupLimit;
+
+      expect(store.get).toBeCalledWith("monthlyBackupLimit");
+      expect(actual).toBe(limit);
+    });
+
+    it("should set the stored monthly backup limit", () => {
+      const limit = 2;
+
+      persistantStorage.monthlyBackupLimit = limit;
+
+      expect(store.set).toBeCalledWith("monthlyBackupLimit", limit);
+    });
+  });
+
+  describe("yearlyBackupLimit", () => {
+    it("should get the stored yearly backup limit", () => {
+      const limit = 2;
+      store.get = jest.fn(() => limit);
+
+      const actual = persistantStorage.yearlyBackupLimit;
+
+      expect(store.get).toBeCalledWith("yearlyBackupLimit");
+      expect(actual).toBe(limit);
+    });
+
+    it("should set the stored yearly backup limit", () => {
+      const limit = 2;
+
+      persistantStorage.yearlyBackupLimit = limit;
+
+      expect(store.set).toBeCalledWith("yearlyBackupLimit", limit);
+    });
+  });
+
   describe("clear", () => {
     it("should clear the store", () => {
       persistantStorage.clear();

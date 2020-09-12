@@ -22,6 +22,8 @@ export interface SavedStorage {
   engineMetadata?: EngineMetadata;
   backupDirectory: string;
   dailyBackupLimit: number;
+  monthlyBackupLimit: number;
+  yearlyBackupLimit: number;
 }
 
 export interface Storage {
@@ -40,6 +42,8 @@ export interface Storage {
   engineMetadata?: EngineMetadata;
   backupDirectory: string;
   dailyBackupLimit: number;
+  monthlyBackupLimit: number;
+  yearlyBackupLimit: number;
 }
 
 function GetDefaultStorage() {
@@ -96,7 +100,9 @@ function GetDefaultStorage() {
         ]
       ).AsSaved(),
       backupDirectory: "",
-      dailyBackupLimit: 7
+      dailyBackupLimit: 14,
+      monthlyBackupLimit: 6,
+      yearlyBackupLimit: 3
     }
   });
 }
@@ -230,6 +236,22 @@ export class PersistantStorage implements Storage {
 
   set dailyBackupLimit(limit: number) {
     this.storage.set("dailyBackupLimit", limit);
+  }
+
+  get monthlyBackupLimit(): number {
+    return this.storage.get("monthlyBackupLimit");
+  }
+
+  set monthlyBackupLimit(limit: number) {
+    this.storage.set("monthlyBackupLimit", limit);
+  }
+
+  get yearlyBackupLimit(): number {
+    return this.storage.get("yearlyBackupLimit");
+  }
+
+  set yearlyBackupLimit(limit: number) {
+    this.storage.set("yearlyBackupLimit", limit);
   }
 
   clear(): void {

@@ -24,7 +24,10 @@ export default new Vuex.Store({
     whiteRepertoire: storage.whiteRepertoire,
     blackRepertoire: storage.blackRepertoire,
     engineMetadata: storage.engineMetadata,
-    backupDirectory: storage.backupDirectory
+    backupDirectory: storage.backupDirectory,
+    dailyBackupLimit: storage.dailyBackupLimit,
+    monthlyBackupLimit: storage.monthlyBackupLimit,
+    yearlyBackupLimit: storage.yearlyBackupLimit
   },
 
   mutations,

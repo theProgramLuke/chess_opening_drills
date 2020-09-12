@@ -33,7 +33,9 @@ describe("mutations", () => {
       whiteRepertoire: new Repertoire([], []),
       blackRepertoire: new Repertoire([], []),
       backupDirectory: "",
-      dailyBackupLimit: 0
+      dailyBackupLimit: 0,
+      monthlyBackupLimit: 0,
+      yearlyBackupLimit: 0
     };
   });
 
@@ -220,6 +222,28 @@ describe("mutations", () => {
 
       expect(state.dailyBackupLimit).toBe(limit);
       expect(state.persisted.dailyBackupLimit).toBe(limit);
+    });
+  });
+
+  describe("setMonthlyBackupLimit", () => {
+    it("should set the monthly backup limit", () => {
+      const limit = 2;
+
+      mutations.setMonthlyBackupLimit(state, limit);
+
+      expect(state.monthlyBackupLimit).toBe(limit);
+      expect(state.persisted.monthlyBackupLimit).toBe(limit);
+    });
+  });
+
+  describe("setYearlyBackupLimit", () => {
+    it("should set the yearly backup limit", () => {
+      const limit = 2;
+
+      mutations.setYearlyBackupLimit(state, limit);
+
+      expect(state.yearlyBackupLimit).toBe(limit);
+      expect(state.persisted.yearlyBackupLimit).toBe(limit);
     });
   });
 
