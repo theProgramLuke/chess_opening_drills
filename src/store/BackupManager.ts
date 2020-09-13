@@ -9,11 +9,11 @@ export const month = day * 31;
 export const year = day * 365;
 
 const lastBackupAge = (backups: Backup[]): number => {
-  return _.min(_.map(backups, backup => backup.age())) || 0;
+  return _.min(_.map(backups, backup => backup.age)) || 0;
 };
 
 const trimBackups = (backups: Backup[], limit: number): Backup[] => {
-  const sorted = _.sortBy(backups, backup => 0 - backup.age());
+  const sorted = _.sortBy(backups, backup => 0 - backup.age);
 
   while (sorted.length > limit) {
     const toDelete = sorted.pop();

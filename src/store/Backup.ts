@@ -6,14 +6,11 @@ export const AgeSeparator = "-";
 
 export class Backup {
   filePath: string;
+  age: number;
 
   constructor(filePath: string) {
     this.filePath = filePath;
-  }
-
-  age(): number {
-    // _.parseInt ignores the .json
-    return _.parseInt(this.filePath.split(AgeSeparator)[1]);
+    this.age = _.parseInt(this.filePath.split(AgeSeparator)[1]);
   }
 
   delete(deleteFile = _.partialRight(fs.unlink, _.noop)): void {

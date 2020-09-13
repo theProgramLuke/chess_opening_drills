@@ -9,7 +9,7 @@ describe("Backup", () => {
       const age = _.now();
       const backup = new Backup(`settings-${age}.json`);
 
-      const actual = backup.age();
+      const actual = backup.age;
 
       expect(actual).toEqual(age);
     });
