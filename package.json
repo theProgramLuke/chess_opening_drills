@@ -2,7 +2,7 @@
   "name": "chess_opening_drills",
   "description": "A cross platform chess opening preparation tool.",
   "author": "theProgramLuke",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "pegjs:pgnGrammar": "yarn tspegjs -o src/store/pgnGrammar.ts src/store/pgnGrammar.pegjs",
