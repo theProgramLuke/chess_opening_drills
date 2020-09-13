@@ -16,7 +16,7 @@
       v-toolbar-title Chess Opening Drills
 
     v-main
-      v-container.fill-height.ma-0.pa-0
+      v-container.fill-height.ma-0.pa-0(fluid)
         router-view
 </template>
 
