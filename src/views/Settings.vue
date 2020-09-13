@@ -51,19 +51,19 @@
                 clearable)
               v-slider(
                 v-model="selectedDailyBackupLimit",
-                label="Daily backup count",
+                label="Daily backups to retain",
                 min=0,
                 max=99,
                 thumb-label=true)
               v-slider(
                 v-model="selectedMonthlyBackupLimit",
-                label="Monthly backup count",
+                label="Monthly backups to retain",
                 min=0,
                 max=99,
                 thumb-label=true)
               v-slider(
                 v-model="selectedYearlyBackupLimit",
-                label="Yearly backup count",
+                label="Yearly backup to retain",
                 min=0,
                 max=99,
                 thumb-label=true)
