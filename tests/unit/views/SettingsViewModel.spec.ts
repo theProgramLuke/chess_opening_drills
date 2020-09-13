@@ -18,6 +18,7 @@ const state = {
   yearlyBackupLimit: 0,
   enableBackups: false
 };
+
 const mutations = {
   setDarkMode: jest.fn(),
   setColor: jest.fn(),

@@ -17,7 +17,7 @@
 
       v-col.fill-height(cols=9)
         plot.ma-10(
-          :data="data",
+          :data="plotData",
           :layout="layout",
           :options="options",
             :dark="darkMode")

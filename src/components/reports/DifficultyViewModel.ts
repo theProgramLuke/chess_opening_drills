@@ -49,7 +49,7 @@ export default Vue.extend({
       return _.isEmpty(this.whiteEasiness) && _.isEmpty(this.blackEasiness);
     },
 
-    data() {
+    plotData() {
       return [
         {
           type: "histogram",
