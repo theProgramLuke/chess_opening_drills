@@ -38,8 +38,11 @@
               chessboard(fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
         v-expansion-panel
-          v-expansion-panel-header Repertoire Backups
+          v-expansion-panel-header Backups
           v-expansion-panel-content.pa-2
+            v-switch(
+              v-model="selectedEnableBackups",
+              label="Enable Backups")
             v-text-field(
               v-model="selectedBackupDirectory",
               label="Backup Folder",
