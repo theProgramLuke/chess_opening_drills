@@ -352,6 +352,7 @@ describe("PersistantStorage", () => {
     it("should set the stored daily backup limit", () => {
       const limit = 2;
       persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
+      persistantStorage.serialize = jest.fn();
 
       persistantStorage.dailyBackupLimit = limit;
 
@@ -374,6 +375,7 @@ describe("PersistantStorage", () => {
     it("should set the stored monthly backup limit", () => {
       const limit = 2;
       persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
+      persistantStorage.serialize = jest.fn();
 
       persistantStorage.monthlyBackupLimit = limit;
 
@@ -396,6 +398,7 @@ describe("PersistantStorage", () => {
     it("should set the stored yearly backup limit", () => {
       const limit = 2;
       persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
+      persistantStorage.serialize = jest.fn();
 
       persistantStorage.yearlyBackupLimit = limit;
 
@@ -428,30 +431,12 @@ describe("PersistantStorage", () => {
     });
 
     it("should backup any changes", () => {
-      const serialized = "content";
-      const backupManager = new BackupManager("", 0, 0, 0);
-      let anyChangeCallback: OnDidAnyChangeCallback<SavedStorage> | undefined;
-      store.onDidAnyChange = jest.fn(
-        (callback: OnDidAnyChangeCallback<SavedStorage>) => {
-          anyChangeCallback = callback;
-          return () => new EventEmitter();
-        }
-      );
-      store.get = jest.fn(() => "backups");
-      const storage = new PersistantStorage(
-        store,
-        jest.fn(() => backupManager)
-      );
-      storage.serialize = jest.fn(() => {
-        return serialized;
-      });
+      const storage = new PersistantStorage(store, createMockBackupManager);
+      storage.backup = jest.fn();
 
-      if (anyChangeCallback) {
-        anyChangeCallback();
-      }
+      storage.darkMode = true;
 
-      expect(anyChangeCallback).toBeDefined();
-      expect(backupManager.SaveBackup).toBeCalledWith(serialized);
+      expect(storage.backup).toBeCalled();
     });
   });
 
