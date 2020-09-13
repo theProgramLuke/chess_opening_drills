@@ -2,6 +2,7 @@ import { shallowMount, createLocalVue } from "@vue/test-utils";
 import Vue from "vue";
 import Vuex from "vuex";
 import Vuetify from "vuetify";
+import _ from "lodash";
 
 import SettingsViewModel from "@/views/SettingsViewModel.ts";
 import { EngineMetadata } from "@/store/EngineHelpers";
@@ -38,17 +39,7 @@ localVue.use(Vuex);
 const store = new Vuex.Store({ state, mutations });
 
 beforeEach(() => {
-  mutations.setDarkMode.mockReset();
-  mutations.setColor.mockReset();
-  mutations.setBoardTheme.mockReset();
-  mutations.setPieceTheme.mockReset();
-  mutations.setEngineMetadata.mockReset();
-  mutations.setBackupDirectory.mockReset();
-  mutations.setDailyBackupLimit.mockReset();
-  mutations.setMonthlyBackupLimit.mockReset();
-  mutations.setYearlyBackupLimit.mockReset();
-  mutations.setEnableBackups.mockReset();
-  mutations.clearStorage.mockReset();
+  _.forEach(mutations, mutation => mutation.mockReset());
 });
 
 describe("SettingsViewModel", () => {
