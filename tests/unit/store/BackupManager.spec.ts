@@ -84,7 +84,7 @@ describe("BackupManager", () => {
         0,
         0,
         jest.fn(() => {
-          throw "folder doesn't exist...";
+          throw Error("folder doesn't exist...");
         }),
         createMockedBackup
       );
