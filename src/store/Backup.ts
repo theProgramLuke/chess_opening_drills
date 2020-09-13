@@ -16,13 +16,13 @@ export class Backup {
     return _.parseInt(this.filePath.split(AgeSeparator)[1]);
   }
 
-  delete(deleteFile = fs.unlinkSync): void {
+  delete(deleteFile = _.partialRight(fs.unlink, _.noop)): void {
     deleteFile(this.filePath);
   }
 
   save(
     content: string,
-    writeFile = fs.writeFileSync,
+    writeFile = _.partialRight(fs.writeFile, _.noop),
     makeDirectory = fs.mkdirSync
   ): void {
     makeDirectory(path.dirname(this.filePath));
