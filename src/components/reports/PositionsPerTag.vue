@@ -5,7 +5,7 @@
 
     plot(
       v-else,
-      :data="data",
+      :data="plotData",
       :layout="layout",
       :options="options",
       :dark="darkMode")
