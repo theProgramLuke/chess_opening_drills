@@ -29,6 +29,7 @@ export interface SavedStorage {
   dailyBackupLimit: number;
   monthlyBackupLimit: number;
   yearlyBackupLimit: number;
+  enableBackups: boolean;
 }
 
 export interface Storage {
@@ -49,6 +50,7 @@ export interface Storage {
   dailyBackupLimit: number;
   monthlyBackupLimit: number;
   yearlyBackupLimit: number;
+  enableBackups: boolean;
 }
 
 function GetDefaultStorage() {
@@ -109,7 +111,8 @@ function GetDefaultStorage() {
       backupDirectory: path.join(defaultCwd, "backups"),
       dailyBackupLimit: 14,
       monthlyBackupLimit: 6,
-      yearlyBackupLimit: 3
+      yearlyBackupLimit: 25,
+      enableBackups: true
     }
   });
 }
@@ -156,7 +159,7 @@ export class PersistantStorage implements Storage {
   }
 
   async backup(): Promise<void> {
-    if (this.backupManager) {
+    if (this.enableBackups && this.backupManager) {
       this.backupManager.SaveBackup(this.serialize);
     }
   }
@@ -322,6 +325,14 @@ export class PersistantStorage implements Storage {
     if (this.backupManager) {
       this.backupManager.yearlyLimit = limit;
     }
+  }
+
+  get enableBackups(): boolean {
+    return this.storage.get("enableBackups");
+  }
+
+  set enableBackups(enable: boolean) {
+    this.setStorage("enableBackups", enable);
   }
 
   serialize(

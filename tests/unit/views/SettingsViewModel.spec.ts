@@ -2,6 +2,7 @@ import { shallowMount, createLocalVue } from "@vue/test-utils";
 import Vue from "vue";
 import Vuex from "vuex";
 import Vuetify from "vuetify";
+import _ from "lodash";
 
 import SettingsViewModel from "@/views/SettingsViewModel.ts";
 import { EngineMetadata } from "@/store/EngineHelpers";
@@ -14,7 +15,8 @@ const state = {
   backupDirectory: undefined as string | undefined,
   dailyBackupLimit: 0,
   monthlyBackupLimit: 0,
-  yearlyBackupLimit: 0
+  yearlyBackupLimit: 0,
+  enableBackups: false
 };
 const mutations = {
   setDarkMode: jest.fn(),
@@ -26,6 +28,7 @@ const mutations = {
   setDailyBackupLimit: jest.fn(),
   setMonthlyBackupLimit: jest.fn(),
   setYearlyBackupLimit: jest.fn(),
+  setEnableBackups: jest.fn(),
   clearStorage: jest.fn()
 };
 
@@ -36,16 +39,7 @@ localVue.use(Vuex);
 const store = new Vuex.Store({ state, mutations });
 
 beforeEach(() => {
-  mutations.setDarkMode.mockReset();
-  mutations.setColor.mockReset();
-  mutations.setBoardTheme.mockReset();
-  mutations.setPieceTheme.mockReset();
-  mutations.setEngineMetadata.mockReset();
-  mutations.setBackupDirectory.mockReset();
-  mutations.setDailyBackupLimit.mockReset();
-  mutations.setMonthlyBackupLimit.mockReset();
-  mutations.setYearlyBackupLimit.mockReset();
-  mutations.clearStorage.mockReset();
+  _.forEach(mutations, mutation => mutation.mockReset());
 });
 
 describe("SettingsViewModel", () => {
@@ -374,5 +368,36 @@ describe("SettingsViewModel", () => {
 
       expect(mutations.setYearlyBackupLimit).toBeCalledWith(state, limit);
     });
+  });
+
+  describe("selectedEnableBackups", () => {
+    it.each([true, false])(
+      "should get the state enable backups enable %s",
+      enable => {
+        store.state.enableBackups = enable;
+        const component = shallowMount(SettingsViewModel, {
+          localVue,
+          store,
+          render: jest.fn()
+        });
+
+        expect(component.vm.selectedEnableBackups).toBe(enable);
+      }
+    );
+
+    it.each([true, false])(
+      "should set the state enable backups enable",
+      enable => {
+        const component = shallowMount(SettingsViewModel, {
+          localVue,
+          store,
+          render: jest.fn()
+        });
+
+        component.vm.selectedEnableBackups = enable;
+
+        expect(mutations.setEnableBackups).toBeCalledWith(state, enable);
+      }
+    );
   });
 });

@@ -407,6 +407,29 @@ describe("PersistantStorage", () => {
     });
   });
 
+  describe("enableBackups", () => {
+    it.each([true, false])(
+      "should get the stored enable backups setting",
+      enableBackups => {
+        store.get = jest.fn(() => enableBackups);
+
+        const actual = persistantStorage.enableBackups;
+
+        expect(store.get).toBeCalledWith("enableBackups");
+        expect(actual).toBe(enableBackups);
+      }
+    );
+
+    it.each([true, false])(
+      "should set the stored enable backups setting",
+      enableBackups => {
+        persistantStorage.enableBackups = enableBackups;
+
+        expect(store.set).toBeCalledWith("enableBackups", enableBackups);
+      }
+    );
+  });
+
   describe("serialize", () => {
     it("should get the persisted file content", () => {
       const content = "content";
@@ -419,15 +442,26 @@ describe("PersistantStorage", () => {
   });
 
   describe("backup", () => {
-    it("should saveBackup with the serialized storage", () => {
+    it("should saveBackup with the serialized storage", async () => {
+      store.get = () => true;
       const serialize = () => "content";
       const backupManager = new BackupManager("", 0, 0, 0);
       persistantStorage.serialize = serialize;
       persistantStorage.backupManager = backupManager;
 
-      persistantStorage.backup();
+      await persistantStorage.backup();
 
       expect(backupManager.SaveBackup).toBeCalledWith(serialize);
+    });
+
+    it("should not saveBackup when enable backups is false", async () => {
+      store.get = () => false;
+      const backupManager = new BackupManager("", 0, 0, 0);
+      persistantStorage.backupManager = backupManager;
+
+      await persistantStorage.backup();
+
+      expect(backupManager.SaveBackup).not.toBeCalled();
     });
 
     it("should backup any changes", () => {
