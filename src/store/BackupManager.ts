@@ -70,8 +70,12 @@ export class BackupManager {
     listDirectory: (directory: string) => string[],
     createBackup: (filePath: string) => Backup
   ): Backup[] {
-    const files = listDirectory(path.join(this.backupFolder, frequency));
-    return _.map(files, createBackup);
+    try {
+      const files = listDirectory(path.join(this.backupFolder, frequency));
+      return _.map(files, createBackup);
+    } catch {
+      return [];
+    }
   }
 
   SaveBackup(content: string, now = _.now): void {

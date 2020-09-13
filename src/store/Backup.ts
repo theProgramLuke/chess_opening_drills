@@ -1,5 +1,6 @@
 import _ from "lodash";
 import fs from "graceful-fs";
+import path from "path";
 
 export const AgeSeparator = "-";
 
@@ -19,7 +20,12 @@ export class Backup {
     deleteFile(this.filePath);
   }
 
-  save(content: string, writeFile = fs.writeFileSync): void {
+  save(
+    content: string,
+    writeFile = fs.writeFileSync,
+    makeDirectory = fs.mkdirSync
+  ): void {
+    makeDirectory(path.dirname(this.filePath));
     writeFile(this.filePath, content);
   }
 }

@@ -53,6 +53,23 @@ describe("BackupManager", () => {
       expect(monthlyBackups).toEqual(directoryBackups[monthlyDirectory]);
       expect(yearlyBackups).toEqual(directoryBackups[yearlyDirectory]);
     });
+
+    it("should discover an empty list if the backup folder doesn't exist", () => {
+      const manager = new BackupManager(
+        backupFolder,
+        0,
+        0,
+        0,
+        jest.fn(() => {
+          throw "folder doesn't exist...";
+        }),
+        createMockedBackup
+      );
+
+      expect(manager.dailyBackups).toEqual([]);
+      expect(manager.monthlyBackups).toEqual([]);
+      expect(manager.yearlyBackups).toEqual([]);
+    });
   });
 
   describe("SaveBackup", () => {

@@ -1,5 +1,6 @@
 import ElectronStore from "electron-store";
 import fs from "graceful-fs";
+import path from "path";
 
 import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
@@ -7,6 +8,7 @@ import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Repertoire, SavedRepertoire } from "./repertoire";
 import { EngineMetadata } from "./EngineHelpers";
 import { BackupManager } from "./BackupManager";
+import electron from "electron";
 
 export interface SavedStorage {
   darkMode: boolean;
@@ -63,6 +65,8 @@ function GetDefaultStorage() {
     false
   );
 
+  const defaultCwd = (electron.app || electron.remote.app).getPath("userData");
+
   return new ElectronStore<SavedStorage>({
     defaults: {
       darkMode: false,
@@ -101,7 +105,7 @@ function GetDefaultStorage() {
           )
         ]
       ).AsSaved(),
-      backupDirectory: "",
+      backupDirectory: path.join(defaultCwd, "backups"),
       dailyBackupLimit: 14,
       monthlyBackupLimit: 6,
       yearlyBackupLimit: 3
