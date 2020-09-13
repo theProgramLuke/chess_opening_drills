@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container.ma-0.pa-0.fill-height
+  v-container.ma-0.pa-0.fill-height(fluid)
     v-row.ma-0.pa-0.fill-height(align="stretch")
       v-col.ma-0.pa-0(cols="4")
         v-tabs(grow)

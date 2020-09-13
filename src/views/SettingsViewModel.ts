@@ -40,7 +40,16 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(["darkMode", "boardTheme", "pieceTheme", "engineMetadata"]),
+    ...mapState([
+      "darkMode",
+      "boardTheme",
+      "pieceTheme",
+      "engineMetadata",
+      "backupDirectory",
+      "dailyBackupLimit",
+      "monthlyBackupLimit",
+      "yearlyBackupLimit"
+    ]),
 
     selectedDarkMode: {
       get(): boolean {
@@ -102,6 +111,46 @@ export default Vue.extend({
           this.setEngineMetadata(undefined);
         }
       }
+    },
+
+    selectedBackupDirectory: {
+      get(): string | undefined {
+        return this.backupDirectory;
+      },
+
+      set(backupDirectory: string | undefined): void {
+        this.setBackupDirectory(backupDirectory);
+      }
+    },
+
+    selectedDailyBackupLimit: {
+      get(): number {
+        return this.dailyBackupLimit;
+      },
+
+      set(limit: number): void {
+        this.setDailyBackupLimit(limit);
+      }
+    },
+
+    selectedMonthlyBackupLimit: {
+      get(): number {
+        return this.monthlyBackupLimit;
+      },
+
+      set(limit: number): void {
+        this.setMonthlyBackupLimit(limit);
+      }
+    },
+
+    selectedYearlyBackupLimit: {
+      get(): number {
+        return this.yearlyBackupLimit;
+      },
+
+      set(limit: number): void {
+        this.setYearlyBackupLimit(limit);
+      }
     }
   },
 
@@ -112,6 +161,10 @@ export default Vue.extend({
       "setBoardTheme",
       "setPieceTheme",
       "setEngineMetadata",
+      "setBackupDirectory",
+      "setDailyBackupLimit",
+      "setMonthlyBackupLimit",
+      "setYearlyBackupLimit",
       "clearStorage"
     ]),
 

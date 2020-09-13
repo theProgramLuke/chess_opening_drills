@@ -7,12 +7,14 @@ import { Move } from "@/store/move";
 import { RepertoireTag } from "@/store/repertoireTag";
 import { TrainingEvent } from "@/store/TrainingEvent";
 import { PgnGame } from "@/store/pgnParser";
+import { BackupManager } from "@/store/BackupManager";
 
 jest.mock("@/store/PersistantStorage");
 jest.mock("@/store/repertoire");
 jest.mock("@/store/repertoireTag");
 jest.mock("@/store/repertoirePosition");
 jest.mock("@/store/TrainingEvent");
+jest.mock("@/store/BackupManager");
 
 describe("mutations", () => {
   let state: MutationState;
@@ -31,7 +33,11 @@ describe("mutations", () => {
       boardTheme: "",
       pieceTheme: "",
       whiteRepertoire: new Repertoire([], []),
-      blackRepertoire: new Repertoire([], [])
+      blackRepertoire: new Repertoire([], []),
+      backupDirectory: "",
+      dailyBackupLimit: 0,
+      monthlyBackupLimit: 0,
+      yearlyBackupLimit: 0
     };
   });
 
@@ -117,8 +123,6 @@ describe("mutations", () => {
           []
         );
         parent.forSide = side;
-        const repertoire =
-          side === Side.White ? state.whiteRepertoire : state.blackRepertoire;
 
         mutations.addRepertoireTag(state, { parent, tag });
 
@@ -134,8 +138,6 @@ describe("mutations", () => {
         const position = new RepertoirePosition("", "", side);
         position.forSide = side;
         const event = new TrainingEvent(0, 0);
-        const repertoire =
-          side === Side.White ? state.whiteRepertoire : state.blackRepertoire;
 
         mutations.addTrainingEvent(state, { position, event });
 
@@ -201,6 +203,50 @@ describe("mutations", () => {
         expect(repertoire.AddFromGame).toBeCalledWith(game);
       }
     );
+  });
+
+  describe("setBackupDirectory", () => {
+    it("should set the backup directory", () => {
+      const backupDirectory = "backups";
+
+      mutations.setBackupDirectory(state, backupDirectory);
+
+      expect(state.backupDirectory).toBe(backupDirectory);
+      expect(state.persisted.backupDirectory).toBe(backupDirectory);
+    });
+  });
+
+  describe("setDailyBackupLimit", () => {
+    it("should set the daily backup limit", () => {
+      const limit = 2;
+
+      mutations.setDailyBackupLimit(state, limit);
+
+      expect(state.dailyBackupLimit).toBe(limit);
+      expect(state.persisted.dailyBackupLimit).toBe(limit);
+    });
+  });
+
+  describe("setMonthlyBackupLimit", () => {
+    it("should set the monthly backup limit", () => {
+      const limit = 2;
+
+      mutations.setMonthlyBackupLimit(state, limit);
+
+      expect(state.monthlyBackupLimit).toBe(limit);
+      expect(state.persisted.monthlyBackupLimit).toBe(limit);
+    });
+  });
+
+  describe("setYearlyBackupLimit", () => {
+    it("should set the yearly backup limit", () => {
+      const limit = 2;
+
+      mutations.setYearlyBackupLimit(state, limit);
+
+      expect(state.yearlyBackupLimit).toBe(limit);
+      expect(state.persisted.yearlyBackupLimit).toBe(limit);
+    });
   });
 
   describe("clear", () => {

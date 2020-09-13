@@ -38,6 +38,33 @@
               chessboard(fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
         v-expansion-panel
+          v-expansion-panel-header Repertoire Backups
+          v-expansion-panel-content.pa-2
+            v-text-field(
+              v-model="selectedBackupDirectory",
+              label="Backup Folder",
+              webkitdirectory,
+              clearable)
+            v-slider(
+              v-model="selectedDailyBackupLimit",
+              label="Daily backup count",
+              min=0,
+              max=99,
+              thumb-label=true)
+            v-slider(
+              v-model="selectedMonthlyBackupLimit",
+              label="Monthly backup count",
+              min=0,
+              max=99,
+              thumb-label=true)
+            v-slider(
+              v-model="selectedYearlyBackupLimit",
+              label="Yearly backup count",
+              min=0,
+              max=99,
+              thumb-label=true)
+
+        v-expansion-panel
           v-expansion-panel-header Engine
           v-expansion-panel-content
             v-file-input(

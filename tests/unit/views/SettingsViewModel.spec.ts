@@ -10,7 +10,11 @@ const state = {
   darkMode: true,
   boardTheme: "some board theme",
   pieceTheme: "some piece theme",
-  engineMetadata: undefined as EngineMetadata | undefined
+  engineMetadata: undefined as EngineMetadata | undefined,
+  backupDirectory: undefined as string | undefined,
+  dailyBackupLimit: 0,
+  monthlyBackupLimit: 0,
+  yearlyBackupLimit: 0
 };
 const mutations = {
   setDarkMode: jest.fn(),
@@ -18,6 +22,10 @@ const mutations = {
   setBoardTheme: jest.fn(),
   setPieceTheme: jest.fn(),
   setEngineMetadata: jest.fn(),
+  setBackupDirectory: jest.fn(),
+  setDailyBackupLimit: jest.fn(),
+  setMonthlyBackupLimit: jest.fn(),
+  setYearlyBackupLimit: jest.fn(),
   clearStorage: jest.fn()
 };
 
@@ -33,6 +41,10 @@ beforeEach(() => {
   mutations.setBoardTheme.mockReset();
   mutations.setPieceTheme.mockReset();
   mutations.setEngineMetadata.mockReset();
+  mutations.setBackupDirectory.mockReset();
+  mutations.setDailyBackupLimit.mockReset();
+  mutations.setMonthlyBackupLimit.mockReset();
+  mutations.setYearlyBackupLimit.mockReset();
   mutations.clearStorage.mockReset();
 });
 
@@ -55,6 +67,7 @@ describe("SettingsViewModel", () => {
         store,
         render: jest.fn()
       });
+
       component.vm.selectedDarkMode = darkMode;
 
       expect(mutations.setDarkMode).toBeCalledWith(state, darkMode);
@@ -119,6 +132,7 @@ describe("SettingsViewModel", () => {
           store,
           render: jest.fn()
         });
+
         component.vm.selectedBoardTheme = boardTheme;
 
         expect(mutations.setBoardTheme).toBeCalledWith(state, boardTheme);
@@ -149,6 +163,7 @@ describe("SettingsViewModel", () => {
           store,
           render: jest.fn()
         });
+
         component.vm.selectedPieceTheme = pieceTheme;
 
         expect(mutations.setPieceTheme).toBeCalledWith(state, pieceTheme);
@@ -247,6 +262,117 @@ describe("SettingsViewModel", () => {
         state,
         store.state.engineMetadata
       );
+    });
+  });
+
+  describe("selectedBackupDirectory", () => {
+    it("should get the state backup directory", () => {
+      const backupDirectory = "backups";
+      store.state.backupDirectory = backupDirectory;
+      const component = shallowMount(SettingsViewModel, {
+        localVue,
+        store,
+        render: jest.fn()
+      });
+
+      expect(component.vm.selectedBackupDirectory).toBe(backupDirectory);
+    });
+
+    it("should set the state backup directory", () => {
+      const backupDirectory = "backups";
+      const component = shallowMount(SettingsViewModel, {
+        localVue,
+        store,
+        render: jest.fn()
+      });
+
+      component.vm.selectedBackupDirectory = backupDirectory;
+
+      expect(mutations.setBackupDirectory).toBeCalledWith(
+        state,
+        backupDirectory
+      );
+    });
+  });
+
+  describe("selectedDailyBackupLimit", () => {
+    it("should get the state daily backup limit", () => {
+      const limit = 5;
+      store.state.dailyBackupLimit = limit;
+      const component = shallowMount(SettingsViewModel, {
+        localVue,
+        store,
+        render: jest.fn()
+      });
+
+      expect(component.vm.selectedDailyBackupLimit).toBe(limit);
+    });
+
+    it("should set the state daily backup limit", () => {
+      const limit = 5;
+      const component = shallowMount(SettingsViewModel, {
+        localVue,
+        store,
+        render: jest.fn()
+      });
+
+      component.vm.selectedDailyBackupLimit = limit;
+
+      expect(mutations.setDailyBackupLimit).toBeCalledWith(state, limit);
+    });
+  });
+
+  describe("selectedMonthlyBackupLimit", () => {
+    it("should get the state monthly backup limit", () => {
+      const limit = 5;
+      store.state.monthlyBackupLimit = limit;
+      const component = shallowMount(SettingsViewModel, {
+        localVue,
+        store,
+        render: jest.fn()
+      });
+
+      expect(component.vm.selectedMonthlyBackupLimit).toBe(limit);
+    });
+
+    it("should set the state monthly backup limit", () => {
+      const limit = 5;
+      const component = shallowMount(SettingsViewModel, {
+        localVue,
+        store,
+        render: jest.fn()
+      });
+
+      component.vm.selectedMonthlyBackupLimit = limit;
+
+      expect(mutations.setMonthlyBackupLimit).toBeCalledWith(state, limit);
+    });
+  });
+
+  describe("selectedYearlyBackupLimit", () => {
+    it("should get the state yearly backup limit", () => {
+      const limit = 5;
+      store.state.yearlyBackupLimit = limit;
+      const component = shallowMount(SettingsViewModel, {
+        localVue,
+        store,
+        render: jest.fn()
+      });
+
+      expect(component.vm.selectedYearlyBackupLimit).toBe(limit);
+    });
+
+    it("should set the state yearly backup limit", () => {
+      const limit = 5;
+      const component = shallowMount(SettingsViewModel, {
+        localVue,
+        store,
+        render: jest.fn()
+      });
+
+      component.vm.selectedYearlyBackupLimit = limit;
+
+      expect(mutations.setYearlyBackupLimit).toBeCalledWith(state, limit);
     });
   });
 });

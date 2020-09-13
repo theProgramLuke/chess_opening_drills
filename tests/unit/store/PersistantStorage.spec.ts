@@ -1,18 +1,43 @@
 import ElectronStore from "electron-store";
+import _ from "lodash";
+import { OnDidAnyChangeCallback } from "conf/dist/source/types";
 
 import { SavedStorage, PersistantStorage } from "@/store/PersistantStorage";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire";
+import { BackupManager } from "@/store/BackupManager";
+import { EventEmitter } from "events";
 
 jest.mock("electron-store");
 jest.mock("@/store/repertoire");
+jest.mock("@/store/BackupManager");
+
+type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 describe("PersistantStorage", () => {
+  const storagePath = "some/path.json";
+  const createMockBackupManager = (
+    filePath: string,
+    dailyBackupLimit: number,
+    monthlyBackupLimit: number,
+    yearlyBackupLimit: number
+  ) => {
+    const manager = new BackupManager(
+      filePath,
+      dailyBackupLimit,
+      monthlyBackupLimit,
+      yearlyBackupLimit
+    );
+    manager.backupFolder = filePath;
+    return manager;
+  };
+
   let store: ElectronStore<SavedStorage>;
   let persistantStorage: PersistantStorage;
 
   beforeEach(() => {
     store = new ElectronStore<SavedStorage>();
-    persistantStorage = new PersistantStorage(store);
+    (store as Writeable<ElectronStore<SavedStorage>>).path = storagePath;
+    persistantStorage = new PersistantStorage(store, createMockBackupManager);
   });
 
   describe("dark mode", () => {
@@ -40,6 +65,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.primary;
 
+        expect(store.get).toBeCalledWith("primary");
         expect(actual).toBe(color);
       }
     );
@@ -62,6 +88,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.secondary;
 
+        expect(store.get).toBeCalledWith("secondary");
         expect(actual).toBe(color);
       }
     );
@@ -82,6 +109,7 @@ describe("PersistantStorage", () => {
 
       const actual = persistantStorage.accent;
 
+      expect(store.get).toBeCalledWith("accent");
       expect(actual).toBe(color);
     });
 
@@ -98,6 +126,7 @@ describe("PersistantStorage", () => {
 
       const actual = persistantStorage.error;
 
+      expect(store.get).toBeCalledWith("error");
       expect(actual).toBe(color);
     });
 
@@ -116,6 +145,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.warning;
 
+        expect(store.get).toBeCalledWith("warning");
         expect(actual).toBe(color);
       }
     );
@@ -136,6 +166,7 @@ describe("PersistantStorage", () => {
 
       const actual = persistantStorage.info;
 
+      expect(store.get).toBeCalledWith("info");
       expect(actual).toBe(color);
     });
 
@@ -154,6 +185,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.success;
 
+        expect(store.get).toBeCalledWith("success");
         expect(actual).toBe(color);
       }
     );
@@ -176,6 +208,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.boardTheme;
 
+        expect(store.get).toBeCalledWith("boardTheme");
         expect(actual).toBe(color);
       }
     );
@@ -198,6 +231,7 @@ describe("PersistantStorage", () => {
 
         const actual = persistantStorage.pieceTheme;
 
+        expect(store.get).toBeCalledWith("pieceTheme");
         expect(actual).toBe(color);
       }
     );
@@ -253,6 +287,156 @@ describe("PersistantStorage", () => {
       persistantStorage.blackRepertoire = repertoire;
 
       expect(store.set).toBeCalledWith("blackRepertoire", savedRepertoire);
+    });
+  });
+
+  describe("backupDirectory", () => {
+    it("should get the stored backup directory", () => {
+      const backupDirectory = "backups";
+      store.get = jest.fn(() => backupDirectory);
+
+      const actual = persistantStorage.backupDirectory;
+
+      expect(store.get).toBeCalledWith("backupDirectory");
+      expect(actual).toBe(backupDirectory);
+    });
+
+    it("should set the stored backup directory", () => {
+      const backupDirectory = "backups";
+
+      persistantStorage.backupDirectory = backupDirectory;
+
+      expect(store.set).toBeCalledWith("backupDirectory", backupDirectory);
+    });
+
+    it("should set the stored backupManager", () => {
+      const backupDirectory = "backups";
+      store.get = jest.fn(() => backupDirectory);
+
+      persistantStorage.backupDirectory = backupDirectory;
+
+      expect(persistantStorage.backupManager).toBeDefined();
+      if (persistantStorage.backupManager) {
+        expect(persistantStorage.backupManager.backupFolder).toBe(
+          backupDirectory
+        );
+      }
+    });
+
+    it("should set the stored backup directory if undefined", () => {
+      persistantStorage.backupDirectory = undefined;
+
+      expect(store.delete).toBeCalledWith("backupDirectory");
+    });
+
+    it("should unset the backup manager if undefined", () => {
+      persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
+
+      persistantStorage.backupDirectory = undefined;
+
+      expect(persistantStorage.backupManager).toBeUndefined();
+    });
+  });
+
+  describe("dailyBackupLimit", () => {
+    it("should get the stored daily backup limit", () => {
+      const limit = 2;
+      store.get = jest.fn(() => limit);
+
+      const actual = persistantStorage.dailyBackupLimit;
+
+      expect(store.get).toBeCalledWith("dailyBackupLimit");
+      expect(actual).toBe(limit);
+    });
+
+    it("should set the stored daily backup limit", () => {
+      const limit = 2;
+      persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
+      persistantStorage.serialize = jest.fn();
+
+      persistantStorage.dailyBackupLimit = limit;
+
+      expect(store.set).toBeCalledWith("dailyBackupLimit", limit);
+      expect(persistantStorage.backupManager.dailyLimit).toBe(limit);
+    });
+  });
+
+  describe("monthlyBackupLimit", () => {
+    it("should get the stored monthly backup limit", () => {
+      const limit = 2;
+      store.get = jest.fn(() => limit);
+
+      const actual = persistantStorage.monthlyBackupLimit;
+
+      expect(store.get).toBeCalledWith("monthlyBackupLimit");
+      expect(actual).toBe(limit);
+    });
+
+    it("should set the stored monthly backup limit", () => {
+      const limit = 2;
+      persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
+      persistantStorage.serialize = jest.fn();
+
+      persistantStorage.monthlyBackupLimit = limit;
+
+      expect(store.set).toBeCalledWith("monthlyBackupLimit", limit);
+      expect(persistantStorage.backupManager.monthlyLimit).toBe(limit);
+    });
+  });
+
+  describe("yearlyBackupLimit", () => {
+    it("should get the stored yearly backup limit", () => {
+      const limit = 2;
+      store.get = jest.fn(() => limit);
+
+      const actual = persistantStorage.yearlyBackupLimit;
+
+      expect(store.get).toBeCalledWith("yearlyBackupLimit");
+      expect(actual).toBe(limit);
+    });
+
+    it("should set the stored yearly backup limit", () => {
+      const limit = 2;
+      persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
+      persistantStorage.serialize = jest.fn();
+
+      persistantStorage.yearlyBackupLimit = limit;
+
+      expect(store.set).toBeCalledWith("yearlyBackupLimit", limit);
+      expect(persistantStorage.backupManager.yearlyLimit).toBe(limit);
+    });
+  });
+
+  describe("serialize", () => {
+    it("should get the persisted file content", () => {
+      const content = "content";
+      const readFileSync = jest.fn(() => content);
+
+      const serialized = persistantStorage.serialize(readFileSync);
+
+      expect(serialized).toBe(content);
+    });
+  });
+
+  describe("backup", () => {
+    it("should saveBackup with the serialized storage", () => {
+      const serialize = () => "content";
+      const backupManager = new BackupManager("", 0, 0, 0);
+      persistantStorage.serialize = serialize;
+      persistantStorage.backupManager = backupManager;
+
+      persistantStorage.backup();
+
+      expect(backupManager.SaveBackup).toBeCalledWith(serialize);
+    });
+
+    it("should backup any changes", () => {
+      const storage = new PersistantStorage(store, createMockBackupManager);
+      storage.backup = jest.fn();
+
+      storage.darkMode = true;
+
+      expect(storage.backup).toBeCalled();
     });
   });
 

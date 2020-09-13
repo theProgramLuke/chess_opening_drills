@@ -1,10 +1,15 @@
 import ElectronStore from "electron-store";
+import _ from "lodash";
+import fs from "graceful-fs";
+import path from "path";
 
 import { RepertoireTag } from "./repertoireTag";
 import { Side } from "./side";
 import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Repertoire, SavedRepertoire } from "./repertoire";
 import { EngineMetadata } from "./EngineHelpers";
+import { BackupManager } from "./BackupManager";
+import electron from "electron";
 
 export interface SavedStorage {
   darkMode: boolean;
@@ -20,6 +25,10 @@ export interface SavedStorage {
   whiteRepertoire: SavedRepertoire;
   blackRepertoire: SavedRepertoire;
   engineMetadata?: EngineMetadata;
+  backupDirectory?: string;
+  dailyBackupLimit: number;
+  monthlyBackupLimit: number;
+  yearlyBackupLimit: number;
 }
 
 export interface Storage {
@@ -36,6 +45,10 @@ export interface Storage {
   whiteRepertoire: Repertoire;
   blackRepertoire: Repertoire;
   engineMetadata?: EngineMetadata;
+  backupDirectory?: string;
+  dailyBackupLimit: number;
+  monthlyBackupLimit: number;
+  yearlyBackupLimit: number;
 }
 
 function GetDefaultStorage() {
@@ -52,6 +65,8 @@ function GetDefaultStorage() {
     Side.Black,
     false
   );
+
+  const defaultCwd = (electron.app || electron.remote.app).getPath("userData");
 
   return new ElectronStore<SavedStorage>({
     defaults: {
@@ -90,16 +105,68 @@ function GetDefaultStorage() {
             "blackStart"
           )
         ]
-      ).AsSaved()
+      ).AsSaved(),
+      backupDirectory: path.join(defaultCwd, "backups"),
+      dailyBackupLimit: 14,
+      monthlyBackupLimit: 6,
+      yearlyBackupLimit: 3
     }
   });
 }
 
 export class PersistantStorage implements Storage {
   storage: ElectronStore<SavedStorage>;
+  backupManager?: BackupManager;
+  createBackupManager: (
+    filePath: string,
+    dailyBackupLimit: number,
+    monthlyBackupLimit: number,
+    yearlyBackupLimit: number
+  ) => BackupManager;
 
-  constructor(storage?: ElectronStore<SavedStorage>) {
+  constructor(
+    storage?: ElectronStore<SavedStorage>,
+    createBackupManager = (
+      filePath: string,
+      dailyBackupLimit: number,
+      monthlyBackupLimit: number,
+      yearlyBackupLimit: number
+    ) =>
+      new BackupManager(
+        filePath,
+        dailyBackupLimit,
+        monthlyBackupLimit,
+        yearlyBackupLimit
+      )
+  ) {
     this.storage = storage || GetDefaultStorage();
+    this.createBackupManager = createBackupManager;
+    this.initializeBackupManagement();
+  }
+
+  private initializeBackupManagement(): void {
+    if (this.backupDirectory) {
+      this.backupManager = this.createBackupManager(
+        this.backupDirectory,
+        this.dailyBackupLimit,
+        this.monthlyBackupLimit,
+        this.yearlyBackupLimit
+      );
+    }
+  }
+
+  async backup(): Promise<void> {
+    if (this.backupManager) {
+      this.backupManager.SaveBackup(this.serialize);
+    }
+  }
+
+  setStorage<Key extends keyof SavedStorage>(
+    key: Key,
+    value?: SavedStorage[Key]
+  ): void {
+    this.storage.set(key, value);
+    this.backup();
   }
 
   get darkMode(): boolean {
@@ -107,7 +174,7 @@ export class PersistantStorage implements Storage {
   }
 
   set darkMode(value: boolean) {
-    this.storage.set("darkMode", value);
+    this.setStorage("darkMode", value);
   }
 
   get primary(): string {
@@ -115,7 +182,7 @@ export class PersistantStorage implements Storage {
   }
 
   set primary(value: string) {
-    this.storage.set("primary", value);
+    this.setStorage("primary", value);
   }
 
   get secondary(): string {
@@ -123,7 +190,7 @@ export class PersistantStorage implements Storage {
   }
 
   set secondary(value: string) {
-    this.storage.set("secondary", value);
+    this.setStorage("secondary", value);
   }
 
   get accent(): string {
@@ -131,7 +198,7 @@ export class PersistantStorage implements Storage {
   }
 
   set accent(value: string) {
-    this.storage.set("accent", value);
+    this.setStorage("accent", value);
   }
 
   get error(): string {
@@ -139,7 +206,7 @@ export class PersistantStorage implements Storage {
   }
 
   set error(value: string) {
-    this.storage.set("error", value);
+    this.setStorage("error", value);
   }
 
   get warning(): string {
@@ -147,7 +214,7 @@ export class PersistantStorage implements Storage {
   }
 
   set warning(value: string) {
-    this.storage.set("warning", value);
+    this.setStorage("warning", value);
   }
 
   get info(): string {
@@ -155,7 +222,7 @@ export class PersistantStorage implements Storage {
   }
 
   set info(value: string) {
-    this.storage.set("info", value);
+    this.setStorage("info", value);
   }
 
   get success(): string {
@@ -163,7 +230,7 @@ export class PersistantStorage implements Storage {
   }
 
   set success(value: string) {
-    this.storage.set("success", value);
+    this.setStorage("success", value);
   }
 
   get boardTheme(): string {
@@ -171,7 +238,7 @@ export class PersistantStorage implements Storage {
   }
 
   set boardTheme(value: string) {
-    this.storage.set("boardTheme", value);
+    this.setStorage("boardTheme", value);
   }
 
   get pieceTheme(): string {
@@ -179,7 +246,7 @@ export class PersistantStorage implements Storage {
   }
 
   set pieceTheme(value: string) {
-    this.storage.set("pieceTheme", value);
+    this.setStorage("pieceTheme", value);
   }
 
   get whiteRepertoire(): Repertoire {
@@ -187,7 +254,7 @@ export class PersistantStorage implements Storage {
   }
 
   set whiteRepertoire(value: Repertoire) {
-    this.storage.set("whiteRepertoire", value.AsSaved());
+    this.setStorage("whiteRepertoire", value.AsSaved());
   }
 
   get blackRepertoire(): Repertoire {
@@ -195,7 +262,7 @@ export class PersistantStorage implements Storage {
   }
 
   set blackRepertoire(value: Repertoire) {
-    this.storage.set("blackRepertoire", value.AsSaved());
+    this.setStorage("blackRepertoire", value.AsSaved());
   }
 
   get engineMetadata(): EngineMetadata | undefined {
@@ -204,10 +271,64 @@ export class PersistantStorage implements Storage {
 
   set engineMetadata(engineMetadata: EngineMetadata | undefined) {
     if (engineMetadata) {
-      this.storage.set("engineMetadata", engineMetadata);
+      this.setStorage("engineMetadata", engineMetadata);
     } else {
       this.storage.delete("engineMetadata");
     }
+  }
+
+  get backupDirectory(): string | undefined {
+    return this.storage.get("backupDirectory");
+  }
+
+  set backupDirectory(backupDirectory: string | undefined) {
+    this.backupManager = undefined;
+    if (backupDirectory) {
+      this.setStorage("backupDirectory", backupDirectory);
+      this.initializeBackupManagement();
+    } else {
+      this.storage.delete("backupDirectory");
+    }
+  }
+
+  get dailyBackupLimit(): number {
+    return this.storage.get("dailyBackupLimit");
+  }
+
+  set dailyBackupLimit(limit: number) {
+    this.setStorage("dailyBackupLimit", limit);
+    if (this.backupManager) {
+      this.backupManager.dailyLimit = limit;
+    }
+  }
+
+  get monthlyBackupLimit(): number {
+    return this.storage.get("monthlyBackupLimit");
+  }
+
+  set monthlyBackupLimit(limit: number) {
+    this.setStorage("monthlyBackupLimit", limit);
+    if (this.backupManager) {
+      this.backupManager.monthlyLimit = limit;
+    }
+  }
+
+  get yearlyBackupLimit(): number {
+    return this.storage.get("yearlyBackupLimit");
+  }
+
+  set yearlyBackupLimit(limit: number) {
+    this.setStorage("yearlyBackupLimit", limit);
+    if (this.backupManager) {
+      this.backupManager.yearlyLimit = limit;
+    }
+  }
+
+  serialize(
+    readFile = (filePath: string): string =>
+      fs.readFileSync(filePath, { encoding: "utf8" })
+  ): string {
+    return readFile(this.storage.path);
   }
 
   clear(): void {

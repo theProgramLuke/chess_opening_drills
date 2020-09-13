@@ -7,6 +7,7 @@ import { Side } from "./side";
 import { PgnGame } from "./pgnParser";
 import { Repertoire } from "./repertoire";
 import { EngineMetadata } from "./EngineHelpers";
+import { BackupManager } from "./BackupManager";
 
 export interface MutationState extends Storage {
   persisted: PersistantStorage;
@@ -144,6 +145,26 @@ export const mutations = {
   ): void {
     state.engineMetadata = engineMetadata;
     state.persisted.engineMetadata = engineMetadata;
+  },
+
+  setBackupDirectory(state: MutationState, backupDirectory: string): void {
+    state.backupDirectory = backupDirectory;
+    state.persisted.backupDirectory = backupDirectory;
+  },
+
+  setDailyBackupLimit(state: MutationState, limit: number): void {
+    state.dailyBackupLimit = limit;
+    state.persisted.dailyBackupLimit = limit;
+  },
+
+  setMonthlyBackupLimit(state: MutationState, limit: number): void {
+    state.monthlyBackupLimit = limit;
+    state.persisted.monthlyBackupLimit = limit;
+  },
+
+  setYearlyBackupLimit(state: MutationState, limit: number): void {
+    state.yearlyBackupLimit = limit;
+    state.persisted.yearlyBackupLimit = limit;
   },
 
   clearStorage(state: MutationState): void {

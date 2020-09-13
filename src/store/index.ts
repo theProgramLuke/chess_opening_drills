@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 import { mutations } from "@/store/Mutations";
-import { PersistantStorage } from "./PersistantStorage";
+import { PersistantStorage } from "@/store/PersistantStorage";
 
 Vue.use(Vuex);
 
@@ -23,7 +23,11 @@ export default new Vuex.Store({
     pieceTheme: storage.pieceTheme,
     whiteRepertoire: storage.whiteRepertoire,
     blackRepertoire: storage.blackRepertoire,
-    engineMetadata: storage.engineMetadata
+    engineMetadata: storage.engineMetadata,
+    backupDirectory: storage.backupDirectory,
+    dailyBackupLimit: storage.dailyBackupLimit,
+    monthlyBackupLimit: storage.monthlyBackupLimit,
+    yearlyBackupLimit: storage.yearlyBackupLimit
   },
 
   mutations,
