@@ -82,13 +82,13 @@ describe("DifficultyViewModel", () => {
       expect(plotData).toEqual([
         {
           type: "histogram",
-          name: "White",
-          x: whiteEasinessFactors
+          name: "Black",
+          x: blackEasinessFactors
         },
         {
           type: "histogram",
-          name: "Black",
-          x: blackEasinessFactors
+          name: "White",
+          x: whiteEasinessFactors
         }
       ]);
     });

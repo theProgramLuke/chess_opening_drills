@@ -27,7 +27,7 @@ export default Vue.extend({
 
   data: () => ({
     options: { displayModeBar: false },
-    layout: { yaxis: { rangemode: "tozero" } }
+    layout: { yaxis: { rangemode: "tozero" }, barmode: "stack" }
   }),
 
   components: {
@@ -53,13 +53,13 @@ export default Vue.extend({
       return [
         {
           type: "histogram",
-          name: "White",
-          x: this.whiteEasiness
+          name: "Black",
+          x: this.blackEasiness
         },
         {
           type: "histogram",
-          name: "Black",
-          x: this.blackEasiness
+          name: "White",
+          x: this.whiteEasiness
         }
       ];
     }
