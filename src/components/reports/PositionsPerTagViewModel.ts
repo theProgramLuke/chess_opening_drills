@@ -94,7 +94,7 @@ export default Vue.extend({
       );
     },
 
-    data() {
+    plotData() {
       const whiteTagCounts = tagCounts(this.whiteRepertoire);
       const blackTagCounts = tagCounts(this.blackRepertoire);
       const disambiguated = disambiguateCounts(whiteTagCounts, blackTagCounts);
