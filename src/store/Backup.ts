@@ -23,7 +23,7 @@ export class Backup {
   save(
     content: string,
     writeFile = _.partialRight(fs.writeFile, _.noop),
-    makeDirectory = fs.mkdirSync
+    makeDirectory = _.partialRight(fs.mkdirSync, { recursive: true })
   ): void {
     makeDirectory(path.dirname(this.filePath));
     writeFile(this.filePath, content);
