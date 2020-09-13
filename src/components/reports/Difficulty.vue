@@ -1,9 +1,8 @@
 <template lang="pug">
   v-container.fill-height.ma-0(fluid)
-    template(v-if="showNoPositions")
-      v-alert(color="error") No positions have been trained
-    v-row(v-else)
-      v-col(cols="auto")
+    v-alert(v-if="showNoPositions", color="error") No positions have been trained
+    v-row.fill-height(v-else)
+      v-col(cols=2)
         template
           v-tooltip(bottom)
             template(v-slot:activator="{ on }")
@@ -16,7 +15,7 @@
             | The initial easiness factor for a position is 2.5.
 
       v-col.fill-height(cols=9)
-        plot.ma-10(
+        plot.fill-height(
           :data="plotData",
           :layout="layout",
           :options="options",

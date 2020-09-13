@@ -42,10 +42,6 @@ const methods = functions.reduce((all, funcName) => {
 
 export default {
   props: {
-    autoResize: {
-      type: Boolean,
-      default: true
-    },
     watchShallow: {
       type: Boolean,
       default: false
@@ -100,7 +96,6 @@ export default {
     this.$watch("layout", this.relayout, { deep: !this.watchShallow });
   },
   beforeDestroy() {
-    window.removeEventListener("resize", this.__resizeListener);
     this.__generalListeners.forEach(obj =>
       this.$refs.container.removeAllListeners(obj.fullName)
     );
@@ -108,14 +103,6 @@ export default {
   },
   methods: {
     initEvents() {
-      if (this.autoResize) {
-        this.__resizeListener = () => {
-          this.internalLayout.datarevision++;
-          debounce(this.react, 200);
-        };
-        window.addEventListener("resize", this.__resizeListener);
-      }
-
       this.__generalListeners = events.map(eventName => {
         return {
           fullName: "plotly_" + eventName,
@@ -170,6 +157,7 @@ export default {
         opts.toImageButtonOptions.width = el.clientWidth;
       if (!opts.toImageButtonOptions.height)
         opts.toImageButtonOptions.height = el.clientHeight;
+      opts.responsive = true;
       return opts;
     },
     newPlot() {
