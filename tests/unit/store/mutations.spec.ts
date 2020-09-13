@@ -37,7 +37,8 @@ describe("mutations", () => {
       backupDirectory: "",
       dailyBackupLimit: 0,
       monthlyBackupLimit: 0,
-      yearlyBackupLimit: 0
+      yearlyBackupLimit: 0,
+      enableBackups: false
     };
   });
 
@@ -247,6 +248,18 @@ describe("mutations", () => {
       expect(state.yearlyBackupLimit).toBe(limit);
       expect(state.persisted.yearlyBackupLimit).toBe(limit);
     });
+  });
+
+  describe("setEnableBackups", () => {
+    it.each([true, false])(
+      "should set the enable backups setting %s",
+      enable => {
+        mutations.setEnableBackups(state, enable);
+
+        expect(state.enableBackups).toBe(enable);
+        expect(state.persisted.enableBackups).toBe(enable);
+      }
+    );
   });
 
   describe("clear", () => {

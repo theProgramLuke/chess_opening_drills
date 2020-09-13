@@ -14,7 +14,8 @@ const state = {
   backupDirectory: undefined as string | undefined,
   dailyBackupLimit: 0,
   monthlyBackupLimit: 0,
-  yearlyBackupLimit: 0
+  yearlyBackupLimit: 0,
+  enableBackups: false
 };
 const mutations = {
   setDarkMode: jest.fn(),
@@ -26,6 +27,7 @@ const mutations = {
   setDailyBackupLimit: jest.fn(),
   setMonthlyBackupLimit: jest.fn(),
   setYearlyBackupLimit: jest.fn(),
+  setEnableBackups: jest.fn(),
   clearStorage: jest.fn()
 };
 
@@ -45,6 +47,7 @@ beforeEach(() => {
   mutations.setDailyBackupLimit.mockReset();
   mutations.setMonthlyBackupLimit.mockReset();
   mutations.setYearlyBackupLimit.mockReset();
+  mutations.setEnableBackups.mockReset();
   mutations.clearStorage.mockReset();
 });
 
@@ -374,5 +377,36 @@ describe("SettingsViewModel", () => {
 
       expect(mutations.setYearlyBackupLimit).toBeCalledWith(state, limit);
     });
+  });
+
+  describe("selectedEnableBackups", () => {
+    it.each([true, false])(
+      "should get the state enable backups enable %s",
+      enable => {
+        store.state.enableBackups = enable;
+        const component = shallowMount(SettingsViewModel, {
+          localVue,
+          store,
+          render: jest.fn()
+        });
+
+        expect(component.vm.selectedEnableBackups).toBe(enable);
+      }
+    );
+
+    it.each([true, false])(
+      "should set the state enable backups enable",
+      enable => {
+        const component = shallowMount(SettingsViewModel, {
+          localVue,
+          store,
+          render: jest.fn()
+        });
+
+        component.vm.selectedEnableBackups = enable;
+
+        expect(mutations.setEnableBackups).toBeCalledWith(state, enable);
+      }
+    );
   });
 });

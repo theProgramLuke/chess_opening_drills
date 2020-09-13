@@ -48,7 +48,8 @@ export default Vue.extend({
       "backupDirectory",
       "dailyBackupLimit",
       "monthlyBackupLimit",
-      "yearlyBackupLimit"
+      "yearlyBackupLimit",
+      "enableBackups"
     ]),
 
     selectedDarkMode: {
@@ -151,6 +152,16 @@ export default Vue.extend({
       set(limit: number): void {
         this.setYearlyBackupLimit(limit);
       }
+    },
+
+    selectedEnableBackups: {
+      get(): boolean {
+        return this.enableBackups;
+      },
+
+      set(enable: boolean): void {
+        this.setEnableBackups(enable);
+      }
     }
   },
 
@@ -165,7 +176,8 @@ export default Vue.extend({
       "setDailyBackupLimit",
       "setMonthlyBackupLimit",
       "setYearlyBackupLimit",
-      "clearStorage"
+      "clearStorage",
+      "setEnableBackups"
     ]),
 
     updateEngineMetadata(): void {

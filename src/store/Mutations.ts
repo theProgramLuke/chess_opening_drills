@@ -167,6 +167,11 @@ export const mutations = {
     state.persisted.yearlyBackupLimit = limit;
   },
 
+  setEnableBackups(state: MutationState, enable: boolean): void {
+    state.enableBackups = enable;
+    state.persisted.enableBackups = enable;
+  },
+
   clearStorage(state: MutationState): void {
     state.persisted.clear();
   }
