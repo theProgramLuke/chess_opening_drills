@@ -63,6 +63,10 @@ export class BackupManager {
     this.dailyLimit = dailyLimit;
     this.monthlyLimit = monthlyLimit;
     this.yearlyLimit = yearlyLimit;
+
+    this.dailyBackups = trimBackups(this.dailyBackups, this.dailyLimit);
+    this.monthlyBackups = trimBackups(this.monthlyBackups, this.monthlyLimit);
+    this.yearlyBackups = trimBackups(this.yearlyBackups, this.yearlyLimit);
   }
 
   private discoverBackups(
@@ -88,8 +92,8 @@ export class BackupManager {
       );
       this.dailyBackups.push(backup);
       backup.save(content);
+      this.dailyBackups = trimBackups(this.dailyBackups, this.dailyLimit);
     }
-    this.dailyBackups = trimBackups(this.dailyBackups, this.dailyLimit);
 
     if (
       this.monthlyLimit &&
@@ -100,8 +104,8 @@ export class BackupManager {
       );
       this.monthlyBackups.push(backup);
       backup.save(content);
+      this.monthlyBackups = trimBackups(this.monthlyBackups, this.monthlyLimit);
     }
-    this.monthlyBackups = trimBackups(this.monthlyBackups, this.monthlyLimit);
 
     if (this.yearlyLimit && now() - lastBackupAge(this.yearlyBackups) >= year) {
       backup = this.createBackup(
@@ -109,7 +113,7 @@ export class BackupManager {
       );
       this.yearlyBackups.push(backup);
       backup.save(content);
+      this.yearlyBackups = trimBackups(this.yearlyBackups, this.yearlyLimit);
     }
-    this.yearlyBackups = trimBackups(this.yearlyBackups, this.yearlyLimit);
   }
 }

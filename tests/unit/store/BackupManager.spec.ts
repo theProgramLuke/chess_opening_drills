@@ -33,7 +33,29 @@ describe("BackupManager", () => {
 
   describe("constructor", () => {
     it("should discover any existing backups from the filesystem", () => {
-      directoryBackups[dailyDirectory] = ["daily-0", "daily-1"];
+      directoryBackups[dailyDirectory] = ["daily-1", "daily-0"];
+      directoryBackups[monthlyDirectory] = ["monthly-0"];
+      directoryBackups[yearlyDirectory] = [];
+
+      const manager = new BackupManager(
+        backupFolder,
+        2,
+        2,
+        2,
+        listDirectory,
+        createMockedBackup
+      );
+      const dailyBackups = getBackupFiles(manager.dailyBackups);
+      const monthlyBackups = getBackupFiles(manager.monthlyBackups);
+      const yearlyBackups = getBackupFiles(manager.yearlyBackups);
+
+      expect(dailyBackups).toEqual(directoryBackups[dailyDirectory]);
+      expect(monthlyBackups).toEqual(directoryBackups[monthlyDirectory]);
+      expect(yearlyBackups).toEqual(directoryBackups[yearlyDirectory]);
+    });
+
+    it("should trim any existing backups to the limits", () => {
+      directoryBackups[dailyDirectory] = ["daily-1", "daily-0"];
       directoryBackups[monthlyDirectory] = ["monthly-0"];
       directoryBackups[yearlyDirectory] = [];
 
@@ -49,9 +71,9 @@ describe("BackupManager", () => {
       const monthlyBackups = getBackupFiles(manager.monthlyBackups);
       const yearlyBackups = getBackupFiles(manager.yearlyBackups);
 
-      expect(dailyBackups).toEqual(directoryBackups[dailyDirectory]);
-      expect(monthlyBackups).toEqual(directoryBackups[monthlyDirectory]);
-      expect(yearlyBackups).toEqual(directoryBackups[yearlyDirectory]);
+      expect(dailyBackups).toEqual([]);
+      expect(monthlyBackups).toEqual([]);
+      expect(yearlyBackups).toEqual([]);
     });
 
     it("should discover an empty list if the backup folder doesn't exist", () => {

@@ -123,7 +123,6 @@ export class PersistantStorage implements Storage {
     monthlyBackupLimit: number,
     yearlyBackupLimit: number
   ) => BackupManager;
-  creatingBackup = false;
 
   constructor(
     storage?: ElectronStore<SavedStorage>,
@@ -157,12 +156,8 @@ export class PersistantStorage implements Storage {
   }
 
   async backup(): Promise<void> {
-    if (!this.creatingBackup) {
-      this.creatingBackup = true;
-      if (this.backupManager) {
-        this.backupManager.SaveBackup(this.serialize());
-      }
-      this.creatingBackup = false;
+    if (this.backupManager) {
+      this.backupManager.SaveBackup(this.serialize());
     }
   }
 
