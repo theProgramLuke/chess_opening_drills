@@ -27,7 +27,8 @@ export default new Vuex.Store({
     backupDirectory: storage.backupDirectory,
     dailyBackupLimit: storage.dailyBackupLimit,
     monthlyBackupLimit: storage.monthlyBackupLimit,
-    yearlyBackupLimit: storage.yearlyBackupLimit
+    yearlyBackupLimit: storage.yearlyBackupLimit,
+    enableBackups: storage.enableBackups
   },
 
   mutations,

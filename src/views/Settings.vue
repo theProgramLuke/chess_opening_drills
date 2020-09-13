@@ -43,29 +43,30 @@
             v-switch(
               v-model="selectedEnableBackups",
               label="Enable Backups")
-            v-text-field(
-              v-model="selectedBackupDirectory",
-              label="Backup Folder",
-              webkitdirectory,
-              clearable)
-            v-slider(
-              v-model="selectedDailyBackupLimit",
-              label="Daily backup count",
-              min=0,
-              max=99,
-              thumb-label=true)
-            v-slider(
-              v-model="selectedMonthlyBackupLimit",
-              label="Monthly backup count",
-              min=0,
-              max=99,
-              thumb-label=true)
-            v-slider(
-              v-model="selectedYearlyBackupLimit",
-              label="Yearly backup count",
-              min=0,
-              max=99,
-              thumb-label=true)
+            template(v-if="selectedEnableBackups")
+              v-text-field(
+                v-model="selectedBackupDirectory",
+                label="Backup Folder",
+                webkitdirectory,
+                clearable)
+              v-slider(
+                v-model="selectedDailyBackupLimit",
+                label="Daily backup count",
+                min=0,
+                max=99,
+                thumb-label=true)
+              v-slider(
+                v-model="selectedMonthlyBackupLimit",
+                label="Monthly backup count",
+                min=0,
+                max=99,
+                thumb-label=true)
+              v-slider(
+                v-model="selectedYearlyBackupLimit",
+                label="Yearly backup count",
+                min=0,
+                max=99,
+                thumb-label=true)
 
         v-expansion-panel
           v-expansion-panel-header Engine
