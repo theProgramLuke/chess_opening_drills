@@ -82,7 +82,7 @@ export class BackupManager {
     }
   }
 
-  SaveBackup(content: string, now = _.now): void {
+  SaveBackup(getContent: () => string, now = _.now): void {
     const fileName = `settings-${now()}.json`;
     let backup: Backup;
 
@@ -91,7 +91,7 @@ export class BackupManager {
         path.join(this.backupFolder, "daily", fileName)
       );
       this.dailyBackups.push(backup);
-      backup.save(content);
+      backup.save(getContent());
       this.dailyBackups = trimBackups(this.dailyBackups, this.dailyLimit);
     }
 
@@ -103,7 +103,7 @@ export class BackupManager {
         path.join(this.backupFolder, "monthly", fileName)
       );
       this.monthlyBackups.push(backup);
-      backup.save(content);
+      backup.save(getContent());
       this.monthlyBackups = trimBackups(this.monthlyBackups, this.monthlyLimit);
     }
 
@@ -112,7 +112,7 @@ export class BackupManager {
         path.join(this.backupFolder, "yearly", fileName)
       );
       this.yearlyBackups.push(backup);
-      backup.save(content);
+      backup.save(getContent());
       this.yearlyBackups = trimBackups(this.yearlyBackups, this.yearlyLimit);
     }
   }

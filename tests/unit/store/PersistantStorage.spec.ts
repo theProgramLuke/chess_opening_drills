@@ -420,14 +420,14 @@ describe("PersistantStorage", () => {
 
   describe("backup", () => {
     it("should saveBackup with the serialized storage", () => {
-      const serialized = "content";
+      const serialize = () => "content";
       const backupManager = new BackupManager("", 0, 0, 0);
-      persistantStorage.serialize = jest.fn(() => serialized);
+      persistantStorage.serialize = serialize;
       persistantStorage.backupManager = backupManager;
 
       persistantStorage.backup();
 
-      expect(backupManager.SaveBackup).toBeCalledWith(serialized);
+      expect(backupManager.SaveBackup).toBeCalledWith(serialize);
     });
 
     it("should backup any changes", () => {
