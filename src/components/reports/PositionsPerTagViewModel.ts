@@ -10,6 +10,7 @@ interface TagCounts {
   labels: string[];
   counts: number[];
   parents: string[];
+  texts: string[];
 }
 
 function tagCountsRecursive(
@@ -17,28 +18,47 @@ function tagCountsRecursive(
   labels: string[],
   counts: number[],
   parents: string[],
+  texts: string[],
   parentLabel = ""
-): void {
+): number {
   labels.push(tag.name);
   parents.push(parentLabel);
 
   let childCount = 0;
   tag.position.VisitChildren(() => childCount++);
-  counts.push(childCount);
+  const index = counts.push(childCount) - 1;
+  texts.push("");
 
-  _.forEach(tag.children, child =>
-    tagCountsRecursive(child, labels, counts, parents, tag.name)
+  let childrenSum = 0;
+
+  _.forEach(
+    tag.children,
+    child =>
+      (childrenSum += tagCountsRecursive(
+        child,
+        labels,
+        counts,
+        parents,
+        texts,
+        tag.name
+      ))
   );
+
+  counts[index] = _.max([counts[index] - childrenSum, 0]) || 0;
+  texts[index] = childCount.toString();
+
+  return childCount;
 }
 
 function tagCounts(repertoire: Repertoire): TagCounts {
   const labels: string[] = [];
   const counts: number[] = [];
   const parents: string[] = [];
+  const texts: string[] = [];
 
-  tagCountsRecursive(repertoire.tags[0], labels, counts, parents);
+  tagCountsRecursive(repertoire.tags[0], labels, counts, parents, texts);
 
-  return { labels, counts, parents };
+  return { labels, counts, parents, texts };
 }
 
 function disambiguateCounts(
@@ -111,7 +131,9 @@ export default Vue.extend({
             disambiguated.blackTagCounts.parents
           ),
           values: _.concat(whiteTagCounts.counts, blackTagCounts.counts),
-          maxdepth: 3
+          hovertext: _.concat(whiteTagCounts.texts, blackTagCounts.texts),
+          maxdepth: 3,
+          hoverinfo: "label+percent parent+text"
         }
       ];
     }

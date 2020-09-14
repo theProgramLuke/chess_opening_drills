@@ -1,0 +1,25 @@
+<template lang="pug">
+  v-container.fill-height.ma-0(fluid)
+    v-row.fill-height
+      v-col(cols=3)
+        v-treeview(
+          :items="combinedTags",
+          v-model="selectedTags",
+          return-object,
+          dense,
+          hoverable,
+          selectable,
+          open-on-click)
+      
+      v-col(cols=9)
+        v-alert(v-if="showNoPositions", color="error") No positions have been entered
+
+        plot(
+          v-else,
+          :data="plotData",
+          :layout="layout",
+          :options="options",
+          :dark="darkMode")
+</template>
+
+<script lang="ts" src="./LearnedViewModel.ts" />
