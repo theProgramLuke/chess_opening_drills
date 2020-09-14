@@ -405,6 +405,26 @@ describe("PersistantStorage", () => {
     });
   });
 
+  describe("moveAnimationSpeed", () => {
+    it("should get the stored move animation speed", () => {
+      const speed = 2;
+      store.get = jest.fn(() => speed);
+
+      const actual = persistantStorage.moveAnimationSpeed;
+
+      expect(store.get).toBeCalledWith("moveAnimationSpeed");
+      expect(actual).toBe(speed);
+    });
+
+    it("should set the stored move animation speed", () => {
+      const speed = 2;
+
+      persistantStorage.moveAnimationSpeed = speed;
+
+      expect(store.set).toBeCalledWith("moveAnimationSpeed", speed);
+    });
+  });
+
   describe("enableBackups", () => {
     it.each([true, false])(
       "should get the stored enable backups setting",

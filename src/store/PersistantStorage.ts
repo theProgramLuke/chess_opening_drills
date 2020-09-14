@@ -30,6 +30,7 @@ export interface SavedStorage {
   monthlyBackupLimit: number;
   yearlyBackupLimit: number;
   enableBackups: boolean;
+  moveAnimationSpeed: number;
 }
 
 export interface Storage {
@@ -51,6 +52,7 @@ export interface Storage {
   monthlyBackupLimit: number;
   yearlyBackupLimit: number;
   enableBackups: boolean;
+  moveAnimationSpeed: number;
 }
 
 function GetDefaultStorage() {
@@ -112,7 +114,8 @@ function GetDefaultStorage() {
       dailyBackupLimit: 14,
       monthlyBackupLimit: 6,
       yearlyBackupLimit: 25,
-      enableBackups: true
+      enableBackups: true,
+      moveAnimationSpeed: 100
     }
   });
 }
@@ -333,6 +336,14 @@ export class PersistantStorage implements Storage {
 
   set enableBackups(enable: boolean) {
     this.setStorage("enableBackups", enable);
+  }
+
+  get moveAnimationSpeed(): number {
+    return this.storage.get("moveAnimationSpeed");
+  }
+
+  set moveAnimationSpeed(speed: number) {
+    this.setStorage("moveAnimationSpeed", speed);
   }
 
   serialize(

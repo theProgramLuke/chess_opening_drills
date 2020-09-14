@@ -256,7 +256,7 @@ export default Vue.extend({
           orientation: this.orientation === Side.White ? "white" : "black",
           animation: {
             enabled: true,
-            duration: 0
+            duration: 100
           }
         });
       } else {
