@@ -16,7 +16,8 @@ const state = {
   dailyBackupLimit: 0,
   monthlyBackupLimit: 0,
   yearlyBackupLimit: 0,
-  enableBackups: false
+  enableBackups: false,
+  moveAnimationSpeed: 0
 };
 
 const mutations = {
@@ -30,6 +31,7 @@ const mutations = {
   setMonthlyBackupLimit: jest.fn(),
   setYearlyBackupLimit: jest.fn(),
   setEnableBackups: jest.fn(),
+  setMoveAnimationSpeed: jest.fn(),
   clearStorage: jest.fn()
 };
 
@@ -372,33 +374,55 @@ describe("SettingsViewModel", () => {
   });
 
   describe("selectedEnableBackups", () => {
-    it.each([true, false])(
-      "should get the state enable backups enable %s",
-      enable => {
-        store.state.enableBackups = enable;
+    it.each([true, false])("should get the state enable backups %s", enable => {
+      store.state.enableBackups = enable;
+      const component = shallowMount(SettingsViewModel, {
+        localVue,
+        store,
+        render: jest.fn()
+      });
+
+      expect(component.vm.selectedEnableBackups).toBe(enable);
+    });
+
+    it.each([true, false])("should set the state enable backups %s", enable => {
+      const component = shallowMount(SettingsViewModel, {
+        localVue,
+        store,
+        render: jest.fn()
+      });
+
+      component.vm.selectedEnableBackups = enable;
+
+      expect(mutations.setEnableBackups).toBeCalledWith(state, enable);
+    });
+  });
+
+  describe("selectedMoveAnimationSpeed", () => {
+    it.each([100, 200])(
+      "should get the state move animation speed %s",
+      speed => {
+        store.state.moveAnimationSpeed = speed;
         const component = shallowMount(SettingsViewModel, {
           localVue,
           store,
           render: jest.fn()
         });
 
-        expect(component.vm.selectedEnableBackups).toBe(enable);
+        expect(component.vm.selectedMoveAnimationSpeed).toBe(speed);
       }
     );
 
-    it.each([true, false])(
-      "should set the state enable backups enable",
-      enable => {
-        const component = shallowMount(SettingsViewModel, {
-          localVue,
-          store,
-          render: jest.fn()
-        });
+    it.each([100, 200])("should set the state move animation speed", speed => {
+      const component = shallowMount(SettingsViewModel, {
+        localVue,
+        store,
+        render: jest.fn()
+      });
 
-        component.vm.selectedEnableBackups = enable;
+      component.vm.selectedMoveAnimationSpeed = speed;
 
-        expect(mutations.setEnableBackups).toBeCalledWith(state, enable);
-      }
-    );
+      expect(mutations.setMoveAnimationSpeed).toBeCalledWith(state, speed);
+    });
   });
 });
