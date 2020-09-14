@@ -22,10 +22,11 @@ const localVue = createLocalVue();
 localVue.use(Vuex);
 const store = new Vuex.Store({ state });
 
-const mockedRepertoirePosition = (includeAsNew = false) => {
+const mockedRepertoirePosition = (includeAsNew = false, myTurn = true) => {
   const position = new RepertoirePosition("", "", Side.White);
   position.IncludeForTrainingMode = (mode: TrainingMode) =>
     mode === TrainingMode.New && includeAsNew;
+  position.myTurn = myTurn;
   return position;
 };
 
@@ -101,13 +102,15 @@ describe("LearnedViewModel", () => {
   });
 
   describe("plotData", () => {
-    it("should get a pie chart for the unique positions of the selected tags", () => {
+    it("should get a pie chart for the unique positions on my turn of the selected tags", () => {
       const position = mockedRepertoirePosition();
       const trainedPositions = 3;
       const newPositions = 5;
       const positions = [
         ..._.times(trainedPositions, () => mockedRepertoirePosition(false)),
-        ..._.times(newPositions, () => mockedRepertoirePosition(true))
+        ..._.times(newPositions, () => mockedRepertoirePosition(true)),
+        mockedRepertoirePosition(false, false), // not myTurn, ignored
+        mockedRepertoirePosition(true, false)
       ];
       position.VisitChildren = (fn: (position: RepertoirePosition) => void) => {
         _.forEach(positions, fn);
