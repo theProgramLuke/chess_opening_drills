@@ -7,7 +7,6 @@ import { Move } from "@/store/move";
 import { RepertoireTag } from "@/store/repertoireTag";
 import { TrainingEvent } from "@/store/TrainingEvent";
 import { PgnGame } from "@/store/pgnParser";
-import { BackupManager } from "@/store/BackupManager";
 
 jest.mock("@/store/PersistantStorage");
 jest.mock("@/store/repertoire");
@@ -38,7 +37,8 @@ describe("mutations", () => {
       dailyBackupLimit: 0,
       monthlyBackupLimit: 0,
       yearlyBackupLimit: 0,
-      enableBackups: false
+      enableBackups: false,
+      moveAnimationSpeed: 0
     };
   });
 
@@ -258,6 +258,18 @@ describe("mutations", () => {
 
         expect(state.enableBackups).toBe(enable);
         expect(state.persisted.enableBackups).toBe(enable);
+      }
+    );
+  });
+
+  describe("setMoveAnimationSpeed", () => {
+    it.each([100, 200])(
+      "should set the move animation speed setting %s",
+      speed => {
+        mutations.setMoveAnimationSpeed(state, speed);
+
+        expect(state.moveAnimationSpeed).toBe(speed);
+        expect(state.persisted.moveAnimationSpeed).toBe(speed);
       }
     );
   });

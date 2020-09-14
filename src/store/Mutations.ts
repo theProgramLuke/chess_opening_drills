@@ -172,6 +172,11 @@ export const mutations = {
     state.persisted.enableBackups = enable;
   },
 
+  setMoveAnimationSpeed(state: MutationState, speed: number): void {
+    state.moveAnimationSpeed = speed;
+    state.persisted.moveAnimationSpeed = speed;
+  },
+
   clearStorage(state: MutationState): void {
     state.persisted.clear();
   }
