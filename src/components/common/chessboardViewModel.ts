@@ -262,6 +262,15 @@ export default Vue.extend({
       } else {
         // try to find fen in the moves from this position.
         this.board.move(foundMove.from, foundMove.to);
+        this.board.set({
+          fen: this.game.fen(),
+          turnColor: this.toColor(),
+          orientation: this.orientation === Side.White ? "white" : "black",
+          movable: {
+            color: this.toColor(),
+            dests: this.possibleMoves()
+          }
+        });
       }
 
       this.board.set({
