@@ -37,7 +37,7 @@ export default Vue.extend({
       let trainedPositions = 0;
       let newPositions = 0;
 
-      _.forEach(this.combinedTags, tag =>
+      _.forEach(this.selectedTags, tag =>
         tag.position.VisitChildren(child => {
           if (child.IncludeForTrainingMode(TrainingMode.New)) {
             ++newPositions;

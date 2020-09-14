@@ -109,13 +109,15 @@ describe("LearnedViewModel", () => {
         _.times(trainedPositions, () => fn(mockedRepertoirePosition()));
         _.times(newPositions, () => fn(mockedRepertoirePosition(true)));
       };
-      state.whiteRepertoire.tags = [mockedRepertoireTag(position)];
-      state.blackRepertoire.tags = [mockedRepertoireTag(position)];
       const component = shallowMount(LearnedViewModel, {
         localVue,
         store,
         render: jest.fn()
       });
+      component.vm.selectedTags = [
+        mockedRepertoireTag(position),
+        mockedRepertoireTag(position)
+      ];
 
       const plotData = component.vm.plotData;
 
