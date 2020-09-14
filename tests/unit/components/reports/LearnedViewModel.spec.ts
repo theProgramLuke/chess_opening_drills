@@ -101,13 +101,16 @@ describe("LearnedViewModel", () => {
   });
 
   describe("plotData", () => {
-    it("should get a pie chart for the selected tags", () => {
+    it("should get a pie chart for the unique positions of the selected tags", () => {
       const position = mockedRepertoirePosition();
       const trainedPositions = 3;
       const newPositions = 5;
+      const positions = [
+        ..._.times(trainedPositions, () => mockedRepertoirePosition(false)),
+        ..._.times(newPositions, () => mockedRepertoirePosition(true))
+      ];
       position.VisitChildren = (fn: (position: RepertoirePosition) => void) => {
-        _.times(trainedPositions, () => fn(mockedRepertoirePosition()));
-        _.times(newPositions, () => fn(mockedRepertoirePosition(true)));
+        _.forEach(positions, fn);
       };
       const component = shallowMount(LearnedViewModel, {
         localVue,
@@ -126,7 +129,7 @@ describe("LearnedViewModel", () => {
           type: "pie",
           hole: 0.7,
           labels: ["Trained", "New"],
-          values: [trainedPositions * 2, newPositions * 2]
+          values: [trainedPositions, newPositions]
         }
       ]);
     });

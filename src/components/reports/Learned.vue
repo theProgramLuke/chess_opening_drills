@@ -5,7 +5,6 @@
         v-treeview(
           :items="combinedTags",
           v-model="selectedTags",
-          selection-type="independent",
           return-object,
           dense,
           hoverable,

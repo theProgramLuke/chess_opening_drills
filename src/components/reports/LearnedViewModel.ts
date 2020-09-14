@@ -5,6 +5,7 @@ import { mapState } from "vuex";
 import Plot from "@/components/common/Plot.vue";
 import { RepertoireTag } from "@/store/repertoireTag";
 import { TrainingMode } from "@/store/trainingMode";
+import { RepertoirePosition } from "@/store/repertoirePosition";
 
 export default Vue.extend({
   name: "LearnedReport",
@@ -33,19 +34,27 @@ export default Vue.extend({
       );
     },
 
+    selectedPositions(): RepertoirePosition[] {
+      const positions: RepertoirePosition[] = [];
+
+      _.forEach(this.selectedTags, tag =>
+        tag.position.VisitChildren(position => positions.push(position))
+      );
+
+      return _.uniq(positions);
+    },
+
     plotData() {
       let trainedPositions = 0;
       let newPositions = 0;
 
-      _.forEach(this.selectedTags, tag =>
-        tag.position.VisitChildren(child => {
-          if (child.IncludeForTrainingMode(TrainingMode.New)) {
-            ++newPositions;
-          } else {
-            ++trainedPositions;
-          }
-        })
-      );
+      _.forEach(this.selectedPositions, position => {
+        if (position.IncludeForTrainingMode(TrainingMode.New)) {
+          ++newPositions;
+        } else {
+          ++trainedPositions;
+        }
+      });
 
       return [
         {
