@@ -1,11 +1,9 @@
 import ElectronStore from "electron-store";
 import _ from "lodash";
-import { OnDidAnyChangeCallback } from "conf/dist/source/types";
 
 import { SavedStorage, PersistantStorage } from "@/store/PersistantStorage";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire";
 import { BackupManager } from "@/store/BackupManager";
-import { EventEmitter } from "events";
 
 jest.mock("electron-store");
 jest.mock("@/store/repertoire");
@@ -444,14 +442,18 @@ describe("PersistantStorage", () => {
   describe("backup", () => {
     it("should saveBackup with the serialized storage", async () => {
       store.get = () => true;
-      const serialize = () => "content";
+      const content = "content";
+      const serialize = () => content;
       const backupManager = new BackupManager("", 0, 0, 0);
       persistantStorage.serialize = serialize;
       persistantStorage.backupManager = backupManager;
+      let serializer = () => "";
+      backupManager.SaveBackup = (fn: () => string) => (serializer = fn);
 
       await persistantStorage.backup();
+      const actualContent = serializer();
 
-      expect(backupManager.SaveBackup).toBeCalledWith(serialize);
+      expect(actualContent).toEqual(content);
     });
 
     it("should not saveBackup when enable backups is false", async () => {

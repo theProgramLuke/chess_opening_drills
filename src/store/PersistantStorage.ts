@@ -160,7 +160,7 @@ export class PersistantStorage implements Storage {
 
   async backup(): Promise<void> {
     if (this.enableBackups && this.backupManager) {
-      this.backupManager.SaveBackup(this.serialize);
+      this.backupManager.SaveBackup(() => this.serialize());
     }
   }
 
