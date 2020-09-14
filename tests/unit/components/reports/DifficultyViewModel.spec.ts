@@ -35,7 +35,7 @@ describe("DifficultyViewModel", () => {
     it("should be true if the repertoire has no trained positions", () => {
       const position = new RepertoirePosition("", "", Side.White);
       position.IncludeForTrainingMode = (mode: TrainingMode) =>
-        mode != TrainingMode.New;
+        mode === TrainingMode.New;
       state.whiteRepertoire.positions = [position];
       const component = shallowMount(DifficultyViewModel, {
         localVue,
@@ -45,10 +45,14 @@ describe("DifficultyViewModel", () => {
 
       const show = component.vm.showNoPositions;
 
-      expect(show).toBeTruthy;
+      expect(show).toBeTruthy();
     });
 
-    it("should be false if the repertoire has no trained positions", () => {
+    it("should be false if the repertoire has trained positions", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+      position.IncludeForTrainingMode = (mode: TrainingMode) =>
+        mode !== TrainingMode.New;
+      state.whiteRepertoire.positions = [position];
       const component = shallowMount(DifficultyViewModel, {
         localVue,
         store,
@@ -57,7 +61,7 @@ describe("DifficultyViewModel", () => {
 
       const show = component.vm.showNoPositions;
 
-      expect(show).toBeFalsy;
+      expect(show).toBeFalsy();
     });
   });
 

@@ -13,12 +13,6 @@ import { Turn } from "@/store/turn";
 import { Move } from "@/store/move";
 import { Side } from "@/store/side";
 import { RepertoireTag } from "@/store/repertoireTag";
-import { Engine } from "node-uci";
-import {
-  EngineOption,
-  ProcessAnalysis,
-  EngineOutput
-} from "@/store/EngineHelpers";
 
 interface EditViewModelData {
   activePosition: RepertoirePosition;

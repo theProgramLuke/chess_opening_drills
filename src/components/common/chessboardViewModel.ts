@@ -74,7 +74,7 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(["boardTheme", "pieceTheme"])
+    ...mapState(["boardTheme", "pieceTheme", "moveAnimationSpeed"])
   },
 
   watch: {
@@ -230,18 +230,49 @@ export default Vue.extend({
       if (fen === this.game.fen()) {
         return;
       }
+
+      let foundMove: Move | undefined;
+
+      _.forEach(this.game.moves(), move => {
+        const game = new Chess(this.game.fen());
+        const legalMove = game.move(move);
+        if (legalMove && game.fen() === fen) {
+          foundMove = legalMove;
+        }
+      });
+
       // set a default value for the configuration object itself to allow call to loadPosition()
       this.game.load(fen || this.fen);
-      this.board = Chessground(this.$refs.board as HTMLElement, {
-        fen: this.game.fen(),
-        turnColor: this.toColor(),
-        movable: {
-          color: this.toColor(),
-          free: this.free,
-          dests: this.possibleMoves()
-        },
-        orientation: this.orientation === Side.White ? "white" : "black"
-      });
+
+      if (!this.board || !foundMove) {
+        this.board = Chessground(this.$refs.board as HTMLElement, {
+          fen: this.game.fen(),
+          turnColor: this.toColor(),
+          movable: {
+            color: this.toColor(),
+            free: this.free,
+            dests: this.possibleMoves()
+          },
+          orientation: this.orientation === Side.White ? "white" : "black",
+          animation: {
+            enabled: true,
+            duration: this.moveAnimationSpeed
+          }
+        });
+      } else {
+        // try to find fen in the moves from this position.
+        this.board.move(foundMove.from, foundMove.to);
+        this.board.set({
+          fen: this.game.fen(),
+          turnColor: this.toColor(),
+          orientation: this.orientation === Side.White ? "white" : "black",
+          movable: {
+            color: this.toColor(),
+            dests: this.possibleMoves()
+          }
+        });
+      }
+
       this.board.set({
         movable: { events: { after: this.changeTurn() } }
       });

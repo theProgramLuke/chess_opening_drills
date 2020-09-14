@@ -49,7 +49,8 @@ export default Vue.extend({
       "dailyBackupLimit",
       "monthlyBackupLimit",
       "yearlyBackupLimit",
-      "enableBackups"
+      "enableBackups",
+      "moveAnimationSpeed"
     ]),
 
     selectedDarkMode: {
@@ -162,6 +163,16 @@ export default Vue.extend({
       set(enable: boolean): void {
         this.setEnableBackups(enable);
       }
+    },
+
+    selectedMoveAnimationSpeed: {
+      get(): number {
+        return this.moveAnimationSpeed;
+      },
+
+      set(speed: number): void {
+        this.setMoveAnimationSpeed(speed);
+      }
     }
   },
 
@@ -176,8 +187,9 @@ export default Vue.extend({
       "setDailyBackupLimit",
       "setMonthlyBackupLimit",
       "setYearlyBackupLimit",
-      "clearStorage",
-      "setEnableBackups"
+      "setEnableBackups",
+      "setMoveAnimationSpeed",
+      "clearStorage"
     ]),
 
     updateEngineMetadata(): void {

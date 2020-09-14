@@ -23,6 +23,16 @@
         v-expansion-panel
           v-expansion-panel-header Board Appearance
           v-expansion-panel-content.pa-2
+            v-slider(
+              v-model="selectedMoveAnimationSpeed",
+              label="Move animation speed (ms)",
+              min=0,
+              max=500,
+              step=25,
+              thumb-label=true,
+              ticks="always"
+            )
+
             v-select(
               v-model="selectedBoardTheme",
               :items="boardThemes",
