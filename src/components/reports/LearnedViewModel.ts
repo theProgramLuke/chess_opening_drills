@@ -47,12 +47,14 @@ export default Vue.extend({
         })
       );
 
-      return {
-        type: "pie",
-        hole: 0.75,
-        labels: ["Trained", "New"],
-        values: [trainedPositions, newPositions]
-      };
+      return [
+        {
+          type: "pie",
+          hole: 0.7,
+          labels: ["Trained", "New"],
+          values: [trainedPositions, newPositions]
+        }
+      ];
     }
   }
 });

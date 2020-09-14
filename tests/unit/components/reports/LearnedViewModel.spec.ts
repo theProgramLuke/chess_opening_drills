@@ -121,12 +121,14 @@ describe("LearnedViewModel", () => {
 
       const plotData = component.vm.plotData;
 
-      expect(plotData).toEqual({
-        type: "pie",
-        hole: 0.75,
-        labels: ["Trained", "New"],
-        values: [trainedPositions * 2, newPositions * 2]
-      });
+      expect(plotData).toEqual([
+        {
+          type: "pie",
+          hole: 0.7,
+          labels: ["Trained", "New"],
+          values: [trainedPositions * 2, newPositions * 2]
+        }
+      ]);
     });
   });
 });
