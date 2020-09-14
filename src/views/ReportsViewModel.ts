@@ -12,7 +12,7 @@ enum ReportToShow {
 
 export default Vue.extend({
   data: () => ({
-    selectedReportType: ReportToShow.Learned,
+    selectedReportType: ReportToShow.PositionsPerTag,
     reportTypes: [
       ReportToShow.PositionsPerTag,
       ReportToShow.Learned,
