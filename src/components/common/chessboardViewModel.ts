@@ -74,7 +74,7 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(["boardTheme", "pieceTheme"])
+    ...mapState(["boardTheme", "pieceTheme", "moveAnimationSpeed"])
   },
 
   watch: {
@@ -256,7 +256,7 @@ export default Vue.extend({
           orientation: this.orientation === Side.White ? "white" : "black",
           animation: {
             enabled: true,
-            duration: 100
+            duration: this.moveAnimationSpeed
           }
         });
       } else {
