@@ -114,7 +114,9 @@ describe("PositionsPerTagViewModel", () => {
           maxdepth: 3,
           parents: ["", "White", "", "Black"],
           type: "sunburst",
-          values: [1, 1, 1, 1]
+          hovertext: ["1", "1", "1", "1"],
+          hoverinfo: "label+percent parent+text",
+          values: [0, 1, 0, 1]
         }
       ]);
     });
