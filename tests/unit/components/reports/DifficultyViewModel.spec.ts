@@ -87,12 +87,14 @@ describe("DifficultyViewModel", () => {
         {
           type: "histogram",
           name: "Black",
-          x: blackEasinessFactors
+          x: blackEasinessFactors,
+          xbins: { start: 0, end: 15 }
         },
         {
           type: "histogram",
           name: "White",
-          x: whiteEasinessFactors
+          x: whiteEasinessFactors,
+          xbins: { start: 0, end: 15 }
         }
       ]);
     });

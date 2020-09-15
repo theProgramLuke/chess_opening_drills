@@ -89,25 +89,31 @@ describe("RetentionViewModel", () => {
         store,
         render: jest.fn()
       });
+      const x = _.concat(
+        _.compact(whiteTrainingCounts),
+        _.compact(blackTrainingCounts)
+      );
+      const y = _.concat(whiteRetentionRates, blackRetentionRates);
 
       const plotData = component.vm.plotData;
 
       expect(plotData).toEqual([
         {
-          type: "scatter",
-          name: "Black",
+          x,
+          y,
           mode: "markers",
-          marker: { size: 12 },
-          x: _.compact(blackTrainingCounts),
-          y: blackRetentionRates
+          name: "points",
+          type: "scatter"
         },
         {
-          type: "scatter",
-          name: "White",
-          mode: "markers",
-          marker: { size: 12 },
-          x: _.compact(whiteTrainingCounts),
-          y: whiteRetentionRates
+          x,
+          yaxis: "y2",
+          type: "histogram"
+        },
+        {
+          y,
+          xaxis: "x2",
+          type: "histogram"
         }
       ]);
     });

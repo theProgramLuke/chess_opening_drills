@@ -34,8 +34,31 @@ export default Vue.extend({
   data: () => ({
     options: { displayModeBar: false },
     layout: {
-      xaxis: { type: "log", rangemode: "tozero" },
-      yaxis: { rangemode: "tozero" }
+      showlegend: false,
+      margin: { b: 125 },
+      xaxis: {
+        domain: [0, 0.8],
+        showgrid: false,
+        zeroline: false,
+        title: { text: "Training Repetition Count" }
+      },
+      yaxis: {
+        domain: [0, 0.8],
+        showgrid: false,
+        zeroline: false,
+        rangemode: "tozero",
+        title: { text: "Retention Rate" }
+      },
+      xaxis2: {
+        domain: [0.85, 1],
+        showgrid: false,
+        zeroline: false
+      },
+      yaxis2: {
+        domain: [0.85, 1],
+        showgrid: false,
+        zeroline: false
+      }
     }
   }),
 
@@ -59,22 +82,27 @@ export default Vue.extend({
     },
 
     plotData(): any[] {
+      const retentions = _.concat(this.whiteRetention, this.blackRetention);
+      const x = _.map(retentions, retention => retention.attempts);
+      const y = _.map(retentions, retention => retention.retentionRate);
+
       return [
         {
-          type: "scatter",
+          x,
+          y,
           mode: "markers",
-          name: "Black",
-          marker: { size: 12 },
-          x: _.map(this.blackRetention, retention => retention.attempts),
-          y: _.map(this.blackRetention, retention => retention.retentionRate)
+          name: "points",
+          type: "scatter"
         },
         {
-          type: "scatter",
-          mode: "markers",
-          name: "White",
-          marker: { size: 12 },
-          x: _.map(this.whiteRetention, retention => retention.attempts),
-          y: _.map(this.whiteRetention, retention => retention.retentionRate)
+          x,
+          yaxis: "y2",
+          type: "histogram"
+        },
+        {
+          y,
+          xaxis: "x2",
+          type: "histogram"
         }
       ];
     }
