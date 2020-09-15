@@ -31,8 +31,8 @@ const positionsFromData = (
     expect(count).toBeGreaterThanOrEqual(successes);
     const position = new RepertoirePosition("", "", Side.White);
     position.trainingHistory = [
-      ..._.times(count - successes, () => new TrainingEvent(1, 0)),
-      ..._.times(successes, () => new TrainingEvent(2, 0))
+      ..._.times(successes, () => new TrainingEvent(1, 0)),
+      ..._.times(count - successes, () => new TrainingEvent(2, 0))
     ];
     return position;
   });
@@ -74,8 +74,8 @@ describe("RetentionViewModel", () => {
       const blackRetentionSuccesses = [1, 0, 4, 1];
       const blackRetentionRates = [1, 4 / 7, 1 / 3];
       const whiteTrainingCounts = [9, 1];
-      const whiteRetentionSuccesses = [0, 1];
-      const whiteRetentionRates = [0, 1];
+      const whiteRetentionSuccesses = [9, 0];
+      const whiteRetentionRates = [1, 0];
       state.blackRepertoire.positions = positionsFromData(
         blackTrainingCounts,
         blackRetentionSuccesses
@@ -96,12 +96,16 @@ describe("RetentionViewModel", () => {
         {
           type: "scatter",
           name: "Black",
+          mode: "markers",
+          marker: { size: 12 },
           x: _.compact(blackTrainingCounts),
           y: blackRetentionRates
         },
         {
           type: "scatter",
           name: "White",
+          mode: "markers",
+          marker: { size: 12 },
           x: _.compact(whiteTrainingCounts),
           y: whiteRetentionRates
         }

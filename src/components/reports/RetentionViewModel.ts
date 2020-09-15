@@ -22,7 +22,7 @@ const getRetentionData = (repertoire: Repertoire): RetentionData[] => {
       position.trainingHistory,
       trainingEvent => trainingEvent.attempts === 1
     ).length;
-    const retentionRate = (attempts - successes) / attempts;
+    const retentionRate = successes / attempts;
 
     return { attempts, retentionRate };
   });
@@ -33,7 +33,10 @@ export default Vue.extend({
 
   data: () => ({
     options: { displayModeBar: false },
-    layout: {}
+    layout: {
+      xaxis: { type: "log", rangemode: "tozero" },
+      yaxis: { rangemode: "tozero" }
+    }
   }),
 
   components: {
@@ -59,13 +62,17 @@ export default Vue.extend({
       return [
         {
           type: "scatter",
+          mode: "markers",
           name: "Black",
+          marker: { size: 12 },
           x: _.map(this.blackRetention, retention => retention.attempts),
           y: _.map(this.blackRetention, retention => retention.retentionRate)
         },
         {
           type: "scatter",
+          mode: "markers",
           name: "White",
+          marker: { size: 12 },
           x: _.map(this.whiteRetention, retention => retention.attempts),
           y: _.map(this.whiteRetention, retention => retention.retentionRate)
         }
