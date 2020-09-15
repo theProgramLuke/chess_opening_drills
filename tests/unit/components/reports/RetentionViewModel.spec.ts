@@ -102,18 +102,20 @@ describe("RetentionViewModel", () => {
           x,
           y,
           mode: "markers",
-          name: "points",
+          name: "Positions",
           type: "scatter"
         },
         {
           x,
           yaxis: "y2",
-          type: "histogram"
+          type: "histogram",
+          showlegend: false
         },
         {
           y,
           xaxis: "x2",
-          type: "histogram"
+          type: "histogram",
+          showlegend: false
         }
       ]);
     });

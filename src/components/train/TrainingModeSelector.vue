@@ -26,6 +26,7 @@
 
             div Scheduled - Positions planned for study today.
             div New - Positions not studied before.
+            div Cram - All positions.
             div Difficult - Positions historically hard to remember.
 
       v-slider(

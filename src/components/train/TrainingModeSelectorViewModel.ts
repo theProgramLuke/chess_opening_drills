@@ -44,7 +44,12 @@ export class TrainingOptions {
 export default Vue.extend({
   data: () => ({
     selectedTopics: [],
-    modes: [TrainingMode.Scheduled, TrainingMode.New, TrainingMode.Difficult],
+    modes: [
+      TrainingMode.Scheduled,
+      TrainingMode.New,
+      TrainingMode.Cram,
+      TrainingMode.Difficult
+    ],
     selectedModes: [TrainingMode.Scheduled],
     previewNewVariations: true,
     entireVariations: true,

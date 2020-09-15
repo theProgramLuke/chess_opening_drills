@@ -34,7 +34,6 @@ export default Vue.extend({
   data: () => ({
     options: { displayModeBar: false },
     layout: {
-      showlegend: false,
       margin: { b: 125 },
       xaxis: {
         domain: [0, 0.8],
@@ -91,18 +90,20 @@ export default Vue.extend({
           x,
           y,
           mode: "markers",
-          name: "points",
+          name: "Positions",
           type: "scatter"
         },
         {
           x,
           yaxis: "y2",
-          type: "histogram"
+          type: "histogram",
+          showlegend: false
         },
         {
           y,
           xaxis: "x2",
-          type: "histogram"
+          type: "histogram",
+          showlegend: false
         }
       ];
     }

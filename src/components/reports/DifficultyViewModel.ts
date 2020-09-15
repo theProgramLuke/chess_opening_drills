@@ -64,12 +64,12 @@ export default Vue.extend({
       return [
         {
           ...common,
-          name: "Black",
+          name: "Black Positions",
           x: this.blackEasiness
         },
         {
           ...common,
-          name: "White",
+          name: "White Positions",
           x: this.whiteEasiness
         }
       ];

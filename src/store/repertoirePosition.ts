@@ -135,6 +135,9 @@ export class RepertoirePosition {
       case TrainingMode.Scheduled: {
         return this.IncludeForScheduledMode();
       }
+      case TrainingMode.Cram: {
+        return true;
+      }
       case TrainingMode.Difficult: {
         return this.IncludeForDifficultMode(difficultyModeLimit);
       }

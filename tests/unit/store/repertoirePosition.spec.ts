@@ -192,6 +192,14 @@ describe("RepertoirePosition", () => {
 
       expect(include).toBeTruthy();
     });
+
+    it("should be included in cram mode", () => {
+      const position = new RepertoirePosition("", "", Side.White);
+
+      const include = position.IncludeForTrainingMode(TrainingMode.Cram);
+
+      expect(include).toBeTruthy();
+    });
   });
 
   describe("IsChildPosition", () => {
