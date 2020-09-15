@@ -86,13 +86,13 @@ describe("DifficultyViewModel", () => {
       expect(plotData).toEqual([
         {
           type: "histogram",
-          name: "Black",
+          name: "Black Positions",
           x: blackEasinessFactors,
           xbins: { start: 0, end: 15 }
         },
         {
           type: "histogram",
-          name: "White",
+          name: "White Positions",
           x: whiteEasinessFactors,
           xbins: { start: 0, end: 15 }
         }
