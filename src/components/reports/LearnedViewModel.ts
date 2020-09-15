@@ -38,7 +38,11 @@ export default Vue.extend({
       const positions: RepertoirePosition[] = [];
 
       _.forEach(this.selectedTags, tag =>
-        tag.position.VisitChildren(position => positions.push(position))
+        tag.position.VisitChildren(position => {
+          if (position.myTurn) {
+            positions.push(position);
+          }
+        })
       );
 
       return _.uniq(positions);
