@@ -2,7 +2,6 @@
 
 _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/issues)._
 
-- % of repertoire learned by tag
 - Repertoire health
   - warning for multiple choices from same position on my turn
   - blunder detection
