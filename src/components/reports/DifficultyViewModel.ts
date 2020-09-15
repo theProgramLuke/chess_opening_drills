@@ -27,7 +27,17 @@ export default Vue.extend({
 
   data: () => ({
     options: { displayModeBar: false },
-    layout: { yaxis: { rangemode: "tozero" }, barmode: "stack" }
+    layout: {
+      yaxis: {
+        rangemode: "tozero",
+        title: { text: "Position Count" }
+      },
+      xaxis: {
+        title: { text: "Difficulty" }
+      },
+      margin: { b: 125 },
+      barmode: "stack"
+    }
   }),
 
   components: {
@@ -50,14 +60,15 @@ export default Vue.extend({
     },
 
     plotData() {
+      const common = { xbins: { start: 0, end: 15 }, type: "histogram" };
       return [
         {
-          type: "histogram",
+          ...common,
           name: "Black",
           x: this.blackEasiness
         },
         {
-          type: "histogram",
+          ...common,
           name: "White",
           x: this.whiteEasiness
         }
