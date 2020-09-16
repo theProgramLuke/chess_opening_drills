@@ -13,16 +13,17 @@ export class Backup {
     this.age = _.parseInt(this.filePath.split(AgeSeparator)[1]);
   }
 
-  delete(deleteFile = _.partialRight(fs.unlink, _.noop)): void {
-    deleteFile(this.filePath);
+  async delete(): Promise<void> {
+    await fs.unlink(this.filePath, _.noop);
   }
 
-  save(
-    content: string,
-    writeFile = _.partialRight(fs.writeFile, _.noop),
-    makeDirectory = _.partialRight(fs.mkdirSync, { recursive: true })
-  ): void {
-    makeDirectory(path.dirname(this.filePath));
-    writeFile(this.filePath, content);
+  async save(content: string): Promise<void> {
+    await fs.mkdir(
+      path.dirname(this.filePath),
+      { recursive: true },
+      async () => {
+        await fs.writeFile(this.filePath, content, _.noop);
+      }
+    );
   }
 }

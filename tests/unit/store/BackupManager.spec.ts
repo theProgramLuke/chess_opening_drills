@@ -1,5 +1,6 @@
 import path from "path";
 import _ from "lodash";
+import fs from "graceful-fs";
 
 import { BackupManager, day, month, year } from "@/store/BackupManager";
 import { Backup } from "@/store/Backup";
@@ -14,8 +15,6 @@ describe("BackupManager", () => {
   const yearlyDirectory = path.join(backupFolder, "yearly");
   const directoryBackups: { [key: string]: string[] } = {};
 
-  const listDirectory = (directory: string) => directoryBackups[directory];
-
   const createMockedBackup = (filePath: string): Backup => {
     const backup = new Backup(filePath);
     backup.save = jest.fn();
@@ -27,6 +26,12 @@ describe("BackupManager", () => {
     _.map(backups, backup => backup.filePath);
 
   beforeEach(() => {
+    jest.mock("fs");
+
+    (fs.readdirSync as jest.Mock).mockImplementation(
+      (directory: string): string[] => directoryBackups[directory]
+    );
+
     directoryBackups[dailyDirectory] = [];
     directoryBackups[monthlyDirectory] = [];
     directoryBackups[yearlyDirectory] = [];
@@ -43,7 +48,6 @@ describe("BackupManager", () => {
         2,
         2,
         2,
-        listDirectory,
         createMockedBackup
       );
       const dailyBackups = getBackupFiles(manager.dailyBackups);
@@ -65,7 +69,6 @@ describe("BackupManager", () => {
         0,
         0,
         0,
-        listDirectory,
         createMockedBackup
       );
       const dailyBackups = getBackupFiles(manager.dailyBackups);
@@ -78,14 +81,14 @@ describe("BackupManager", () => {
     });
 
     it("should discover an empty list if the backup folder doesn't exist", () => {
+      fs.readdirSync = jest.fn(() => {
+        throw Error("folder doesn't exist...");
+      });
       const manager = new BackupManager(
         backupFolder,
         0,
         0,
         0,
-        jest.fn(() => {
-          throw Error("folder doesn't exist...");
-        }),
         createMockedBackup
       );
 
@@ -111,7 +114,6 @@ describe("BackupManager", () => {
         1,
         1,
         1,
-        jest.fn(() => []),
         createMockedBackup
       );
 
@@ -133,14 +135,7 @@ describe("BackupManager", () => {
 
     it("should not save a backup if the limit is 0", () => {
       const createBackup = jest.fn(() => createMockedBackup(""));
-      const manager = new BackupManager(
-        backupFolder,
-        0,
-        0,
-        0,
-        jest.fn(() => []),
-        createBackup
-      );
+      const manager = new BackupManager(backupFolder, 0, 0, 0, createBackup);
 
       manager.SaveBackup(
         () => "",
@@ -162,7 +157,6 @@ describe("BackupManager", () => {
         2,
         0,
         0,
-        listDirectory,
         createMockedBackup
       );
 
@@ -181,7 +175,6 @@ describe("BackupManager", () => {
         0,
         2,
         0,
-        listDirectory,
         createMockedBackup
       );
 
@@ -200,7 +193,6 @@ describe("BackupManager", () => {
         0,
         0,
         2,
-        listDirectory,
         createMockedBackup
       );
 
@@ -218,7 +210,6 @@ describe("BackupManager", () => {
         2,
         0,
         0,
-        listDirectory,
         createMockedBackup
       );
 
@@ -236,7 +227,6 @@ describe("BackupManager", () => {
         0,
         2,
         0,
-        listDirectory,
         createMockedBackup
       );
 
@@ -254,7 +244,6 @@ describe("BackupManager", () => {
         0,
         0,
         2,
-        listDirectory,
         createMockedBackup
       );
 
@@ -283,7 +272,6 @@ describe("BackupManager", () => {
         1,
         1,
         1,
-        listDirectory,
         createMockedBackup
       );
 

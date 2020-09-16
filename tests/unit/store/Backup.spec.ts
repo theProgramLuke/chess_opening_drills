@@ -1,7 +1,10 @@
 import _ from "lodash";
 import path from "path";
+import fs from "graceful-fs";
 
 import { Backup } from "@/store/Backup";
+
+jest.mock("graceful-fs");
 
 describe("Backup", () => {
   describe("age", () => {
@@ -16,37 +19,40 @@ describe("Backup", () => {
   });
 
   describe("save", () => {
-    it("should write the content to the filepath", () => {
-      const saveFile = jest.fn();
+    it("should write the content to the filepath", async () => {
       const content = "some content";
       const filePath = "not a real file path";
       const backup = new Backup(filePath);
 
-      backup.save(content, saveFile, jest.fn());
+      await backup.save(content);
 
-      expect(saveFile).toBeCalledWith(filePath, content);
+      expect(fs.writeFile).toHaveBeenCalledWith(filePath, content, _.noop);
     });
 
-    it("should try to create the directory", () => {
-      const makeDirectory = jest.fn();
+    it("should try to create the directory", async () => {
       const filePath = "some/path/settings-0.json";
       const backup = new Backup(filePath);
 
-      backup.save("", jest.fn(), makeDirectory);
+      await backup.save("");
 
-      expect(makeDirectory).toBeCalledWith(path.dirname(filePath));
+      expect(fs.mkdir).toBeCalledWith(
+        path.dirname(filePath),
+        {
+          recursive: true
+        },
+        expect.anything()
+      );
     });
   });
 
   describe("delete", () => {
-    it("should delete the backup file", () => {
-      const deleteFile = jest.fn();
+    it("should delete the backup file", async () => {
       const filePath = "not a real file path";
       const backup = new Backup(filePath);
 
-      backup.delete(deleteFile);
+      await backup.delete();
 
-      expect(deleteFile).toBeCalledWith(filePath);
+      expect(fs.unlink).toBeCalledWith(filePath, _.noop);
     });
   });
 });

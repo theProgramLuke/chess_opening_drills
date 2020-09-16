@@ -40,26 +40,13 @@ export class BackupManager {
     dailyLimit: number,
     monthlyLimit: number,
     yearlyLimit: number,
-    listDirectory = (directory: string): string[] => fs.readdirSync(directory),
     createBackup = (filePath: string) => new Backup(filePath)
   ) {
     this.backupFolder = backupFolder;
     this.createBackup = createBackup;
-    this.dailyBackups = this.discoverBackups(
-      "daily",
-      listDirectory,
-      createBackup
-    );
-    this.monthlyBackups = this.discoverBackups(
-      "monthly",
-      listDirectory,
-      createBackup
-    );
-    this.yearlyBackups = this.discoverBackups(
-      "yearly",
-      listDirectory,
-      createBackup
-    );
+    this.dailyBackups = this.discoverBackups("daily", createBackup);
+    this.monthlyBackups = this.discoverBackups("monthly", createBackup);
+    this.yearlyBackups = this.discoverBackups("yearly", createBackup);
     this.dailyLimit = dailyLimit;
     this.monthlyLimit = monthlyLimit;
     this.yearlyLimit = yearlyLimit;
@@ -71,11 +58,10 @@ export class BackupManager {
 
   private discoverBackups(
     frequency: string,
-    listDirectory: (directory: string) => string[],
     createBackup: (filePath: string) => Backup
   ): Backup[] {
     try {
-      const files = listDirectory(path.join(this.backupFolder, frequency));
+      const files = fs.readdirSync(path.join(this.backupFolder, frequency));
       return _.map(files, createBackup);
     } catch {
       return [];

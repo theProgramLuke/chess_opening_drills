@@ -7,6 +7,8 @@ import _ from "lodash";
 import SettingsViewModel from "@/views/SettingsViewModel.ts";
 import { EngineMetadata } from "@/store/EngineHelpers";
 
+jest.mock("fs");
+
 const state = {
   darkMode: true,
   boardTheme: "some board theme",
