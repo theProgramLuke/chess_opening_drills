@@ -43,7 +43,7 @@ export class TrainingOptions {
 
 export default Vue.extend({
   data: () => ({
-    selectedTopics: [],
+    selectedTopics: [] as RepertoireTag[],
     modes: [
       TrainingMode.Scheduled,
       TrainingMode.New,
