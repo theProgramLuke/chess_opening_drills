@@ -69,18 +69,14 @@ export default Vue.extend({
     },
 
     activeVariationPositions(): RepertoirePosition[] {
-      if (this.activeVariation) {
-        const positions: RepertoirePosition[] = [];
+      const positions: RepertoirePosition[] = [];
 
-        if (this.activeVariation[0].position.forSide === Side.White) {
-          positions.push(this.activeVariation[0].position.parents[0]);
-        }
-
-        _.forEach(this.activeVariation, move => positions.push(move.position));
-        return positions;
-      } else {
-        return [];
+      if (this.activeVariation[0].position.forSide === Side.White) {
+        positions.push(this.activeVariation[0].position.parents[0]);
       }
+
+      _.forEach(this.activeVariation, move => positions.push(move.position));
+      return positions;
     },
 
     activePosition(): RepertoirePosition {
