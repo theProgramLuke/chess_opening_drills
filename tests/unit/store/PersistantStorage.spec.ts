@@ -16,21 +16,6 @@ type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 describe("PersistantStorage", () => {
   const storagePath = "some/path.json";
-  const createMockBackupManager = (
-    filePath: string,
-    dailyBackupLimit: number,
-    monthlyBackupLimit: number,
-    yearlyBackupLimit: number
-  ) => {
-    const manager = new BackupManager(
-      filePath,
-      dailyBackupLimit,
-      monthlyBackupLimit,
-      yearlyBackupLimit
-    );
-    manager.backupFolder = filePath;
-    return manager;
-  };
 
   let store: ElectronStore<SavedStorage>;
   let persistantStorage: PersistantStorage;
@@ -38,7 +23,7 @@ describe("PersistantStorage", () => {
   beforeEach(() => {
     store = new ElectronStore<SavedStorage>();
     (store as Writeable<ElectronStore<SavedStorage>>).path = storagePath;
-    persistantStorage = new PersistantStorage(store, createMockBackupManager);
+    persistantStorage = new PersistantStorage(store);
   });
 
   describe("GetDefaultStorage", () => {
@@ -530,7 +515,7 @@ describe("PersistantStorage", () => {
     });
 
     it("should backup any changes", () => {
-      const storage = new PersistantStorage(store, createMockBackupManager);
+      const storage = new PersistantStorage(store);
       storage.backup = jest.fn();
 
       storage.darkMode = true;
