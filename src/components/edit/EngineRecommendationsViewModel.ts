@@ -40,12 +40,9 @@ export default Vue.extend({
   },
 
   methods: {
-    async activateEngine(
-      active: boolean,
-      createEngine = (filePath: string) => new Engine(filePath)
-    ) {
+    async activateEngine(active: boolean) {
       if (active) {
-        this.engine = createEngine(this.engineMetadata.filePath);
+        this.engine = new Engine(this.engineMetadata.filePath);
 
         await this.engine.init();
         _.forEach(this.engineMetadata.options, async (option: EngineOption) => {
