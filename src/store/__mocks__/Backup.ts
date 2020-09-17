@@ -1,8 +1,8 @@
 import _ from "lodash";
 
-import * as RealBackup from "@/store/Backup";
+import * as Real from "@/store/Backup";
 
-export class Backup implements RealBackup.Backup {
+export class Backup implements Real.Backup {
   filePath: string;
   age: number;
   delete: () => Promise<void>;
