@@ -1,10 +1,12 @@
-import ElectronStore from "electron-store";
 import _ from "lodash";
+import fs from "graceful-fs";
+import ElectronStore from "electron-store";
 
 import { SavedStorage, PersistantStorage } from "@/store/PersistantStorage";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire";
 import { BackupManager } from "@/store/BackupManager";
 
+jest.mock("graceful-fs");
 jest.mock("electron-store");
 jest.mock("@/store/repertoire");
 jest.mock("@/store/BackupManager");
@@ -358,7 +360,6 @@ describe("PersistantStorage", () => {
     it("should set the stored daily backup limit", () => {
       const limit = 2;
       persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
-      persistantStorage.serialize = jest.fn();
 
       persistantStorage.dailyBackupLimit = limit;
 
@@ -381,7 +382,6 @@ describe("PersistantStorage", () => {
     it("should set the stored monthly backup limit", () => {
       const limit = 2;
       persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
-      persistantStorage.serialize = jest.fn();
 
       persistantStorage.monthlyBackupLimit = limit;
 
@@ -404,7 +404,6 @@ describe("PersistantStorage", () => {
     it("should set the stored yearly backup limit", () => {
       const limit = 2;
       persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
-      persistantStorage.serialize = jest.fn();
 
       persistantStorage.yearlyBackupLimit = limit;
 
@@ -459,9 +458,9 @@ describe("PersistantStorage", () => {
   describe("serialize", () => {
     it("should get the persisted file content", () => {
       const content = "content";
-      const readFileSync = jest.fn(() => content);
+      (fs.readFileSync as jest.Mock) = jest.fn(() => content);
 
-      const serialized = persistantStorage.serialize(readFileSync);
+      const serialized = persistantStorage.serialize();
 
       expect(serialized).toBe(content);
     });

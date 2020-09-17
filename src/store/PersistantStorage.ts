@@ -346,11 +346,8 @@ export class PersistantStorage implements Storage {
     this.setStorage("moveAnimationSpeed", speed);
   }
 
-  serialize(
-    readFile = (filePath: string): string =>
-      fs.readFileSync(filePath, { encoding: "utf8" })
-  ): string {
-    return readFile(this.storage.path);
+  serialize(): string {
+    return fs.readFileSync(this.storage.path, { encoding: "utf8" });
   }
 
   clear(): void {
