@@ -38,6 +38,14 @@ describe("PersistantStorage", () => {
     persistantStorage = new PersistantStorage(store, createMockBackupManager);
   });
 
+  describe("GetDefaultStorage", () => {
+    it("should get sane starting values", () => {
+      new PersistantStorage();
+
+      expect((ElectronStore as jest.Mock).mock.calls).toMatchSnapshot();
+    });
+  });
+
   describe("dark mode", () => {
     it.each([true, false])("should get the stored dark mode %s", darkMode => {
       store.get = jest.fn(() => darkMode);
