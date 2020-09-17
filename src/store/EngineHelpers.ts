@@ -1,4 +1,5 @@
-import _, { create } from "lodash";
+import _ from "lodash";
+
 import { Engine } from "node-uci";
 
 export interface SourceEngineOption {
@@ -26,12 +27,11 @@ export interface MetadataEngine extends Engine {
 }
 
 export async function GetMetadataFromEngine(
-  enginePath: string,
-  createEngine = (filePath: string) => new Engine(filePath)
+  enginePath: string
 ): Promise<EngineMetadata | undefined> {
   if (enginePath) {
     // Launch the engine with a dummy position to get the available options.
-    const engine: MetadataEngine = createEngine(enginePath);
+    const engine: MetadataEngine = new Engine(enginePath);
 
     await engine.init();
     await engine.position("7K/8/8/8/8/8/8/7k");
