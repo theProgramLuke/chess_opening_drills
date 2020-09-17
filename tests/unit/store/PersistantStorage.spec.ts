@@ -5,6 +5,7 @@ import ElectronStore from "electron-store";
 import { SavedStorage, PersistantStorage } from "@/store/PersistantStorage";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire";
 import { BackupManager } from "@/store/BackupManager";
+import { EngineMetadata } from "@/store/EngineHelpers";
 
 jest.mock("graceful-fs");
 jest.mock("electron-store");
@@ -295,6 +296,41 @@ describe("PersistantStorage", () => {
       persistantStorage.blackRepertoire = repertoire;
 
       expect(store.set).toBeCalledWith("blackRepertoire", savedRepertoire);
+    });
+  });
+
+  describe("engineMetadata", () => {
+    it("should get the saved engine metadata", () => {
+      const metadata: EngineMetadata = {
+        filePath: "path",
+        name: "name",
+        options: []
+      };
+      store.get = jest.fn(() => metadata);
+
+      const actual = persistantStorage.engineMetadata;
+
+      expect(store.get).toBeCalledWith("engineMetadata");
+      expect(actual).toBe(metadata);
+    });
+
+    it("should set the engine metadata", () => {
+      const metadata: EngineMetadata = {
+        filePath: "path",
+        name: "name",
+        options: []
+      };
+      store.get = jest.fn(() => metadata);
+
+      persistantStorage.engineMetadata = metadata;
+
+      expect(store.set).toBeCalledWith("engineMetadata", metadata);
+    });
+
+    it("should delete the engine metadata if undefined", () => {
+      persistantStorage.engineMetadata = undefined;
+
+      expect(store.delete).toBeCalledWith("engineMetadata");
     });
   });
 

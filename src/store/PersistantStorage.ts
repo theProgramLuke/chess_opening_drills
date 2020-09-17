@@ -123,36 +123,15 @@ function GetDefaultStorage() {
 export class PersistantStorage implements Storage {
   storage: ElectronStore<SavedStorage>;
   backupManager?: BackupManager;
-  createBackupManager: (
-    filePath: string,
-    dailyBackupLimit: number,
-    monthlyBackupLimit: number,
-    yearlyBackupLimit: number
-  ) => BackupManager;
 
-  constructor(
-    storage?: ElectronStore<SavedStorage>,
-    createBackupManager = (
-      filePath: string,
-      dailyBackupLimit: number,
-      monthlyBackupLimit: number,
-      yearlyBackupLimit: number
-    ) =>
-      new BackupManager(
-        filePath,
-        dailyBackupLimit,
-        monthlyBackupLimit,
-        yearlyBackupLimit
-      )
-  ) {
+  constructor(storage?: ElectronStore<SavedStorage>) {
     this.storage = storage || GetDefaultStorage();
-    this.createBackupManager = createBackupManager;
     this.initializeBackupManagement();
   }
 
   private initializeBackupManagement(): void {
     if (this.backupDirectory) {
-      this.backupManager = this.createBackupManager(
+      this.backupManager = new BackupManager(
         this.backupDirectory,
         this.dailyBackupLimit,
         this.monthlyBackupLimit,
