@@ -2,15 +2,15 @@
 
 _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/issues)._
 
+- persist edit position annotations (arrows etc)
+- configurable max training attempts
+- per position training history
 - Repertoire health
-  - warning for multiple choices from same position on my turn
+  - warning for multiple move choices from same position on my turn
   - blunder detection
 - add +- etc annotation to position
 - reset appearance
-- persist edit position annotations (arrows etc)
-- configurable max training attempts
 - add training stats to training complete!
-- per position training history
-- upload anonymous training history
+- telemetry?
 - server mode? Would be good for mobile use
 - use vuetify color scheme for plots
