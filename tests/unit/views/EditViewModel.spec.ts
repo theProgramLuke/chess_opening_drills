@@ -156,26 +156,49 @@ describe("EditViewModel", () => {
   });
 
   describe("onScroll", () => {
-    it("should go to the next position on scroll up", () => {
+    const scrollUp = { deltaY: 1 };
+    const scrollDown = { deltaY: -1 };
+
+    it("should go to the next position on scroll down", () => {
       const nextPosition = new RepertoirePosition("", "", Side.White);
       startPosition.children.push(new Move("", nextPosition));
       const component = mountComponent();
       component.vm.updateBoard = jest.fn();
 
-      component.vm.onScroll({ deltaY: 1 });
+      component.vm.onScroll(scrollUp);
 
       expect(component.vm.updateBoard).toBeCalledWith(nextPosition);
     });
 
-    it("should go to the next position on scroll down", () => {
+    it("should stay at the active position on scroll down when there are no next moves", () => {
+      startPosition.children = [];
+      const component = mountComponent();
+      component.vm.updateBoard = jest.fn();
+
+      component.vm.onScroll(scrollUp);
+
+      expect(component.vm.updateBoard).not.toBeCalled();
+    });
+
+    it("should go to the previous position on scroll up", () => {
       const nextPosition = new RepertoirePosition("", "", Side.White);
       startPosition.parents.push(nextPosition);
       const component = mountComponent();
       component.vm.updateBoard = jest.fn();
 
-      component.vm.onScroll({ deltaY: -1 });
+      component.vm.onScroll(scrollDown);
 
       expect(component.vm.updateBoard).toBeCalledWith(nextPosition);
+    });
+
+    it("should stay at the active position on scroll up when there are no previous moves", () => {
+      startPosition.parents = [];
+      const component = mountComponent();
+      component.vm.updateBoard = jest.fn();
+
+      component.vm.onScroll(scrollDown);
+
+      expect(component.vm.updateBoard).not.toBeCalled();
     });
   });
 });
