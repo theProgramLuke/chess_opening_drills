@@ -40,7 +40,7 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(["whiteRepertoire", "blackRepertoire", "engineMetadata"]),
+    ...mapState(["whiteRepertoire", "blackRepertoire"]),
 
     turnLists(): Turn[][] {
       return this.activePosition.GetTurnLists() || [[]];
@@ -65,7 +65,7 @@ export default Vue.extend({
     },
 
     onBoardMove(threats: Threats) {
-      const lastMoveSan = _.last(threats.history) || "SAN";
+      const lastMoveSan = _.last(threats.history) || "";
 
       if (threats.fen && threats.fen !== this.activePosition.fen) {
         const position = new RepertoirePosition(

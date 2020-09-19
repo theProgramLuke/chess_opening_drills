@@ -5,7 +5,7 @@ import TrainingModeSelector from "@/components/train/TrainingModeSelector.vue";
 import { TrainingOptions } from "@/components/train/TrainingModeSelectorViewModel";
 import Trainer from "@/components/train/Trainer.vue";
 
-enum TrainingState {
+export enum TrainingState {
   Selecting,
   Training,
   Complete
