@@ -2,7 +2,7 @@
   v-container.ma-0.pa-0.fill-height(fluid)
     v-row.ma-0.pa-0.fill-height(align="stretch")
       v-col.ma-0.pa-0(cols="4")
-        v-tabs(grow)
+        v-tabs(show-arrows, grow)
           v-tab(key=0, href="#tab-0") Repertoire
           v-tab(key=1, href="#tab-1") Moves
           v-tab(key=2, href="#tab-2") Notes
