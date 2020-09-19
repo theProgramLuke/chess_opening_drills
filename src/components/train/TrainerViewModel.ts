@@ -22,7 +22,7 @@ export default Vue.extend({
     startTime: _.now(),
     attempts: 0,
     previewIndex: 0,
-    previewedVariations: [-1], // -1 as type hint,
+    previewedVariations: [] as number[],
     mistakeInVariation: false
   }),
 
@@ -212,8 +212,8 @@ export default Vue.extend({
 
     advancePreview() {
       if (this.previewIndex < this.activeVariation.length) {
+        ++this.previewIndex;
         setTimeout(() => {
-          ++this.previewIndex;
           this.advancePreview();
         }, this.previewPlaybackDelay);
       } else {
@@ -224,9 +224,9 @@ export default Vue.extend({
     }
   },
 
-  created(): void {
+  mounted(): void {
     if (this.previewing) {
-      this.advancePreview();
+      setTimeout(() => this.advancePreview(), this.previewPlaybackDelay);
     }
   }
 });
