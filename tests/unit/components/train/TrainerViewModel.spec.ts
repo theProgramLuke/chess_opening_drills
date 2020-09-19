@@ -506,4 +506,103 @@ describe("TrainerViewModel", () => {
       expect(component.vm.startTime).toBeLessThanOrEqual(after);
     });
   });
+
+  describe("advancePreview", () => {
+    const delay = 10;
+    let variation: Move[];
+
+    beforeEach(() => {
+      variation = makeVariation(["e4", "e5", "Nf3"]);
+      variation[0].position.parents = [variation[0].position]; // fake previous move
+    });
+
+    it("should advance to the next position", () => {
+      const component = mountComponent(
+        new TrainingOptions([], [variation], false, false, 0, 0)
+      );
+      component.vm.previewIndex = 0;
+
+      component.vm.advancePreview();
+
+      expect(component.vm.previewIndex).toEqual(1);
+    });
+
+    it("should advance again after a delay", () => {
+      const component = mountComponent(
+        new TrainingOptions([], [variation], false, false, delay, 0)
+      );
+      const nextAdvance = jest.fn();
+      component.vm.advancePreview();
+      component.vm.advancePreview = nextAdvance;
+
+      jest.advanceTimersByTime(delay * 1000);
+
+      expect(nextAdvance).toBeCalled();
+    });
+
+    it("should not advance again before the delay finishes", () => {
+      const component = mountComponent(
+        new TrainingOptions([], [variation], false, false, delay, 0)
+      );
+      const nextAdvance = jest.fn();
+      component.vm.advancePreview();
+      component.vm.advancePreview = nextAdvance;
+
+      jest.advanceTimersByTime(delay * 1000 - 1);
+
+      expect(nextAdvance).not.toBeCalled();
+    });
+
+    it("should be called after a delay on mount if previewing", () => {
+      variation[0].position.IncludeForTrainingMode = () => true;
+      variation[0].position.myTurn = true;
+      const component = mountComponent(
+        new TrainingOptions([], [variation], true, false, delay, 0)
+      );
+      const nextAdvance = jest.fn();
+      component.vm.advancePreview = nextAdvance;
+
+      component.vm.$mount();
+      jest.advanceTimersByTime(delay * 1000);
+
+      expect(nextAdvance).toBeCalled();
+    });
+
+    it("should not be called before a delay on mount if previewing", () => {
+      variation[0].position.IncludeForTrainingMode = () => true;
+      variation[0].position.myTurn = true;
+      const component = mountComponent(
+        new TrainingOptions([], [variation], true, false, delay, 0)
+      );
+      const nextAdvance = jest.fn();
+      component.vm.advancePreview = nextAdvance;
+
+      component.vm.$mount();
+      jest.advanceTimersByTime(delay * 1000);
+
+      expect(nextAdvance).toBeCalled();
+    });
+
+    it("should mark the variation as previewed when all the positions have been shown", () => {
+      const component = mountComponent(
+        new TrainingOptions([], [variation], false, false, delay, 0)
+      );
+      component.vm.advancePreview();
+
+      _.times(variation.length, jest.advanceTimersToNextTimer);
+
+      expect(component.vm.previewedVariations).toEqual([0]);
+    });
+
+    it("should start the next preview at the first move", () => {
+      const component = mountComponent(
+        new TrainingOptions([], [variation], false, false, delay, 0)
+      );
+      component.vm.advancePreview();
+
+      _.times(variation.length, jest.advanceTimersToNextTimer);
+
+      expect(component.vm.previewIndex).toEqual(0);
+    });
+  });
 });
