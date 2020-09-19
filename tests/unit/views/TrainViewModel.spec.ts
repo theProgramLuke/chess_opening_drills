@@ -1,6 +1,7 @@
 import { shallowMount } from "@vue/test-utils";
 
 import TrainViewModel, { TrainingState } from "@/views/TrainViewModel.ts";
+import { TrainingOptions } from "@/components/train/TrainingModeSelectorViewModel";
 
 describe("TrainViewModel", () => {
   const mountComponent = () =>
@@ -81,9 +82,9 @@ describe("TrainViewModel", () => {
     it("should set state to training", () => {
       const component = mountComponent();
       component.vm.state = TrainingState.Selecting;
-      const options = "some options";
+      const options = new TrainingOptions([], [], true, true, 1, 17);
 
-      component.vm.startTraining(options as any);
+      component.vm.startTraining(options);
       const actualState = component.vm.state;
       const actualOptions = component.vm.trainingOptions;
 

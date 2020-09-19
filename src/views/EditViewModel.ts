@@ -110,7 +110,7 @@ export default Vue.extend({
       }
     },
 
-    onScroll(event: WheelEvent) {
+    onScroll(event: { deltaY: number }) {
       if (event.deltaY > 0) {
         this.goToNextPosition();
       } else {

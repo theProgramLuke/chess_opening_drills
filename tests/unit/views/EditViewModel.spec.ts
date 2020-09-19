@@ -162,7 +162,7 @@ describe("EditViewModel", () => {
       const component = mountComponent();
       component.vm.updateBoard = jest.fn();
 
-      component.vm.onScroll({ deltaY: 1 } as any);
+      component.vm.onScroll({ deltaY: 1 });
 
       expect(component.vm.updateBoard).toBeCalledWith(nextPosition);
     });
@@ -173,7 +173,7 @@ describe("EditViewModel", () => {
       const component = mountComponent();
       component.vm.updateBoard = jest.fn();
 
-      component.vm.onScroll({ deltaY: -1 } as any);
+      component.vm.onScroll({ deltaY: -1 });
 
       expect(component.vm.updateBoard).toBeCalledWith(nextPosition);
     });
