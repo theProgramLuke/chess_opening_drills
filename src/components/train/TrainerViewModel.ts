@@ -69,14 +69,18 @@ export default Vue.extend({
     },
 
     activeVariationPositions(): RepertoirePosition[] {
-      const positions: RepertoirePosition[] = [];
+      if (this.activeVariation) {
+        const positions: RepertoirePosition[] = [];
 
-      if (this.activeVariation[0].position.forSide === Side.White) {
-        positions.push(this.activeVariation[0].position.parents[0]);
+        if (this.activeVariation[0].position.forSide === Side.White) {
+          positions.push(this.activeVariation[0].position.parents[0]);
+        }
+
+        _.forEach(this.activeVariation, move => positions.push(move.position));
+        return positions;
+      } else {
+        return [];
       }
-
-      _.forEach(this.activeVariation, move => positions.push(move.position));
-      return positions;
     },
 
     activePosition(): RepertoirePosition {
@@ -141,6 +145,12 @@ export default Vue.extend({
   methods: {
     ...mapMutations(["addTrainingEvent"]),
 
+    reloadPosition(): void {
+      (this.$refs.board as Vue & {
+        loadPosition: () => void;
+      }).loadPosition();
+    },
+
     onBoardMove(threats: Threats) {
       if (threats.fen && threats.fen !== this.activePosition.fen) {
         this.attempts++;
@@ -156,10 +166,7 @@ export default Vue.extend({
         } else {
           this.mistakeInVariation = true;
 
-          // forces a reload of the previous position
-          (this.$refs.board as Vue & {
-            loadPosition: () => void;
-          }).loadPosition();
+          this.reloadPosition();
         }
       }
     },
@@ -184,8 +191,7 @@ export default Vue.extend({
 
     nextVariation() {
       if (this.activeVariation.length === 1) {
-        // force reset of board since fen was the same
-        (this.$refs.board as Vue & { loadPosition: () => void }).loadPosition();
+        this.reloadPosition();
       }
 
       if (!this.mistakeInVariation) {
@@ -205,9 +211,11 @@ export default Vue.extend({
     },
 
     advancePreview() {
-      this.previewIndex++;
       if (this.previewIndex < this.activeVariation.length) {
-        setTimeout(() => this.advancePreview(), this.previewPlaybackDelay);
+        setTimeout(() => {
+          ++this.previewIndex;
+          this.advancePreview();
+        }, this.previewPlaybackDelay);
       } else {
         this.previewedVariations.push(this.variationIndex);
         this.previewIndex = 0;

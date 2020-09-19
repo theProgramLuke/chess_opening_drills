@@ -43,7 +43,6 @@ export class RepertoirePosition {
     this.parents = [];
     this.children = [];
     this.myTurn = false;
-    this.forSide = Side.White;
     this.trainingHistory = [];
     this.nextRepetitionTimestamp = 0;
     this.previousIntervalDays = 0;
