@@ -1,8 +1,11 @@
 import path from "path";
 import _ from "lodash";
+import fs from "graceful-fs";
 
 import { BackupManager, day, month, year } from "@/store/BackupManager";
 import { Backup } from "@/store/Backup";
+
+jest.mock("@/store/Backup");
 
 describe("BackupManager", () => {
   const now = day + year + month;
@@ -14,19 +17,16 @@ describe("BackupManager", () => {
   const yearlyDirectory = path.join(backupFolder, "yearly");
   const directoryBackups: { [key: string]: string[] } = {};
 
-  const listDirectory = (directory: string) => directoryBackups[directory];
-
-  const createMockedBackup = (filePath: string): Backup => {
-    const backup = new Backup(filePath);
-    backup.save = jest.fn();
-    backup.delete = jest.fn();
-    return backup;
-  };
-
   const getBackupFiles = (backups: Backup[]) =>
     _.map(backups, backup => backup.filePath);
 
   beforeEach(() => {
+    jest.mock("fs");
+
+    (fs.readdirSync as jest.Mock).mockImplementation(
+      (directory: string): string[] => directoryBackups[directory]
+    );
+
     directoryBackups[dailyDirectory] = [];
     directoryBackups[monthlyDirectory] = [];
     directoryBackups[yearlyDirectory] = [];
@@ -38,14 +38,7 @@ describe("BackupManager", () => {
       directoryBackups[monthlyDirectory] = ["monthly-0"];
       directoryBackups[yearlyDirectory] = [];
 
-      const manager = new BackupManager(
-        backupFolder,
-        2,
-        2,
-        2,
-        listDirectory,
-        createMockedBackup
-      );
+      const manager = new BackupManager(backupFolder, 2, 2, 2);
       const dailyBackups = getBackupFiles(manager.dailyBackups);
       const monthlyBackups = getBackupFiles(manager.monthlyBackups);
       const yearlyBackups = getBackupFiles(manager.yearlyBackups);
@@ -60,14 +53,7 @@ describe("BackupManager", () => {
       directoryBackups[monthlyDirectory] = ["monthly-0"];
       directoryBackups[yearlyDirectory] = [];
 
-      const manager = new BackupManager(
-        backupFolder,
-        0,
-        0,
-        0,
-        listDirectory,
-        createMockedBackup
-      );
+      const manager = new BackupManager(backupFolder, 0, 0, 0);
       const dailyBackups = getBackupFiles(manager.dailyBackups);
       const monthlyBackups = getBackupFiles(manager.monthlyBackups);
       const yearlyBackups = getBackupFiles(manager.yearlyBackups);
@@ -78,16 +64,10 @@ describe("BackupManager", () => {
     });
 
     it("should discover an empty list if the backup folder doesn't exist", () => {
-      const manager = new BackupManager(
-        backupFolder,
-        0,
-        0,
-        0,
-        jest.fn(() => {
-          throw Error("folder doesn't exist...");
-        }),
-        createMockedBackup
-      );
+      fs.readdirSync = jest.fn(() => {
+        throw Error("folder doesn't exist...");
+      });
+      const manager = new BackupManager(backupFolder, 0, 0, 0);
 
       expect(manager.dailyBackups).toEqual([]);
       expect(manager.monthlyBackups).toEqual([]);
@@ -106,14 +86,7 @@ describe("BackupManager", () => {
       const expectedYearlyBackupFiles = [
         path.join(yearlyDirectory, `settings-${now}.json`)
       ];
-      const manager = new BackupManager(
-        backupFolder,
-        1,
-        1,
-        1,
-        jest.fn(() => []),
-        createMockedBackup
-      );
+      const manager = new BackupManager(backupFolder, 1, 1, 1);
 
       manager.SaveBackup(
         getContent,
@@ -132,15 +105,7 @@ describe("BackupManager", () => {
     });
 
     it("should not save a backup if the limit is 0", () => {
-      const createBackup = jest.fn(() => createMockedBackup(""));
-      const manager = new BackupManager(
-        backupFolder,
-        0,
-        0,
-        0,
-        jest.fn(() => []),
-        createBackup
-      );
+      const manager = new BackupManager(backupFolder, 0, 0, 0);
 
       manager.SaveBackup(
         () => "",
@@ -150,21 +115,13 @@ describe("BackupManager", () => {
       expect(manager.dailyBackups).toEqual([]);
       expect(manager.monthlyBackups).toEqual([]);
       expect(manager.yearlyBackups).toEqual([]);
-      expect(createBackup).not.toBeCalled();
     });
 
     it("should save a daily backup if it has been a day since the last backup", () => {
       const old = `settings-${now - day}.json`;
       const expectedNew = path.join(dailyDirectory, `settings-${now}.json`);
       directoryBackups[dailyDirectory] = [old];
-      const manager = new BackupManager(
-        backupFolder,
-        2,
-        0,
-        0,
-        listDirectory,
-        createMockedBackup
-      );
+      const manager = new BackupManager(backupFolder, 2, 0, 0);
 
       manager.SaveBackup(getContent, () => now);
       const backupFiles = getBackupFiles(manager.dailyBackups);
@@ -176,14 +133,7 @@ describe("BackupManager", () => {
       const old = `settings-${now - month}.json`;
       const expectedNew = path.join(monthlyDirectory, `settings-${now}.json`);
       directoryBackups[monthlyDirectory] = [old];
-      const manager = new BackupManager(
-        backupFolder,
-        0,
-        2,
-        0,
-        listDirectory,
-        createMockedBackup
-      );
+      const manager = new BackupManager(backupFolder, 0, 2, 0);
 
       manager.SaveBackup(getContent, () => now);
       const backupFiles = getBackupFiles(manager.monthlyBackups);
@@ -195,14 +145,7 @@ describe("BackupManager", () => {
       const old = `settings-${now - year}.json`;
       const expectedNew = path.join(yearlyDirectory, `settings-${now}.json`);
       directoryBackups[yearlyDirectory] = [old];
-      const manager = new BackupManager(
-        backupFolder,
-        0,
-        0,
-        2,
-        listDirectory,
-        createMockedBackup
-      );
+      const manager = new BackupManager(backupFolder, 0, 0, 2);
 
       manager.SaveBackup(getContent, () => now);
       const backupFiles = getBackupFiles(manager.yearlyBackups);
@@ -213,14 +156,7 @@ describe("BackupManager", () => {
     it("should not save a daily backup if it has less than a day since the last backup", () => {
       const old = `settings-${now - (day - 1)}.json`;
       directoryBackups[dailyDirectory] = [old];
-      const manager = new BackupManager(
-        backupFolder,
-        2,
-        0,
-        0,
-        listDirectory,
-        createMockedBackup
-      );
+      const manager = new BackupManager(backupFolder, 2, 0, 0);
 
       manager.SaveBackup(getContent, () => now);
       const backupFiles = getBackupFiles(manager.dailyBackups);
@@ -231,14 +167,7 @@ describe("BackupManager", () => {
     it("should not save a monthly backup if it has less a month since the last backup", () => {
       const old = `settings-${now - (month - 1)}.json`;
       directoryBackups[monthlyDirectory] = [old];
-      const manager = new BackupManager(
-        backupFolder,
-        0,
-        2,
-        0,
-        listDirectory,
-        createMockedBackup
-      );
+      const manager = new BackupManager(backupFolder, 0, 2, 0);
 
       manager.SaveBackup(getContent, () => now);
       const backupFiles = getBackupFiles(manager.monthlyBackups);
@@ -249,14 +178,7 @@ describe("BackupManager", () => {
     it("should not save a yearly backup if it has less a year since the last backup", () => {
       const old = `settings-${now - (year - 1)}.json`;
       directoryBackups[yearlyDirectory] = [old];
-      const manager = new BackupManager(
-        backupFolder,
-        0,
-        0,
-        2,
-        listDirectory,
-        createMockedBackup
-      );
+      const manager = new BackupManager(backupFolder, 0, 0, 2);
 
       manager.SaveBackup(getContent, () => now);
       const backupFiles = getBackupFiles(manager.yearlyBackups);
@@ -278,14 +200,7 @@ describe("BackupManager", () => {
       const expectedYearlyBackupFiles = [
         path.join(yearlyDirectory, `settings-${now}.json`)
       ];
-      const manager = new BackupManager(
-        backupFolder,
-        1,
-        1,
-        1,
-        listDirectory,
-        createMockedBackup
-      );
+      const manager = new BackupManager(backupFolder, 1, 1, 1);
 
       manager.SaveBackup(getContent, () => now);
       const dailyBackupFiles = getBackupFiles(manager.dailyBackups);

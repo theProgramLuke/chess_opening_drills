@@ -30,17 +30,28 @@ describe("EngineRecommendationsViewModel", () => {
           activePosition: new RepertoirePosition("", "", Side.Black)
         }
       });
-      const engine = new Engine("");
-      const createEngine = jest.fn(() => {
-        return engine;
-      });
+      const options = [
+        { name: "name0", value: "value0" },
+        { name: "name1", value: "value1" }
+      ];
+      component.vm.engineMetadata.options = options;
       component.vm.startGettingEngineRecommendations = jest.fn();
+      const engine = new Engine("");
+      (Engine as jest.Mock).mockImplementationOnce(() => engine);
 
-      await component.vm.activateEngine(true, createEngine);
+      await component.vm.activateEngine(true);
 
-      expect(createEngine).toBeCalled();
-      expect(engine.setoption).toBeCalled();
       expect(component.vm.startGettingEngineRecommendations).toBeCalled();
+      expect(engine.setoption).toHaveBeenNthCalledWith(
+        1,
+        options[0].name,
+        options[0].value
+      );
+      expect(engine.setoption).toHaveBeenNthCalledWith(
+        2,
+        options[1].name,
+        options[1].value
+      );
     });
 
     it("active=false should quit the running engine", async () => {
@@ -59,7 +70,7 @@ describe("EngineRecommendationsViewModel", () => {
       engine.quit = jest.fn(async () => engine);
       component.vm.engine = engine;
 
-      await component.vm.activateEngine(false, createEngine);
+      await component.vm.activateEngine(false);
 
       expect(engine.quit).toBeCalled();
       expect(component.vm.engine).toBeUndefined();

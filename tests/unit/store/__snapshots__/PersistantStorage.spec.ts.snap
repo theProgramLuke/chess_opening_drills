@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PersistantStorage GetDefaultStorage should get sane starting values 1`] = `
+Array [
+  Array [],
+  Array [
+    Object {
+      "defaults": Object {
+        "accent": "#FF4081",
+        "backupDirectory": "tmp/backups",
+        "blackRepertoire": undefined,
+        "boardTheme": "maple",
+        "dailyBackupLimit": 14,
+        "darkMode": false,
+        "enableBackups": true,
+        "error": "#FF5252",
+        "info": "#2196F3",
+        "monthlyBackupLimit": 6,
+        "moveAnimationSpeed": 100,
+        "pieceTheme": "staunty",
+        "primary": "#2196F3",
+        "secondary": "#424242",
+        "success": "#4CAF50",
+        "warning": "#FFC107",
+        "whiteRepertoire": undefined,
+        "yearlyBackupLimit": 25,
+      },
+    },
+  ],
+]
+`;

@@ -1,10 +1,13 @@
-import ElectronStore from "electron-store";
 import _ from "lodash";
+import fs from "graceful-fs";
+import ElectronStore from "electron-store";
 
 import { SavedStorage, PersistantStorage } from "@/store/PersistantStorage";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire";
 import { BackupManager } from "@/store/BackupManager";
+import { EngineMetadata } from "@/store/EngineHelpers";
 
+jest.mock("graceful-fs");
 jest.mock("electron-store");
 jest.mock("@/store/repertoire");
 jest.mock("@/store/BackupManager");
@@ -13,21 +16,6 @@ type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 describe("PersistantStorage", () => {
   const storagePath = "some/path.json";
-  const createMockBackupManager = (
-    filePath: string,
-    dailyBackupLimit: number,
-    monthlyBackupLimit: number,
-    yearlyBackupLimit: number
-  ) => {
-    const manager = new BackupManager(
-      filePath,
-      dailyBackupLimit,
-      monthlyBackupLimit,
-      yearlyBackupLimit
-    );
-    manager.backupFolder = filePath;
-    return manager;
-  };
 
   let store: ElectronStore<SavedStorage>;
   let persistantStorage: PersistantStorage;
@@ -35,7 +23,15 @@ describe("PersistantStorage", () => {
   beforeEach(() => {
     store = new ElectronStore<SavedStorage>();
     (store as Writeable<ElectronStore<SavedStorage>>).path = storagePath;
-    persistantStorage = new PersistantStorage(store, createMockBackupManager);
+    persistantStorage = new PersistantStorage(store);
+  });
+
+  describe("GetDefaultStorage", () => {
+    it("should get sane starting values", () => {
+      new PersistantStorage();
+
+      expect((ElectronStore as jest.Mock).mock.calls).toMatchSnapshot();
+    });
   });
 
   describe("dark mode", () => {
@@ -288,6 +284,41 @@ describe("PersistantStorage", () => {
     });
   });
 
+  describe("engineMetadata", () => {
+    it("should get the saved engine metadata", () => {
+      const metadata: EngineMetadata = {
+        filePath: "path",
+        name: "name",
+        options: []
+      };
+      store.get = jest.fn(() => metadata);
+
+      const actual = persistantStorage.engineMetadata;
+
+      expect(store.get).toBeCalledWith("engineMetadata");
+      expect(actual).toBe(metadata);
+    });
+
+    it("should set the engine metadata", () => {
+      const metadata: EngineMetadata = {
+        filePath: "path",
+        name: "name",
+        options: []
+      };
+      store.get = jest.fn(() => metadata);
+
+      persistantStorage.engineMetadata = metadata;
+
+      expect(store.set).toBeCalledWith("engineMetadata", metadata);
+    });
+
+    it("should delete the engine metadata if undefined", () => {
+      persistantStorage.engineMetadata = undefined;
+
+      expect(store.delete).toBeCalledWith("engineMetadata");
+    });
+  });
+
   describe("backupDirectory", () => {
     it("should get the stored backup directory", () => {
       const backupDirectory = "backups";
@@ -350,7 +381,6 @@ describe("PersistantStorage", () => {
     it("should set the stored daily backup limit", () => {
       const limit = 2;
       persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
-      persistantStorage.serialize = jest.fn();
 
       persistantStorage.dailyBackupLimit = limit;
 
@@ -373,7 +403,6 @@ describe("PersistantStorage", () => {
     it("should set the stored monthly backup limit", () => {
       const limit = 2;
       persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
-      persistantStorage.serialize = jest.fn();
 
       persistantStorage.monthlyBackupLimit = limit;
 
@@ -396,7 +425,6 @@ describe("PersistantStorage", () => {
     it("should set the stored yearly backup limit", () => {
       const limit = 2;
       persistantStorage.backupManager = new BackupManager("", 0, 0, 0);
-      persistantStorage.serialize = jest.fn();
 
       persistantStorage.yearlyBackupLimit = limit;
 
@@ -451,9 +479,9 @@ describe("PersistantStorage", () => {
   describe("serialize", () => {
     it("should get the persisted file content", () => {
       const content = "content";
-      const readFileSync = jest.fn(() => content);
+      (fs.readFileSync as jest.Mock) = jest.fn(() => content);
 
-      const serialized = persistantStorage.serialize(readFileSync);
+      const serialized = persistantStorage.serialize();
 
       expect(serialized).toBe(content);
     });
@@ -487,7 +515,7 @@ describe("PersistantStorage", () => {
     });
 
     it("should backup any changes", () => {
-      const storage = new PersistantStorage(store, createMockBackupManager);
+      const storage = new PersistantStorage(store);
       storage.backup = jest.fn();
 
       storage.darkMode = true;

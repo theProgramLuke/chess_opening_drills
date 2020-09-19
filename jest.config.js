@@ -16,7 +16,9 @@ module.exports = {
     // Generated Plotly themes
     "!src/views/PlotlyLayouts.ts",
     // List of themes
-    "!src/views/ChessgroundThemes.ts"
+    "!src/views/ChessgroundThemes.ts",
+    // typescript version of vue-chessboard
+    "!src/components/common/chessboardViewModel.ts"
   ],
   moduleFileExtensions: ["ts", "js"],
   globals: {
