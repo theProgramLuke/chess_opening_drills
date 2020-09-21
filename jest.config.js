@@ -1,7 +1,7 @@
 module.exports = {
   preset: "@vue/cli-plugin-unit-jest/presets/typescript-and-babel",
-  collectCoverage: true,
-  coverageDirectory: "coverage",
+  collectCoverage: false,
+  coverageDirectory: ".coverage",
   collectCoverageFrom: [
     "src/**/*.ts",
     // vue CLI files

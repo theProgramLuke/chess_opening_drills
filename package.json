@@ -64,6 +64,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "file-saver": "2.0.2",
     "graceful-fs": "4.2.4",
+    "graphlib": "2.1.8",
     "guid-typescript": "1.0.9",
     "imports-loader": "1.1.0",
     "jest": "24.9.0",
