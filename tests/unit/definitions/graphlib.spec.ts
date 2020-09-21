@@ -1,5 +1,9 @@
 import { Graph } from "graphlib";
 
+interface GraphData {
+  data: number;
+}
+
 interface NodeData {
   foo: number;
   bar: string;
@@ -11,7 +15,7 @@ interface EdgeData {
 
 describe("Graph", () => {
   it("should allow typed nodes", () => {
-    const graph = new Graph<NodeData, EdgeData>();
+    const graph = new Graph<GraphData, NodeData, EdgeData>();
     const nodeData = { foo: 17, bar: "some string" };
     const name = "a";
 
@@ -22,7 +26,7 @@ describe("Graph", () => {
   });
 
   it("should allow typed edges", () => {
-    const graph = new Graph<NodeData, EdgeData>();
+    const graph = new Graph<GraphData, NodeData, EdgeData>();
     const edgeData = { baz: "some string" };
     graph.setNode("a");
     graph.setNode("b");
@@ -31,5 +35,15 @@ describe("Graph", () => {
     const actual = graph.edge("a", "b");
 
     expect(actual).toBe(edgeData);
+  });
+
+  it("should allow a typed graph label", () => {
+    const graph = new Graph<GraphData, NodeData, EdgeData>();
+    const data = { data: 0 };
+
+    graph.setGraph(data);
+    const actual = graph.graph();
+
+    expect(actual).toBe(data);
   });
 });

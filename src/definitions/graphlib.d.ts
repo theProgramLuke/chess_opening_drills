@@ -17,7 +17,7 @@ declare module "graphlib" {
     name?: string;
   }
 
-  export class Graph<N, E> {
+  export class Graph<G, N, E> {
     constructor(options?: GraphOptions);
 
     /**
@@ -172,7 +172,7 @@ declare module "graphlib" {
      *
      * @returns label value of the node.
      */
-    node(name: string): any;
+    node(name: string): N;
 
     /**
      * Creates or updates the label for the edge (v, w) with the optionally supplied
@@ -219,7 +219,7 @@ declare module "graphlib" {
      * @argument name - name of the edge (actual for multigraph).
      * @returns value associated with specified edge.
      */
-    edge(v: string, w: string, name?: string): any;
+    edge(v: string, w: string, name?: string): E;
 
     /**
      * Gets the label for the specified edge.
@@ -228,7 +228,7 @@ declare module "graphlib" {
      * @argument edge - edge descriptor.
      * @returns value associated with specified edge.
      */
-    edge(e: Edge): any;
+    edge(e: Edge): E;
 
     /**
      * Detects whether the graph contains specified edge or not. No subgraphs are considered.
@@ -361,14 +361,14 @@ declare module "graphlib" {
      * @argument label - label value.
      * @returns the graph, allowing this to be chained with other functions.
      */
-    setGraph(label: any): Graph;
+    setGraph(label: G): Graph;
 
     /**
      * Gets the graph label.
      *
      * @returns currently assigned label for the graph or undefined if no label assigned.
      */
-    graph(): void | string;
+    graph(): void | G;
 
     /**
      * Gets the number of nodes in the graph.
