@@ -404,6 +404,8 @@ declare module "graphlib" {
   }
 
   export namespace json {
+    type SavedGraph = Record<string, any>;
+
     /**
      * Creates a JSON representation of the graph that can be serialized to a string with
      * JSON.stringify. The graph can later be restored using json.read.
@@ -411,7 +413,7 @@ declare module "graphlib" {
      * @argument graph - target to create JSON representation of.
      * @returns JSON serializable graph representation
      */
-    function write(graph: Graph): Record<string, any>;
+    function write(graph: Graph): SavedGraph;
 
     /**
      * Takes JSON as input and returns the graph representation.
@@ -426,7 +428,7 @@ declare module "graphlib" {
      * @argument json - JSON serializable graph representation
      * @returns graph constructed acccording to specified representation
      */
-    function read(json: Record<string, any>): Graph;
+    function read(json: SavedGraph): Graph;
   }
 
   export interface Path {
