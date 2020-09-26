@@ -28,6 +28,15 @@ describe("repertoire", () => {
       expect(moves).toEqual([{ move, fen: expect.anything() }]);
     });
 
+    it("should not add an illegal move", () => {
+      const repertoire = new Repertoire(startingRepertoire);
+
+      repertoire.addMove(startPosition, "Ne4");
+      const moves = repertoire.movesFromPosition(startPosition);
+
+      expect(moves).toEqual([]);
+    });
+
     it("should return the fen of the resulting move", () => {
       const repertoire = new Repertoire(startingRepertoire);
       const move = { san: "a3" };
@@ -319,7 +328,7 @@ describe("repertoire", () => {
       expect(pgn).toEqual(expectedPgn);
     });
 
-    it("should include the fen tag if the position is not the normal starting position", () => {
+    it("should include the FEN and SetUp tags if the position is not the normal starting position", () => {
       const repertoire = new Repertoire(startingRepertoire);
       const variation = ["e4", "e5", "Nf3", "Nf6", "Bc4"];
       let fen = repertoire.addMove(startPosition, variation[0]);
@@ -337,6 +346,7 @@ describe("repertoire", () => {
 [Black ""]
 [Result "*"]
 [FEN "${positionFen}"]
+[SetUp "1"]
 
 1. ${variation[2]} ${variation[3]} 2. ${variation[4]} *`;
 
@@ -362,6 +372,7 @@ describe("repertoire", () => {
 [Black ""]
 [Result "*"]
 [FEN "${positionFen}"]
+[SetUp "1"]
 
 1. ... ${variation[1]} 2. ${variation[2]} ${variation[3]} 3. ${variation[4]} *`;
 
@@ -373,11 +384,11 @@ describe("repertoire", () => {
     it("should include variations in the pgn representation", () => {
       const repertoire = new Repertoire(startingRepertoire);
       const variations = [
-        ["e4", "e5", "Nf3", "Nf6", "Bc4"],
+        ["e4", "e5", "Nf3", "Nc6", "Bc4"],
         ["e4", "c5", "d4"]
       ];
       _.forEach(variations, variation => {
-        let fen = repertoire.addMove(startPosition, variation[0]);
+        let fen = startPosition;
         _.forEach(variation, move => {
           fen = repertoire.addMove(fen, move);
         });
@@ -399,8 +410,59 @@ describe("repertoire", () => {
   });
 
   describe("loadPgn", () => {
-    // it("should import all the moves from a pgn game into the repertoire", () => {});
-    // it("should not change the repertoire if the pgn start position is not in the repertoire", () => {});
+    it("should import all the moves from a pgn game into the repertoire", () => {
+      const repertoire = new Repertoire(startingRepertoire);
+      const pgn = `1. e4 e5 2. Nf3 Nc6 3. Bc4 *`;
+      const expectedVariations = [
+        [
+          "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
+          "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
+          "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq -",
+          "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",
+          "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq -"
+        ]
+      ];
+
+      repertoire.loadPgn(pgn);
+      const loaded = repertoire.getVariations(startPosition);
+
+      expect(loaded).toEqual(expectedVariations);
+    });
+
+    it("should import sub variations from a pgn game into the repertoire", () => {
+      const repertoire = new Repertoire(startingRepertoire);
+      const pgn = `1. e4 e5 (1... c5 2. d4) *`;
+      const expectedVariations = [
+        [
+          "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
+          "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -"
+        ],
+        [
+          "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
+          "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
+          "rnbqkbnr/pp1ppppp/8/2p5/3PP3/8/PPP2PPP/RNBQKBNR b KQkq -"
+        ]
+      ].sort();
+
+      repertoire.loadPgn(pgn);
+      const loaded = repertoire.getVariations(startPosition);
+
+      expect(loaded.sort()).toEqual(expectedVariations);
+    });
+
+    it("should not change the repertoire if the pgn start position is not in the repertoire", () => {
+      const repertoire = new Repertoire(startingRepertoire);
+      const before = repertoire.asSaved();
+      const pgn = `[FEN "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"]
+[SetUp "1"]
+
+1... e5 2. Nf3 Nf6 3. Bc4 *`;
+
+      repertoire.loadPgn(pgn);
+      const after = repertoire.asSaved();
+
+      expect(after).toEqual(before);
+    });
   });
 
   describe("asSaved", () => {

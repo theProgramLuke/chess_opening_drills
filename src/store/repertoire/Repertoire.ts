@@ -2,9 +2,36 @@ import { Graph, json, alg } from "graphlib";
 import _ from "lodash";
 import { Chess } from "chess.js";
 import { Pgn } from "chess-pgn";
+import { parsePgn, PgnGame, PgnMove } from "../pgnParser";
 
 interface EdgeData {
   san: string;
+}
+
+function variationsFromGame(
+  pgnMoves: PgnMove[],
+  collector: string[][],
+  history: PgnMove[] = []
+): void {
+  _.forEach(pgnMoves, pgnMove => {
+    if (pgnMove.ravs) {
+      _.forEach(pgnMove.ravs, rav => {
+        variationsFromGame(rav.moves, collector, _.clone(history));
+      });
+    }
+
+    history.push(_.omit(pgnMove, "ravs"));
+  });
+
+  const moves = _.map(history, move => move.move || "");
+  collector.push(moves);
+}
+
+function variationsFromPgnGame(game: PgnGame): string[][] {
+  const variations: string[][] = [];
+  variationsFromGame(game.moves, variations);
+
+  return variations;
 }
 
 export class Repertoire {
@@ -17,17 +44,26 @@ export class Repertoire {
   addMove(fen: string, san: string): string {
     const nextFen = Repertoire.fenAfterMove(fen, san);
 
-    this.graph.setEdge(fen, nextFen, { san });
+    if (nextFen) {
+      this.graph.setEdge(fen, nextFen, { san });
 
-    return nextFen;
+      return nextFen;
+    } else {
+      return "";
+    }
   }
 
   deleteMove(fen: string, san: string): string[] {
     const nextFen = Repertoire.fenAfterMove(fen, san);
-    const startPosition = this.graph.sources()[0];
 
-    this.graph.removeEdge(fen, nextFen);
-    return this.removeOrphans(startPosition);
+    if (nextFen) {
+      const startPosition = this.graph.sources()[0];
+
+      this.graph.removeEdge(fen, nextFen);
+      return this.removeOrphans(startPosition);
+    } else {
+      return [];
+    }
   }
 
   movesFromPosition(fen: string): { move: EdgeData; fen: string }[] {
@@ -69,6 +105,7 @@ export class Repertoire {
 
     if (!fen.startsWith("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq")) {
       pgn = pgn.addTag("FEN", fen);
+      pgn = pgn.addTag("SetUp", "1");
     }
 
     const variations = this.getVariationsMoves(fen);
@@ -91,6 +128,25 @@ export class Repertoire {
     return pgn.toString();
   }
 
+  loadPgn(pgn: string): void {
+    const games = parsePgn(pgn);
+
+    _.forEach(games, game => {
+      const variations = variationsFromPgnGame(game);
+      _.forEach(variations, variation => {
+        const fenHeader = _.find(game.headers, header => header.name === "FEN");
+        let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
+        if (fenHeader) {
+          fen = fenHeader.value;
+        }
+
+        _.forEach(variation, move => {
+          fen = this.addMove(fen, move);
+        });
+      });
+    });
+  }
+
   getVariations(fen: string): string[][] {
     const variations: string[][] = [];
     this.collectVariationPositions(fen, variations);
@@ -109,29 +165,31 @@ export class Repertoire {
     return removed;
   }
 
-  private static fenAfterMove(fen: string, san: string): string {
+  private static fenAfterMove(fen: string, san: string): string | undefined {
     const game = new Chess(fen + " 0 1"); // add back half move clock and full move number to be valid FEN
-    game.move(san);
-    let maybeEnPassantFen = game.fen();
 
-    const enPassant = _.some(
-      game.moves({
-        verbose: true
-      }),
-      move => move.flags.includes("e") // "e" is en passant flag https://github.com/jhlywa/chess.js/
-    );
+    if (game.move(san)) {
+      let nextFen = game.fen();
 
-    const fenSections = maybeEnPassantFen.split(" ");
+      const enPassant = _.some(
+        game.moves({
+          verbose: true
+        }),
+        move => move.flags.includes("e") // "e" is en passant flag https://github.com/jhlywa/chess.js/
+      );
 
-    if (!enPassant) {
-      fenSections[3] = "-"; // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+      const fenSections = nextFen.split(" ");
+
+      if (!enPassant) {
+        fenSections[3] = "-"; // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+      }
+
+      fenSections.pop(); // remove full move number
+      fenSections.pop(); // remove half move clock
+      nextFen = _.join(_.slice(fenSections), " ");
+
+      return nextFen;
     }
-
-    fenSections.pop(); // remove full move number
-    fenSections.pop(); // remove half move clock
-    maybeEnPassantFen = _.join(_.slice(fenSections), " ");
-
-    return maybeEnPassantFen;
   }
 
   private collectVariationPositions(
