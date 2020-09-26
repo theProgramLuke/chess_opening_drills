@@ -70,7 +70,6 @@
     "imports-loader": "1.1.0",
     "jest": "24.9.0",
     "jest-serializer-vue": "2.0.2",
-    "kokopu": "1.4.0",
     "lint-staged": "^9.5.0",
     "lodash": "4.17.19",
     "node-sass": "^4.12.0",
