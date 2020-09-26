@@ -2,7 +2,8 @@ import { Graph, json, alg } from "graphlib";
 import _ from "lodash";
 import { Chess } from "chess.js";
 import { Pgn } from "chess-pgn";
-import { parsePgn, PgnGame, PgnMove } from "../pgnParser";
+
+import { parse, PgnGame, PgnMove } from "pgn-parser";
 
 interface EdgeData {
   san: string;
@@ -129,7 +130,7 @@ export class Repertoire {
   }
 
   loadPgn(pgn: string): void {
-    const games = parsePgn(pgn);
+    const games = parse(pgn);
 
     _.forEach(games, game => {
       const variations = variationsFromPgnGame(game);

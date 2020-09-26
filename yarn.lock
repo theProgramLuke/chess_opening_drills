@@ -12080,6 +12080,11 @@ permutation-rank@^1.0.0:
     invert-permutation "^1.0.0"
     typedarray-pool "^1.0.0"
 
+pgn-parser@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/pgn-parser/-/pgn-parser-2.0.0.tgz#88091447c141121974ba4ccc4390858f205a569c"
+  integrity sha512-T+uu3RiP1oZH5zmvqeSKZAsdks6Z/IhTQuF2NaMEiEbJjaR3DIFCoWvCoKmdbsHvTTWvqadsnPzrpjnGfPq3Cg==
+
 phantomjs-prebuilt@^2.1.14:
   version "2.1.16"
   resolved "https://registry.yarnpkg.com/phantomjs-prebuilt/-/phantomjs-prebuilt-2.1.16.tgz#efd212a4a3966d3647684ea8ba788549be2aefef"
