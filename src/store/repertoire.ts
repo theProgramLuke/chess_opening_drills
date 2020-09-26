@@ -1,8 +1,7 @@
 import _ from "lodash";
 import { FEN } from "chessground/types";
 import { Chess } from "chess.js";
-
-import { PgnGame, PgnMove } from "@/store/pgnParser";
+import { PgnGame, PgnMove } from "pgn-parser";
 
 import {
   RepertoirePosition,

@@ -6,7 +6,7 @@ import {
 } from "@/store/repertoirePosition";
 import { RepertoireTag, SavedRepertoireTag } from "@/store/repertoireTag";
 import { Move } from "@/store/move";
-import { PgnGame } from "@/store/pgnParser";
+import { PgnGame } from "pgn-parser";
 
 export class SavedRepertoire {
   positions: SavedRepertoirePosition[];

@@ -11,8 +11,6 @@ module.exports = {
     "!src/router/index.ts",
     "!src/background.ts",
     "!src/plugins/**",
-    // Generated pegjs file
-    "!src/store/pgnGrammar.ts",
     // Generated Plotly themes
     "!src/views/PlotlyLayouts.ts",
     // List of themes

@@ -1,3 +1,5 @@
+import { PgnGame } from "pgn-parser";
+
 import { mutations, MutationState } from "@/store/Mutations";
 import { Repertoire } from "@/store/repertoire";
 import { PersistantStorage } from "@/store/PersistantStorage";
@@ -6,7 +8,6 @@ import { RepertoirePosition } from "@/store/repertoirePosition";
 import { Move } from "@/store/move";
 import { RepertoireTag } from "@/store/repertoireTag";
 import { TrainingEvent } from "@/store/TrainingEvent";
-import { PgnGame } from "@/store/pgnParser";
 
 jest.mock("@/store/PersistantStorage");
 jest.mock("@/store/repertoire");

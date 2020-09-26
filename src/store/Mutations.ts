@@ -1,13 +1,13 @@
+import { PgnGame } from "pgn-parser";
+
 import { Storage, PersistantStorage } from "@/store/PersistantStorage";
-import { RepertoirePosition } from "./repertoirePosition";
-import { Move } from "./move";
-import { TrainingEvent } from "./TrainingEvent";
-import { RepertoireTag } from "./repertoireTag";
-import { Side } from "./side";
-import { PgnGame } from "./pgnParser";
-import { Repertoire } from "./repertoire";
-import { EngineMetadata } from "./EngineHelpers";
-import { BackupManager } from "./BackupManager";
+import { RepertoirePosition } from "@/store/repertoirePosition";
+import { Move } from "@/store/move";
+import { TrainingEvent } from "@/store/TrainingEvent";
+import { RepertoireTag } from "@/store/repertoireTag";
+import { Side } from "@/store/side";
+import { Repertoire } from "@/store/repertoire";
+import { EngineMetadata } from "@/store/EngineHelpers";
 
 export interface MutationState extends Storage {
   persisted: PersistantStorage;

@@ -1,8 +1,8 @@
 import Vue from "vue";
 import _ from "lodash";
 import { mapMutations } from "vuex";
+import { parse, PgnGame } from "pgn-parser";
 
-import { parsePgn, PgnGame } from "@/store/pgnParser";
 import { RepertoireTag } from "@/store/repertoireTag";
 
 declare interface ImporterComponentData {
@@ -28,7 +28,7 @@ export default Vue.extend({
       inputFileErrors: [],
       loading: false,
       valid: false,
-      pgnParser: parsePgn
+      pgnParser: parse
     };
   },
 
