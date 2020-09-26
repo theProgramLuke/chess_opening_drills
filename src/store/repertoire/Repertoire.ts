@@ -1,6 +1,7 @@
 import { Graph, json, alg } from "graphlib";
 import _ from "lodash";
 import { Chess } from "chess.js";
+import { Pgn } from "chess-pgn";
 
 interface EdgeData {
   san: string;
@@ -56,9 +57,43 @@ export class Repertoire {
     return json.write(this.graph);
   }
 
+  asPgn(fen: string): string {
+    let pgn = new Pgn();
+    pgn = pgn.addTag("Event", "Chess Opening Drills");
+    pgn = pgn.addTag("Site", "");
+    pgn = pgn.addTag("Date", "??");
+    pgn = pgn.addTag("Round", "");
+    pgn = pgn.addTag("White", "");
+    pgn = pgn.addTag("Black", "");
+    pgn = pgn.addTag("Result", "*");
+
+    if (!fen.startsWith("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq")) {
+      pgn = pgn.addTag("FEN", fen);
+    }
+
+    const variations = this.getVariationsMoves(fen);
+
+    if (fen.includes(" b ")) {
+      _.forEach(variations, variation => {
+        if (!_.isEmpty(variation)) {
+          variation.unshift("...");
+        }
+      });
+    }
+
+    _.forEach(variations, variation => {
+      pgn = pgn.startingPosition();
+      _.forEach(variation, move => {
+        pgn = pgn.move(move);
+      });
+    });
+
+    return pgn.toString();
+  }
+
   getVariations(fen: string): string[][] {
     const variations: string[][] = [];
-    this.collectVariations(fen, variations);
+    this.collectVariationPositions(fen, variations);
     return variations;
   }
 
@@ -99,7 +134,7 @@ export class Repertoire {
     return maybeEnPassantFen;
   }
 
-  private collectVariations(
+  private collectVariationPositions(
     fen: string,
     collector: string[][],
     path: string[] = []
@@ -112,7 +147,42 @@ export class Repertoire {
       }
     } else {
       _.forEach(successors, successor => {
-        this.collectVariations(successor, collector, [...path, successor]);
+        this.collectVariationPositions(successor, collector, [
+          ...path,
+          successor
+        ]);
+      });
+    }
+  }
+
+  private getVariationsMoves(fen: string): string[][] {
+    const variations: string[][] = [];
+    this.collectVariationMoves(fen, variations);
+    return variations;
+  }
+
+  private collectVariationMoves(
+    fen: string,
+    collector: string[][],
+    path: string[] = [],
+    moves: string[] = []
+  ): void {
+    const successors = _.without(this.graph.successors(fen) || [], ...path);
+
+    if (_.isEmpty(successors)) {
+      if (_.some(moves)) {
+        collector.push(moves);
+      }
+    } else {
+      _.forEach(successors, successor => {
+        const move = this.graph.edge(fen, successor).san;
+
+        this.collectVariationMoves(
+          successor,
+          collector,
+          [...path, successor],
+          [...moves, move]
+        );
       });
     }
   }

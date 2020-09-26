@@ -4172,6 +4172,19 @@ check-types@^8.0.3:
   resolved "https://registry.yarnpkg.com/check-types/-/check-types-8.0.3.tgz#3356cca19c889544f2d7a95ed49ce508a0ecf552"
   integrity sha512-YpeKZngUmG65rLudJ4taU7VLkOCTMhNl/u4ctNC56LQS/zJTyNH0Lrtwm1tfTsbLlwvlfsA2d1c8vCf/Kh2KwQ==
 
+chess-fen@^0.2.2:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/chess-fen/-/chess-fen-0.2.5.tgz#902b3834d79a38fab56678458852ec71e6097e3a"
+  integrity sha512-Exp2P6zUbCiU1r2DIqE/lLyltMu0Ag6IH8EIZKyLx70Ny6uxtCiiJGDcJ9I+j+KzvxionYc5gIq9AD2D8NZbIg==
+
+chess-pgn@0.1.10:
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/chess-pgn/-/chess-pgn-0.1.10.tgz#c45a324055f39c34e476d4cfded98ab1457d34c7"
+  integrity sha512-tKnDy1zW66a8j1DcanfcJaa2gJeDpjiyAG1lpNfjst6epoh199R/e/VzOBD8+s5wQdcYY68RM4mzhVNrYMKnJg==
+  dependencies:
+    chess-fen "^0.2.2"
+    uuid "^7.0.3"
+
 chess.js@0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/chess.js/-/chess.js-0.11.0.tgz#e1802179b944eab5daf11b5d4bce08cdcadbeffa"
@@ -10022,6 +10035,11 @@ kleur@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
+
+kokopu@1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/kokopu/-/kokopu-1.4.0.tgz#54d2d416987e6ecc9f5e3e2996f2beef2e799ab9"
+  integrity sha512-qxFWG2A1f5dKeyM5CNJJQOgUjuyqbLwcpLqxNTEtG3s9ByGkgH1d4DkWSEV7IuChzOU9HqUiqNlw8XkSM956MQ==
 
 latest-version@^5.0.0:
   version "5.1.0"
@@ -16031,6 +16049,11 @@ uuid@^3.3.2, uuid@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
+
+uuid@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-7.0.3.tgz#c5c9f2c8cf25dc0a372c4df1441c41f5bd0c680b"
+  integrity sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==
 
 uuid@^8.0.0:
   version "8.3.0"

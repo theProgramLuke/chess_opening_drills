@@ -296,6 +296,113 @@ describe("repertoire", () => {
     });
   });
 
+  describe("asPgn", () => {
+    it("should get the pgn representation of the repertoire", () => {
+      const repertoire = new Repertoire(startingRepertoire);
+      const variation = ["e4", "e5", "Nf3", "Nf6", "Bc4"];
+      let fen = startPosition;
+      _.forEach(variation, move => {
+        fen = repertoire.addMove(fen, move);
+      });
+      const expectedPgn = `[Event "Chess Opening Drills"]
+[Site ""]
+[Date "??"]
+[Round ""]
+[White ""]
+[Black ""]
+[Result "*"]
+
+1. ${variation[0]} ${variation[1]} 2. ${variation[2]} ${variation[3]} 3. ${variation[4]} *`;
+
+      const pgn = repertoire.asPgn(startPosition);
+
+      expect(pgn).toEqual(expectedPgn);
+    });
+
+    it("should include the fen tag if the position is not the normal starting position", () => {
+      const repertoire = new Repertoire(startingRepertoire);
+      const variation = ["e4", "e5", "Nf3", "Nf6", "Bc4"];
+      let fen = repertoire.addMove(startPosition, variation[0]);
+      const positionFen = repertoire.addMove(fen, variation[1]);
+      fen = positionFen;
+      _.forEach(_.slice(variation, 2), move => {
+        fen = repertoire.addMove(fen, move);
+      });
+
+      const expectedPgn = `[Event "Chess Opening Drills"]
+[Site ""]
+[Date "??"]
+[Round ""]
+[White ""]
+[Black ""]
+[Result "*"]
+[FEN "${positionFen}"]
+
+1. ${variation[2]} ${variation[3]} 2. ${variation[4]} *`;
+
+      const pgn = repertoire.asPgn(positionFen);
+
+      expect(pgn).toEqual(expectedPgn);
+    });
+
+    it("should append ... before the first move if black plays first", () => {
+      const repertoire = new Repertoire(startingRepertoire);
+      const variation = ["e4", "e5", "Nf3", "Nf6", "Bc4"];
+      let fen = repertoire.addMove(startPosition, variation[0]);
+      const positionFen = fen;
+      _.forEach(_.tail(variation), move => {
+        fen = repertoire.addMove(fen, move);
+      });
+
+      const expectedPgn = `[Event "Chess Opening Drills"]
+[Site ""]
+[Date "??"]
+[Round ""]
+[White ""]
+[Black ""]
+[Result "*"]
+[FEN "${positionFen}"]
+
+1. ... ${variation[1]} 2. ${variation[2]} ${variation[3]} 3. ${variation[4]} *`;
+
+      const pgn = repertoire.asPgn(positionFen);
+
+      expect(pgn).toEqual(expectedPgn);
+    });
+
+    it("should include variations in the pgn representation", () => {
+      const repertoire = new Repertoire(startingRepertoire);
+      const variations = [
+        ["e4", "e5", "Nf3", "Nf6", "Bc4"],
+        ["e4", "c5", "d4"]
+      ];
+      _.forEach(variations, variation => {
+        let fen = repertoire.addMove(startPosition, variation[0]);
+        _.forEach(variation, move => {
+          fen = repertoire.addMove(fen, move);
+        });
+      });
+      const expectedPgn = `[Event "Chess Opening Drills"]
+[Site ""]
+[Date "??"]
+[Round ""]
+[White ""]
+[Black ""]
+[Result "*"]
+
+1. ${variations[0][0]} ${variations[0][1]} (1... ${variations[1][1]} 2. ${variations[1][2]}) 2. ${variations[0][2]} ${variations[0][3]} 3. ${variations[0][4]} *`;
+
+      const pgn = repertoire.asPgn(startPosition);
+
+      expect(pgn).toEqual(expectedPgn);
+    });
+  });
+
+  describe("loadPgn", () => {
+    // it("should import all the moves from a pgn game into the repertoire", () => {});
+    // it("should not change the repertoire if the pgn start position is not in the repertoire", () => {});
+  });
+
   describe("asSaved", () => {
     it("should be able to recreate the same repertoire", () => {
       const repertoire = new Repertoire(startingRepertoire);
