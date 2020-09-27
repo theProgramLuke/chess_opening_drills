@@ -59,9 +59,7 @@ function fenAfterMove(fen: string, san: string): string | undefined {
       fenSections[3] = "-"; // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
     }
 
-    fenSections.pop(); // remove full move number
-    fenSections.pop(); // remove half move clock
-    nextFen = _.join(_.slice(fenSections), " ");
+    nextFen = _.join(_.slice(fenSections, 0, 4), " "); // omits half move clock and full move number
 
     return nextFen;
   }
