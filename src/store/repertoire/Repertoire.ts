@@ -9,6 +9,11 @@ interface EdgeData {
   san: string;
 }
 
+export interface VariationMove {
+  san: string;
+  resultingFen: string;
+}
+
 function variationsFromGame(
   pgnMoves: PgnMove[],
   collector: string[][],
@@ -109,7 +114,9 @@ export class Repertoire {
       pgn = pgn.addTag("SetUp", "1");
     }
 
-    const variations = this.getVariationsMoves(fen);
+    const variations = _.map(this.getVariations(fen), variation =>
+      _.map(variation, move => move.san)
+    );
 
     if (fen.includes(" b ")) {
       _.forEach(variations, variation => {
@@ -148,9 +155,9 @@ export class Repertoire {
     });
   }
 
-  getVariations(fen: string): string[][] {
-    const variations: string[][] = [];
-    this.collectVariationPositions(fen, variations);
+  getVariations(fen: string): VariationMove[][] {
+    const variations: VariationMove[][] = [];
+    this.collectVariations(fen, variations);
     return variations;
   }
 
@@ -193,12 +200,15 @@ export class Repertoire {
     }
   }
 
-  private collectVariationPositions(
+  private collectVariations(
     fen: string,
-    collector: string[][],
-    path: string[] = []
+    collector: VariationMove[][],
+    path: VariationMove[] = []
   ): void {
-    const successors = _.without(this.graph.successors(fen) || [], ...path);
+    const successors = _.without(
+      this.graph.successors(fen) || [],
+      ..._.map(path, move => move.resultingFen)
+    );
 
     if (_.isEmpty(successors)) {
       if (_.some(path)) {
@@ -206,42 +216,12 @@ export class Repertoire {
       }
     } else {
       _.forEach(successors, successor => {
-        this.collectVariationPositions(successor, collector, [
-          ...path,
-          successor
-        ]);
-      });
-    }
-  }
-
-  private getVariationsMoves(fen: string): string[][] {
-    const variations: string[][] = [];
-    this.collectVariationMoves(fen, variations);
-    return variations;
-  }
-
-  private collectVariationMoves(
-    fen: string,
-    collector: string[][],
-    path: string[] = [],
-    moves: string[] = []
-  ): void {
-    const successors = _.without(this.graph.successors(fen) || [], ...path);
-
-    if (_.isEmpty(successors)) {
-      if (_.some(moves)) {
-        collector.push(moves);
-      }
-    } else {
-      _.forEach(successors, successor => {
         const move = this.graph.edge(fen, successor).san;
 
-        this.collectVariationMoves(
-          successor,
-          collector,
-          [...path, successor],
-          [...moves, move]
-        );
+        this.collectVariations(successor, collector, [
+          ...path,
+          { resultingFen: successor, san: move }
+        ]);
       });
     }
   }

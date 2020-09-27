@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import { Repertoire } from "@/store/repertoire/Repertoire";
+import { Repertoire, VariationMove } from "@/store/repertoire/Repertoire";
 
 const startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
@@ -270,13 +270,28 @@ describe("repertoire", () => {
   describe("getVariations", () => {
     it("should get all the possible variations from the position", () => {
       const repertoire = new Repertoire(startingRepertoire);
-      const variations: string[][] = [[], []];
-      variations[0].push(repertoire.addMove(startPosition, "e4"));
+      const variations: VariationMove[][] = [[], []];
+      variations[0].push({
+        resultingFen: repertoire.addMove(startPosition, "e4"),
+        san: "e4"
+      });
       variations[1].push(variations[0][0]);
-      variations[0].push(repertoire.addMove(variations[0][0], "e5"));
-      variations[0].push(repertoire.addMove(variations[0][1], "Nf3"));
-      variations[1].push(repertoire.addMove(variations[1][0], "c6"));
-      variations[1].push(repertoire.addMove(variations[1][1], "d4"));
+      variations[0].push({
+        resultingFen: repertoire.addMove(variations[0][0].resultingFen, "e5"),
+        san: "e5"
+      });
+      variations[0].push({
+        resultingFen: repertoire.addMove(variations[0][1].resultingFen, "Nf3"),
+        san: "Nf3"
+      });
+      variations[1].push({
+        resultingFen: repertoire.addMove(variations[1][0].resultingFen, "c6"),
+        san: "c6"
+      });
+      variations[1].push({
+        resultingFen: repertoire.addMove(variations[1][1].resultingFen, "d4"),
+        san: "d4"
+      });
 
       const actual = repertoire.getVariations(startPosition);
 
@@ -293,11 +308,23 @@ describe("repertoire", () => {
 
     it("should stop the variation when a cycle is reached", () => {
       const repertoire = new Repertoire(startingRepertoire);
-      const variation: string[] = [];
-      variation.push(repertoire.addMove(startPosition, "Nf3"));
-      variation.push(repertoire.addMove(variation[0], "Nf6"));
-      variation.push(repertoire.addMove(variation[1], "Ng1"));
-      variation.push(repertoire.addMove(variation[2], "Ng8"));
+      const variation: VariationMove[] = [];
+      variation.push({
+        resultingFen: repertoire.addMove(startPosition, "Nf3"),
+        san: "Nf3"
+      });
+      variation.push({
+        resultingFen: repertoire.addMove(variation[0].resultingFen, "Nf6"),
+        san: "Nf6"
+      });
+      variation.push({
+        resultingFen: repertoire.addMove(variation[1].resultingFen, "Ng1"),
+        san: "Ng1"
+      });
+      variation.push({
+        resultingFen: repertoire.addMove(variation[2].resultingFen, "Ng8"),
+        san: "Ng8"
+      });
 
       const actual = repertoire.getVariations(startPosition);
 
@@ -415,11 +442,31 @@ describe("repertoire", () => {
       const pgn = `1. e4 e5 2. Nf3 Nc6 3. Bc4 *`;
       const expectedVariations = [
         [
-          "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
-          "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
-          "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq -",
-          "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",
-          "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq -"
+          {
+            resultingFen:
+              "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
+            san: "e4"
+          },
+          {
+            resultingFen:
+              "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
+            san: "e5"
+          },
+          {
+            resultingFen:
+              "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq -",
+            san: "Nf3"
+          },
+          {
+            resultingFen:
+              "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",
+            san: "Nc6"
+          },
+          {
+            resultingFen:
+              "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq -",
+            san: "Bc4"
+          }
         ]
       ];
 
@@ -434,13 +481,33 @@ describe("repertoire", () => {
       const pgn = `1. e4 e5 (1... c5 2. d4) *`;
       const expectedVariations = [
         [
-          "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
-          "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -"
+          {
+            resultingFen:
+              "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
+            san: "e4"
+          },
+          {
+            resultingFen:
+              "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
+            san: "e5"
+          }
         ],
         [
-          "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
-          "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
-          "rnbqkbnr/pp1ppppp/8/2p5/3PP3/8/PPP2PPP/RNBQKBNR b KQkq -"
+          {
+            resultingFen:
+              "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
+            san: "e4"
+          },
+          {
+            resultingFen:
+              "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
+            san: "c5"
+          },
+          {
+            resultingFen:
+              "rnbqkbnr/pp1ppppp/8/2p5/3PP3/8/PPP2PPP/RNBQKBNR b KQkq -",
+            san: "d4"
+          }
         ]
       ].sort();
 
