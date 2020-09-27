@@ -40,6 +40,33 @@ function variationsFromPgnGame(game: PgnGame): string[][] {
   return variations;
 }
 
+function fenAfterMove(fen: string, san: string): string | undefined {
+  const game = new Chess(fen + " 0 1"); // add back half move clock and full move number to be valid FEN
+
+  if (game.move(san)) {
+    let nextFen = game.fen();
+
+    const enPassant = _.some(
+      game.moves({
+        verbose: true
+      }),
+      move => move.flags.includes("e") // "e" is en passant flag https://github.com/jhlywa/chess.js/
+    );
+
+    const fenSections = nextFen.split(" ");
+
+    if (!enPassant) {
+      fenSections[3] = "-"; // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+    }
+
+    fenSections.pop(); // remove full move number
+    fenSections.pop(); // remove half move clock
+    nextFen = _.join(_.slice(fenSections), " ");
+
+    return nextFen;
+  }
+}
+
 export class Repertoire {
   private graph: Graph<never, never, EdgeData>;
 
@@ -48,7 +75,7 @@ export class Repertoire {
   }
 
   addMove(fen: string, san: string): string {
-    const nextFen = Repertoire.fenAfterMove(fen, san);
+    const nextFen = fenAfterMove(fen, san);
 
     if (nextFen) {
       this.graph.setEdge(fen, nextFen, { san });
@@ -60,7 +87,7 @@ export class Repertoire {
   }
 
   deleteMove(fen: string, san: string): string[] {
-    const nextFen = Repertoire.fenAfterMove(fen, san);
+    const nextFen = fenAfterMove(fen, san);
 
     if (nextFen) {
       const startPosition = this.graph.sources()[0];
@@ -171,33 +198,6 @@ export class Repertoire {
     } while (_.some(orphans));
 
     return removed;
-  }
-
-  private static fenAfterMove(fen: string, san: string): string | undefined {
-    const game = new Chess(fen + " 0 1"); // add back half move clock and full move number to be valid FEN
-
-    if (game.move(san)) {
-      let nextFen = game.fen();
-
-      const enPassant = _.some(
-        game.moves({
-          verbose: true
-        }),
-        move => move.flags.includes("e") // "e" is en passant flag https://github.com/jhlywa/chess.js/
-      );
-
-      const fenSections = nextFen.split(" ");
-
-      if (!enPassant) {
-        fenSections[3] = "-"; // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
-      }
-
-      fenSections.pop(); // remove full move number
-      fenSections.pop(); // remove half move clock
-      nextFen = _.join(_.slice(fenSections), " ");
-
-      return nextFen;
-    }
   }
 
   private collectVariations(
