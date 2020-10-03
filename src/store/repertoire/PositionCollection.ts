@@ -8,17 +8,17 @@ import {
   variationsFromPgnGame
 } from "@/store/repertoire/chessHelpers";
 
-interface EdgeData {
+interface MoveData {
   san: string;
 }
 
 export interface VariationMove {
-  san: string;
+  moveData: MoveData;
   resultingFen: string;
 }
 
 export class PositionCollection {
-  private graph: Graph<never, never, EdgeData>;
+  private graph: Graph<never, never, MoveData>;
 
   constructor(serialized: json.SavedGraph) {
     this.graph = json.read(serialized);
@@ -49,14 +49,14 @@ export class PositionCollection {
     }
   }
 
-  movesFromPosition(fen: string): { move: EdgeData; fen: string }[] {
+  movesFromPosition(fen: string): VariationMove[] {
     const successors = this.graph.successors(fen);
 
     if (successors) {
       return _.map(successors, successor => {
         return {
-          move: this.graph.edge(fen, successor),
-          fen: successor
+          moveData: this.graph.edge(fen, successor),
+          resultingFen: successor
         };
       });
     }
@@ -92,7 +92,7 @@ export class PositionCollection {
     }
 
     const variations = _.map(this.getVariations(fen), variation =>
-      _.map(variation, move => move.san)
+      _.map(variation, move => move.moveData.san)
     );
 
     if (fen.includes(" b ")) {
@@ -166,11 +166,11 @@ export class PositionCollection {
       }
     } else {
       _.forEach(successors, successor => {
-        const move = this.graph.edge(fen, successor).san;
+        const move = this.graph.edge(fen, successor);
 
         this.collectVariations(successor, collector, [
           ...path,
-          { resultingFen: successor, san: move }
+          { resultingFen: successor, moveData: move }
         ]);
       });
     }

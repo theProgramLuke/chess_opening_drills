@@ -28,7 +28,9 @@ describe("PositionCollection", () => {
       repertoire.addMove(startPosition, move.san);
       const moves = repertoire.movesFromPosition(startPosition);
 
-      expect(moves).toEqual([{ move, fen: expect.anything() }]);
+      expect(moves).toEqual([
+        { moveData: move, resultingFen: expect.anything() }
+      ]);
     });
 
     it("should not add an illegal move", () => {
@@ -60,8 +62,8 @@ describe("PositionCollection", () => {
 
       expect(moves).toEqual([
         {
-          move: expect.anything(),
-          fen: "rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq -"
+          moveData: expect.anything(),
+          resultingFen: "rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq -"
         }
       ]);
     });
@@ -134,8 +136,8 @@ describe("PositionCollection", () => {
 
       expect(moves).toEqual([
         {
-          move: expect.anything(),
-          fen: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -"
+          moveData: expect.anything(),
+          resultingFen: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -"
         }
       ]);
     });
@@ -154,8 +156,9 @@ describe("PositionCollection", () => {
 
       expect(moves).toEqual([
         {
-          move: expect.anything(),
-          fen: "rnbqkbnr/ppp1pppp/8/8/P2pP3/8/1PPP1PPP/RNBQKBNR b KQkq e3"
+          moveData: expect.anything(),
+          resultingFen:
+            "rnbqkbnr/ppp1pppp/8/8/P2pP3/8/1PPP1PPP/RNBQKBNR b KQkq e3"
         }
       ]);
     });
@@ -190,31 +193,33 @@ describe("PositionCollection", () => {
     it("should get all the moves from the position", () => {
       const moves = [
         {
-          fen: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
-          move: {
-            san: "e4"
-          }
+          resultingFen:
+            "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+          moveData: { san: "e4" }
         },
         {
-          fen: "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
-          move: {
-            san: "d4"
-          }
+          resultingFen:
+            "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
+          moveData: { san: "d4" }
         }
       ];
       const repertoire = new PositionCollection({
         option: graphOptions,
-        nodes: [{ v: startPosition }, { v: moves[0].fen }, { v: moves[1].fen }],
+        nodes: [
+          { v: startPosition },
+          { v: moves[0].resultingFen },
+          { v: moves[1].resultingFen }
+        ],
         edges: [
           {
             v: startPosition,
-            w: moves[0].fen,
-            value: moves[0].move
+            w: moves[0].resultingFen,
+            value: moves[0].moveData
           },
           {
             v: startPosition,
-            w: moves[1].fen,
-            value: moves[1].move
+            w: moves[1].resultingFen,
+            value: moves[1].moveData
           }
         ]
       });
@@ -276,24 +281,24 @@ describe("PositionCollection", () => {
       const variations: VariationMove[][] = [[], []];
       variations[0].push({
         resultingFen: repertoire.addMove(startPosition, "e4"),
-        san: "e4"
+        moveData: { san: "e4" }
       });
       variations[1].push(variations[0][0]);
       variations[0].push({
         resultingFen: repertoire.addMove(variations[0][0].resultingFen, "e5"),
-        san: "e5"
+        moveData: { san: "e5" }
       });
       variations[0].push({
         resultingFen: repertoire.addMove(variations[0][1].resultingFen, "Nf3"),
-        san: "Nf3"
+        moveData: { san: "Nf3" }
       });
       variations[1].push({
         resultingFen: repertoire.addMove(variations[1][0].resultingFen, "c6"),
-        san: "c6"
+        moveData: { san: "c6" }
       });
       variations[1].push({
         resultingFen: repertoire.addMove(variations[1][1].resultingFen, "d4"),
-        san: "d4"
+        moveData: { san: "d4" }
       });
 
       const actual = repertoire.getVariations(startPosition);
@@ -314,19 +319,19 @@ describe("PositionCollection", () => {
       const variation: VariationMove[] = [];
       variation.push({
         resultingFen: repertoire.addMove(startPosition, "Nf3"),
-        san: "Nf3"
+        moveData: { san: "Nf3" }
       });
       variation.push({
         resultingFen: repertoire.addMove(variation[0].resultingFen, "Nf6"),
-        san: "Nf6"
+        moveData: { san: "Nf6" }
       });
       variation.push({
         resultingFen: repertoire.addMove(variation[1].resultingFen, "Ng1"),
-        san: "Ng1"
+        moveData: { san: "Ng1" }
       });
       variation.push({
         resultingFen: repertoire.addMove(variation[2].resultingFen, "Ng8"),
-        san: "Ng8"
+        moveData: { san: "Ng8" }
       });
 
       const actual = repertoire.getVariations(startPosition);
@@ -443,32 +448,32 @@ describe("PositionCollection", () => {
     it("should import all the moves from a pgn game into the repertoire", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const pgn = `1. e4 e5 2. Nf3 Nc6 3. Bc4 *`;
-      const expectedVariations = [
+      const expectedVariations: VariationMove[][] = [
         [
           {
             resultingFen:
               "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
-            san: "e4"
+            moveData: { san: "e4" }
           },
           {
             resultingFen:
               "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
-            san: "e5"
+            moveData: { san: "e5" }
           },
           {
             resultingFen:
               "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq -",
-            san: "Nf3"
+            moveData: { san: "Nf3" }
           },
           {
             resultingFen:
               "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",
-            san: "Nc6"
+            moveData: { san: "Nc6" }
           },
           {
             resultingFen:
               "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq -",
-            san: "Bc4"
+            moveData: { san: "Bc4" }
           }
         ]
       ];
@@ -482,34 +487,34 @@ describe("PositionCollection", () => {
     it("should import sub variations from a pgn game into the repertoire", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const pgn = `1. e4 e5 (1... c5 2. d4) *`;
-      const expectedVariations = [
+      const expectedVariations: VariationMove[][] = [
         [
           {
             resultingFen:
               "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
-            san: "e4"
+            moveData: { san: "e4" }
           },
           {
             resultingFen:
               "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
-            san: "e5"
+            moveData: { san: "e5" }
           }
         ],
         [
           {
             resultingFen:
               "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
-            san: "e4"
+            moveData: { san: "e4" }
           },
           {
             resultingFen:
               "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
-            san: "c5"
+            moveData: { san: "c5" }
           },
           {
             resultingFen:
               "rnbqkbnr/pp1ppppp/8/2p5/3PP3/8/PPP2PPP/RNBQKBNR b KQkq -",
-            san: "d4"
+            moveData: { san: "d4" }
           }
         ]
       ].sort();
