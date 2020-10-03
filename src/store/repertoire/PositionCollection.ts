@@ -17,7 +17,7 @@ export interface VariationMove {
   resultingFen: string;
 }
 
-export class Repertoire {
+export class PositionCollection {
   private graph: Graph<never, never, EdgeData>;
 
   constructor(serialized: json.SavedGraph) {

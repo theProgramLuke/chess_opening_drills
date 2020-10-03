@@ -1,6 +1,9 @@
 import _ from "lodash";
 
-import { Repertoire, VariationMove } from "@/store/repertoire/Repertoire";
+import {
+  PositionCollection,
+  VariationMove
+} from "@/store/repertoire/PositionCollection";
 
 const startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
@@ -16,10 +19,10 @@ const startingRepertoire = {
   edges: []
 };
 
-describe("repertoire", () => {
+describe("PositionCollection", () => {
   describe("addMove", () => {
     it("should add the move as an outgoing move of the given position", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const move = { san: "e4" };
 
       repertoire.addMove(startPosition, move.san);
@@ -29,7 +32,7 @@ describe("repertoire", () => {
     });
 
     it("should not add an illegal move", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
 
       repertoire.addMove(startPosition, "Ne4");
       const moves = repertoire.movesFromPosition(startPosition);
@@ -38,7 +41,7 @@ describe("repertoire", () => {
     });
 
     it("should return the fen of the resulting move", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const move = { san: "a3" };
 
       const actual = repertoire.addMove(startPosition, move.san);
@@ -49,7 +52,7 @@ describe("repertoire", () => {
     });
 
     it("should add the resulting position with the correct FEN", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const san = "a3";
 
       repertoire.addMove(startPosition, san);
@@ -64,7 +67,7 @@ describe("repertoire", () => {
     });
 
     it("should add the move as an incoming move of the resulting position", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const move = { san: "a3" };
       repertoire.addMove(startPosition, move.san);
 
@@ -76,7 +79,7 @@ describe("repertoire", () => {
     });
 
     it("should add a new parent to the resulting position if the resulting position already exists", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       let fen = repertoire.addMove(startPosition, "e4"); // 1. e4
       fen = repertoire.addMove(fen, "e5"); // 1. e4 e5
       fen = repertoire.addMove(fen, "d4"); // 1. e4 e5 2. d4
@@ -93,7 +96,7 @@ describe("repertoire", () => {
     });
 
     it("should not add a new position if the resulting position already exists", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       let fen = repertoire.addMove(startPosition, "e4"); // 1. e4
       fen = repertoire.addMove(fen, "e5"); // 1. e4 e5
       fen = repertoire.addMove(fen, "d4"); // 1. e4 e5 2. d4
@@ -110,7 +113,7 @@ describe("repertoire", () => {
     });
 
     it("should not change the repertoire if the move already exists", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const move = { san: "e4" };
       repertoire.addMove(startPosition, move.san);
       const expected = repertoire.asSaved();
@@ -122,7 +125,7 @@ describe("repertoire", () => {
     });
 
     it("should replace the FEN en passant section with - if no en passant capture is possible", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const san = "e4";
 
       repertoire.addMove(startPosition, san);
@@ -140,7 +143,7 @@ describe("repertoire", () => {
     it("should not replace the FEN en passant section with - if en passant capture is possible", () => {
       const beforeEnPassantPossible =
         "rnbqkbnr/ppp1pppp/8/8/P2p4/8/1PPPPPPP/RNBQKBNR w KQkq -";
-      const repertoire = new Repertoire({
+      const repertoire = new PositionCollection({
         option: graphOptions,
         nodes: [{ v: beforeEnPassantPossible }],
         edges: []
@@ -158,7 +161,7 @@ describe("repertoire", () => {
     });
 
     it("should not include half move clock and full move number fen fields", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const move = { san: "a3" };
 
       const fen = repertoire.addMove(startPosition, move.san);
@@ -171,7 +174,7 @@ describe("repertoire", () => {
 
   describe("descendantPositions", () => {
     it("should get all the positions occurring after the given position", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const expected: string[] = [];
       expected.push(repertoire.addMove(startPosition, "e4"));
       expected.push(repertoire.addMove(_.last(expected) || "", "e5"));
@@ -199,7 +202,7 @@ describe("repertoire", () => {
           }
         }
       ];
-      const repertoire = new Repertoire({
+      const repertoire = new PositionCollection({
         option: graphOptions,
         nodes: [{ v: startPosition }, { v: moves[0].fen }, { v: moves[1].fen }],
         edges: [
@@ -223,10 +226,10 @@ describe("repertoire", () => {
   });
 
   describe("deleteMove", () => {
-    let repertoire: Repertoire;
+    let repertoire: PositionCollection;
 
     beforeEach(() => {
-      repertoire = new Repertoire(startingRepertoire);
+      repertoire = new PositionCollection(startingRepertoire);
       let fen = repertoire.addMove(startPosition, "d4");
       fen = repertoire.addMove(fen, "d5");
       fen = repertoire.addMove(startPosition, "d3");
@@ -269,7 +272,7 @@ describe("repertoire", () => {
 
   describe("getVariations", () => {
     it("should get all the possible variations from the position", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const variations: VariationMove[][] = [[], []];
       variations[0].push({
         resultingFen: repertoire.addMove(startPosition, "e4"),
@@ -299,7 +302,7 @@ describe("repertoire", () => {
     });
 
     it("should get an empty list if the position has no successors", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
 
       const variations = repertoire.getVariations(startPosition);
 
@@ -307,7 +310,7 @@ describe("repertoire", () => {
     });
 
     it("should stop the variation when a cycle is reached", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const variation: VariationMove[] = [];
       variation.push({
         resultingFen: repertoire.addMove(startPosition, "Nf3"),
@@ -334,7 +337,7 @@ describe("repertoire", () => {
 
   describe("asPgn", () => {
     it("should get the pgn representation of the repertoire", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const variation = ["e4", "e5", "Nf3", "Nf6", "Bc4"];
       let fen = startPosition;
       _.forEach(variation, move => {
@@ -356,7 +359,7 @@ describe("repertoire", () => {
     });
 
     it("should include the FEN and SetUp tags if the position is not the normal starting position", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const variation = ["e4", "e5", "Nf3", "Nf6", "Bc4"];
       let fen = repertoire.addMove(startPosition, variation[0]);
       const positionFen = repertoire.addMove(fen, variation[1]);
@@ -383,7 +386,7 @@ describe("repertoire", () => {
     });
 
     it("should append ... before the first move if black plays first", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const variation = ["e4", "e5", "Nf3", "Nf6", "Bc4"];
       let fen = repertoire.addMove(startPosition, variation[0]);
       const positionFen = fen;
@@ -409,7 +412,7 @@ describe("repertoire", () => {
     });
 
     it("should include variations in the pgn representation", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const variations = [
         ["e4", "e5", "Nf3", "Nc6", "Bc4"],
         ["e4", "c5", "d4"]
@@ -438,7 +441,7 @@ describe("repertoire", () => {
 
   describe("loadPgn", () => {
     it("should import all the moves from a pgn game into the repertoire", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const pgn = `1. e4 e5 2. Nf3 Nc6 3. Bc4 *`;
       const expectedVariations = [
         [
@@ -477,7 +480,7 @@ describe("repertoire", () => {
     });
 
     it("should import sub variations from a pgn game into the repertoire", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const pgn = `1. e4 e5 (1... c5 2. d4) *`;
       const expectedVariations = [
         [
@@ -518,7 +521,7 @@ describe("repertoire", () => {
     });
 
     it("should not change the repertoire if the pgn start position is not in the repertoire", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
       const before = repertoire.asSaved();
       const pgn = `[FEN "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"]
 [SetUp "1"]
@@ -534,7 +537,7 @@ describe("repertoire", () => {
 
   describe("asSaved", () => {
     it("should be able to recreate the same repertoire", () => {
-      const repertoire = new Repertoire(startingRepertoire);
+      const repertoire = new PositionCollection(startingRepertoire);
 
       const actual = repertoire.asSaved();
 
