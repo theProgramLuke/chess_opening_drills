@@ -8,7 +8,7 @@ import {
   variationsFromPgnGame
 } from "@/store/repertoire/chessHelpers";
 
-interface MoveData {
+export interface MoveData {
   san: string;
 }
 
