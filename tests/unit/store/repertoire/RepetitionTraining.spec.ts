@@ -29,10 +29,10 @@ describe("RepetitionTraining", () => {
       "should assign a grade of %s for the duration %s with %s attempted move(s)",
       (expectedGrade, elapsedMilliseconds, attemptsCount) => {
         const training = new RepetitionTraining();
-        const attempts = _.times(attemptsCount, () => "");
+        const attemptedMoves = _.times(attemptsCount, () => "");
 
         training.addTrainingEvent({
-          attemptedMoves: attempts,
+          attemptedMoves,
           elapsedMilliseconds
         });
         const actual = training.history[0].grade;
@@ -45,7 +45,7 @@ describe("RepetitionTraining", () => {
   describe("history", () => {
     it("should be the super memo2 history and the training event data", () => {
       const elapsedMilliseconds = 1000;
-      const attempts: string[] = ["e4", "d4"];
+      const attemptedMoves: string[] = ["e4", "d4"];
       const expected: TrainingHistoryEntry[] = [
         {
           elapsedMilliseconds,
@@ -58,7 +58,7 @@ describe("RepetitionTraining", () => {
       const training = new RepetitionTraining();
 
       training.addTrainingEvent({
-        attemptedMoves: attempts,
+        attemptedMoves,
         elapsedMilliseconds
       });
       const actual = training.history;
