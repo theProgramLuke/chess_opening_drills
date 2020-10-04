@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import {
   RepetitionTraining,
   TrainingHistoryEntry
@@ -25,8 +27,9 @@ describe("RepetitionTraining", () => {
       [0 as TrainingGrade, Infinity, Infinity]
     ])(
       "should assign a grade of %s for the duration %s with %s attempted move(s)",
-      (expectedGrade, elapsedMilliseconds, attempts) => {
+      (expectedGrade, elapsedMilliseconds, attemptsCount) => {
         const training = new RepetitionTraining();
+        const attempts = _.times(attemptsCount, () => "");
 
         training.addTrainingEvent({ attempts, elapsedMilliseconds });
         const actual = training.history[0].grade;
@@ -39,7 +42,7 @@ describe("RepetitionTraining", () => {
   describe("history", () => {
     it("should be the super memo2 history and the training event data", () => {
       const elapsedMilliseconds = 1000;
-      const attempts = 1;
+      const attempts: string[] = ["e4", "d4"];
       const expected: TrainingHistoryEntry[] = [
         {
           elapsedMilliseconds,

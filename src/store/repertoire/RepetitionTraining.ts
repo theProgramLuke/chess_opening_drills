@@ -8,7 +8,7 @@ import {
 
 export interface TrainingEvent {
   elapsedMilliseconds: number;
-  attempts: number;
+  attempts: string[];
 }
 
 export interface TrainingHistoryEntry
@@ -49,7 +49,7 @@ export class RepetitionTraining {
   }
 
   private calculateGrade(event: Readonly<TrainingEvent>): TrainingGrade {
-    switch (event.attempts) {
+    switch (event.attempts.length) {
       case 1: {
         if (event.elapsedMilliseconds < 2000) {
           return 5;
