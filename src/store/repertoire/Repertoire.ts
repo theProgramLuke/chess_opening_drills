@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { json } from "graphlib";
 
 import { TagTree } from "@/store/repertoire/TagTree";
@@ -28,7 +29,11 @@ export class Repertoire implements PositionCollectionInterface {
   }
 
   deleteMove(fen: string, san: string): string[] {
-    return this.positions.deleteMove(fen, san);
+    const deleted = this.positions.deleteMove(fen, san);
+    _.forEach(deleted, deletedFen =>
+      _.forEach(this.tags, tag => tag.removeTag(deletedFen))
+    );
+    return deleted;
   }
 
   movesFromPosition(fen: string): VariationMove[] {

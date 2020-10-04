@@ -8,6 +8,7 @@ import {
 } from "@/store/repertoire/PositionCollection";
 
 jest.mock("@/store/repertoire/PositionCollection");
+jest.mock("@/store/repertoire/TagTree");
 
 describe("Repertoire", () => {
   describe("asSaved", () => {
@@ -66,6 +67,25 @@ describe("Repertoire", () => {
 
       expect(actual).toBe(expected);
       expect(positions.deleteMove).toBeCalledWith(fen, san);
+    });
+
+    it("should delete tags of deleted positions", () => {
+      const positions = new PositionCollection({});
+      const tags = [
+        new TagTree("name0", "fen0", "id0", []),
+        new TagTree("name1", "fen1", "id1", [])
+      ];
+      const deletedFens = ["deleted fen0", "deleted fen1"];
+      (positions.deleteMove as jest.Mock).mockReturnValue(deletedFens);
+      const repertoire = new Repertoire(positions, tags);
+
+      repertoire.deleteMove("fen", "some san");
+
+      _.forEach(tags, tagTree =>
+        _.forEach(deletedFens, deleted =>
+          expect(tagTree.removeTag).toBeCalledWith(deleted)
+        )
+      );
     });
   });
 

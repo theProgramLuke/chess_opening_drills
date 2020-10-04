@@ -6,18 +6,18 @@ import { TagTree } from "@/store/repertoire/TagTree";
 describe("TagTree", () => {
   describe("removeTag", () => {
     it("should delete a tag and all of its successors", () => {
-      const tagToDelete = "delete me";
+      const fenToDelete = "delete me";
       const tree = new TagTree("root", "", _.uniqueId(), [
         new TagTree("a", "", _.uniqueId(), [])
       ]);
       const expected = _.cloneDeep(tree);
       tree.children.push(
-        new TagTree("b", "", tagToDelete, [
+        new TagTree("b", fenToDelete, "", [
           new TagTree("c", "", _.uniqueId(), [])
         ])
       );
 
-      tree.removeTag(tagToDelete);
+      tree.removeTag(fenToDelete);
 
       expect(tree).toEqual(expected);
     });

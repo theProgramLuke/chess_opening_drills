@@ -14,9 +14,9 @@ export class TagTree {
     this.children = children;
   }
 
-  removeTag(id: string): void {
-    _.remove(this.children, child => child.id === id);
-    _.forEach(this.children, child => child.removeTag(id));
+  removeTag(fen: string): void {
+    _.remove(this.children, child => child.fen === fen);
+    _.forEach(this.children, child => child.removeTag(fen));
   }
 
   addTag(name: string, fen: string): void {
