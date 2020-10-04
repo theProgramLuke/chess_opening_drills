@@ -181,4 +181,25 @@ describe("SuperMemo2", () => {
       expect(actualSchedule).toEqual(expectedSchedule);
     });
   });
+
+  describe("easinessHistory", () => {
+    it("should keep a history of the easiness", () => {
+      const sm2 = new SuperMemo2();
+      const grades: TrainingGrade[] = [0, 1, 2, 3, 4, 5];
+      const expected = [
+        1.7000000000000002,
+        1.3,
+        1.3,
+        1.3,
+        1.3,
+        1.4000000000000001
+      ];
+      expect(expected.length).toEqual(grades.length);
+
+      _.forEach(grades, grade => sm2.addTrainingEvent(grade));
+      const actual = sm2.easinessHistory;
+
+      expect(actual).toEqual(expected);
+    });
+  });
 });
