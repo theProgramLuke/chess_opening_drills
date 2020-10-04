@@ -4,7 +4,8 @@ import now from "lodash/now";
 import {
   SuperMemo2,
   TrainingGrade,
-  MillisecondsPerDay
+  MillisecondsPerDay,
+  EasinessHistoryEntry
 } from "@/store/repertoire/SuperMemo2";
 
 jest.mock("lodash/now");
@@ -183,16 +184,16 @@ describe("SuperMemo2", () => {
   });
 
   describe("easinessHistory", () => {
-    it("should keep a history of the easiness", () => {
+    it("should keep a timestamped history of the easiness", () => {
       const sm2 = new SuperMemo2();
       const grades: TrainingGrade[] = [0, 1, 2, 3, 4, 5];
-      const expected = [
-        1.7000000000000002,
-        1.3,
-        1.3,
-        1.3,
-        1.3,
-        1.4000000000000001
+      const expected: EasinessHistoryEntry[] = [
+        { easiness: 1.7000000000000002, timestamp: nowTimestamp },
+        { easiness: 1.3, timestamp: nowTimestamp },
+        { easiness: 1.3, timestamp: nowTimestamp },
+        { easiness: 1.3, timestamp: nowTimestamp },
+        { easiness: 1.3, timestamp: nowTimestamp },
+        { easiness: 1.4000000000000001, timestamp: nowTimestamp }
       ];
       expect(expected.length).toEqual(grades.length);
 
