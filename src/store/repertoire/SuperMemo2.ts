@@ -13,9 +13,8 @@ export type TrainingGrade = 0 | 1 | 2 | 3 | 4 | 5;
 export const MillisecondsPerDay = 86400000;
 
 export class SuperMemo2 {
-  easiness: number;
-  scheduledRepetitionTimestamp?: number;
-
+  private easinessInternal: number;
+  private scheduledRepetitionTimestampInternal?: number;
   private effectiveTrainingIndex: number;
   private previousIntervalDays?: number;
 
@@ -24,17 +23,25 @@ export class SuperMemo2 {
     effectiveTrainingIndex = 0,
     previousIntervalDays?: number
   ) {
-    this.easiness = easiness;
+    this.easinessInternal = easiness;
     this.effectiveTrainingIndex = effectiveTrainingIndex;
     this.previousIntervalDays = previousIntervalDays;
   }
 
-  addTrainingEvent(grade: TrainingGrade): void {
-    const previousEasiness = this.easiness;
+  get easiness(): number {
+    return this.easinessInternal;
+  }
 
-    this.easiness =
+  get scheduledRepetitionTimestamp(): number | undefined {
+    return this.scheduledRepetitionTimestampInternal;
+  }
+
+  addTrainingEvent(grade: TrainingGrade): void {
+    const previousEasiness = this.easinessInternal;
+
+    this.easinessInternal =
       previousEasiness + (0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02));
-    this.easiness = _.max([this.easiness, 1.3]) || 1.3;
+    this.easinessInternal = _.max([this.easinessInternal, 1.3]) || 1.3;
 
     if (grade < 3) {
       // If the quality response was lower than 3
@@ -56,10 +63,11 @@ export class SuperMemo2 {
     } else if (2 === this.effectiveTrainingIndex) {
       days = 4;
     } else {
-      days = _.ceil((this.previousIntervalDays || 0) * this.easiness);
+      days = _.ceil((this.previousIntervalDays || 0) * this.easinessInternal);
     }
 
-    this.scheduledRepetitionTimestamp = now() + days * MillisecondsPerDay;
+    this.scheduledRepetitionTimestampInternal =
+      now() + days * MillisecondsPerDay;
     this.previousIntervalDays = days;
   }
 }
