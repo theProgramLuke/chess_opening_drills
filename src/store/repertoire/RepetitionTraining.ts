@@ -8,6 +8,7 @@ import {
 
 export interface TrainingEvent {
   elapsedMilliseconds: number;
+  attempts: number;
 }
 
 export interface TrainingHistoryEntry
@@ -15,57 +16,51 @@ export interface TrainingHistoryEntry
     TrainingEvent {}
 
 export class RepetitionTraining {
-  private elapsedMillisecondsHistory: number[];
+  private trainingHistory: TrainingEvent[];
   private training: SuperMemo2;
 
   constructor(
     easiness = 2.5,
     effectiveTrainingIndex = 0,
     previousIntervalDays?: number,
-    elapsedMillisecondsHistory: number[] = []
+    trainingHistory: TrainingEvent[] = []
   ) {
     this.training = new SuperMemo2(
       easiness,
       effectiveTrainingIndex,
       previousIntervalDays
     );
-    this.elapsedMillisecondsHistory = elapsedMillisecondsHistory;
+    this.trainingHistory = trainingHistory;
   }
 
-  addTrainingEvent(attempts: number, elapsedMilliseconds: number): void {
-    const grade = this.calculateGrade(attempts, elapsedMilliseconds);
+  addTrainingEvent(event: TrainingEvent): void {
+    const grade = this.calculateGrade(event);
     this.training.addTrainingEvent(grade);
-    this.elapsedMillisecondsHistory.push(elapsedMilliseconds);
+    this.trainingHistory.push(event);
   }
 
   get history(): TrainingHistoryEntry[] {
-    return _.map(
-      this.elapsedMillisecondsHistory,
-      (elapsedMilliseconds, index) => {
-        return {
-          ...this.training.history[index],
-          elapsedMilliseconds
-        } as TrainingHistoryEntry;
-      }
-    );
+    return _.map(this.trainingHistory, (event, index) => {
+      return {
+        ...this.training.history[index],
+        ...event
+      } as TrainingHistoryEntry;
+    });
   }
 
-  private calculateGrade(
-    attempts: number,
-    elapsedMilliseconds: number
-  ): TrainingGrade {
-    switch (attempts) {
+  private calculateGrade(event: TrainingEvent): TrainingGrade {
+    switch (event.attempts) {
       case 1: {
-        if (elapsedMilliseconds < 2000) {
+        if (event.elapsedMilliseconds < 2000) {
           return 5;
-        } else if (elapsedMilliseconds < 10000) {
+        } else if (event.elapsedMilliseconds < 10000) {
           return 4;
         } else {
           return 3;
         }
       }
       case 2: {
-        if (elapsedMilliseconds < 10000) {
+        if (event.elapsedMilliseconds < 10000) {
           return 2;
         } else {
           return 1;

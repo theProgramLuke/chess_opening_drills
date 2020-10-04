@@ -28,7 +28,7 @@ describe("RepetitionTraining", () => {
       (expectedGrade, elapsedMilliseconds, attempts) => {
         const training = new RepetitionTraining();
 
-        training.addTrainingEvent(attempts, elapsedMilliseconds);
+        training.addTrainingEvent({ attempts, elapsedMilliseconds });
         const actual = training.history[0].grade;
 
         expect(actual).toEqual(expectedGrade);
@@ -37,11 +37,13 @@ describe("RepetitionTraining", () => {
   });
 
   describe("historyWithDurations", () => {
-    it("should be the training history with durations", () => {
-      const elapsed = 1000;
+    it("should be the super memo2 history and the training event data", () => {
+      const elapsedMilliseconds = 1000;
+      const attempts = 1;
       const expected: TrainingHistoryEntry[] = [
         {
-          elapsedMilliseconds: elapsed,
+          elapsedMilliseconds,
+          attempts,
           easiness: expect.anything(),
           grade: expect.anything(),
           timestamp: expect.anything()
@@ -49,7 +51,7 @@ describe("RepetitionTraining", () => {
       ];
       const training = new RepetitionTraining();
 
-      training.addTrainingEvent(1, elapsed);
+      training.addTrainingEvent({ attempts, elapsedMilliseconds });
       const actual = training.history;
 
       expect(actual).toEqual(expected);
