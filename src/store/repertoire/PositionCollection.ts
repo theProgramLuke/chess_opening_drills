@@ -17,7 +17,19 @@ export interface VariationMove {
   resultingFen: string;
 }
 
-export class PositionCollection {
+export interface PositionCollectionInterface {
+  addMove: (fen: string, san: string) => string;
+  deleteMove: (fen: string, san: string) => string[];
+  movesFromPosition: (fen: string) => VariationMove[];
+  parentPositions: (fen: string) => string[];
+  descendantPositions: (fen: string) => string[];
+  asSaved: () => json.SavedGraph;
+  asPgn: (fen: string) => string;
+  loadPgn: (pgn: string) => void;
+  getVariations: (fen: string) => VariationMove[][];
+}
+
+export class PositionCollection implements PositionCollectionInterface {
   private graph: Graph<never, never, MoveData>;
 
   constructor(serialized: json.SavedGraph) {
