@@ -28,8 +28,8 @@ describe("DurationSuperMemo2", () => {
       (expectedGrade, elapsedMilliseconds, attempts) => {
         const training = new DurationSuperMemo2();
 
-        training.addGradedTrainingEvent(attempts, elapsedMilliseconds);
-        const actual = training.trainingHistory[0].grade;
+        training.addTrainingEvent(attempts, elapsedMilliseconds);
+        const actual = training.history[0].grade;
 
         expect(actual).toEqual(expectedGrade);
       }
@@ -49,8 +49,8 @@ describe("DurationSuperMemo2", () => {
       ];
       const training = new DurationSuperMemo2();
 
-      training.addGradedTrainingEvent(1, elapsed);
-      const actual = training.trainingHistory;
+      training.addTrainingEvent(1, elapsed);
+      const actual = training.history;
 
       expect(actual).toEqual(expected);
     });

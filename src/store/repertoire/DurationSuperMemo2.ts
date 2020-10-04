@@ -6,9 +6,11 @@ import {
   HistoryEntry
 } from "@/store/repertoire/SuperMemo2";
 
-export interface DurationHistoryEntry extends HistoryEntry {
+export interface TrainingEvent {
   elapsedMilliseconds: number;
 }
+
+export interface DurationHistoryEntry extends HistoryEntry, TrainingEvent {}
 
 export class DurationSuperMemo2 {
   private elapsedMillisecondsHistory: number[];
@@ -28,13 +30,13 @@ export class DurationSuperMemo2 {
     this.elapsedMillisecondsHistory = elapsedMillisecondsHistory;
   }
 
-  addGradedTrainingEvent(attempts: number, elapsedMilliseconds: number): void {
+  addTrainingEvent(attempts: number, elapsedMilliseconds: number): void {
     const grade = this.calculateGrade(attempts, elapsedMilliseconds);
     this.training.addTrainingEvent(grade);
     this.elapsedMillisecondsHistory.push(elapsedMilliseconds);
   }
 
-  get trainingHistory(): DurationHistoryEntry[] {
+  get history(): DurationHistoryEntry[] {
     return _.map(
       this.elapsedMillisecondsHistory,
       (elapsedMilliseconds, index) => {
