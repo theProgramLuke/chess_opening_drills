@@ -31,7 +31,10 @@ describe("RepetitionTraining", () => {
         const training = new RepetitionTraining();
         const attempts = _.times(attemptsCount, () => "");
 
-        training.addTrainingEvent({ attempts, elapsedMilliseconds });
+        training.addTrainingEvent({
+          attemptedMoves: attempts,
+          elapsedMilliseconds
+        });
         const actual = training.history[0].grade;
 
         expect(actual).toEqual(expectedGrade);
@@ -46,7 +49,7 @@ describe("RepetitionTraining", () => {
       const expected: TrainingHistoryEntry[] = [
         {
           elapsedMilliseconds,
-          attempts,
+          attemptedMoves: attempts,
           easiness: expect.anything(),
           grade: expect.anything(),
           timestamp: expect.anything()
@@ -54,7 +57,10 @@ describe("RepetitionTraining", () => {
       ];
       const training = new RepetitionTraining();
 
-      training.addTrainingEvent({ attempts, elapsedMilliseconds });
+      training.addTrainingEvent({
+        attemptedMoves: attempts,
+        elapsedMilliseconds
+      });
       const actual = training.history;
 
       expect(actual).toEqual(expected);
