@@ -33,13 +33,13 @@ export class RepetitionTraining {
     this.trainingHistory = trainingHistory;
   }
 
-  addTrainingEvent(event: TrainingEvent): void {
+  addTrainingEvent(event: Readonly<TrainingEvent>): void {
     const grade = this.calculateGrade(event);
     this.training.addTrainingEvent(grade);
     this.trainingHistory.push(event);
   }
 
-  get history(): TrainingHistoryEntry[] {
+  get history(): Readonly<Readonly<TrainingHistoryEntry>[]> {
     return _.map(this.trainingHistory, (event, index) => {
       return {
         ...this.training.history[index],
@@ -48,7 +48,7 @@ export class RepetitionTraining {
     });
   }
 
-  private calculateGrade(event: TrainingEvent): TrainingGrade {
+  private calculateGrade(event: Readonly<TrainingEvent>): TrainingGrade {
     switch (event.attempts) {
       case 1: {
         if (event.elapsedMilliseconds < 2000) {

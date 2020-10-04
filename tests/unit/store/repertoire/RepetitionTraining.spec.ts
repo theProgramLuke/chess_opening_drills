@@ -24,7 +24,7 @@ describe("RepetitionTraining", () => {
       [0 as TrainingGrade, 0, Infinity],
       [0 as TrainingGrade, Infinity, Infinity]
     ])(
-      "should assign a grade of %s for the duration %s with %s attempt(s)",
+      "should assign a grade of %s for the duration %s with %s attempted move(s)",
       (expectedGrade, elapsedMilliseconds, attempts) => {
         const training = new RepetitionTraining();
 
@@ -36,7 +36,7 @@ describe("RepetitionTraining", () => {
     );
   });
 
-  describe("historyWithDurations", () => {
+  describe("history", () => {
     it("should be the super memo2 history and the training event data", () => {
       const elapsedMilliseconds = 1000;
       const attempts = 1;
