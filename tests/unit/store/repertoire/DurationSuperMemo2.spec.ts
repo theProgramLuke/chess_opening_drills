@@ -1,10 +1,10 @@
 import {
-  DurationSuperMemo2,
-  DurationHistoryEntry
+  Training,
+  TrainingHistoryEntry
 } from "@/store/repertoire/DurationSuperMemo2";
 import { TrainingGrade } from "@/store/repertoire/SuperMemo2";
 
-describe("DurationSuperMemo2", () => {
+describe("Training", () => {
   describe("addTrainingEvent", () => {
     it.each([
       [5 as TrainingGrade, 0, 1],
@@ -26,7 +26,7 @@ describe("DurationSuperMemo2", () => {
     ])(
       "should assign a grade of %s for the duration %s with %s attempt(s)",
       (expectedGrade, elapsedMilliseconds, attempts) => {
-        const training = new DurationSuperMemo2();
+        const training = new Training();
 
         training.addTrainingEvent(attempts, elapsedMilliseconds);
         const actual = training.history[0].grade;
@@ -39,7 +39,7 @@ describe("DurationSuperMemo2", () => {
   describe("historyWithDurations", () => {
     it("should be the training history with durations", () => {
       const elapsed = 1000;
-      const expected: DurationHistoryEntry[] = [
+      const expected: TrainingHistoryEntry[] = [
         {
           elapsedMilliseconds: elapsed,
           easiness: expect.anything(),
@@ -47,7 +47,7 @@ describe("DurationSuperMemo2", () => {
           timestamp: expect.anything()
         }
       ];
-      const training = new DurationSuperMemo2();
+      const training = new Training();
 
       training.addTrainingEvent(1, elapsed);
       const actual = training.history;

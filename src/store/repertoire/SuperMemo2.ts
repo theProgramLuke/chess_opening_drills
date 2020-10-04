@@ -12,7 +12,7 @@ export type TrainingGrade = 0 | 1 | 2 | 3 | 4 | 5;
 
 export const MillisecondsPerDay = 86400000;
 
-export interface HistoryEntry {
+export interface SuperMemo2HistoryEntry {
   readonly easiness: number;
   readonly timestamp: number;
   readonly grade: TrainingGrade;
@@ -20,7 +20,7 @@ export interface HistoryEntry {
 
 export class SuperMemo2 {
   private easinessInternal: number;
-  private historyInternal: HistoryEntry[];
+  private historyInternal: SuperMemo2HistoryEntry[];
   private scheduledRepetitionTimestampInternal?: number;
   private effectiveTrainingIndex: number;
   private previousIntervalDays?: number;
@@ -29,7 +29,7 @@ export class SuperMemo2 {
     easiness = 2.5,
     effectiveTrainingIndex = 0,
     previousIntervalDays?: number,
-    easinessHistory: HistoryEntry[] = []
+    easinessHistory: SuperMemo2HistoryEntry[] = []
   ) {
     this.easinessInternal = easiness;
     this.effectiveTrainingIndex = effectiveTrainingIndex;
@@ -45,7 +45,7 @@ export class SuperMemo2 {
     return this.scheduledRepetitionTimestampInternal;
   }
 
-  get history(): HistoryEntry[] {
+  get history(): SuperMemo2HistoryEntry[] {
     return this.historyInternal;
   }
 

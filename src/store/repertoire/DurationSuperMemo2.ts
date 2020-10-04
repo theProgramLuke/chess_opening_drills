@@ -3,16 +3,18 @@ import _ from "lodash";
 import {
   SuperMemo2,
   TrainingGrade,
-  HistoryEntry
+  SuperMemo2HistoryEntry
 } from "@/store/repertoire/SuperMemo2";
 
 export interface TrainingEvent {
   elapsedMilliseconds: number;
 }
 
-export interface DurationHistoryEntry extends HistoryEntry, TrainingEvent {}
+export interface TrainingHistoryEntry
+  extends SuperMemo2HistoryEntry,
+    TrainingEvent {}
 
-export class DurationSuperMemo2 {
+export class Training {
   private elapsedMillisecondsHistory: number[];
   private training: SuperMemo2;
 
@@ -36,14 +38,14 @@ export class DurationSuperMemo2 {
     this.elapsedMillisecondsHistory.push(elapsedMilliseconds);
   }
 
-  get history(): DurationHistoryEntry[] {
+  get history(): TrainingHistoryEntry[] {
     return _.map(
       this.elapsedMillisecondsHistory,
       (elapsedMilliseconds, index) => {
         return {
           ...this.training.history[index],
           elapsedMilliseconds
-        } as DurationHistoryEntry;
+        } as TrainingHistoryEntry;
       }
     );
   }
