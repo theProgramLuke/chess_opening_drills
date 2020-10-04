@@ -14,7 +14,7 @@ export interface TrainingHistoryEntry
   extends SuperMemo2HistoryEntry,
     TrainingEvent {}
 
-export class Training {
+export class RepetitionTraining {
   private elapsedMillisecondsHistory: number[];
   private training: SuperMemo2;
 
