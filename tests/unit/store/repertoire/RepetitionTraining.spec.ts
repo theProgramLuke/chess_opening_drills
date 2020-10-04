@@ -49,7 +49,7 @@ describe("RepetitionTraining", () => {
       const expected: TrainingHistoryEntry[] = [
         {
           elapsedMilliseconds,
-          attemptedMoves: attempts,
+          attemptedMoves,
           easiness: expect.anything(),
           grade: expect.anything(),
           timestamp: expect.anything()
