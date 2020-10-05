@@ -18,6 +18,14 @@ export interface SuperMemo2HistoryEntry {
   readonly grade: TrainingGrade;
 }
 
+export interface SavedSuperMemo2 {
+  readonly easiness: number;
+  readonly history: SuperMemo2HistoryEntry[];
+  readonly scheduledRepetitionTimestamp?: number;
+  readonly effectiveTrainingIndex: number;
+  readonly previousIntervalDays?: number;
+}
+
 export class SuperMemo2 {
   private easinessInternal: number;
   private historyInternal: SuperMemo2HistoryEntry[];
@@ -29,12 +37,24 @@ export class SuperMemo2 {
     easiness = 2.5,
     effectiveTrainingIndex = 0,
     previousIntervalDays?: number,
-    easinessHistory: SuperMemo2HistoryEntry[] = []
+    easinessHistory: SuperMemo2HistoryEntry[] = [],
+    scheduledRepetitionTimestamp?: number
   ) {
     this.easinessInternal = easiness;
     this.effectiveTrainingIndex = effectiveTrainingIndex;
     this.previousIntervalDays = previousIntervalDays;
     this.historyInternal = easinessHistory;
+    this.scheduledRepetitionTimestampInternal = scheduledRepetitionTimestamp;
+  }
+
+  static fromSaved(saved: SavedSuperMemo2): SuperMemo2 {
+    return new SuperMemo2(
+      saved.easiness,
+      saved.effectiveTrainingIndex,
+      saved.previousIntervalDays,
+      saved.history,
+      saved.scheduledRepetitionTimestamp
+    );
   }
 
   get easiness(): number {
@@ -72,6 +92,16 @@ export class SuperMemo2 {
     }
 
     this.updateSchedule();
+  }
+
+  asSaved(): SavedSuperMemo2 {
+    return {
+      easiness: this.easinessInternal,
+      history: this.historyInternal,
+      scheduledRepetitionTimestamp: this.scheduledRepetitionTimestamp,
+      previousIntervalDays: this.previousIntervalDays,
+      effectiveTrainingIndex: this.effectiveTrainingIndex
+    };
   }
 
   private updateSchedule(): void {

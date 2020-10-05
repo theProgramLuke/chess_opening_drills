@@ -5,7 +5,8 @@ import {
   SuperMemo2,
   TrainingGrade,
   MillisecondsPerDay,
-  SuperMemo2HistoryEntry
+  SuperMemo2HistoryEntry,
+  SavedSuperMemo2
 } from "@/store/repertoire/SuperMemo2";
 
 jest.mock("lodash/now");
@@ -209,6 +210,38 @@ describe("SuperMemo2", () => {
       const actual = sm2.history;
 
       expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("asSaved", () => {
+    const grades: TrainingGrade[] = [3, 4, 5];
+    const saved: SavedSuperMemo2 = {
+      easiness: 2.46,
+      history: [
+        { easiness: 2.36, grade: grades[0], timestamp: nowTimestamp },
+        { easiness: 2.36, grade: grades[1], timestamp: nowTimestamp },
+        { easiness: 2.46, grade: grades[2], timestamp: nowTimestamp }
+      ],
+      scheduledRepetitionTimestamp: 10 * MillisecondsPerDay + nowTimestamp,
+      previousIntervalDays: 10,
+      effectiveTrainingIndex: grades.length
+    };
+
+    it("should capture the state of the training", () => {
+      const sm2 = new SuperMemo2();
+      _.forEach(grades, grade => sm2.addTrainingEvent(grade));
+
+      const actual = sm2.asSaved();
+
+      expect(actual).toEqual(saved);
+    });
+
+    it("should restore the training state", () => {
+      const sm2 = SuperMemo2.fromSaved(saved);
+
+      const actual = sm2.asSaved();
+
+      expect(actual).toEqual(saved);
     });
   });
 });
