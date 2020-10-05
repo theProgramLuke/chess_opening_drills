@@ -1,4 +1,5 @@
 import _ from "lodash";
+import now from "lodash/now";
 
 import {
   SuperMemo2,
@@ -6,6 +7,7 @@ import {
   SuperMemo2HistoryEntry,
   SavedSuperMemo2
 } from "@/store/repertoire/SuperMemo2";
+import { TrainingMode } from "../trainingMode";
 
 export interface TrainingEvent {
   elapsedMilliseconds: number;
@@ -48,6 +50,14 @@ export class RepetitionTraining {
     this.historyInternal = history;
   }
 
+  get scheduledRepetitionTimestamp(): number | undefined {
+    return this.training.scheduledRepetitionTimestamp;
+  }
+
+  get easiness(): number {
+    return this.training.easiness;
+  }
+
   static fromSaved(saved: SavedRepetitionTraining) {
     return new RepetitionTraining(
       saved.easiness,
@@ -78,6 +88,44 @@ export class RepetitionTraining {
       ...this.training.asSaved(),
       history: this.history
     };
+  }
+
+  includeForTrainingMode(mode: TrainingMode, difficultyLimit = 0): boolean {
+    if (TrainingMode.New === mode) {
+      return this.includeForNewMode();
+    } else if (TrainingMode.Cram === mode) {
+      return true;
+    } else if (TrainingMode.Scheduled === mode) {
+      return this.includeForScheduledMode();
+    } else {
+      // TrainingMode.Difficult
+      return this.includeForDifficultMode(difficultyLimit);
+    }
+  }
+
+  private includeForDifficultMode(difficultyLimit: number): boolean {
+    return (
+      this.training.easiness <= difficultyLimit && !this.includeForNewMode()
+    );
+  }
+
+  private includeForNewMode(): boolean {
+    return _.isEmpty(this.historyInternal);
+  }
+
+  private includeForScheduledMode(): boolean {
+    if (this.training.scheduledRepetitionTimestamp) {
+      const today = new Date(now());
+      const scheduled = new Date(this.training.scheduledRepetitionTimestamp);
+
+      // strip time portion
+      today.setHours(0, 0, 0, 0);
+      scheduled.setHours(0, 0, 0, 0);
+
+      return today >= scheduled;
+    } else {
+      return false;
+    }
   }
 
   private calculateGrade(event: TrainingEvent): TrainingGrade {

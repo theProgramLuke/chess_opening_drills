@@ -11,6 +11,8 @@ import {
   TrainingGrade,
   MillisecondsPerDay
 } from "@/store/repertoire/SuperMemo2";
+import { TrainingMode } from "@/store/trainingMode";
+import { millisecondsPerDay } from "@/store/repertoirePosition";
 
 jest.mock("lodash/now");
 
@@ -115,6 +117,165 @@ describe("RepetitionTraining", () => {
       const actual = training.asSaved();
 
       expect(actual).toEqual(saved);
+    });
+  });
+
+  describe("includeForTrainingMode", () => {
+    describe("TrainingMode.New", () => {
+      it("should be included if the position has not been trained", () => {
+        const training = new RepetitionTraining();
+
+        const actual = training.includeForTrainingMode(TrainingMode.New);
+
+        expect(actual).toBeTruthy();
+      });
+
+      it("should not be included if the position has been trained", () => {
+        const training = new RepetitionTraining();
+        training.addTrainingEvent({
+          elapsedMilliseconds: 0,
+          attemptedMoves: [""]
+        });
+
+        const actual = training.includeForTrainingMode(TrainingMode.New);
+
+        expect(actual).toBeFalsy();
+      });
+    });
+
+    describe("TrainingMode.Cram", () => {
+      it("should be included if the position has not been trained", () => {
+        const training = new RepetitionTraining();
+
+        const actual = training.includeForTrainingMode(TrainingMode.Cram);
+
+        expect(actual).toBeTruthy();
+      });
+
+      it("should be included if the position has been trained", () => {
+        const training = new RepetitionTraining();
+        training.addTrainingEvent({
+          elapsedMilliseconds: 0,
+          attemptedMoves: [""]
+        });
+
+        const actual = training.includeForTrainingMode(TrainingMode.Cram);
+
+        expect(actual).toBeTruthy();
+      });
+    });
+
+    describe("TrainingMode.Scheduled", () => {
+      it("should be included if the scheduled timestamp is the last millisecond of today", () => {
+        const training = new RepetitionTraining();
+        const today = new Date(10 * millisecondsPerDay);
+        today.setHours(23, 59, 59, 999);
+        const lastMillisecondOfToday = today.getMilliseconds();
+        (now as jest.Mock).mockReturnValue(
+          lastMillisecondOfToday - millisecondsPerDay
+        ); // first training interval will be millisecondsPerDay
+        training.addTrainingEvent({
+          elapsedMilliseconds: 0,
+          attemptedMoves: [""]
+        });
+        expect(training.scheduledRepetitionTimestamp).toEqual(
+          lastMillisecondOfToday
+        );
+        (now as jest.Mock).mockReturnValue(lastMillisecondOfToday);
+
+        const actual = training.includeForTrainingMode(TrainingMode.Scheduled);
+
+        expect(actual).toBeTruthy();
+      });
+
+      it("should be included if the scheduled timestamp is before today", () => {
+        const training = new RepetitionTraining();
+        (now as jest.Mock).mockReturnValue(0);
+        training.addTrainingEvent({
+          elapsedMilliseconds: 0,
+          attemptedMoves: [""]
+        });
+        (now as jest.Mock).mockReturnValue(10 * millisecondsPerDay);
+
+        const actual = training.includeForTrainingMode(TrainingMode.Scheduled);
+
+        expect(actual).toBeTruthy();
+      });
+
+      it("should be not included if the scheduled timestamp is later than today", () => {
+        const training = new RepetitionTraining();
+        (now as jest.Mock).mockReturnValue(10 * millisecondsPerDay);
+        training.addTrainingEvent({
+          elapsedMilliseconds: 0,
+          attemptedMoves: [""]
+        });
+        (now as jest.Mock).mockReturnValue(0);
+
+        const actual = training.includeForTrainingMode(TrainingMode.Scheduled);
+
+        expect(actual).toBeFalsy();
+      });
+    });
+
+    describe("TrainingMode.Difficult", () => {
+      it("should not include new positions", () => {
+        const training = new RepetitionTraining();
+
+        const actual = training.includeForTrainingMode(
+          TrainingMode.Difficult,
+          2.6
+        );
+
+        expect(actual).toBeFalsy();
+      });
+
+      it("should be included if the easiness is less than difficulty limit", () => {
+        const training = new RepetitionTraining();
+        training.addTrainingEvent({
+          elapsedMilliseconds: 0,
+          attemptedMoves: [""]
+        });
+        expect(training.easiness).toEqual(2.6);
+
+        const actual = training.includeForTrainingMode(
+          TrainingMode.Difficult,
+          2.7
+        );
+
+        expect(actual).toBeTruthy();
+      });
+
+      it("should be included if the easiness is the difficulty limit", () => {
+        const training = new RepetitionTraining();
+        training.addTrainingEvent({
+          elapsedMilliseconds: 0,
+          attemptedMoves: [""]
+        });
+        expect(training.easiness).toEqual(2.6);
+
+        const actual = training.includeForTrainingMode(
+          TrainingMode.Difficult,
+          2.6
+        );
+
+        expect(actual).toBeTruthy();
+      });
+
+      it("should be included if the easiness more than the difficulty limit", () => {
+        const training = new RepetitionTraining();
+        training.addTrainingEvent({
+          elapsedMilliseconds: 0,
+          attemptedMoves: [""]
+        });
+        expect(training.easiness).toEqual(2.6);
+
+        const actual = training.includeForTrainingMode(
+          TrainingMode.Difficult,
+          2.5
+        );
+
+        expect(actual).toBeFalsy();
+      });
     });
   });
 });
