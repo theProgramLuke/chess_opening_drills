@@ -1,10 +1,25 @@
 import _ from "lodash";
+import now from "lodash/now";
 
 import {
   RepetitionTraining,
-  TrainingHistoryEntry
+  TrainingHistoryEntry,
+  SavedRepetitionTraining,
+  TrainingEvent
 } from "@/store/repertoire/RepetitionTraining";
-import { TrainingGrade } from "@/store/repertoire/SuperMemo2";
+import {
+  TrainingGrade,
+  MillisecondsPerDay
+} from "@/store/repertoire/SuperMemo2";
+
+jest.mock("lodash/now");
+
+const nowTimestamp = 24601;
+
+beforeEach(() => {
+  (now as jest.Mock).mockReset();
+  (now as jest.Mock).mockReturnValue(nowTimestamp);
+});
 
 describe("RepetitionTraining", () => {
   describe("addTrainingEvent", () => {
@@ -64,6 +79,42 @@ describe("RepetitionTraining", () => {
       const actual = training.history;
 
       expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("asSaved", () => {
+    const events: TrainingEvent[] = [
+      { elapsedMilliseconds: 10000, attemptedMoves: [""] },
+      { elapsedMilliseconds: 3000, attemptedMoves: [""] },
+      { elapsedMilliseconds: 0, attemptedMoves: [""] }
+    ];
+    const saved: SavedRepetitionTraining = {
+      easiness: 2.46,
+      history: [
+        { easiness: 2.36, grade: 3, timestamp: nowTimestamp, ...events[0] },
+        { easiness: 2.36, grade: 4, timestamp: nowTimestamp, ...events[1] },
+        { easiness: 2.46, grade: 5, timestamp: nowTimestamp, ...events[2] }
+      ],
+      scheduledRepetitionTimestamp: 10 * MillisecondsPerDay + nowTimestamp,
+      previousIntervalDays: 10,
+      effectiveTrainingIndex: events.length
+    };
+
+    it("should capture the state of the training", () => {
+      const training = new RepetitionTraining();
+      _.forEach(events, event => training.addTrainingEvent(event));
+
+      const actual = training.asSaved();
+
+      expect(actual).toEqual(saved);
+    });
+
+    it("should restore the training state", () => {
+      const training = RepetitionTraining.fromSaved(saved);
+
+      const actual = training.asSaved();
+
+      expect(actual).toEqual(saved);
     });
   });
 });

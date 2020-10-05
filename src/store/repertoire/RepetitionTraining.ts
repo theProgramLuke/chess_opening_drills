@@ -3,7 +3,8 @@ import _ from "lodash";
 import {
   SuperMemo2,
   TrainingGrade,
-  SuperMemo2HistoryEntry
+  SuperMemo2HistoryEntry,
+  SavedSuperMemo2
 } from "@/store/repertoire/SuperMemo2";
 
 export interface TrainingEvent {
@@ -15,32 +16,56 @@ export interface TrainingHistoryEntry
   extends SuperMemo2HistoryEntry,
     TrainingEvent {}
 
+export interface SavedRepetitionTraining
+  extends Omit<SavedSuperMemo2, "history"> {
+  history: TrainingHistoryEntry[];
+}
+
 export class RepetitionTraining {
-  private trainingHistory: TrainingEvent[];
+  private historyInternal: TrainingEvent[];
   private training: SuperMemo2;
 
   constructor(
     easiness = 2.5,
     effectiveTrainingIndex = 0,
     previousIntervalDays?: number,
-    trainingHistory: TrainingEvent[] = []
+    history: TrainingHistoryEntry[] = [],
+    scheduledRepetitionTimestamp?: number
   ) {
     this.training = new SuperMemo2(
       easiness,
       effectiveTrainingIndex,
-      previousIntervalDays
+      previousIntervalDays,
+      _.map(history, entry => {
+        return {
+          easiness: entry.easiness,
+          grade: entry.grade,
+          timestamp: entry.timestamp
+        } as SuperMemo2HistoryEntry;
+      }),
+      scheduledRepetitionTimestamp
     );
-    this.trainingHistory = trainingHistory;
+    this.historyInternal = history;
   }
 
-  addTrainingEvent(event: Readonly<TrainingEvent>): void {
+  static fromSaved(saved: SavedRepetitionTraining) {
+    return new RepetitionTraining(
+      saved.easiness,
+      saved.effectiveTrainingIndex,
+      saved.previousIntervalDays,
+      saved.history,
+      saved.scheduledRepetitionTimestamp
+    );
+  }
+
+  addTrainingEvent(event: TrainingEvent): void {
     const grade = this.calculateGrade(event);
     this.training.addTrainingEvent(grade);
-    this.trainingHistory.push(event);
+    this.historyInternal.push(event);
   }
 
-  get history(): Readonly<Readonly<TrainingHistoryEntry>[]> {
-    return _.map(this.trainingHistory, (event, index) => {
+  get history(): TrainingHistoryEntry[] {
+    return _.map(this.historyInternal, (event, index) => {
       return {
         ...this.training.history[index],
         ...event
@@ -48,7 +73,14 @@ export class RepetitionTraining {
     });
   }
 
-  private calculateGrade(event: Readonly<TrainingEvent>): TrainingGrade {
+  asSaved(): SavedRepetitionTraining {
+    return {
+      ...this.training.asSaved(),
+      history: this.history
+    };
+  }
+
+  private calculateGrade(event: TrainingEvent): TrainingGrade {
     switch (event.attemptedMoves.length) {
       case 1: {
         if (event.elapsedMilliseconds < 2000) {
