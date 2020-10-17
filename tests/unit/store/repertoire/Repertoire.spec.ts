@@ -6,16 +6,19 @@ import {
   PositionCollection,
   VariationMove
 } from "@/store/repertoire/PositionCollection";
+import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
+import { Side } from "@/store/side";
 
 jest.mock("@/store/repertoire/PositionCollection");
 jest.mock("@/store/repertoire/TagTree");
+jest.mock("@/store/repertoire/RepetitionTraining");
 
 describe("Repertoire", () => {
   describe("asSaved", () => {
-    it("should save the positions and tags", () => {
-      const saved = { saved: "positions" };
+    it("should save the repertoire", () => {
+      const savedPositions = { saved: "positions" };
       const expectedPositions = new PositionCollection({});
-      (expectedPositions.asSaved as jest.Mock).mockReturnValue(saved);
+      (expectedPositions.asSaved as jest.Mock).mockReturnValue(savedPositions);
       const expectedTags: TagTree[] = [
         new TagTree("name0", "fen0", "id0", [
           new TagTree("name1", "fen3", "id1", []),
@@ -24,10 +27,14 @@ describe("Repertoire", () => {
         new TagTree("name3", "fen3", "id3", [])
       ];
       const expected: SavedRepertoire = {
-        positions: saved,
-        tags: expectedTags
+        positions: savedPositions,
+        tags: expectedTags,
+        sideToTrain: Side.White,
+        name: "my white repertoire"
       };
       const repertoire = new Repertoire(
+        expected.name,
+        expected.sideToTrain,
         _.cloneDeep(expectedPositions),
         _.cloneDeep(expectedTags)
       );
@@ -45,7 +52,7 @@ describe("Repertoire", () => {
       const fen = "some fen";
       const san = "some san";
       (positions.addMove as jest.Mock).mockReturnValue(expected);
-      const repertoire = new Repertoire(positions, []);
+      const repertoire = new Repertoire("", Side.White, positions, []);
 
       const actual = repertoire.addMove(fen, san);
 
@@ -61,7 +68,7 @@ describe("Repertoire", () => {
       const fen = "some fen";
       const san = "some san";
       (positions.deleteMove as jest.Mock).mockReturnValue(expected);
-      const repertoire = new Repertoire(positions, []);
+      const repertoire = new Repertoire("", Side.White, positions, []);
 
       const actual = repertoire.deleteMove(fen, san);
 
@@ -77,7 +84,7 @@ describe("Repertoire", () => {
       ];
       const deletedFens = ["deleted fen0", "deleted fen1"];
       (positions.deleteMove as jest.Mock).mockReturnValue(deletedFens);
-      const repertoire = new Repertoire(positions, tags);
+      const repertoire = new Repertoire("", Side.White, positions, tags);
 
       repertoire.deleteMove("fen", "some san");
 
@@ -97,7 +104,7 @@ describe("Repertoire", () => {
       ];
       const fen = "some fen";
       (positions.movesFromPosition as jest.Mock).mockReturnValue(expected);
-      const repertoire = new Repertoire(positions, []);
+      const repertoire = new Repertoire("", Side.White, positions, []);
 
       const actual = repertoire.movesFromPosition(fen);
 
@@ -112,7 +119,7 @@ describe("Repertoire", () => {
       const expected = ["parent fen0", "parent fen1"];
       const fen = "some fen";
       (positions.parentPositions as jest.Mock).mockReturnValue(expected);
-      const repertoire = new Repertoire(positions, []);
+      const repertoire = new Repertoire("", Side.White, positions, []);
 
       const actual = repertoire.parentPositions(fen);
 
@@ -127,7 +134,7 @@ describe("Repertoire", () => {
       const expected = ["resulting fen0", "resulting fen1"];
       const fen = "some fen";
       (positions.descendantPositions as jest.Mock).mockReturnValue(expected);
-      const repertoire = new Repertoire(positions, []);
+      const repertoire = new Repertoire("", Side.White, positions, []);
 
       const actual = repertoire.descendantPositions(fen);
 
@@ -142,7 +149,7 @@ describe("Repertoire", () => {
       const expected = "pgn";
       const fen = "some fen";
       (positions.asPgn as jest.Mock).mockReturnValue(expected);
-      const repertoire = new Repertoire(positions, []);
+      const repertoire = new Repertoire("", Side.White, positions, []);
 
       const actual = repertoire.asPgn(fen);
 
@@ -155,7 +162,7 @@ describe("Repertoire", () => {
     it("should passthrough to the position collection ", () => {
       const positions = new PositionCollection({});
       const fen = "some fen";
-      const repertoire = new Repertoire(positions, []);
+      const repertoire = new Repertoire("", Side.White, positions, []);
 
       repertoire.loadPgn(fen);
 
@@ -171,7 +178,7 @@ describe("Repertoire", () => {
       ];
       const fen = "some fen";
       (positions.getVariations as jest.Mock).mockReturnValue(expected);
-      const repertoire = new Repertoire(positions, []);
+      const repertoire = new Repertoire("", Side.White, positions, []);
 
       const actual = repertoire.getVariations(fen);
 
