@@ -558,6 +558,32 @@ describe("PositionCollection", () => {
 
       expect(after).toEqual(before);
     });
+
+    it("should call onAddMove for all the added moves from a pgn game", () => {
+      const onAddMove = jest.fn();
+      const repertoire = new PositionCollection(startingRepertoire, onAddMove);
+      const pgn = `1. e4 e5 2. Nf3 Nc6 3. Bc4 *`;
+
+      repertoire.loadPgn(pgn);
+
+      expect(onAddMove).toHaveBeenCalledWith(startPosition, "e4");
+      expect(onAddMove).toHaveBeenCalledWith(
+        "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
+        "e5"
+      );
+      expect(onAddMove).toHaveBeenCalledWith(
+        "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
+        "Nf3"
+      );
+      expect(onAddMove).toHaveBeenCalledWith(
+        "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq -",
+        "Nc6"
+      );
+      expect(onAddMove).toHaveBeenCalledWith(
+        "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",
+        "Bc4"
+      );
+    });
   });
 
   describe("asSaved", () => {
