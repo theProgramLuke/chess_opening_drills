@@ -2,10 +2,7 @@ import _ from "lodash";
 import { json } from "graphlib";
 
 import { TagTree } from "@/store/repertoire/TagTree";
-import {
-  PositionCollection,
-  VariationMove
-} from "@/store/repertoire/PositionCollection";
+import { PositionCollection } from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
 
 export interface SavedRepertoire {
