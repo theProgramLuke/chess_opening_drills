@@ -29,7 +29,7 @@ export class Repertoire {
   constructor(saved: SavedRepertoire) {
     this.name = saved.name;
     this.sideToTrain = saved.sideToTrain;
-    this.positions = new PositionCollection(saved);
+    this.positions = new PositionCollection(saved.positions);
     this.tags = saved.tags;
     this.training = TrainingCollection.fromSaved(saved.training);
   }

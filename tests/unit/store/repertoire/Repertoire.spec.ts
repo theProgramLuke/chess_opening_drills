@@ -5,9 +5,6 @@ import { PositionCollection } from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
 import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
 
-jest.mock("@/store/repertoire/TagTree");
-jest.mock("@/store/repertoire/RepetitionTraining");
-
 describe("Repertoire", () => {
   describe("asSaved", () => {
     it("should save the repertoire", () => {
