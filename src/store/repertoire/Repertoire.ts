@@ -29,7 +29,12 @@ export class Repertoire {
   constructor(saved: SavedRepertoire) {
     this.name = saved.name;
     this.sideToTrain = saved.sideToTrain;
-    this.positions = new PositionCollection(saved.positions);
+    this.positions = new PositionCollection(
+      saved.positions,
+      (fen: string, san: string): void => {
+        this.onAddmove(fen, san);
+      }
+    );
     this.tags = saved.tags;
     this.training = TrainingCollection.fromSaved(saved.training);
   }
@@ -42,5 +47,9 @@ export class Repertoire {
       tags: this.tags,
       training: this.training.asSaved()
     };
+  }
+
+  private onAddmove(fen: string, san: string) {
+    this.training.addForTraining(fen, san);
   }
 }
