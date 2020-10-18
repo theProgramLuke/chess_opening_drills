@@ -9,7 +9,8 @@ import { Side } from "@/store/side";
 import {
   TrainingCollection,
   SavedTrainingCollection
-} from "./TrainingCollection";
+} from "@/store/repertoire/TrainingCollection";
+import { sideFromFen } from "@/store/repertoire/chessHelpers";
 
 export interface SavedRepertoire {
   name: string;
@@ -53,10 +54,7 @@ export class Repertoire {
   }
 
   private onAddMove(fen: string, san: string) {
-    let side = Side.White;
-    if (fen.includes(" b ")) {
-      side = Side.Black;
-    }
+    const side = sideFromFen(fen);
 
     if (this.sideToTrain === side) {
       this.training.addMove(fen, san);

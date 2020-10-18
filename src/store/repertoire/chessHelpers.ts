@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { Chess } from "chess.js";
 import { PgnMove, PgnGame } from "pgn-parser";
+import { Side } from "@/store/side";
 
 export function fenAfterMove(fen: string, san: string): string | undefined {
   const game = new Chess(fen + " 0 1"); // add back half move clock and full move number to be valid FEN
@@ -51,4 +52,12 @@ export function variationsFromPgnGame(game: PgnGame): string[][] {
   variationsFromGame(game.moves, variations);
 
   return variations;
+}
+
+export function sideFromFen(fen: string) {
+  let side = Side.White;
+  if (fen.includes(" b ")) {
+    side = Side.Black;
+  }
+  return side;
 }
