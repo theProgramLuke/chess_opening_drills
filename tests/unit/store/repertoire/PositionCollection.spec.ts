@@ -249,6 +249,24 @@ describe("PositionCollection", () => {
 
       expect(actualMoves).toEqual(moves);
     });
+
+    it("should get an empty array if the position is not in the repertoire", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+
+      const actualMoves = repertoire.movesFromPosition(
+        "not a repertoire position"
+      );
+
+      expect(actualMoves).toEqual([]);
+    });
+
+    it("should get an empty array if the position has no children", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+
+      const actualMoves = repertoire.movesFromPosition(startPosition);
+
+      expect(actualMoves).toEqual([]);
+    });
   });
 
   describe("deleteMove", () => {
