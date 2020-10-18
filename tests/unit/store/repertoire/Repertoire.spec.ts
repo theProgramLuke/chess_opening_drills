@@ -2,7 +2,8 @@ import _ from "lodash";
 
 import {
   PositionCollection,
-  AddMoveObserver
+  AddMoveObserver,
+  DeleteMoveObserver
 } from "@/store/repertoire/PositionCollection";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
@@ -54,6 +55,28 @@ describe("Repertoire", () => {
       }).addMoveObserver(fen, san);
 
       expect(repertoire.training.addMove).toBeCalledWith(fen, san);
+    });
+
+    it("should be updated with the deleted moves and positions when a move is deleted", () => {
+      const repertoire = new Repertoire({
+        name: "",
+        sideToTrain: Side.White,
+        positions: {},
+        tags: [],
+        training: {}
+      });
+      const fen = "fen";
+      const san = "san";
+      const positions = ["some", "positions"];
+
+      (repertoire.positions as PositionCollection & {
+        deleteMoveObserver: DeleteMoveObserver;
+      }).deleteMoveObserver(fen, san, positions);
+
+      expect(repertoire.training.deleteMove).toBeCalledWith(fen, san);
+      _.forEach(positions, position =>
+        expect(repertoire.training.deletePosition).toBeCalledWith(position)
+      );
     });
   });
 });

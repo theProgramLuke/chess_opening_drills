@@ -33,6 +33,9 @@ export class Repertoire {
       saved.positions,
       (fen: string, san: string): void => {
         this.onAddMove(fen, san);
+      },
+      (fen: string, san: string, deletedPositions: string[]) => {
+        this.deleteMove(fen, san, deletedPositions);
       }
     );
     this.tags = saved.tags;
@@ -51,5 +54,12 @@ export class Repertoire {
 
   private onAddMove(fen: string, san: string) {
     this.training.addMove(fen, san);
+  }
+
+  private deleteMove(fen: string, san: string, deletedPositions: string[]) {
+    this.training.deleteMove(fen, san);
+    _.forEach(deletedPositions, position =>
+      this.training.deletePosition(position)
+    );
   }
 }
