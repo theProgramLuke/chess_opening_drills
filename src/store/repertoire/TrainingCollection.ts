@@ -22,7 +22,7 @@ export class TrainingCollection {
     this.repetitionTraining = repetitionTraining;
   }
 
-  addForTraining(fen: string, san: string): void {
+  addMove(fen: string, san: string): void {
     const fenEntry = this.repetitionTraining[fen];
     if (fenEntry) {
       const sanEntry = fenEntry[san];

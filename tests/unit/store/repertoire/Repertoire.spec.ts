@@ -53,7 +53,7 @@ describe("Repertoire", () => {
         addMoveObserver: AddMoveObserver;
       }).addMoveObserver(fen, san);
 
-      expect(repertoire.training.addForTraining).toBeCalledWith(fen, san);
+      expect(repertoire.training.addMove).toBeCalledWith(fen, san);
     });
   });
 });

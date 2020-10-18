@@ -50,6 +50,6 @@ export class Repertoire {
   }
 
   private onAddmove(fen: string, san: string) {
-    this.training.addForTraining(fen, san);
+    this.training.addMove(fen, san);
   }
 }

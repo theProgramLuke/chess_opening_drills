@@ -27,8 +27,8 @@ describe("TrainingCollection", () => {
         }
       };
 
-      training.addForTraining(fen0, san0);
-      training.addForTraining(fen1, san1);
+      training.addMove(fen0, san0);
+      training.addMove(fen1, san1);
       const actual = training.repetitionTraining;
 
       expect(actual).toEqual(expected);
@@ -40,7 +40,7 @@ describe("TrainingCollection", () => {
       const san = "some san";
       const training = new TrainingCollection({ [fen]: { [san]: expected } });
 
-      training.addForTraining(fen, san);
+      training.addMove(fen, san);
       const actual = training.repetitionTraining[fen][san];
 
       expect(actual).toBe(expected);
@@ -58,8 +58,8 @@ describe("TrainingCollection", () => {
         }
       };
 
-      training.addForTraining(fen, san0);
-      training.addForTraining(fen, san1);
+      training.addMove(fen, san0);
+      training.addMove(fen, san1);
       const actual = training.repetitionTraining;
 
       expect(actual).toEqual(expected);
@@ -81,7 +81,7 @@ describe("TrainingCollection", () => {
           [san]: savedTraining
         }
       };
-      training.addForTraining(fen, san);
+      training.addMove(fen, san);
       (training.repetitionTraining[fen][san]
         .asSaved as jest.Mock).mockReturnValue(savedTraining);
 
