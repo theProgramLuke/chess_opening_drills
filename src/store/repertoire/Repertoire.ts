@@ -6,12 +6,17 @@ import {
   SavedPositionCollection
 } from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
+import {
+  TrainingCollection,
+  SavedTrainingCollection
+} from "./TrainingCollection";
 
 export interface SavedRepertoire {
   name: string;
   sideToTrain: Side;
   positions: SavedPositionCollection;
   tags: TagTree[];
+  training: SavedTrainingCollection;
 }
 
 export class Repertoire {
@@ -19,12 +24,14 @@ export class Repertoire {
   sideToTrain: Side;
   positions: PositionCollection;
   tags: TagTree[];
+  training: TrainingCollection;
 
   constructor(saved: SavedRepertoire) {
     this.name = saved.name;
     this.sideToTrain = saved.sideToTrain;
     this.positions = new PositionCollection(saved);
     this.tags = saved.tags;
+    this.training = TrainingCollection.fromSaved(saved.training);
   }
 
   asSaved(): SavedRepertoire {
@@ -32,7 +39,8 @@ export class Repertoire {
       name: this.name,
       sideToTrain: this.sideToTrain,
       positions: this.positions.asSaved(),
-      tags: this.tags
+      tags: this.tags,
+      training: this.training.asSaved()
     };
   }
 }

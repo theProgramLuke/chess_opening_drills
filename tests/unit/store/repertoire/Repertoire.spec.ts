@@ -3,6 +3,7 @@ import _ from "lodash";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { PositionCollection } from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
+import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
 
 jest.mock("@/store/repertoire/TagTree");
 jest.mock("@/store/repertoire/RepetitionTraining");
@@ -14,7 +15,8 @@ describe("Repertoire", () => {
         name: "my white repertoire",
         sideToTrain: Side.White,
         positions: new PositionCollection({}).asSaved(),
-        tags: []
+        tags: [],
+        training: new TrainingCollection({}).asSaved()
       };
       const repertoire = new Repertoire(_.cloneDeep(expected));
 
