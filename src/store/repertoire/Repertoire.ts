@@ -32,7 +32,7 @@ export class Repertoire {
     this.positions = new PositionCollection(
       saved.positions,
       (fen: string, san: string): void => {
-        this.onAddmove(fen, san);
+        this.onAddMove(fen, san);
       }
     );
     this.tags = saved.tags;
@@ -49,7 +49,7 @@ export class Repertoire {
     };
   }
 
-  private onAddmove(fen: string, san: string) {
+  private onAddMove(fen: string, san: string) {
     this.training.addMove(fen, san);
   }
 }
