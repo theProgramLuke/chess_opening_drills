@@ -3,7 +3,6 @@ import { json } from "graphlib";
 
 import { TagTree } from "@/store/repertoire/TagTree";
 import {
-  PositionCollectionInterface,
   PositionCollection,
   VariationMove
 } from "@/store/repertoire/PositionCollection";
@@ -21,13 +20,13 @@ export interface SavedRepertoire {
 export class Repertoire {
   name: string;
   sideToTrain: Side;
-  positions: PositionCollectionInterface;
+  positions: PositionCollection;
   tags: TagTree[];
 
   constructor(
     name: string,
     sideToTrain: Side,
-    positions: PositionCollectionInterface,
+    positions: PositionCollection,
     tags: TagTree[]
   ) {
     this.name = name;
