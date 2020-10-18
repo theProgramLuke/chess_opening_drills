@@ -104,6 +104,19 @@ describe("TrainingCollection", () => {
     });
   });
 
+  describe("deletePosition", () => {
+    it("should remove the entry for the delete position", () => {
+      const training = new TrainingCollection();
+      const fen = "fen";
+      training.addMove(fen, "san0");
+      training.addMove(fen, "san1");
+
+      training.deletePosition(fen);
+
+      expect(training.repetitionTraining[fen]).toBeUndefined();
+    });
+  });
+
   describe("asSaved", () => {
     it("should capture the state of the training", () => {
       const training = new TrainingCollection();

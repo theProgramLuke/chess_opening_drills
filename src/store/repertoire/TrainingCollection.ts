@@ -42,7 +42,7 @@ export class TrainingCollection {
     }
   }
 
-  private deletePosition(fen: string) {
+  deletePosition(fen: string) {
     delete this.repetitionTraining[fen];
   }
 
