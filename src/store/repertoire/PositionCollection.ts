@@ -17,11 +17,18 @@ export interface VariationMove {
   resultingFen: string;
 }
 
+export type AddMoveObserver = (fen: string, san: string) => void;
+
 export class PositionCollection {
   private graph: Graph<never, never, MoveData>;
+  private onAddMove: AddMoveObserver;
 
-  constructor(serialized: json.SavedGraph) {
+  constructor(
+    serialized: json.SavedGraph,
+    onAddMove: AddMoveObserver = _.noop
+  ) {
     this.graph = json.read(serialized);
+    this.onAddMove = onAddMove;
   }
 
   addMove(fen: string, san: string): string {
@@ -29,6 +36,8 @@ export class PositionCollection {
 
     if (nextFen) {
       this.graph.setEdge(fen, nextFen, { san });
+
+      this.onAddMove(fen, san);
 
       return nextFen;
     } else {

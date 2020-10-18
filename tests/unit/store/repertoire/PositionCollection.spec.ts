@@ -173,6 +173,26 @@ describe("PositionCollection", () => {
         "rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq -"
       );
     });
+
+    it("should call onAddMove with the fen and san if a move was added", () => {
+      const onAddMove = jest.fn();
+      const repertoire = new PositionCollection(startingRepertoire, onAddMove);
+      const san = "e4";
+
+      repertoire.addMove(startPosition, san);
+
+      expect(onAddMove).toBeCalledWith(startPosition, san);
+    });
+
+    it("should not call onAddMove if a move was not added", () => {
+      const onAddMove = jest.fn();
+      const repertoire = new PositionCollection(startingRepertoire, onAddMove);
+      const san = "e5"; // illegal move
+
+      repertoire.addMove(startPosition, san);
+
+      expect(onAddMove).not.toBeCalled();
+    });
   });
 
   describe("descendantPositions", () => {
