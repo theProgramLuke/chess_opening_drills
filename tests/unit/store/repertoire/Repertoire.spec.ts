@@ -1,7 +1,7 @@
 import _ from "lodash";
 
-import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { PositionCollection } from "@/store/repertoire/PositionCollection";
+import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
 import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
 
