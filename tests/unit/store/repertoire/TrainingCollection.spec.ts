@@ -11,7 +11,7 @@ import {
 jest.mock("@/store/repertoire/RepetitionTraining");
 
 describe("TrainingCollection", () => {
-  describe("addForTraining", () => {
+  describe("addMove", () => {
     it("should track repetition training for fen/san pairs", () => {
       const training = new TrainingCollection();
       const fen0 = "some fen0";
@@ -63,6 +63,44 @@ describe("TrainingCollection", () => {
       const actual = training.repetitionTraining;
 
       expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("deleteMove", () => {
+    it("should remove the san entry for the deleted move", () => {
+      const training = new TrainingCollection();
+      const fen = "fen";
+      const san = "san";
+      training.addMove(fen, san);
+      training.addMove(fen, "other");
+
+      training.deleteMove(fen, san);
+
+      expect(training.repetitionTraining[fen][san]).toBeUndefined();
+    });
+
+    it("should not remove the fen entry for other moves from the same fen", () => {
+      const training = new TrainingCollection();
+      const fen = "fen";
+      const san = "san";
+      const other = "other san";
+      training.addMove(fen, san);
+      training.addMove(fen, other);
+
+      training.deleteMove(fen, san);
+
+      expect(training.repetitionTraining[fen][other]).toBeDefined();
+    });
+
+    it("should remove the fen entry if there are no remaining moves", () => {
+      const training = new TrainingCollection();
+      const fen = "fen";
+      const san = "san";
+      training.addMove(fen, san);
+
+      training.deleteMove(fen, san);
+
+      expect(training.repetitionTraining[fen]).toBeUndefined();
     });
   });
 

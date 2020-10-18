@@ -34,6 +34,18 @@ export class TrainingCollection {
     }
   }
 
+  deleteMove(fen: string, san: string): void {
+    delete this.repetitionTraining[fen][san];
+
+    if (_.isEmpty(this.repetitionTraining[fen])) {
+      this.deletePosition(fen);
+    }
+  }
+
+  private deletePosition(fen: string) {
+    delete this.repetitionTraining[fen];
+  }
+
   asSaved(): SavedTrainingCollection {
     const saved: SavedTrainingCollection = {};
 
