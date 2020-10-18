@@ -1,14 +1,16 @@
 import _ from "lodash";
-import { json } from "graphlib";
 
 import { TagTree } from "@/store/repertoire/TagTree";
-import { PositionCollection } from "@/store/repertoire/PositionCollection";
+import {
+  PositionCollection,
+  SavedPositionCollection
+} from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
 
 export interface SavedRepertoire {
   name: string;
   sideToTrain: Side;
-  positions: json.SavedGraph;
+  positions: SavedPositionCollection;
   tags: TagTree[];
 }
 
@@ -18,16 +20,11 @@ export class Repertoire {
   positions: PositionCollection;
   tags: TagTree[];
 
-  constructor(
-    name: string,
-    sideToTrain: Side,
-    positions: PositionCollection,
-    tags: TagTree[]
-  ) {
-    this.name = name;
-    this.sideToTrain = sideToTrain;
-    this.positions = positions;
-    this.tags = tags;
+  constructor(saved: SavedRepertoire) {
+    this.name = saved.name;
+    this.sideToTrain = saved.sideToTrain;
+    this.positions = new PositionCollection(saved);
+    this.tags = saved.tags;
   }
 
   asSaved(): SavedRepertoire {

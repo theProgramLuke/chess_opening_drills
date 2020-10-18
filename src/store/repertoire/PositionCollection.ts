@@ -24,13 +24,15 @@ export type DeleteMoveObserver = (
   deletedPositions: string[]
 ) => void;
 
+export type SavedPositionCollection = json.SavedGraph;
+
 export class PositionCollection {
   private graph: Graph<never, never, MoveData>;
   private onAddMove: AddMoveObserver;
   private onDeleteMove: DeleteMoveObserver;
 
   constructor(
-    serialized: json.SavedGraph,
+    serialized: SavedPositionCollection,
     onAddMove: AddMoveObserver = _.noop,
     onDeleteMove: DeleteMoveObserver = _.noop
   ) {
@@ -93,7 +95,7 @@ export class PositionCollection {
     return _.tail(alg.preorder(this.graph, [fen]));
   }
 
-  asSaved(): json.SavedGraph {
+  asSaved(): SavedPositionCollection {
     return json.write(this.graph);
   }
 
