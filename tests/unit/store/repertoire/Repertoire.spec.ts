@@ -2,11 +2,7 @@ import _ from "lodash";
 
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { TagTree } from "@/store/repertoire/TagTree";
-import {
-  PositionCollection,
-  VariationMove
-} from "@/store/repertoire/PositionCollection";
-import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
+import { PositionCollection } from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
 
 jest.mock("@/store/repertoire/PositionCollection");
