@@ -53,7 +53,14 @@ export class Repertoire {
   }
 
   private onAddMove(fen: string, san: string) {
-    this.training.addMove(fen, san);
+    let side = Side.White;
+    if (fen.includes(" b ")) {
+      side = Side.Black;
+    }
+
+    if (this.sideToTrain === side) {
+      this.training.addMove(fen, san);
+    }
   }
 
   private deleteMove(fen: string, san: string, deletedPositions: string[]) {

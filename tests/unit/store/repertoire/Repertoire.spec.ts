@@ -40,7 +40,7 @@ describe("Repertoire", () => {
   });
 
   describe("training", () => {
-    it("should be updated with the new move when a move is added to the positions", () => {
+    it("should be updated with the new move when a move is added to the positions for the side to train", () => {
       const repertoire = new Repertoire({
         name: "",
         sideToTrain: Side.White,
@@ -48,7 +48,7 @@ describe("Repertoire", () => {
         tags: [],
         training: {}
       });
-      const fen = "fen";
+      const fen = "fen w ";
       const san = "san";
 
       (repertoire.positions as PositionCollection & {
@@ -56,6 +56,24 @@ describe("Repertoire", () => {
       }).addMoveObserver(fen, san);
 
       expect(repertoire.training.addMove).toBeCalledWith(fen, san);
+    });
+
+    it("should not be updated with the new move when a move is added to the positions for the side not to train", () => {
+      const repertoire = new Repertoire({
+        name: "",
+        sideToTrain: Side.White,
+        positions: {},
+        tags: [],
+        training: {}
+      });
+      const fen = "fen b ";
+      const san = "san";
+
+      (repertoire.positions as PositionCollection & {
+        addMoveObserver: AddMoveObserver;
+      }).addMoveObserver(fen, san);
+
+      expect(repertoire.training.addMove).not.toBeCalled();
     });
 
     it("should be updated with the deleted moves and positions when a move is deleted", () => {
