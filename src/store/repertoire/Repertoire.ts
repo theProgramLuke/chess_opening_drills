@@ -15,8 +15,6 @@ export interface SavedRepertoire {
   tags: TagTree[];
 }
 
-// Implement PositionCollectionInterface with positions as private so that
-// we can modify the other repertoire members on position mutations.
 export class Repertoire {
   name: string;
   sideToTrain: Side;
