@@ -4,7 +4,6 @@ import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { PositionCollection } from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
 
-jest.mock("@/store/repertoire/PositionCollection");
 jest.mock("@/store/repertoire/TagTree");
 jest.mock("@/store/repertoire/RepetitionTraining");
 
