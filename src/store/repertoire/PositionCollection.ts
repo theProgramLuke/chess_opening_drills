@@ -26,7 +26,19 @@ export type DeleteMoveObserver = (
 
 export type SavedPositionCollection = json.SavedGraph;
 
-export class PositionCollection {
+export interface PositionCollectionInterface {
+  addMove: (fen: string, san: string) => string;
+  deleteMove: (fen: string, san: string) => string[];
+  movesFromPosition: (fen: string) => VariationMove[];
+  parentPositions: (fen: string) => string[];
+  descendantPositions: (fen: string) => string[];
+  asSaved: () => Record<string, any>;
+  asPgn: (fen: string) => string;
+  loadPgn: (pgn: string) => void;
+  getVariations: (fen: string) => VariationMove[][];
+}
+
+export class PositionCollection implements PositionCollectionInterface {
   private graph: Graph<never, never, MoveData>;
   private onAddMove: AddMoveObserver;
   private onDeleteMove: DeleteMoveObserver;
