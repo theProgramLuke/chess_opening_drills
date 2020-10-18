@@ -18,17 +18,25 @@ export interface VariationMove {
 }
 
 export type AddMoveObserver = (fen: string, san: string) => void;
+export type DeleteMoveObserver = (
+  fen: string,
+  san: string,
+  deletedPositions: string[]
+) => void;
 
 export class PositionCollection {
   private graph: Graph<never, never, MoveData>;
   private onAddMove: AddMoveObserver;
+  private onDeleteMove: DeleteMoveObserver;
 
   constructor(
     serialized: json.SavedGraph,
-    onAddMove: AddMoveObserver = _.noop
+    onAddMove: AddMoveObserver = _.noop,
+    onDeleteMove: DeleteMoveObserver = _.noop
   ) {
     this.graph = json.read(serialized);
     this.onAddMove = onAddMove;
+    this.onDeleteMove = onDeleteMove;
   }
 
   addMove(fen: string, san: string): string {
@@ -46,13 +54,17 @@ export class PositionCollection {
   }
 
   deleteMove(fen: string, san: string): string[] {
-    const nextFen = fenAfterMove(fen, san);
+    const nextFen = fenAfterMove(fen, san) || "";
+    const moveExists = this.graph.hasEdge(fen, nextFen);
 
-    if (nextFen) {
+    if (moveExists) {
       const startPosition = this.graph.sources()[0];
 
       this.graph.removeEdge(fen, nextFen);
-      return this.removeOrphans(startPosition);
+      const removed = this.removeOrphans(startPosition);
+      this.onDeleteMove(fen, san, removed);
+
+      return removed;
     } else {
       return [];
     }

@@ -2,7 +2,8 @@ import _ from "lodash";
 
 import {
   PositionCollection,
-  VariationMove
+  VariationMove,
+  DeleteMoveObserver
 } from "@/store/repertoire/PositionCollection";
 
 const startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
@@ -252,9 +253,15 @@ describe("PositionCollection", () => {
 
   describe("deleteMove", () => {
     let repertoire: PositionCollection;
+    let onDeleteMove: DeleteMoveObserver;
 
     beforeEach(() => {
-      repertoire = new PositionCollection(startingRepertoire);
+      onDeleteMove = jest.fn();
+      repertoire = new PositionCollection(
+        startingRepertoire,
+        _.noop,
+        onDeleteMove
+      );
       let fen = repertoire.addMove(startPosition, "d4");
       fen = repertoire.addMove(fen, "d5");
       fen = repertoire.addMove(startPosition, "d3");
@@ -292,6 +299,24 @@ describe("PositionCollection", () => {
         "rnbqkbnr/ppp1pppp/3p4/8/8/3P4/PPP1PPPP/RNBQKBNR w KQkq -",
         "rnbqkbnr/ppp1pppp/3p4/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq -"
       ]);
+    });
+
+    it("should call onDeleteMove with the deleted move and positions if a move was deleted", () => {
+      const san = "d3";
+
+      const removedPositions = repertoire.deleteMove(startPosition, san);
+
+      expect(onDeleteMove).toHaveBeenCalledWith(
+        startPosition,
+        san,
+        removedPositions
+      );
+    });
+
+    it("should not call onDeleteMove if no move was deleted", () => {
+      repertoire.deleteMove(startPosition, "a3"); // not a repertoire move
+
+      expect(onDeleteMove).not.toHaveBeenCalled();
     });
   });
 

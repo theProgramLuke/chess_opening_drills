@@ -3,6 +3,7 @@ src/store/pgnGrammar.ts
 
 # Code coverage reports
 coverage
+.coverage
 
 # Common files
 .DS_Store
