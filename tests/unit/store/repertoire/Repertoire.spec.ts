@@ -8,6 +8,7 @@ import {
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
 import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
+import { TagTree } from "@/store/repertoire/TagTree";
 
 jest.mock("@/store/repertoire/TagTree");
 jest.mock("@/store/repertoire/RepetitionTraining");
@@ -76,6 +77,29 @@ describe("Repertoire", () => {
       expect(repertoire.training.deleteMove).toBeCalledWith(fen, san);
       _.forEach(positions, position =>
         expect(repertoire.training.deletePosition).toBeCalledWith(position)
+      );
+    });
+  });
+
+  describe("tags", () => {
+    it("should each be updated with the deleted positions when a position is deleted", () => {
+      const repertoire = new Repertoire({
+        name: "",
+        sideToTrain: Side.White,
+        positions: {},
+        tags: [new TagTree("", "", "", []), new TagTree("", "", "", [])],
+        training: {}
+      });
+      const positions = ["some", "positions"];
+
+      (repertoire.positions as PositionCollection & {
+        deleteMoveObserver: DeleteMoveObserver;
+      }).deleteMoveObserver("", "", positions);
+
+      _.forEach(repertoire.tags, tag =>
+        _.forEach(positions, position =>
+          expect(tag.removeTag).toBeCalledWith(position)
+        )
       );
     });
   });

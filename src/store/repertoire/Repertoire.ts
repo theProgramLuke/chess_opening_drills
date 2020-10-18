@@ -58,8 +58,10 @@ export class Repertoire {
 
   private deleteMove(fen: string, san: string, deletedPositions: string[]) {
     this.training.deleteMove(fen, san);
-    _.forEach(deletedPositions, position =>
-      this.training.deletePosition(position)
-    );
+    _.forEach(deletedPositions, position => {
+      this.training.deletePosition(position);
+
+      _.forEach(this.tags, tag => tag.removeTag(position));
+    });
   }
 }
