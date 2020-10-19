@@ -12,8 +12,7 @@ export interface MoveData {
   san: string;
 }
 
-export interface VariationMove {
-  moveData: MoveData;
+export interface VariationMove extends MoveData {
   resultingFen: string;
 }
 
@@ -36,6 +35,7 @@ export interface PositionCollectionInterface {
   asPgn: (fen: string) => string;
   loadPgn: (pgn: string) => void;
   getChildVariations: (fen: string) => VariationMove[][];
+  getSourceVariations: (fen: string) => VariationMove[][];
 }
 
 export class PositionCollection implements PositionCollectionInterface {
@@ -90,7 +90,7 @@ export class PositionCollection implements PositionCollectionInterface {
     if (successors) {
       return _.map(successors, successor => {
         return {
-          moveData: this.graph.edge(fen, successor),
+          san: this.graph.edge(fen, successor).san,
           resultingFen: successor
         };
       });
@@ -127,7 +127,7 @@ export class PositionCollection implements PositionCollectionInterface {
     }
 
     const variations = _.map(this.getChildVariations(fen), variation =>
-      _.map(variation, move => move.moveData.san)
+      _.map(variation, move => move.san)
     );
 
     if (fen.includes(" b ")) {
@@ -223,7 +223,7 @@ export class PositionCollection implements PositionCollectionInterface {
 
         this.collectVariations(successor, collector, [
           ...path,
-          { resultingFen: successor, moveData: move }
+          { resultingFen: successor, san: move.san }
         ]);
       });
     }

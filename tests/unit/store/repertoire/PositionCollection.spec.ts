@@ -32,7 +32,7 @@ function addMovesToRepertoire(
 
     variation.push({
       resultingFen,
-      moveData: { san: move }
+      san: move
     });
     previousPosition = resultingFen;
   });
@@ -44,14 +44,13 @@ describe("PositionCollection", () => {
   describe("addMove", () => {
     it("should add the move as an outgoing move of the given position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const move = { san: "e4" };
+      const san = "e4";
+      const expected = [{ san, resultingFen: expect.anything() }];
 
-      repertoire.addMove(startPosition, move.san);
-      const moves = repertoire.movesFromPosition(startPosition);
+      repertoire.addMove(startPosition, san);
+      const actual = repertoire.movesFromPosition(startPosition);
 
-      expect(moves).toEqual([
-        { moveData: move, resultingFen: expect.anything() }
-      ]);
+      expect(actual).toEqual(expected);
     });
 
     it("should not add an illegal move", () => {
@@ -77,16 +76,17 @@ describe("PositionCollection", () => {
     it("should add the resulting position with the correct FEN", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const san = "a3";
+      const expected = [
+        {
+          san: expect.anything(),
+          resultingFen: "rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq -"
+        }
+      ];
 
       repertoire.addMove(startPosition, san);
       const moves = repertoire.movesFromPosition(startPosition);
 
-      expect(moves).toEqual([
-        {
-          moveData: expect.anything(),
-          resultingFen: "rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq -"
-        }
-      ]);
+      expect(moves).toEqual(expected);
     });
 
     it("should add the move as an incoming move of the resulting position", () => {
@@ -152,12 +152,11 @@ describe("PositionCollection", () => {
       const san = "e4";
 
       repertoire.addMove(startPosition, san);
-
       const moves = repertoire.movesFromPosition(startPosition);
 
       expect(moves).toEqual([
         {
-          moveData: expect.anything(),
+          san,
           resultingFen: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -"
         }
       ]);
@@ -177,7 +176,7 @@ describe("PositionCollection", () => {
 
       expect(moves).toEqual([
         {
-          moveData: expect.anything(),
+          san: expect.anything(),
           resultingFen:
             "rnbqkbnr/ppp1pppp/8/8/P2pP3/8/1PPP1PPP/RNBQKBNR b KQkq e3"
         }
@@ -236,12 +235,12 @@ describe("PositionCollection", () => {
         {
           resultingFen:
             "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
-          moveData: { san: "e4" }
+          san: "e4"
         },
         {
           resultingFen:
             "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
-          moveData: { san: "d4" }
+          san: "d4"
         }
       ];
       const repertoire = new PositionCollection({
@@ -255,12 +254,12 @@ describe("PositionCollection", () => {
           {
             v: startPosition,
             w: moves[0].resultingFen,
-            value: moves[0].moveData
+            value: { san: moves[0].san }
           },
           {
             v: startPosition,
             w: moves[1].resultingFen,
-            value: moves[1].moveData
+            value: { san: moves[1].san }
           }
         ]
       });

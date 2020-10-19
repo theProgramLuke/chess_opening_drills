@@ -60,14 +60,6 @@ export class Repertoire {
     };
   }
 
-  getVariationsForTraining(
-    tagsToTrain: TagTree[],
-    trainingModes: TrainingMode[],
-    entireVariation: boolean
-  ): Variation[] {
-    return [];
-  }
-
   private onAddMove(fen: string, san: string) {
     const side = sideFromFen(fen);
 

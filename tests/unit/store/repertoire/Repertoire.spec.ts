@@ -3,7 +3,8 @@ import _ from "lodash";
 import {
   PositionCollection,
   AddMoveObserver,
-  DeleteMoveObserver
+  DeleteMoveObserver,
+  VariationMove
 } from "@/store/repertoire/PositionCollection";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
@@ -120,39 +121,6 @@ describe("Repertoire", () => {
           expect(tag.removeTag).toBeCalledWith(position)
         )
       );
-    });
-  });
-
-  describe("getVariationsForTraining", () => {
-    it(`should get the full variations leading to moves
-        which match the training modes and descend from the tags to train
-        when training full lines`, () => {
-      const repertoire = new Repertoire({
-        name: "",
-        sideToTrain: Side.White,
-        positions: {},
-        tags: [],
-        training: {}
-      });
-      const tagsToTrain = [
-        new TagTree("", "fen0", "", []),
-        new TagTree("", "fen1", "", [])
-      ];
-      const descendantPositions: Record<string, string[]> = {
-        [tagsToTrain[0].fen]: ["position0", "position1"],
-        [tagsToTrain[1].fen]: ["position2", "position3"]
-      };
-      repertoire.positions.descendantPositions = jest.fn(
-        (fen: string) => descendantPositions[fen]
-      );
-
-      const actual = repertoire.getVariationsForTraining(
-        tagsToTrain,
-        [TrainingMode.Scheduled],
-        true
-      );
-
-      // TODO
     });
   });
 });
