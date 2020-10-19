@@ -20,6 +20,26 @@ const startingRepertoire = {
   edges: []
 };
 
+function addMovesToRepertoire(
+  repertoire: PositionCollection,
+  moves: string[]
+): VariationMove[] {
+  const variation: VariationMove[] = [];
+  let previousPosition = startPosition;
+
+  _.forEach(moves, move => {
+    const resultingFen = repertoire.addMove(previousPosition, move);
+
+    variation.push({
+      resultingFen,
+      moveData: { san: move }
+    });
+    previousPosition = resultingFen;
+  });
+
+  return variation;
+}
+
 describe("PositionCollection", () => {
   describe("addMove", () => {
     it("should add the move as an outgoing move of the given position", () => {
@@ -341,28 +361,10 @@ describe("PositionCollection", () => {
   describe("getChildVariations", () => {
     it("should get all the possible variations from the position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const variations: VariationMove[][] = [[], []];
-      variations[0].push({
-        resultingFen: repertoire.addMove(startPosition, "e4"),
-        moveData: { san: "e4" }
-      });
-      variations[1].push(variations[0][0]);
-      variations[0].push({
-        resultingFen: repertoire.addMove(variations[0][0].resultingFen, "e5"),
-        moveData: { san: "e5" }
-      });
-      variations[0].push({
-        resultingFen: repertoire.addMove(variations[0][1].resultingFen, "Nf3"),
-        moveData: { san: "Nf3" }
-      });
-      variations[1].push({
-        resultingFen: repertoire.addMove(variations[1][0].resultingFen, "c6"),
-        moveData: { san: "c6" }
-      });
-      variations[1].push({
-        resultingFen: repertoire.addMove(variations[1][1].resultingFen, "d4"),
-        moveData: { san: "d4" }
-      });
+      const variations: VariationMove[][] = [
+        addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3"]),
+        addMovesToRepertoire(repertoire, ["e4", "c6", "d4"])
+      ];
 
       const actual = repertoire.getChildVariations(startPosition);
 
@@ -379,23 +381,12 @@ describe("PositionCollection", () => {
 
     it("should stop the variation when a cycle is reached", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const variation: VariationMove[] = [];
-      variation.push({
-        resultingFen: repertoire.addMove(startPosition, "Nf3"),
-        moveData: { san: "Nf3" }
-      });
-      variation.push({
-        resultingFen: repertoire.addMove(variation[0].resultingFen, "Nf6"),
-        moveData: { san: "Nf6" }
-      });
-      variation.push({
-        resultingFen: repertoire.addMove(variation[1].resultingFen, "Ng1"),
-        moveData: { san: "Ng1" }
-      });
-      variation.push({
-        resultingFen: repertoire.addMove(variation[2].resultingFen, "Ng8"),
-        moveData: { san: "Ng8" }
-      });
+      const variation: VariationMove[] = addMovesToRepertoire(repertoire, [
+        "Nf3",
+        "Nf6",
+        "Ng1",
+        "Ng8"
+      ]);
 
       const actual = repertoire.getChildVariations(startPosition);
 
@@ -406,47 +397,10 @@ describe("PositionCollection", () => {
   describe("getSourceVariations", () => {
     it("should get the variations that gives rise to a position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const expected: VariationMove[][] = [[], []];
-      expected[0].push({
-        resultingFen: repertoire.addMove(startPosition, "e4"),
-        moveData: { san: "e4" }
-      });
-      expected[0].push({
-        resultingFen: repertoire.addMove(expected[0][0].resultingFen, "e5"),
-        moveData: { san: "e5" }
-      });
-      expected[0].push({
-        resultingFen: repertoire.addMove(expected[0][1].resultingFen, "Nf3"),
-        moveData: { san: "Nf3" }
-      });
-      expected[0].push({
-        resultingFen: repertoire.addMove(expected[0][2].resultingFen, "Nc6"),
-        moveData: { san: "Nc6" }
-      });
-      expected[0].push({
-        resultingFen: repertoire.addMove(expected[0][3].resultingFen, "d4"),
-        moveData: { san: "d4" }
-      });
-      expected[1].push({
-        resultingFen: repertoire.addMove(startPosition, "Nf3"),
-        moveData: { san: "Nf3" }
-      });
-      expected[1].push({
-        resultingFen: repertoire.addMove(expected[1][0].resultingFen, "e5"),
-        moveData: { san: "e5" }
-      });
-      expected[1].push({
-        resultingFen: repertoire.addMove(expected[1][1].resultingFen, "e4"),
-        moveData: { san: "e4" }
-      });
-      expected[1].push({
-        resultingFen: repertoire.addMove(expected[1][2].resultingFen, "Nc6"),
-        moveData: { san: "Nc6" }
-      });
-      expected[1].push({
-        resultingFen: repertoire.addMove(expected[1][3].resultingFen, "d4"),
-        moveData: { san: "d4" }
-      });
+      const expected: VariationMove[][] = [
+        addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3", "Nc6", "d4"]),
+        addMovesToRepertoire(repertoire, ["Nf3", "e5", "e4", "Nc6", "d4"])
+      ];
 
       const actual = repertoire.getSourceVariations(
         "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",
@@ -539,12 +493,8 @@ describe("PositionCollection", () => {
         ["e4", "e5", "Nf3", "Nc6", "Bc4"],
         ["e4", "c5", "d4"]
       ];
-      _.forEach(variations, variation => {
-        let fen = startPosition;
-        _.forEach(variation, move => {
-          fen = repertoire.addMove(fen, move);
-        });
-      });
+      addMovesToRepertoire(repertoire, variations[0]);
+      addMovesToRepertoire(repertoire, variations[1]);
       const expectedPgn = `[Event "Chess Opening Drills"]
 [Site ""]
 [Date "??"]
@@ -565,81 +515,28 @@ describe("PositionCollection", () => {
     it("should import all the moves from a pgn game into the repertoire", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const pgn = `1. e4 e5 2. Nf3 Nc6 3. Bc4 *`;
-      const expectedVariations: VariationMove[][] = [
-        [
-          {
-            resultingFen:
-              "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
-            moveData: { san: "e4" }
-          },
-          {
-            resultingFen:
-              "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
-            moveData: { san: "e5" }
-          },
-          {
-            resultingFen:
-              "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq -",
-            moveData: { san: "Nf3" }
-          },
-          {
-            resultingFen:
-              "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",
-            moveData: { san: "Nc6" }
-          },
-          {
-            resultingFen:
-              "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq -",
-            moveData: { san: "Bc4" }
-          }
-        ]
+      const expected: VariationMove[][] = [
+        addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3", "Nc6", "Bc4"])
       ];
 
       repertoire.loadPgn(pgn);
       const loaded = repertoire.getChildVariations(startPosition);
 
-      expect(loaded).toEqual(expectedVariations);
+      expect(loaded).toEqual(expected);
     });
 
     it("should import sub variations from a pgn game into the repertoire", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const pgn = `1. e4 e5 (1... c5 2. d4) *`;
       const expectedVariations: VariationMove[][] = [
-        [
-          {
-            resultingFen:
-              "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
-            moveData: { san: "e4" }
-          },
-          {
-            resultingFen:
-              "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
-            moveData: { san: "e5" }
-          }
-        ],
-        [
-          {
-            resultingFen:
-              "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
-            moveData: { san: "e4" }
-          },
-          {
-            resultingFen:
-              "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
-            moveData: { san: "c5" }
-          },
-          {
-            resultingFen:
-              "rnbqkbnr/pp1ppppp/8/2p5/3PP3/8/PPP2PPP/RNBQKBNR b KQkq -",
-            moveData: { san: "d4" }
-          }
-        ]
-      ].sort();
+        addMovesToRepertoire(repertoire, ["e4", "e5"]),
+        addMovesToRepertoire(repertoire, ["e4", "c5", "d4"])
+      ];
 
       repertoire.loadPgn(pgn);
       const loaded = repertoire.getChildVariations(startPosition);
 
-      expect(loaded.sort()).toEqual(expectedVariations);
+      expect(loaded).toEqual(expectedVariations);
     });
 
     it("should not change the repertoire if the pgn start position is not in the repertoire", () => {
