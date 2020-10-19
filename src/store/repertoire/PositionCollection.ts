@@ -173,15 +173,22 @@ export class PositionCollection implements PositionCollectionInterface {
     return variations;
   }
 
-  getSourceVariations(fen: string, san: string): VariationMove[][] {
+  getSourceVariations(fen: string): VariationMove[][] {
     const startPosition = this.graph.sources()[0];
     const allVariations = this.getChildVariations(startPosition);
 
-    const variationsIncludingPosition = _.filter(allVariations, variation =>
-      _.some(variation, move => move.resultingFen === fen)
-    );
+    const truncatedVariations = _.map(allVariations, variation => {
+      const positionIndex = _.findIndex(
+        variation,
+        move => move.resultingFen === fen
+      );
 
-    return variationsIncludingPosition;
+      return _.take(variation, positionIndex + 1);
+    });
+
+    _.remove(truncatedVariations, _.isEmpty);
+
+    return truncatedVariations;
   }
 
   private removeOrphans(startPosition: string): string[] {

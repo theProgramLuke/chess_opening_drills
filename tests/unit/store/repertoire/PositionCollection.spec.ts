@@ -403,8 +403,7 @@ describe("PositionCollection", () => {
       ];
 
       const actual = repertoire.getSourceVariations(
-        "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",
-        "d4"
+        "r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq -"
       );
 
       expect(actual).toEqual(expected);
@@ -413,14 +412,25 @@ describe("PositionCollection", () => {
     it("should not include variations that don't gives rise to the position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const expected: VariationMove[][] = [
-        addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3"])
+        addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3", "Nc6", "d4"])
       ];
       addMovesToRepertoire(repertoire, ["d4", "d5", "c4"]);
+      const fen = expected[0][4].resultingFen;
 
-      const actual = repertoire.getSourceVariations(
-        "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
-        "Nf3"
-      );
+      const actual = repertoire.getSourceVariations(fen);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should not include moves after the position", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+      const variations: VariationMove[][] = [
+        addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3", "Nc6", "d4"])
+      ];
+      const expected = [_.take(variations[0], 3)];
+      const fen = expected[0][2].resultingFen;
+
+      const actual = repertoire.getSourceVariations(fen);
 
       expect(actual).toEqual(expected);
     });
