@@ -13,6 +13,7 @@ export interface MoveData {
 }
 
 export interface VariationMove extends MoveData {
+  sourceFen: string;
   resultingFen: string;
 }
 
@@ -90,6 +91,7 @@ export class PositionCollection implements PositionCollectionInterface {
     if (successors) {
       return _.map(successors, successor => {
         return {
+          sourceFen: fen,
           san: this.graph.edge(fen, successor).san,
           resultingFen: successor
         };
@@ -223,7 +225,7 @@ export class PositionCollection implements PositionCollectionInterface {
 
         this.collectVariations(successor, collector, [
           ...path,
-          { resultingFen: successor, san: move.san }
+          { sourceFen: fen, resultingFen: successor, san: move.san }
         ]);
       });
     }

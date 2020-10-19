@@ -25,16 +25,18 @@ function addMovesToRepertoire(
   moves: string[]
 ): VariationMove[] {
   const variation: VariationMove[] = [];
-  let previousPosition = startPosition;
+  let sourceFen = startPosition;
 
   _.forEach(moves, move => {
-    const resultingFen = repertoire.addMove(previousPosition, move);
+    const resultingFen = repertoire.addMove(sourceFen, move);
 
     variation.push({
+      sourceFen,
       resultingFen,
       san: move
     });
-    previousPosition = resultingFen;
+
+    sourceFen = resultingFen;
   });
 
   return variation;
@@ -45,7 +47,9 @@ describe("PositionCollection", () => {
     it("should add the move as an outgoing move of the given position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const san = "e4";
-      const expected = [{ san, resultingFen: expect.anything() }];
+      const expected: VariationMove[] = [
+        { san, resultingFen: expect.anything(), sourceFen: startPosition }
+      ];
 
       repertoire.addMove(startPosition, san);
       const actual = repertoire.movesFromPosition(startPosition);
@@ -76,10 +80,11 @@ describe("PositionCollection", () => {
     it("should add the resulting position with the correct FEN", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const san = "a3";
-      const expected = [
+      const expected: VariationMove[] = [
         {
           san: expect.anything(),
-          resultingFen: "rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq -"
+          resultingFen: "rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq -",
+          sourceFen: startPosition
         }
       ];
 
@@ -150,16 +155,19 @@ describe("PositionCollection", () => {
     it("should replace the FEN en passant section with - if no en passant capture is possible", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const san = "e4";
+      const expected: VariationMove[] = [
+        {
+          san,
+          resultingFen:
+            "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -",
+          sourceFen: startPosition
+        }
+      ];
 
       repertoire.addMove(startPosition, san);
       const moves = repertoire.movesFromPosition(startPosition);
 
-      expect(moves).toEqual([
-        {
-          san,
-          resultingFen: "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -"
-        }
-      ]);
+      expect(moves).toEqual(expected);
     });
 
     it("should not replace the FEN en passant section with - if en passant capture is possible", () => {
@@ -170,17 +178,19 @@ describe("PositionCollection", () => {
         nodes: [{ v: beforeEnPassantPossible }],
         edges: []
       });
+      const expected: VariationMove[] = [
+        {
+          san: "e4",
+          resultingFen:
+            "rnbqkbnr/ppp1pppp/8/8/P2pP3/8/1PPP1PPP/RNBQKBNR b KQkq e3",
+          sourceFen: beforeEnPassantPossible
+        }
+      ];
 
       repertoire.addMove(beforeEnPassantPossible, "e4");
       const moves = repertoire.movesFromPosition(beforeEnPassantPossible);
 
-      expect(moves).toEqual([
-        {
-          san: expect.anything(),
-          resultingFen:
-            "rnbqkbnr/ppp1pppp/8/8/P2pP3/8/1PPP1PPP/RNBQKBNR b KQkq e3"
-        }
-      ]);
+      expect(moves).toEqual(expected);
     });
 
     it("should not include half move clock and full move number fen fields", () => {
@@ -231,38 +241,11 @@ describe("PositionCollection", () => {
 
   describe("movesFromPosition", () => {
     it("should get all the moves from the position", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
       const moves = [
-        {
-          resultingFen:
-            "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
-          san: "e4"
-        },
-        {
-          resultingFen:
-            "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
-          san: "d4"
-        }
+        addMovesToRepertoire(repertoire, ["e4"])[0],
+        addMovesToRepertoire(repertoire, ["d4"])[0]
       ];
-      const repertoire = new PositionCollection({
-        option: graphOptions,
-        nodes: [
-          { v: startPosition },
-          { v: moves[0].resultingFen },
-          { v: moves[1].resultingFen }
-        ],
-        edges: [
-          {
-            v: startPosition,
-            w: moves[0].resultingFen,
-            value: { san: moves[0].san }
-          },
-          {
-            v: startPosition,
-            w: moves[1].resultingFen,
-            value: { san: moves[1].san }
-          }
-        ]
-      });
 
       const actualMoves = repertoire.movesFromPosition(startPosition);
 
