@@ -338,7 +338,7 @@ describe("PositionCollection", () => {
     });
   });
 
-  describe("getVariations", () => {
+  describe("getChildVariations", () => {
     it("should get all the possible variations from the position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const variations: VariationMove[][] = [[], []];
@@ -364,7 +364,7 @@ describe("PositionCollection", () => {
         moveData: { san: "d4" }
       });
 
-      const actual = repertoire.getVariations(startPosition);
+      const actual = repertoire.getChildVariations(startPosition);
 
       expect(actual).toEqual(variations);
     });
@@ -372,7 +372,7 @@ describe("PositionCollection", () => {
     it("should get an empty list if the position has no successors", () => {
       const repertoire = new PositionCollection(startingRepertoire);
 
-      const variations = repertoire.getVariations(startPosition);
+      const variations = repertoire.getChildVariations(startPosition);
 
       expect(variations).toEqual([]);
     });
@@ -397,9 +397,63 @@ describe("PositionCollection", () => {
         moveData: { san: "Ng8" }
       });
 
-      const actual = repertoire.getVariations(startPosition);
+      const actual = repertoire.getChildVariations(startPosition);
 
       expect(actual).toEqual([variation]);
+    });
+  });
+
+  describe("getSourceVariations", () => {
+    it("should get the variations that gives rise to a position", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+      const expected: VariationMove[][] = [[], []];
+      expected[0].push({
+        resultingFen: repertoire.addMove(startPosition, "e4"),
+        moveData: { san: "e4" }
+      });
+      expected[0].push({
+        resultingFen: repertoire.addMove(expected[0][0].resultingFen, "e5"),
+        moveData: { san: "e5" }
+      });
+      expected[0].push({
+        resultingFen: repertoire.addMove(expected[0][1].resultingFen, "Nf3"),
+        moveData: { san: "Nf3" }
+      });
+      expected[0].push({
+        resultingFen: repertoire.addMove(expected[0][2].resultingFen, "Nc6"),
+        moveData: { san: "Nc6" }
+      });
+      expected[0].push({
+        resultingFen: repertoire.addMove(expected[0][3].resultingFen, "d4"),
+        moveData: { san: "d4" }
+      });
+      expected[1].push({
+        resultingFen: repertoire.addMove(startPosition, "Nf3"),
+        moveData: { san: "Nf3" }
+      });
+      expected[1].push({
+        resultingFen: repertoire.addMove(expected[1][0].resultingFen, "e5"),
+        moveData: { san: "e5" }
+      });
+      expected[1].push({
+        resultingFen: repertoire.addMove(expected[1][1].resultingFen, "e4"),
+        moveData: { san: "e4" }
+      });
+      expected[1].push({
+        resultingFen: repertoire.addMove(expected[1][2].resultingFen, "Nc6"),
+        moveData: { san: "Nc6" }
+      });
+      expected[1].push({
+        resultingFen: repertoire.addMove(expected[1][3].resultingFen, "d4"),
+        moveData: { san: "d4" }
+      });
+
+      const actual = repertoire.getSourceVariations(
+        "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",
+        "d4"
+      );
+
+      expect(actual).toEqual(expected);
     });
   });
 
@@ -542,7 +596,7 @@ describe("PositionCollection", () => {
       ];
 
       repertoire.loadPgn(pgn);
-      const loaded = repertoire.getVariations(startPosition);
+      const loaded = repertoire.getChildVariations(startPosition);
 
       expect(loaded).toEqual(expectedVariations);
     });
@@ -583,7 +637,7 @@ describe("PositionCollection", () => {
       ].sort();
 
       repertoire.loadPgn(pgn);
-      const loaded = repertoire.getVariations(startPosition);
+      const loaded = repertoire.getChildVariations(startPosition);
 
       expect(loaded.sort()).toEqual(expectedVariations);
     });

@@ -3,7 +3,8 @@ import _ from "lodash";
 import { TagTree } from "@/store/repertoire/TagTree";
 import {
   PositionCollection,
-  SavedPositionCollection
+  SavedPositionCollection,
+  VariationMove
 } from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
 import {
@@ -11,6 +12,7 @@ import {
   SavedTrainingCollection
 } from "@/store/repertoire/TrainingCollection";
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
+import { TrainingMode } from "@/store/trainingMode";
 
 export interface SavedRepertoire {
   name: string;
@@ -18,6 +20,11 @@ export interface SavedRepertoire {
   positions: SavedPositionCollection;
   tags: TagTree[];
   training: SavedTrainingCollection;
+}
+
+export interface Variation {
+  startingFen: string;
+  moves: VariationMove[];
 }
 
 export class Repertoire {
@@ -51,6 +58,14 @@ export class Repertoire {
       tags: this.tags,
       training: this.training.asSaved()
     };
+  }
+
+  getVariationsForTraining(
+    tagsToTrain: TagTree[],
+    trainingModes: TrainingMode[],
+    entireVariation: boolean
+  ): Variation[] {
+    return [];
   }
 
   private onAddMove(fen: string, san: string) {

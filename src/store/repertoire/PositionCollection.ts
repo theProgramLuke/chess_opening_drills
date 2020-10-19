@@ -35,7 +35,7 @@ export interface PositionCollectionInterface {
   asSaved: () => Record<string, any>;
   asPgn: (fen: string) => string;
   loadPgn: (pgn: string) => void;
-  getVariations: (fen: string) => VariationMove[][];
+  getChildVariations: (fen: string) => VariationMove[][];
 }
 
 export class PositionCollection implements PositionCollectionInterface {
@@ -126,7 +126,7 @@ export class PositionCollection implements PositionCollectionInterface {
       pgn = pgn.addTag("SetUp", "1");
     }
 
-    const variations = _.map(this.getVariations(fen), variation =>
+    const variations = _.map(this.getChildVariations(fen), variation =>
       _.map(variation, move => move.moveData.san)
     );
 
@@ -167,10 +167,21 @@ export class PositionCollection implements PositionCollectionInterface {
     });
   }
 
-  getVariations(fen: string): VariationMove[][] {
+  getChildVariations(fen: string): VariationMove[][] {
     const variations: VariationMove[][] = [];
     this.collectVariations(fen, variations);
     return variations;
+  }
+
+  getSourceVariations(fen: string, san: string): VariationMove[][] {
+    const startPosition = this.graph.sources()[0];
+    const allVariations = this.getChildVariations(startPosition);
+
+    const variationsIncludingPosition = _.filter(allVariations, variation =>
+      _.some(variation, move => move.resultingFen === fen)
+    );
+
+    return allVariations;
   }
 
   private removeOrphans(startPosition: string): string[] {
