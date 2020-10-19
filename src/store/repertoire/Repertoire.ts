@@ -22,11 +22,6 @@ export interface SavedRepertoire {
   training: SavedTrainingCollection;
 }
 
-export interface Variation {
-  startingFen: string;
-  moves: VariationMove[];
-}
-
 export class Repertoire {
   name: string;
   sideToTrain: Side;
