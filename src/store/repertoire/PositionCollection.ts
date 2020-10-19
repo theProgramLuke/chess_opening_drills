@@ -181,7 +181,7 @@ export class PositionCollection implements PositionCollectionInterface {
       _.some(variation, move => move.resultingFen === fen)
     );
 
-    return allVariations;
+    return variationsIncludingPosition;
   }
 
   private removeOrphans(startPosition: string): string[] {

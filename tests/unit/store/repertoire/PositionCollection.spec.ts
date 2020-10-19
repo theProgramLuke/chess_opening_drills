@@ -395,7 +395,7 @@ describe("PositionCollection", () => {
   });
 
   describe("getSourceVariations", () => {
-    it("should get the variations that gives rise to a position", () => {
+    it("should get the variations that gives rise to the position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const expected: VariationMove[][] = [
         addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3", "Nc6", "d4"]),
@@ -405,6 +405,21 @@ describe("PositionCollection", () => {
       const actual = repertoire.getSourceVariations(
         "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",
         "d4"
+      );
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should not include variations that don't gives rise to the position", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+      const expected: VariationMove[][] = [
+        addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3"])
+      ];
+      addMovesToRepertoire(repertoire, ["d4", "d5", "c4"]);
+
+      const actual = repertoire.getSourceVariations(
+        "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq -",
+        "Nf3"
       );
 
       expect(actual).toEqual(expected);
