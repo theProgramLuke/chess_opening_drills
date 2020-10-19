@@ -4,7 +4,8 @@ import {
   PositionCollection,
   AddMoveObserver,
   DeleteMoveObserver,
-  Variation
+  Variation,
+  VariationMove
 } from "@/store/repertoire/PositionCollection";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
@@ -171,6 +172,11 @@ describe("Repertoire", () => {
         [positions[1]]: [_.take(expected[0], 1)],
         [positions[2]]: [_.take(expected[0], 2)]
       };
+      const movesFromPositions: Record<string, VariationMove[]> = {
+        [positions[0]]: [],
+        [positions[1]]: [expected[0][0]],
+        [positions[2]]: [expected[0][1]]
+      };
       (training[positions[1]][moves[1]]
         .includeForTrainingMode as jest.Mock).mockImplementation(
         (mode: TrainingMode) => mode === trainingMode
@@ -187,6 +193,9 @@ describe("Repertoire", () => {
         .getSourceVariations as jest.Mock).mockImplementation(
         (fen: string) => sourceVariations[fen]
       );
+      (repertoire.positions.movesFromPosition as jest.Mock).mockImplementation(
+        (fen: string) => movesFromPositions[fen]
+      );
       repertoire.tags[0].fen = positions[0];
 
       const actual = repertoire.getTrainingVariations(
@@ -195,6 +204,81 @@ describe("Repertoire", () => {
       );
 
       expect(actual).toEqual(expected);
+    });
+
+    it(`should not include variations that do not match the training mode`, () => {
+      const positions: string[] = ["fen0", "fen1", "fen2"];
+      const moves: string[] = ["san0", "san1"];
+      const descendants: Record<string, string[]> = {
+        [positions[0]]: [positions[1], positions[2]],
+        [positions[1]]: [positions[2]],
+        [positions[2]]: []
+      };
+      const training: Record<string, Record<string, RepetitionTraining>> = {
+        [positions[0]]: {
+          [moves[0]]: new RepetitionTraining()
+        },
+        [positions[1]]: {
+          [moves[1]]: new RepetitionTraining()
+        }
+      };
+      const trainingMode = TrainingMode.Scheduled;
+      const repertoire = new Repertoire({
+        name: "",
+        sideToTrain: Side.White,
+        positions: {},
+        tags: [new TagTree("", "", "", [])],
+        training: {}
+      });
+      const expected: Variation[] = [
+        [
+          {
+            sourceFen: positions[0],
+            san: moves[0],
+            resultingFen: positions[1]
+          },
+          {
+            sourceFen: positions[1],
+            san: moves[1],
+            resultingFen: positions[2]
+          }
+        ]
+      ];
+      const sourceVariations: Record<string, Variation[]> = {
+        [positions[0]]: [],
+        [positions[1]]: [_.take(expected[0], 1)],
+        [positions[2]]: [_.take(expected[0], 2)]
+      };
+      const movesFromPositions: Record<string, VariationMove[]> = {
+        [positions[0]]: [],
+        [positions[1]]: [expected[0][0]],
+        [positions[2]]: [expected[0][1]]
+      };
+      (training[positions[1]][moves[1]]
+        .includeForTrainingMode as jest.Mock).mockImplementation(() => false);
+      (repertoire.training
+        .getTrainingForMove as jest.Mock).mockImplementation(
+        (fen: string, san: string) => _.get(training, [fen, san])
+      );
+      (repertoire.positions
+        .descendantPositions as jest.Mock).mockImplementation(
+        (fen: string) => descendants[fen]
+      );
+      (repertoire.positions
+        .getSourceVariations as jest.Mock).mockImplementation(
+        (fen: string) => sourceVariations[fen]
+      );
+      (repertoire.positions.movesFromPosition as jest.Mock).mockImplementation(
+        (fen: string) => movesFromPositions[fen]
+      );
+      repertoire.tags[0].fen = positions[0];
+
+      const actual = repertoire.getTrainingVariations(
+        [repertoire.tags[0]],
+        [trainingMode]
+      );
+
+      expect(actual).toEqual([]);
     });
   });
 });

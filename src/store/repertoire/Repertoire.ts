@@ -4,7 +4,8 @@ import { TagTree } from "@/store/repertoire/TagTree";
 import {
   PositionCollection,
   SavedPositionCollection,
-  Variation
+  Variation,
+  VariationMove
 } from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
 import {
@@ -59,9 +60,49 @@ export class Repertoire {
     tagsToTrain: TagTree[],
     trainingModes: TrainingMode[]
   ): Variation[] {
-    const positions = this.positions.descendantPositions(tagsToTrain[0].fen);
+    const variations: Variation[] = [];
 
-    return this.positions.getSourceVariations(positions[1]);
+    const descendantPositions = this.positions.descendantPositions(
+      tagsToTrain[0].fen
+    );
+    const descendantMoves = _.uniq(
+      _.flatten(
+        _.map(descendantPositions, position =>
+          this.positions.movesFromPosition(position)
+        )
+      )
+    );
+
+    const trainingMoves: VariationMove[] = [];
+
+    _.forEach(descendantMoves, move => {
+      const trainingForMove = this.training.getTrainingForMove(
+        move.sourceFen,
+        move.san
+      );
+
+      if (trainingForMove) {
+        const include = _.some(trainingModes, mode =>
+          trainingForMove.includeForTrainingMode(mode)
+        );
+
+        if (include) {
+          trainingMoves.push(move);
+        }
+      }
+    });
+
+    _.forEach(trainingMoves, move => {
+      const trainingVariations = this.positions.getSourceVariations(
+        move.sourceFen
+      );
+      _.forEach(trainingVariations, variation => {
+        variation.push(move); // include the move to be trained at the end of the variation
+        variations.push(variation);
+      });
+    });
+
+    return variations;
   }
 
   private onAddMove(fen: string, san: string) {
