@@ -3,7 +3,8 @@ import _ from "lodash";
 import {
   PositionCollection,
   VariationMove,
-  DeleteMoveObserver
+  DeleteMoveObserver,
+  Variation
 } from "@/store/repertoire/PositionCollection";
 
 const startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
@@ -23,8 +24,8 @@ const startingRepertoire = {
 function addMovesToRepertoire(
   repertoire: PositionCollection,
   moves: string[]
-): VariationMove[] {
-  const variation: VariationMove[] = [];
+): Variation {
+  const variation: Variation = [];
   let sourceFen = startPosition;
 
   _.forEach(moves, move => {
@@ -47,7 +48,7 @@ describe("PositionCollection", () => {
     it("should add the move as an outgoing move of the given position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const san = "e4";
-      const expected: VariationMove[] = [
+      const expected: Variation = [
         { san, resultingFen: expect.anything(), sourceFen: startPosition }
       ];
 
@@ -80,7 +81,7 @@ describe("PositionCollection", () => {
     it("should add the resulting position with the correct FEN", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const san = "a3";
-      const expected: VariationMove[] = [
+      const expected: Variation = [
         {
           san: expect.anything(),
           resultingFen: "rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq -",
@@ -155,7 +156,7 @@ describe("PositionCollection", () => {
     it("should replace the FEN en passant section with - if no en passant capture is possible", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const san = "e4";
-      const expected: VariationMove[] = [
+      const expected: Variation = [
         {
           san,
           resultingFen:
@@ -178,7 +179,7 @@ describe("PositionCollection", () => {
         nodes: [{ v: beforeEnPassantPossible }],
         edges: []
       });
-      const expected: VariationMove[] = [
+      const expected: Variation = [
         {
           san: "e4",
           resultingFen:
@@ -343,7 +344,7 @@ describe("PositionCollection", () => {
   describe("getChildVariations", () => {
     it("should get all the possible variations from the position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const variations: VariationMove[][] = [
+      const variations: Variation[] = [
         addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3"]),
         addMovesToRepertoire(repertoire, ["e4", "c6", "d4"])
       ];
@@ -363,7 +364,7 @@ describe("PositionCollection", () => {
 
     it("should stop the variation when a cycle is reached", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const variation: VariationMove[] = addMovesToRepertoire(repertoire, [
+      const variation: Variation = addMovesToRepertoire(repertoire, [
         "Nf3",
         "Nf6",
         "Ng1",
@@ -379,7 +380,7 @@ describe("PositionCollection", () => {
   describe("getSourceVariations", () => {
     it("should get the variations that gives rise to the position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const expected: VariationMove[][] = [
+      const expected: Variation[] = [
         addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3", "Nc6", "d4"]),
         addMovesToRepertoire(repertoire, ["Nf3", "e5", "e4", "Nc6", "d4"])
       ];
@@ -393,7 +394,7 @@ describe("PositionCollection", () => {
 
     it("should not include variations that don't gives rise to the position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const expected: VariationMove[][] = [
+      const expected: Variation[] = [
         addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3", "Nc6", "d4"])
       ];
       addMovesToRepertoire(repertoire, ["d4", "d5", "c4"]);
@@ -406,7 +407,7 @@ describe("PositionCollection", () => {
 
     it("should not include moves after the position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const variations: VariationMove[][] = [
+      const variations: Variation[] = [
         addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3", "Nc6", "d4"])
       ];
       const expected = [_.take(variations[0], 3)];
@@ -522,7 +523,7 @@ describe("PositionCollection", () => {
     it("should import all the moves from a pgn game into the repertoire", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const pgn = `1. e4 e5 2. Nf3 Nc6 3. Bc4 *`;
-      const expected: VariationMove[][] = [
+      const expected: Variation[] = [
         addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3", "Nc6", "Bc4"])
       ];
 
@@ -535,7 +536,7 @@ describe("PositionCollection", () => {
     it("should import sub variations from a pgn game into the repertoire", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const pgn = `1. e4 e5 (1... c5 2. d4) *`;
-      const expectedVariations: VariationMove[][] = [
+      const expectedVariations: Variation[] = [
         addMovesToRepertoire(repertoire, ["e4", "e5"]),
         addMovesToRepertoire(repertoire, ["e4", "c5", "d4"])
       ];

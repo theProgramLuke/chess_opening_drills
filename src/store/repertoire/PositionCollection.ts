@@ -17,6 +17,8 @@ export interface VariationMove extends MoveData {
   resultingFen: string;
 }
 
+export type Variation = VariationMove[];
+
 export type AddMoveObserver = (fen: string, san: string) => void;
 export type DeleteMoveObserver = (
   fen: string,
@@ -35,8 +37,8 @@ export interface PositionCollectionInterface {
   asSaved: () => Record<string, any>;
   asPgn: (fen: string) => string;
   loadPgn: (pgn: string) => void;
-  getChildVariations: (fen: string) => VariationMove[][];
-  getSourceVariations: (fen: string) => VariationMove[][];
+  getChildVariations: (fen: string) => Variation[];
+  getSourceVariations: (fen: string) => Variation[];
 }
 
 export class PositionCollection implements PositionCollectionInterface {
@@ -169,13 +171,13 @@ export class PositionCollection implements PositionCollectionInterface {
     });
   }
 
-  getChildVariations(fen: string): VariationMove[][] {
-    const variations: VariationMove[][] = [];
+  getChildVariations(fen: string): Variation[] {
+    const variations: Variation[] = [];
     this.collectVariations(fen, variations);
     return variations;
   }
 
-  getSourceVariations(fen: string): VariationMove[][] {
+  getSourceVariations(fen: string): Variation[] {
     const startPosition = this.graph.sources()[0];
     const allVariations = this.getChildVariations(startPosition);
 
