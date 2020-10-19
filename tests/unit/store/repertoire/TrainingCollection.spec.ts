@@ -18,20 +18,18 @@ describe("TrainingCollection", () => {
       const san0 = "some san0";
       const fen1 = "some fen1";
       const san1 = "some san1";
-      const expected = {
-        [fen0]: {
-          [san0]: expect.any(RepetitionTraining)
-        },
-        [fen1]: {
-          [san1]: expect.any(RepetitionTraining)
-        }
-      };
 
       training.addMove(fen0, san0);
       training.addMove(fen1, san1);
-      const actual = training.repetitionTraining;
+      const actual = [
+        training.getTrainingForMove(fen0, san0),
+        training.getTrainingForMove(fen1, san1)
+      ];
 
-      expect(actual).toEqual(expected);
+      expect(actual).toEqual([
+        expect.any(RepetitionTraining),
+        expect.any(RepetitionTraining)
+      ]);
     });
 
     it("should not modify already existing repetition training for the fen/san pair", () => {
@@ -41,7 +39,7 @@ describe("TrainingCollection", () => {
       const training = new TrainingCollection({ [fen]: { [san]: expected } });
 
       training.addMove(fen, san);
-      const actual = training.repetitionTraining[fen][san];
+      const actual = training.getTrainingForMove(fen, san);
 
       expect(actual).toBe(expected);
     });
@@ -51,18 +49,18 @@ describe("TrainingCollection", () => {
       const fen = "some fen";
       const san0 = "some san0";
       const san1 = "some san1";
-      const expected = {
-        [fen]: {
-          [san0]: expect.any(RepetitionTraining),
-          [san1]: expect.any(RepetitionTraining)
-        }
-      };
 
       training.addMove(fen, san0);
       training.addMove(fen, san1);
-      const actual = training.repetitionTraining;
+      const actual = [
+        training.getTrainingForMove(fen, san0),
+        training.getTrainingForMove(fen, san1)
+      ];
 
-      expect(actual).toEqual(expected);
+      expect(actual).toEqual([
+        expect.any(RepetitionTraining),
+        expect.any(RepetitionTraining)
+      ]);
     });
   });
 
@@ -76,7 +74,7 @@ describe("TrainingCollection", () => {
 
       training.deleteMove(fen, san);
 
-      expect(training.repetitionTraining[fen][san]).toBeUndefined();
+      expect(training.getTrainingForMove(fen, san)).toBeUndefined();
     });
 
     it("should not remove the fen entry for other moves from the same fen", () => {
@@ -89,31 +87,26 @@ describe("TrainingCollection", () => {
 
       training.deleteMove(fen, san);
 
-      expect(training.repetitionTraining[fen][other]).toBeDefined();
-    });
-
-    it("should remove the fen entry if there are no remaining moves", () => {
-      const training = new TrainingCollection();
-      const fen = "fen";
-      const san = "san";
-      training.addMove(fen, san);
-
-      training.deleteMove(fen, san);
-
-      expect(training.repetitionTraining[fen]).toBeUndefined();
+      expect(training.getTrainingForMove(fen, other)).toBeDefined();
     });
   });
 
   describe("deletePosition", () => {
-    it("should remove the entry for the delete position", () => {
+    it("should remove all training moves for the delete position", () => {
       const training = new TrainingCollection();
       const fen = "fen";
-      training.addMove(fen, "san0");
-      training.addMove(fen, "san1");
+      const san0 = "san0";
+      const san1 = "san1";
+      training.addMove(fen, san0);
+      training.addMove(fen, san1);
 
       training.deletePosition(fen);
+      const actual = [
+        training.getTrainingForMove(fen, san0),
+        training.getTrainingForMove(fen, san1)
+      ];
 
-      expect(training.repetitionTraining[fen]).toBeUndefined();
+      expect(actual).toEqual([undefined, undefined]);
     });
   });
 
@@ -133,7 +126,7 @@ describe("TrainingCollection", () => {
         }
       };
       training.addMove(fen, san);
-      (training.repetitionTraining[fen][san]
+      ((training.getTrainingForMove(fen, san) || expect.anything())
         .asSaved as jest.Mock).mockReturnValue(savedTraining);
 
       const actual = training.asSaved();

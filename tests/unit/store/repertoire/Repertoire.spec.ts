@@ -4,13 +4,15 @@ import {
   PositionCollection,
   AddMoveObserver,
   DeleteMoveObserver,
-  VariationMove
+  VariationMove,
+  Variation
 } from "@/store/repertoire/PositionCollection";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
 import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
 import { TagTree } from "@/store/repertoire/TagTree";
 import { TrainingMode } from "@/store/trainingMode";
+import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 
 jest.mock("@/store/repertoire/TagTree");
 jest.mock("@/store/repertoire/RepetitionTraining");
@@ -123,4 +125,35 @@ describe("Repertoire", () => {
       );
     });
   });
+
+  // describe("getTrainingVariations", () => {
+  //   it(`should get the full variation
+  //       that contain positions matching the training mode
+  //       and descend from the tags to train`, () => {
+  //     const positions: string[] = ["fen0", "fen1", "fen2"];
+  //     const moves: string[] = ["san0", "san1"];
+  //     const descendants: Record<string, string[]> = {
+  //       [positions[0]]: [positions[1], positions[2]],
+  //       [positions[1]]: [positions[2]],
+  //       [positions[2]]: []
+  //     };
+  //     const repertoire = new Repertoire({
+  //       name: "",
+  //       sideToTrain: Side.White,
+  //       positions: {},
+  //       tags: [new TagTree("", positions[0], "", [])],
+  //       training: {}
+  //     });
+  //     const expected: Variation[] = [
+  //       [{ sourceFen: positions[0], san: moves[0], resultingFen: positions[0] }]
+  //     ];
+
+  //     const actual = repertoire.getTrainingVariations(
+  //       [repertoire.tags[0]],
+  //       [TrainingMode.Scheduled]
+  //     );
+
+  //     expect(actual).toEqual(expected);
+  //   });
+  // });
 });

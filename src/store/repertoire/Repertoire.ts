@@ -4,7 +4,7 @@ import { TagTree } from "@/store/repertoire/TagTree";
 import {
   PositionCollection,
   SavedPositionCollection,
-  VariationMove
+  Variation
 } from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
 import {
@@ -54,6 +54,13 @@ export class Repertoire {
       training: this.training.asSaved()
     };
   }
+
+  // getTrainingVariations(
+  //   tagsToTrain: TagTree[],
+  //   trainingModes: TrainingMode[]
+  // ): Variation[] {
+  //   return this.positions.getChildVariations(tagsToTrain[0].fen);
+  // }
 
   private onAddMove(fen: string, san: string) {
     const side = sideFromFen(fen);

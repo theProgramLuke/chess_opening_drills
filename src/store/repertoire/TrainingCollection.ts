@@ -16,7 +16,7 @@ export type SavedTrainingCollection = Record<
 >;
 
 export class TrainingCollection {
-  repetitionTraining: RepetitionTrainingCollection;
+  private repetitionTraining: RepetitionTrainingCollection;
 
   constructor(repetitionTraining: RepetitionTrainingCollection = {}) {
     this.repetitionTraining = repetitionTraining;
@@ -32,6 +32,10 @@ export class TrainingCollection {
     } else {
       this.repetitionTraining[fen] = { [san]: new RepetitionTraining() };
     }
+  }
+
+  getTrainingForMove(fen: string, san: string): RepetitionTraining | undefined {
+    return _.get(this.repetitionTraining, [fen, san], undefined);
   }
 
   deleteMove(fen: string, san: string): void {
