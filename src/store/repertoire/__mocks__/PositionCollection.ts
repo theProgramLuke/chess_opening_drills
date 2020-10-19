@@ -12,6 +12,7 @@ export class PositionCollection implements Real.PositionCollectionInterface {
   asPgn: (fen: string) => string = jest.fn();
   loadPgn: (pgn: string) => void = jest.fn();
   getChildVariations: (fen: string) => Real.VariationMove[][] = jest.fn();
+  getSourceVariations: (fen: string) => Real.Variation[] = jest.fn();
 
   addMoveObserver: Real.AddMoveObserver;
   deleteMoveObserver: Real.DeleteMoveObserver;

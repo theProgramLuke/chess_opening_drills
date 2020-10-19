@@ -55,12 +55,14 @@ export class Repertoire {
     };
   }
 
-  // getTrainingVariations(
-  //   tagsToTrain: TagTree[],
-  //   trainingModes: TrainingMode[]
-  // ): Variation[] {
-  //   return this.positions.getChildVariations(tagsToTrain[0].fen);
-  // }
+  getTrainingVariations(
+    tagsToTrain: TagTree[],
+    trainingModes: TrainingMode[]
+  ): Variation[] {
+    const positions = this.positions.descendantPositions(tagsToTrain[0].fen);
+
+    return this.positions.getSourceVariations(positions[1]);
+  }
 
   private onAddMove(fen: string, san: string) {
     const side = sideFromFen(fen);
