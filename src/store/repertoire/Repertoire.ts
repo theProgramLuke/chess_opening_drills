@@ -14,6 +14,7 @@ import {
 } from "@/store/repertoire/TrainingCollection";
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
 import { TrainingMode } from "@/store/trainingMode";
+import { filterPrefixLists } from "@/store/ListHelpers";
 
 export interface SavedRepertoire {
   name: string;
@@ -102,7 +103,7 @@ export class Repertoire {
       });
     });
 
-    return variations;
+    return filterPrefixLists(variations);
   }
 
   private onAddMove(fen: string, san: string) {
