@@ -63,9 +63,12 @@ export class Repertoire {
   ): Variation[] {
     const variations: Variation[] = [];
 
-    const descendantPositions = this.positions.descendantPositions(
-      tagsToTrain[0].fen
+    const descendantPositions = _.uniq(
+      _.flatten(
+        _.map(tagsToTrain, tag => this.positions.descendantPositions(tag.fen))
+      )
     );
+
     const descendantMoves = _.uniq(
       _.flatten(
         _.map(descendantPositions, position =>
