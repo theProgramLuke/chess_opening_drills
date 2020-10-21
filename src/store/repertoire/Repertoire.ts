@@ -61,40 +61,26 @@ export class Repertoire {
     tagsToTrain: TagTree[],
     trainingModes: TrainingMode[]
   ): Variation[] {
+    const descendantMoves: VariationMove[] = this.getMovesDescendingFromTags(
+      tagsToTrain
+    );
+
+    const trainingMoves: VariationMove[] = this.filterMovesToTrain(
+      descendantMoves,
+      trainingModes
+    );
+
+    const variations: Variation[] = this.getVariationsToTrainFromMoves(
+      trainingMoves
+    );
+
+    return filterPrefixLists(variations);
+  }
+
+  private getVariationsToTrainFromMoves(
+    trainingMoves: VariationMove[]
+  ): Variation[] {
     const variations: Variation[] = [];
-
-    const descendantPositions = _.uniq(
-      _.flatten(
-        _.map(tagsToTrain, tag => this.positions.descendantPositions(tag.fen))
-      )
-    );
-
-    const descendantMoves = _.uniq(
-      _.flatten(
-        _.map(descendantPositions, position =>
-          this.positions.movesFromPosition(position)
-        )
-      )
-    );
-
-    const trainingMoves: VariationMove[] = [];
-
-    _.forEach(descendantMoves, move => {
-      const trainingForMove = this.training.getTrainingForMove(
-        move.sourceFen,
-        move.san
-      );
-
-      if (trainingForMove) {
-        const include = _.some(trainingModes, mode =>
-          trainingForMove.includeForTrainingMode(mode)
-        );
-
-        if (include) {
-          trainingMoves.push(move);
-        }
-      }
-    });
 
     _.forEach(trainingMoves, move => {
       const trainingVariations = this.positions.getSourceVariations(
@@ -106,7 +92,47 @@ export class Repertoire {
       });
     });
 
-    return filterPrefixLists(variations);
+    return variations;
+  }
+
+  private getMovesDescendingFromTags(tags: TagTree[]): VariationMove[] {
+    const descendantPositions = _.uniq(
+      _.flatten(_.map(tags, tag => this.positions.descendantPositions(tag.fen)))
+    );
+
+    return _.uniq(
+      _.flatten(
+        _.map(descendantPositions, position =>
+          this.positions.movesFromPosition(position)
+        )
+      )
+    );
+  }
+
+  private filterMovesToTrain(
+    moves: VariationMove[],
+    trainingModes: TrainingMode[]
+  ): VariationMove[] {
+    const filteredMoves: VariationMove[] = [];
+
+    _.forEach(moves, move => {
+      const trainingForMove = this.training.getTrainingForMove(
+        move.sourceFen,
+        move.san
+      );
+
+      if (trainingForMove) {
+        const include = _.some(trainingModes, mode =>
+          trainingForMove.includeForTrainingMode(mode)
+        );
+
+        if (include) {
+          filteredMoves.push(move);
+        }
+      }
+    });
+
+    return filteredMoves;
   }
 
   private onAddMove(fen: string, san: string) {
