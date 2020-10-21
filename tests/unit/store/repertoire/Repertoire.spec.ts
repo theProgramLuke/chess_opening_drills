@@ -134,8 +134,23 @@ describe("Repertoire", () => {
     let training: Record<string, Record<string, RepetitionTraining>>;
 
     beforeEach(() => {
+      repertoire = new Repertoire({
+        name: "",
+        sideToTrain: Side.White,
+        positions: {},
+        tags: [new TagTree("", "", "", []), new TagTree("", "", "", [])],
+        training: {}
+      });
+      // tag0
+      // fen0 -> fen1 (san0)
+      //   fen1 -> fen2 (san1)
+      //   tag1
+      //   fen2 -> fen3 (san2)
+      //   fen3 -> fen4 (san3)
       positions = ["fen0", "fen1", "fen2", "fen3", "fen4"];
       moves = ["san0", "san1", "san2", "san3"];
+      repertoire.tags[0].fen = positions[0];
+      repertoire.tags[1].fen = positions[2];
       const descendants: Record<string, string[]> = {
         [positions[0]]: _.takeRight(positions, 4),
         [positions[1]]: _.takeRight(positions, 3),
@@ -157,13 +172,6 @@ describe("Repertoire", () => {
           [moves[3]]: new RepetitionTraining()
         }
       };
-      repertoire = new Repertoire({
-        name: "",
-        sideToTrain: Side.White,
-        positions: {},
-        tags: [new TagTree("", "", "", [])],
-        training: {}
-      });
       variations = [
         [
           {
@@ -217,7 +225,6 @@ describe("Repertoire", () => {
       (repertoire.positions.movesFromPosition as jest.Mock).mockImplementation(
         (fen: string) => movesFromPositions[fen]
       );
-      repertoire.tags[0].fen = positions[0];
     });
 
     it(`should get the full variation
@@ -287,6 +294,25 @@ describe("Repertoire", () => {
       );
 
       expect(actual).toEqual(expected);
+    });
+
+    it("should only include variation once when the move to train descends from multiple tags", () => {
+      const expected = [_.take(variations[0], 4)];
+      (training[positions[3]][moves[3]]
+        .includeForTrainingMode as jest.Mock).mockImplementation(() => true);
+
+      const actual = repertoire.getTrainingVariations(
+        [repertoire.tags[0], repertoire.tags[1]],
+        [TrainingMode.Scheduled]
+      );
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should get no variations if no training modes are specified", () => {
+      const actual = repertoire.getTrainingVariations(repertoire.tags, []);
+
+      expect(actual).toEqual([]);
     });
   });
 });
