@@ -5,6 +5,11 @@ import {
   SavedRepetitionTraining
 } from "@/store/repertoire/RepetitionTraining";
 
+export interface TrainingMoveSpecification {
+  san: string;
+  fen: string;
+}
+
 export type RepetitionTrainingCollection = Record<
   string,
   Record<string, RepetitionTraining>
@@ -48,6 +53,18 @@ export class TrainingCollection {
 
   deletePosition(fen: string) {
     delete this.repetitionTraining[fen];
+  }
+
+  getMoves(): TrainingMoveSpecification[] {
+    const moves: TrainingMoveSpecification[] = [];
+
+    _.forEach(_.keys(this.repetitionTraining), fen => {
+      _.forEach(_.keys(this.repetitionTraining[fen]), san => {
+        moves.push({ fen, san });
+      });
+    });
+
+    return moves;
   }
 
   asSaved(): SavedTrainingCollection {

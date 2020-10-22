@@ -1,7 +1,9 @@
+import _ from "lodash";
+
 import {
   TrainingCollection,
-  RepetitionTrainingCollection,
-  SavedTrainingCollection
+  SavedTrainingCollection,
+  TrainingMoveSpecification
 } from "@/store/repertoire/TrainingCollection";
 import {
   RepetitionTraining,
@@ -157,6 +159,22 @@ describe("TrainingCollection", () => {
       const actual = training.asSaved();
 
       expect(actual).toEqual(saved);
+    });
+  });
+
+  describe("getMoves", () => {
+    it("should enumerate the stored moves", () => {
+      const expected: TrainingMoveSpecification[] = [
+        { fen: "fen0", san: "san0" },
+        { fen: "fen1", san: "san1" },
+        { fen: "fen1", san: "san2" }
+      ];
+      const training = new TrainingCollection();
+      _.forEach(expected, move => training.addMove(move.fen, move.san));
+
+      const actual = training.getMoves();
+
+      expect(actual).toEqual(expected);
     });
   });
 });
