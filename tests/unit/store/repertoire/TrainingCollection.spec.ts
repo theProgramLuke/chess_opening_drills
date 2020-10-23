@@ -79,6 +79,18 @@ describe("TrainingCollection", () => {
       expect(training.getTrainingForMove(fen, san)).toBeUndefined();
     });
 
+    it("should remove the fen entry if there are no remaining moves", () => {
+      const training = new TrainingCollection();
+      const fen = "fen";
+      const san = "san";
+      training.addMove(fen, san);
+
+      training.deleteMove(fen, san);
+      const actual = training.asSaved();
+
+      expect(actual).toEqual({});
+    });
+
     it("should not remove the fen entry for other moves from the same fen", () => {
       const training = new TrainingCollection();
       const fen = "fen";
