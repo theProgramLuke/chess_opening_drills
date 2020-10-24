@@ -1,28 +1,27 @@
+import _ from "lodash";
+import "reflect-metadata";
 import Vue from "vue";
+import Component from "vue-class-component";
+import { Prop, Emit, Watch } from "vue-property-decorator";
 
-import { VariationMove } from "@/store/repertoire/PositionCollection";
+import {
+  Variation,
+  VariationMove
+} from "@/store/repertoire/PositionCollection";
 
-export default Vue.extend({
-  data: () => ({
-    pageIndex: 1
-  }),
+@Component
+export default class MoveListViewModel extends Vue {
+  pageIndex = 1;
 
-  props: {
-    turnLists: {
-      type: Array,
-      required: true
-    }
-  },
+  @Prop({ required: true }) turnLists!: Variation[];
 
-  watch: {
-    turnLists() {
-      this.pageIndex = 1;
-    }
-  },
-
-  methods: {
-    onSelectMove(move: VariationMove) {
-      this.$emit("onSelectMove", move);
-    }
+  @Watch("turnLists")
+  onTurnListsChanged(): void {
+    this.pageIndex = 1;
   }
-});
+
+  @Emit("onSelectMove")
+  onSelectMove(move: VariationMove): void {
+    _.noop();
+  }
+}
