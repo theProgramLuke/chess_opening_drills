@@ -1,22 +1,20 @@
 import Vue from "vue";
 
-import { Move } from "@/store/move";
+import "reflect-metadata";
+import Component from "vue-class-component";
+import { Emit, Prop } from "vue-property-decorator";
 
-export default Vue.extend({
-  data: () => ({
-    showDialog: false
-  }),
+import { VariationMove } from "@/store/repertoire/PositionCollection";
 
-  props: {
-    move: {
-      type: Move,
-      required: true
-    }
-  },
+@Component
+export default class MoveDeleterViewModel extends Vue {
+  showDialog = false;
 
-  methods: {
-    onDelete() {
-      this.$emit("onDelete", this.move);
-    }
+  @Prop({ required: true })
+  move!: VariationMove;
+
+  @Emit("onDelete")
+  onDelete() {
+    return this.move;
   }
-});
+}
