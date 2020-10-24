@@ -1,24 +1,24 @@
 import { shallowMount } from "@vue/test-utils";
 
 import TagCreatorViewModel from "@/components/edit/TagCreatorViewModel.ts";
-import { RepertoireTag } from "@/store/repertoireTag";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Side } from "@/store/side";
+import { TagTree } from "@/store/repertoire/TagTree";
+import { Repertoire } from "@/store/repertoire/Repertoire";
 
 describe("TagCreatorViewModel", () => {
-  let tag: RepertoireTag;
-  let position: RepertoirePosition;
+  let tag: TagTree;
+  let repertoire: Repertoire;
+  const taggedPosition = "fen";
 
   beforeEach(() => {
-    tag = new RepertoireTag(
-      Side.White,
-      "",
-      new RepertoirePosition("", "", Side.White),
-      "",
-      []
-    );
-
-    position = new RepertoirePosition("", "", Side.White);
+    tag = new TagTree("", "", "", []);
+    tag.fen = taggedPosition;
+    repertoire = new Repertoire({
+      name: "",
+      positions: {},
+      training: {},
+      sideToTrain: 0,
+      tags: []
+    });
   });
 
   describe("showDialog", () => {
@@ -26,8 +26,9 @@ describe("TagCreatorViewModel", () => {
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
+          repertoire,
           parentTag: tag,
-          activePosition: position
+          activePosition: taggedPosition
         }
       });
 
@@ -36,26 +37,43 @@ describe("TagCreatorViewModel", () => {
   });
 
   describe("disabled", () => {
-    it("should be disabled if the position is not a child of the tag", () => {
-      tag.position.IsChildPosition = jest.fn(() => false);
+    it("should be disabled if the position is not a child of the tagged position", () => {
+      repertoire.positions.descendantPositions = jest.fn(() => []);
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
+          repertoire,
           parentTag: tag,
-          activePosition: position
+          activePosition: "not a descendant"
         }
       });
 
       expect(component.vm.disabled).toBeTruthy();
     });
 
-    it("should not be disabled if the position is a child of the tag", () => {
-      tag.position.IsChildPosition = jest.fn(() => true);
+    it("should not be disabled if the active position is a child of the tagged position", () => {
+      const childFen = "childFen";
+      repertoire.positions.descendantPositions = jest.fn(() => [childFen]);
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
+          repertoire,
           parentTag: tag,
-          activePosition: position
+          activePosition: childFen
+        }
+      });
+
+      expect(component.vm.disabled).toBeFalsy();
+    });
+
+    it("should not be disabled if the active position is the tagged position", () => {
+      repertoire.positions.descendantPositions = jest.fn(() => []);
+      const component = shallowMount(TagCreatorViewModel, {
+        render: jest.fn(),
+        propsData: {
+          repertoire,
+          parentTag: tag,
+          activePosition: taggedPosition
         }
       });
 
@@ -68,8 +86,9 @@ describe("TagCreatorViewModel", () => {
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
+          repertoire,
           parentTag: tag,
-          activePosition: position
+          activePosition: taggedPosition
         }
       });
       component.vm.validate = jest.fn(() => true);
@@ -85,8 +104,9 @@ describe("TagCreatorViewModel", () => {
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
+          repertoire,
           parentTag: tag,
-          activePosition: position
+          activePosition: taggedPosition
         }
       });
       component.vm.validate = jest.fn(() => false);
@@ -102,8 +122,9 @@ describe("TagCreatorViewModel", () => {
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
+          repertoire,
           parentTag: tag,
-          activePosition: position
+          activePosition: taggedPosition
         }
       });
 
@@ -116,8 +137,9 @@ describe("TagCreatorViewModel", () => {
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
+          repertoire,
           parentTag: tag,
-          activePosition: position
+          activePosition: taggedPosition
         }
       });
 

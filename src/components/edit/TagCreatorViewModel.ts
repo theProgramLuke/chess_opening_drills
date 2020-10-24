@@ -1,45 +1,50 @@
+import _ from "lodash";
+import "reflect-metadata";
 import Vue from "vue";
+import { Component, Prop } from "vue-property-decorator";
 
-import { RepertoireTag } from "@/store/repertoireTag";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { TagTree } from "@/store/repertoire/TagTree";
+import { Repertoire } from "@/store/repertoire/Repertoire";
 
-export default Vue.extend({
-  data: () => ({
-    showDialog: false,
-    valid: false,
-    name: "",
-    nameRules: [(value: string) => !!value || "Name is required"]
-  }),
+type InputValidationRule = (value: string) => true | string;
 
-  props: {
-    parentTag: {
-      type: RepertoireTag,
-      required: true
-    },
+@Component
+export default class TagCreatorViewModel extends Vue {
+  showDialog = false;
+  valid = false;
+  name = "";
+  nameRules: InputValidationRule[] = [
+    (value: string) => !!value || "Name is required"
+  ];
 
-    activePosition: {
-      type: RepertoirePosition,
-      required: true
-    }
-  },
+  @Prop({ required: true })
+  parentTag!: TagTree;
 
-  computed: {
-    disabled(): boolean {
-      return !this.parentTag.position.IsChildPosition(this.activePosition);
-    }
-  },
+  @Prop({ required: true })
+  repertoire!: Repertoire;
 
-  methods: {
-    validate(): boolean {
-      return (this.$refs.form as Vue & { validate: () => boolean }).validate();
-    },
+  @Prop({ required: true })
+  activePosition!: string;
 
-    onCreate(): void {
-      if (this.validate()) {
-        this.$emit("onCreate", this.parentTag, this.name);
-        this.showDialog = false;
-        this.name = "";
-      }
+  get disabled(): boolean {
+    const descendants = this.repertoire.positions.descendantPositions(
+      this.parentTag.fen
+    );
+    return !(
+      this.activePosition === this.parentTag.fen ||
+      _.includes(descendants, this.activePosition)
+    );
+  }
+
+  validate(): boolean {
+    return (this.$refs.form as Vue & { validate: () => boolean }).validate();
+  }
+
+  onCreate(): void {
+    if (this.validate()) {
+      this.$emit("onCreate", this.parentTag, this.name);
+      this.showDialog = false;
+      this.name = "";
     }
   }
-});
+}
