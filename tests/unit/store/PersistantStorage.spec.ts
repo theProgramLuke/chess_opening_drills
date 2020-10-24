@@ -21,6 +21,7 @@ const emptySavedRepertoire: SavedRepertoire = {
   positions: {},
   tags: []
 };
+
 describe("PersistantStorage", () => {
   const storagePath = "some/path.json";
 

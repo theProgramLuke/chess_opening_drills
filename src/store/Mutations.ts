@@ -1,12 +1,8 @@
-import { PgnGame } from "pgn-parser";
-
 import { Storage, PersistantStorage } from "@/store/PersistantStorage";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Move } from "@/store/move";
-import { TrainingEvent } from "@/store/TrainingEvent";
-import { RepertoireTag } from "@/store/repertoireTag";
 import { Side } from "@/store/side";
-import { Repertoire } from "@/store/repertoire";
+import { Repertoire } from "@/store/repertoire/Repertoire";
+import { TrainingEvent } from "@/store/repertoire/RepetitionTraining";
+import { TagTree } from "@/store/repertoire/TagTree";
 import { EngineMetadata } from "@/store/EngineHelpers";
 
 export interface MutationState extends Storage {
@@ -65,78 +61,98 @@ export const mutations = {
     state.persisted[payload.colorToSet] = payload.color;
   },
 
-  addRepertoirePosition(
+  addRepertoireMove(
     state: MutationState,
-    payload: { parent: RepertoirePosition; newMove: Move }
+    payload: { repertoire: Repertoire; fen: string; san: string }
   ): void {
-    if (payload.parent && payload.newMove) {
-      const side = payload.parent.forSide;
-      const repertoire = getRepertoireForSide(state, side);
+    payload.repertoire.positions.addMove(payload.fen, payload.san);
 
-      repertoire.AddMove(payload.parent, payload.newMove);
-
-      setRepertoireForSide(state, side, repertoire);
-    }
+    setRepertoireForSide(
+      state,
+      payload.repertoire.sideToTrain,
+      payload.repertoire
+    );
   },
 
   addRepertoireTag(
     state: MutationState,
-    payload: { parent: RepertoireTag; tag: RepertoireTag }
-  ): void {
-    if (payload.parent && payload.tag) {
-      const side = payload.parent.forSide;
-      const repertoire = getRepertoireForSide(state, side);
-
-      payload.parent.AddChild(payload.tag);
-
-      setRepertoireForSide(state, side, repertoire);
+    payload: {
+      repertoire: Repertoire;
+      parent: TagTree;
+      name: string;
+      fen: string;
     }
+  ): void {
+    payload.parent.addTag(payload.name, payload.fen);
+
+    setRepertoireForSide(
+      state,
+      payload.repertoire.sideToTrain,
+      payload.repertoire
+    );
   },
 
   addTrainingEvent(
     state: MutationState,
-    payload: { position: RepertoirePosition; event: TrainingEvent }
-  ): void {
-    if (payload.position && payload.event) {
-      const side = payload.position.forSide;
-      const repertoire = getRepertoireForSide(state, side);
-
-      payload.position.AddTrainingEvent(payload.event);
-
-      setRepertoireForSide(state, side, repertoire);
+    payload: {
+      repertoire: Repertoire;
+      fen: string;
+      san: string;
+      event: TrainingEvent;
     }
+  ): void {
+    const moveTraining = payload.repertoire.training.getTrainingForMove(
+      payload.fen,
+      payload.san
+    );
+    if (moveTraining) {
+      moveTraining.addTrainingEvent(payload.event);
+    }
+
+    setRepertoireForSide(
+      state,
+      payload.repertoire.sideToTrain,
+      payload.repertoire
+    );
   },
 
-  removeRepertoireTag(state: MutationState, tag: RepertoireTag): void {
-    const side = tag.forSide;
-    const repertoire = getRepertoireForSide(state, side);
-
-    repertoire.RemoveRepertoireTag(tag);
-
-    setRepertoireForSide(state, side, repertoire);
-  },
-
-  removeRepertoireMove(state: MutationState, move: Move): void {
-    const side = move.position.forSide;
-    const repertoire = getRepertoireForSide(state, side);
-
-    repertoire.RemoveMove(move);
-
-    setRepertoireForSide(state, side, repertoire);
-  },
-
-  addPositionsFromGame(
+  removeRepertoireTag(
     state: MutationState,
-    payload: { forSide: Side; game: PgnGame }
+    payload: { repertoire: Repertoire; parent: TagTree; fen: string }
   ): void {
-    if (payload.game) {
-      const side = payload.forSide;
-      const repertoire = getRepertoireForSide(state, side);
+    payload.parent.removeTag(payload.fen);
 
-      repertoire.AddFromGame(payload.game);
+    setRepertoireForSide(
+      state,
+      payload.repertoire.sideToTrain,
+      payload.repertoire
+    );
+  },
 
-      setRepertoireForSide(state, side, repertoire);
-    }
+  removeRepertoireMove(
+    state: MutationState,
+    payload: { repertoire: Repertoire; fen: string; san: string }
+  ): void {
+    payload.repertoire.positions.deleteMove(payload.fen, payload.san);
+
+    setRepertoireForSide(
+      state,
+      payload.repertoire.sideToTrain,
+      payload.repertoire
+    );
+  },
+
+  addPositionsFromPgn(
+    state: MutationState,
+    payload: { repertoire: Repertoire; pgnGame: string }
+  ): void {
+    payload.repertoire.positions.loadPgn(payload.pgnGame);
+
+    setRepertoireForSide(
+      state,
+      payload.repertoire.sideToTrain,
+      payload.repertoire
+    );
   },
 
   setEngineMetadata(

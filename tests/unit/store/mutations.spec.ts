@@ -1,23 +1,32 @@
-import { PgnGame } from "pgn-parser";
-
 import { mutations, MutationState } from "@/store/Mutations";
-import { Repertoire } from "@/store/repertoire";
 import { PersistantStorage } from "@/store/PersistantStorage";
-import { Side } from "@/store/side";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Move } from "@/store/move";
-import { RepertoireTag } from "@/store/repertoireTag";
-import { TrainingEvent } from "@/store/TrainingEvent";
+import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
+import { PositionCollection } from "@/store/repertoire/PositionCollection";
+import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
+import { TagTree } from "@/store/repertoire/TagTree";
+import {
+  RepetitionTraining,
+  TrainingEvent
+} from "@/store/repertoire/RepetitionTraining";
 
 jest.mock("@/store/PersistantStorage");
-jest.mock("@/store/repertoire");
-jest.mock("@/store/repertoireTag");
-jest.mock("@/store/repertoirePosition");
-jest.mock("@/store/TrainingEvent");
+jest.mock("@/store/repertoire/Repertoire");
+jest.mock("@/store/repertoire/PositionCollection");
+jest.mock("@/store/repertoire/TrainingCollection");
+jest.mock("@/store/repertoire/TagTree");
+jest.mock("@/store/repertoire/RepetitionTraining");
 jest.mock("@/store/BackupManager");
 
 describe("mutations", () => {
   let state: MutationState;
+
+  const emptySavedRepertoire: SavedRepertoire = {
+    name: "",
+    training: {},
+    sideToTrain: 0,
+    positions: {},
+    tags: []
+  };
 
   beforeEach(() => {
     state = {
@@ -32,8 +41,8 @@ describe("mutations", () => {
       success: "",
       boardTheme: "",
       pieceTheme: "",
-      whiteRepertoire: new Repertoire([], []),
-      blackRepertoire: new Repertoire([], []),
+      whiteRepertoire: new Repertoire(emptySavedRepertoire),
+      blackRepertoire: new Repertoire(emptySavedRepertoire),
       backupDirectory: "",
       dailyBackupLimit: 0,
       monthlyBackupLimit: 0,
@@ -41,6 +50,9 @@ describe("mutations", () => {
       enableBackups: false,
       moveAnimationSpeed: 0
     };
+
+    state.whiteRepertoire.positions = new PositionCollection({});
+    state.blackRepertoire.positions = new PositionCollection({});
   });
 
   describe("setDarkMode", () => {
@@ -89,122 +101,89 @@ describe("mutations", () => {
     });
   });
 
-  describe("addRepertoirePosition", () => {
-    it.each([Side.White, Side.Black])(
-      "should addMove to the %s repertoire",
-      side => {
-        const parent = new RepertoirePosition("", "", side);
-        parent.forSide = side;
-        const newMove = new Move("", new RepertoirePosition("", "", side));
-        const repertoire =
-          side === Side.White ? state.whiteRepertoire : state.blackRepertoire;
+  describe("addRepertoireMove", () => {
+    it("should add the move to the %s repertoire", () => {
+      const repertoire = new Repertoire(emptySavedRepertoire);
+      repertoire.positions = new PositionCollection({});
+      const fen = "fen";
+      const san = "san";
 
-        mutations.addRepertoirePosition(state, { parent, newMove });
+      mutations.addRepertoireMove(state, { repertoire, fen, san });
 
-        expect(repertoire.AddMove).toBeCalledWith(parent, newMove);
-      }
-    );
+      expect(repertoire.positions.addMove).toBeCalledWith(fen, san);
+    });
   });
 
   describe("addRepertoireTag", () => {
-    it.each([Side.White, Side.Black])(
-      "should AddChild to the parent tag",
-      side => {
-        const parent = new RepertoireTag(
-          side,
-          "",
-          new RepertoirePosition("", "", side),
-          "",
-          []
-        );
-        const tag = new RepertoireTag(
-          side,
-          "",
-          new RepertoirePosition("", "", side),
-          "",
-          []
-        );
-        parent.forSide = side;
+    it("should AddChild to the parent tag", () => {
+      const parent = new TagTree("", "", "", []);
+      const repertoire = new Repertoire(emptySavedRepertoire);
+      const fen = "fen";
+      const name = "name";
 
-        mutations.addRepertoireTag(state, { parent, tag });
+      mutations.addRepertoireTag(state, { repertoire, parent, fen, name });
 
-        expect(parent.AddChild).toBeCalledWith(tag);
-      }
-    );
+      expect(parent.addTag).toBeCalledWith(name, fen);
+    });
   });
 
   describe("addTrainingEvent", () => {
-    it.each([Side.White, Side.Black])(
-      "should addTrainingEvent to the %s position",
-      side => {
-        const position = new RepertoirePosition("", "", side);
-        position.forSide = side;
-        const event = new TrainingEvent(0, 0);
+    it("should addTrainingEvent to the %s position", () => {
+      const repertoire = new Repertoire(emptySavedRepertoire);
+      const moveTraining = new RepetitionTraining();
+      const event: TrainingEvent = {
+        attemptedMoves: [],
+        elapsedMilliseconds: 0
+      };
+      repertoire.training = new TrainingCollection({});
+      (repertoire.training.getTrainingForMove as jest.Mock).mockReturnValue(
+        moveTraining
+      );
+      const fen = "fen";
+      const san = "san";
 
-        mutations.addTrainingEvent(state, { position, event });
+      mutations.addTrainingEvent(state, { repertoire, fen, san, event });
 
-        expect(position.AddTrainingEvent).toBeCalledWith(event);
-      }
-    );
+      expect(moveTraining.addTrainingEvent).toBeCalledWith(event);
+      expect(repertoire.training.getTrainingForMove).toBeCalledWith(fen, san);
+    });
   });
 
   describe("removeRepertoireTag", () => {
-    it.each([Side.White, Side.Black])(
-      "should AddChild to the parent tag",
-      side => {
-        const tag = new RepertoireTag(
-          side,
-          "",
-          new RepertoirePosition("", "", side),
-          "",
-          []
-        );
-        tag.forSide = side;
-        const repertoire =
-          side === Side.White ? state.whiteRepertoire : state.blackRepertoire;
+    it("should removeTag to the parent tag", () => {
+      const repertoire = new Repertoire(emptySavedRepertoire);
+      const parent = new TagTree("", "", "", []);
+      const fen = "fen";
 
-        mutations.removeRepertoireTag(state, tag);
+      mutations.removeRepertoireTag(state, { repertoire, parent, fen });
 
-        expect(repertoire.RemoveRepertoireTag).toBeCalledWith(tag);
-      }
-    );
+      expect(parent.removeTag).toBeCalledWith(fen);
+    });
   });
 
   describe("removeRepertoireMove", () => {
-    it.each([Side.White, Side.Black])(
-      "should AddChild to the parent tag",
-      side => {
-        const move = new Move("", new RepertoirePosition("", "", side));
-        move.position.forSide = side;
-        const repertoire =
-          side === Side.White ? state.whiteRepertoire : state.blackRepertoire;
+    it("should AddChild to the parent tag", () => {
+      const repertoire = new Repertoire(emptySavedRepertoire);
+      repertoire.positions = new PositionCollection({});
+      const fen = "fen";
+      const san = "san";
 
-        mutations.removeRepertoireMove(state, move);
+      mutations.removeRepertoireMove(state, { repertoire, fen, san });
 
-        expect(repertoire.RemoveMove).toBeCalledWith(move);
-      }
-    );
+      expect(repertoire.positions.deleteMove).toBeCalledWith(fen, san);
+    });
   });
 
-  describe("addPositionsFromGame", () => {
-    it.each([Side.White, Side.Black])(
-      "should AddFromGame to the %s repertoire",
-      side => {
-        const game: PgnGame = {
-          commentsAboveHeader: "",
-          comments: "",
-          moves: [],
-          headers: [],
-          result: ""
-        };
-        const repertoire =
-          side === Side.White ? state.whiteRepertoire : state.blackRepertoire;
+  describe("addPositionsFromPgn", () => {
+    it("should loadPgn on the repertoire positions", () => {
+      const pgnGame = "";
+      const repertoire = new Repertoire(emptySavedRepertoire);
+      repertoire.positions = new PositionCollection({});
 
-        mutations.addPositionsFromGame(state, { forSide: side, game });
+      mutations.addPositionsFromPgn(state, { repertoire, pgnGame });
 
-        expect(repertoire.AddFromGame).toBeCalledWith(game);
-      }
-    );
+      expect(repertoire.positions.loadPgn).toBeCalledWith(pgnGame);
+    });
   });
 
   describe("setBackupDirectory", () => {
