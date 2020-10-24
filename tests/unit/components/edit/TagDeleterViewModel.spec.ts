@@ -1,21 +1,13 @@
 import { shallowMount } from "@vue/test-utils";
 
 import TagDeleterViewModel from "@/components/edit/TagDeleterViewModel.ts";
-import { RepertoireTag } from "@/store/repertoireTag";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Side } from "@/store/side";
+import { TagTree } from "@/store/repertoire/TagTree";
 
 describe("TagDeleterViewModel", () => {
-  let tag: RepertoireTag;
+  let tag: TagTree;
 
   beforeEach(() => {
-    tag = new RepertoireTag(
-      Side.White,
-      "",
-      new RepertoirePosition("", "", Side.White),
-      "",
-      []
-    );
+    tag = new TagTree("", "", "", []);
   });
 
   describe("showDialog", () => {
@@ -45,7 +37,7 @@ describe("TagDeleterViewModel", () => {
       expect(component.emitted().onDelete).toEqual([[tag]]);
     });
 
-    it("should reset showDialog to false", () => {
+    it("should set showDialog to false", () => {
       const component = shallowMount(TagDeleterViewModel, {
         render: jest.fn(),
         propsData: {
