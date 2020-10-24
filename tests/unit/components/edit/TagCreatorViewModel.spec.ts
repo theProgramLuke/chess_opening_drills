@@ -3,6 +3,11 @@ import { shallowMount } from "@vue/test-utils";
 import TagCreatorViewModel from "@/components/edit/TagCreatorViewModel.ts";
 import { TagTree } from "@/store/repertoire/TagTree";
 import { Repertoire } from "@/store/repertoire/Repertoire";
+import { PositionCollection } from "@/store/repertoire/PositionCollection";
+
+jest.mock("@/store/repertoire/TagTree");
+jest.mock("@/store/repertoire/Repertoire");
+jest.mock("@/store/repertoire/PositionCollection");
 
 describe("TagCreatorViewModel", () => {
   let tag: TagTree;
@@ -19,6 +24,7 @@ describe("TagCreatorViewModel", () => {
       sideToTrain: 0,
       tags: []
     });
+    repertoire.positions = new PositionCollection({});
   });
 
   describe("showDialog", () => {
@@ -38,7 +44,9 @@ describe("TagCreatorViewModel", () => {
 
   describe("disabled", () => {
     it("should be disabled if the position is not a child of the tagged position", () => {
-      repertoire.positions.descendantPositions = jest.fn(() => []);
+      (repertoire.positions.descendantPositions as jest.Mock).mockReturnValue(
+        []
+      );
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
@@ -53,7 +61,9 @@ describe("TagCreatorViewModel", () => {
 
     it("should not be disabled if the active position is a child of the tagged position", () => {
       const childFen = "childFen";
-      repertoire.positions.descendantPositions = jest.fn(() => [childFen]);
+      (repertoire.positions.descendantPositions as jest.Mock).mockReturnValue([
+        childFen
+      ]);
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
@@ -67,7 +77,9 @@ describe("TagCreatorViewModel", () => {
     });
 
     it("should not be disabled if the active position is the tagged position", () => {
-      repertoire.positions.descendantPositions = jest.fn(() => []);
+      (repertoire.positions.descendantPositions as jest.Mock).mockReturnValue(
+        []
+      );
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
