@@ -5,7 +5,7 @@ import { Component, Prop } from "vue-property-decorator";
 
 import { TagTree } from "@/store/repertoire/TagTree";
 import { Repertoire } from "@/store/repertoire/Repertoire";
-import { InputValidationRule } from "./InputValidationRule";
+import { InputValidationRule } from "@/components/common/InputValidationRule";
 
 @Component
 export default class TagCreatorViewModel extends Vue {
