@@ -1,8 +1,7 @@
 import { shallowMount } from "@vue/test-utils";
 
 import MoveListViewModel from "@/components/edit/MoveListViewModel.ts";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Side } from "@/store/side";
+import { VariationMove } from "@/store/repertoire/PositionCollection";
 
 describe("MoveListViewModel", () => {
   describe("pageIndex", () => {
@@ -21,7 +20,7 @@ describe("MoveListViewModel", () => {
       const component = shallowMount(MoveListViewModel, {
         render: jest.fn(),
         propsData: {
-          turnLists: [0]
+          turnLists: []
         }
       });
       component.vm.pageIndex = 10;
@@ -37,14 +36,14 @@ describe("MoveListViewModel", () => {
       const component = shallowMount(MoveListViewModel, {
         render: jest.fn(),
         propsData: {
-          turnLists: [0]
+          turnLists: []
         }
       });
-      const position = new RepertoirePosition("", "", Side.White);
+      const move: VariationMove = { resultingFen: "", san: "", sourceFen: "" };
 
-      component.vm.onSelectMove(position);
+      component.vm.onSelectMove(move);
 
-      expect(component.emitted().onSelectMove).toEqual([[position]]);
+      expect(component.emitted().onSelectMove).toEqual([[move]]);
     });
   });
 });

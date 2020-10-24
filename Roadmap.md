@@ -2,6 +2,8 @@
 
 _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/issues)._
 
+- redo backend storage
+- vue-property-decorator
 - persist edit position annotations (arrows etc)
 - configurable max training attempts
 - per position training history

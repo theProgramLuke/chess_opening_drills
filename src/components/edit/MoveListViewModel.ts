@@ -1,6 +1,6 @@
 import Vue from "vue";
 
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { VariationMove } from "@/store/repertoire/PositionCollection";
 
 export default Vue.extend({
   data: () => ({
@@ -21,8 +21,8 @@ export default Vue.extend({
   },
 
   methods: {
-    onSelectMove(position: RepertoirePosition) {
-      this.$emit("onSelectMove", position);
+    onSelectMove(move: VariationMove) {
+      this.$emit("onSelectMove", move);
     }
   }
 });
