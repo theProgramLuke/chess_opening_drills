@@ -1,4 +1,5 @@
 import _ from "lodash";
+import "reflect-metadata";
 import { Vue, Component, Emit, Prop } from "vue-property-decorator";
 
 import TagDeleter from "@/components/edit/TagDeleter.vue";

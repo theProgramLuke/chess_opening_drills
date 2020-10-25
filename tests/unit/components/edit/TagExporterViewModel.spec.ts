@@ -6,13 +6,12 @@ import { Repertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
 import { PositionCollection } from "@/store/repertoire/PositionCollection";
 import { TagTree } from "@/store/repertoire/TagTree";
+import { Writeable } from "../../../TestHelpers";
 
 jest.mock("@/store/repertoire/TagTree");
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/PositionCollection");
 jest.mock("file-saver");
-
-type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 describe("TagExporterViewModel", () => {
   const pgnText = "some pgn text";

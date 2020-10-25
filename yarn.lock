@@ -1930,10 +1930,10 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
-"@types/plotly.js@1.50.17":
-  version "1.50.17"
-  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.50.17.tgz#2569ce88c211ac86185b8de6798748a51fbd884f"
-  integrity sha512-d2flG2dmGPGrUSWdhbC+yV7GOr4S6D/lbQtVvANlkr4PCm00r49oghlknj9Ms7/Wkz03pDRKnrH/x2OLUfyRqw==
+"@types/plotly.js@1.54.0":
+  version "1.54.0"
+  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.54.0.tgz#4f60618b187844231fc9675bd26f9edbb1f3cc1c"
+  integrity sha512-Ogoz/ftxVT7djzSQRPHTvT/kRcss1WASy+VpTv/oxIalUY4/XvWgU/6RyWIRmaNVAaftiPprOg+cnYIBbmLT4g==
   dependencies:
     "@types/d3" "^3"
 

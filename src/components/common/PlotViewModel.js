@@ -1,6 +1,5 @@
 import Plotly from "plotly.js";
 import _ from "lodash";
-import debounce from "lodash/debounce";
 import defaults from "lodash/defaults";
 
 import { PlotlyWhite, PlotlyDark } from "@/views/PlotlyLayouts";

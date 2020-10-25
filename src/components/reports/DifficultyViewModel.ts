@@ -1,78 +1,85 @@
-import Vue from "vue";
+import "reflect-metadata";
+import { Vue, Component } from "vue-property-decorator";
+import { State } from "vuex-class";
 import _ from "lodash";
-import { mapState } from "vuex";
+import { Layout, Config, PlotData } from "plotly.js";
 
 import Plot from "@/components/common/Plot.vue";
-import { Repertoire } from "@/store/repertoire";
-import { TrainingMode } from "@/store/trainingMode";
+import { Repertoire } from "@/store/repertoire/Repertoire";
+import { TrainingMoveSpecification } from "@/store/repertoire/TrainingCollection";
 
 function easinessFromRepertoire(repertoire: Repertoire): number[] {
   const easiness: number[] = [];
 
   _.forEach(
-    _.filter(
-      repertoire.positions,
-      position => !position.IncludeForTrainingMode(TrainingMode.New)
-    ),
-    position => {
-      easiness.push(position.easinessFactor);
+    repertoire.training.getMoves(),
+    (trainingMove: TrainingMoveSpecification) => {
+      const training = repertoire.training.getTrainingForMove(
+        trainingMove.fen,
+        trainingMove.san
+      );
+
+      if (!_.isUndefined(training)) {
+        easiness.push(training.easiness);
+      }
     }
   );
 
   return easiness;
 }
 
-export default Vue.extend({
-  name: "DifficultyReport",
-
-  data: () => ({
-    options: { displayModeBar: false },
-    layout: {
-      yaxis: {
-        rangemode: "tozero",
-        title: { text: "Position Count" }
-      },
-      xaxis: {
-        title: { text: "Difficulty" }
-      },
-      margin: { b: 125 },
-      barmode: "stack"
-    }
-  }),
-
-  components: {
-    Plot
-  },
-
-  computed: {
-    ...mapState(["darkMode", "whiteRepertoire", "blackRepertoire"]),
-
-    whiteEasiness(): number[] {
-      return easinessFromRepertoire(this.whiteRepertoire);
+@Component({ name: "DifficultyReport", components: { Plot } })
+export default class DifficultyViewModel extends Vue {
+  options: Partial<Config> = { displayModeBar: false };
+  layout: Partial<Layout> = {
+    yaxis: {
+      rangemode: "tozero",
+      title: { text: "Position Count" }
     },
-
-    blackEasiness(): number[] {
-      return easinessFromRepertoire(this.blackRepertoire);
+    xaxis: {
+      title: { text: "Difficulty" }
     },
+    margin: { b: 125 },
+    barmode: "stack"
+  };
 
-    showNoPositions(): boolean {
-      return _.isEmpty(this.whiteEasiness) && _.isEmpty(this.blackEasiness);
-    },
+  @State
+  darkMode!: boolean;
 
-    plotData() {
-      const common = { xbins: { start: 0, end: 15 }, type: "histogram" };
-      return [
-        {
-          ...common,
-          name: "Black Positions",
-          x: this.blackEasiness
-        },
-        {
-          ...common,
-          name: "White Positions",
-          x: this.whiteEasiness
-        }
-      ];
-    }
+  @State
+  whiteRepertoire!: Repertoire;
+
+  @State
+  blackRepertoire!: Repertoire;
+
+  get whiteEasiness(): number[] {
+    return easinessFromRepertoire(this.whiteRepertoire);
   }
-});
+
+  get blackEasiness(): number[] {
+    return easinessFromRepertoire(this.blackRepertoire);
+  }
+
+  get showNoPositions(): boolean {
+    return _.isEmpty(this.whiteEasiness) && _.isEmpty(this.blackEasiness);
+  }
+
+  get plotData(): Partial<PlotData>[] {
+    const common: Partial<PlotData> = {
+      xbins: { start: 0, end: 15, size: 15 },
+      type: "histogram"
+    };
+    return [
+      {
+        ...common,
+        name: "Black Positions",
+        x: this.blackEasiness
+      },
+      {
+        ...common,
+        name: "White Positions",
+        x: this.whiteEasiness
+      }
+    ];
+  }
+}
