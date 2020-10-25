@@ -2,17 +2,17 @@ import _ from "lodash";
 import "reflect-metadata";
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
+import { InputValidationRules } from "vuetify";
 
 import { TagTree } from "@/store/repertoire/TagTree";
 import { Repertoire } from "@/store/repertoire/Repertoire";
-import { InputValidationRule } from "@/components/common/InputValidationRule";
 
 @Component
 export default class TagCreatorViewModel extends Vue {
   showDialog = false;
   valid = false;
   name = "";
-  nameRules: InputValidationRule[] = [
+  nameRules: InputValidationRules = [
     (value: string) => !!value || "Name is required"
   ];
 

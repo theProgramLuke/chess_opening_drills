@@ -2,31 +2,35 @@ import { shallowMount, createLocalVue } from "@vue/test-utils";
 import Vuex from "vuex";
 
 import TagImporterViewModel from "@/components/edit/TagImporterViewModel.ts";
-import { RepertoireTag } from "@/store/repertoireTag";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { TagTree } from "@/store/repertoire/TagTree";
+import { Repertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
+
+jest.mock("@/store/repertoire/TagTree");
+jest.mock("@/store/repertoire/Repertoire");
 
 describe("TagImporterViewModel", () => {
   const localVue = createLocalVue();
   localVue.use(Vuex);
-
-  let tag: RepertoireTag;
-
   const mutations = {
-    addPositionsFromGame: jest.fn()
+    addPositionsFromPgn: jest.fn()
   };
   const store = new Vuex.Store({ mutations });
 
-  beforeEach(() => {
-    tag = new RepertoireTag(
-      Side.White,
-      "",
-      new RepertoirePosition("", "", Side.White),
-      "",
-      []
-    );
+  let tag: TagTree;
+  let repertoire: Repertoire;
 
-    mutations.addPositionsFromGame.mockClear();
+  beforeEach(() => {
+    tag = new TagTree("", "", "", []);
+    repertoire = new Repertoire({
+      name: "",
+      training: {},
+      positions: {},
+      sideToTrain: Side.White,
+      tags: []
+    });
+
+    mutations.addPositionsFromPgn.mockClear();
   });
 
   describe("showDialog", () => {
@@ -34,7 +38,8 @@ describe("TagImporterViewModel", () => {
       const component = shallowMount(TagImporterViewModel, {
         render: jest.fn(),
         propsData: {
-          tag: tag
+          tag,
+          repertoire
         }
       });
 
@@ -44,16 +49,14 @@ describe("TagImporterViewModel", () => {
 
   describe("onImport", () => {
     const pgn = "pgn";
-    const pgnGames = [
-      {
-        commentsAboveHeader: "",
-        headers: [],
-        comments: "",
-        moves: [],
-        result: ""
-      }
-    ];
-    const mockFile = new File([], "");
+    let file: File;
+
+    beforeEach(() => {
+      file = new File([], "");
+
+      const textPromise = new Promise<string>(f => f(pgn));
+      file.text = jest.fn((): Promise<string> => textPromise);
+    });
 
     it("should load the pgn", async () => {
       const component = shallowMount(TagImporterViewModel, {
@@ -61,19 +64,17 @@ describe("TagImporterViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          tag: tag
+          tag,
+          repertoire
         }
       });
-      const textPromise = new Promise<string>(f => f(pgn));
-      mockFile.text = jest.fn((): Promise<string> => textPromise);
-      component.vm.inputFile = mockFile;
-      component.vm.pgnParser = jest.fn(() => pgnGames);
+      component.vm.inputFile = file;
 
       await component.vm.onImport();
 
-      expect(mutations.addPositionsFromGame).toBeCalledWith(expect.anything(), {
-        game: pgnGames[0],
-        forSide: tag.forSide
+      expect(mutations.addPositionsFromPgn).toBeCalledWith(expect.anything(), {
+        repertoire,
+        pgn
       });
     });
   });

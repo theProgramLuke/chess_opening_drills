@@ -1,8 +1,5 @@
-import Vue from "vue";
-
 import "reflect-metadata";
-import Component from "vue-class-component";
-import { Emit, Prop } from "vue-property-decorator";
+import { Vue, Component, Emit, Prop } from "vue-property-decorator";
 
 import { VariationMove } from "@/store/repertoire/PositionCollection";
 
