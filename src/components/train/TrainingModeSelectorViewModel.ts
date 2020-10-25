@@ -97,7 +97,7 @@ export default class TrainingModeSelectorViewModel extends Vue {
 
   get difficultyModeLimitLabel(): string {
     const difficulty = Number(this.coercedDifficultyModeLimit).toFixed(2);
-    return "Difficulty Limit (" + difficulty + ")";
+    return `Difficulty Limit (${difficulty})`;
   }
 
   @Emit("onStartTraining")
