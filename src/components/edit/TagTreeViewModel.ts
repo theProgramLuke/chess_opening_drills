@@ -1,51 +1,40 @@
-import Vue from "vue";
 import _ from "lodash";
+import { Vue, Component, Emit, Prop } from "vue-property-decorator";
 
 import TagDeleter from "@/components/edit/TagDeleter.vue";
 import TagCreator from "@/components/edit/TagCreator.vue";
 import TagExporter from "@/components/edit/TagExporter.vue";
 import TagImporter from "@/components/edit/TagImporter.vue";
-import { RepertoireTag } from "@/store/repertoireTag";
-import { Repertoire } from "@/store/repertoire";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { TagTree } from "@/store/repertoire/TagTree";
+import { Repertoire } from "@/store/repertoire/Repertoire";
 
-export default Vue.extend({
-  components: { TagDeleter, TagCreator, TagExporter, TagImporter },
+@Component({
+  components: { TagDeleter, TagCreator, TagExporter, TagImporter }
+})
+export default class TagTreeViewModel extends Vue {
+  @Prop({ required: true })
+  whiteRepertoire!: Repertoire;
 
-  props: {
-    whiteRepertoire: {
-      type: Repertoire,
-      required: true
-    },
+  @Prop({ required: true })
+  blackRepertoire!: Repertoire;
 
-    blackRepertoire: {
-      type: Repertoire,
-      required: true
-    },
+  @Prop({ required: true })
+  activePosition!: string;
 
-    activePosition: {
-      type: RepertoirePosition,
-      required: true
-    }
-  },
+  // TODO view transformation
 
-  computed: {
-    combinedTags() {
-      return _.concat(this.whiteRepertoire.tags, this.blackRepertoire.tags);
-    }
-  },
-
-  methods: {
-    onCreate(parent: RepertoireTag, name: string): void {
-      this.$emit("onCreate", parent, name);
-    },
-
-    onDelete(tag: RepertoireTag): void {
-      this.$emit("onDelete", tag);
-    },
-
-    onSelect(position: RepertoirePosition) {
-      this.$emit("onSelect", position);
-    }
+  @Emit("onCreate")
+  onCreate(parent: TagTree, name: string): void {
+    _.noop();
   }
-});
+
+  @Emit("onDelete")
+  onDelete(tag: TagTree): void {
+    _.noop();
+  }
+
+  @Emit("onSelect")
+  onSelect(fen: string) {
+    _.noop();
+  }
+}

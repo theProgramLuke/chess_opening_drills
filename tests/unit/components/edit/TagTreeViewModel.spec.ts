@@ -1,60 +1,32 @@
 import { shallowMount } from "@vue/test-utils";
 
 import TagTreeViewModel from "@/components/edit/TagTreeViewModel.ts";
-import { Repertoire } from "@/store/repertoire";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
+import { TagTree } from "@/store/repertoire/TagTree";
 import { Side } from "@/store/side";
-import { RepertoireTag } from "@/store/repertoireTag";
+
+jest.mock("@/store/repertoire/Repertoire");
+jest.mock("@/store/repertoire/TagTree");
 
 describe("TagTreeViewModel", () => {
   let whiteRepertoire: Repertoire;
   let blackRepertoire: Repertoire;
-  let activePosition: RepertoirePosition;
+  const activePosition = "some fen";
 
   beforeEach(() => {
-    whiteRepertoire = new Repertoire(
-      [],
-      [
-        new RepertoireTag(
-          Side.White,
-          "",
-          new RepertoirePosition("", "", Side.White),
-          "",
-          []
-        )
-      ]
-    );
-    blackRepertoire = new Repertoire(
-      [],
-      [
-        new RepertoireTag(
-          Side.Black,
-          "",
-          new RepertoirePosition("", "", Side.Black),
-          "",
-          []
-        )
-      ]
-    );
-    activePosition = new RepertoirePosition("", "", Side.White);
-  });
+    const emptyRepertoire: SavedRepertoire = {
+      name: "",
+      training: {},
+      positions: {},
+      sideToTrain: Side.White,
+      tags: []
+    };
 
-  describe("combinedTags", () => {
-    it("should combine the white and black repertoire tags", () => {
-      const component = shallowMount(TagTreeViewModel, {
-        render: jest.fn(),
-        propsData: {
-          whiteRepertoire,
-          blackRepertoire,
-          activePosition
-        }
-      });
+    whiteRepertoire = new Repertoire(emptyRepertoire);
+    blackRepertoire = new Repertoire(emptyRepertoire);
 
-      expect(component.vm.combinedTags).toEqual([
-        whiteRepertoire.tags[0],
-        blackRepertoire.tags[0]
-      ]);
-    });
+    whiteRepertoire.tags = [];
+    blackRepertoire.tags = [];
   });
 
   describe("onCreate", () => {

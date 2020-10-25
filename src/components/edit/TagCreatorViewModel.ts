@@ -1,7 +1,6 @@
 import _ from "lodash";
 import "reflect-metadata";
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop } from "vue-property-decorator";
 import { InputValidationRules } from "vuetify";
 
 import { TagTree } from "@/store/repertoire/TagTree";

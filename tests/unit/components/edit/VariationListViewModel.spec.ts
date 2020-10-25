@@ -1,15 +1,13 @@
 import { shallowMount } from "@vue/test-utils";
 
 import VariationListViewModel from "@/components/edit/VariationListViewModel.ts";
-import { Move } from "@/store/move";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Side } from "@/store/side";
+import { Variation } from "@/store/repertoire/PositionCollection";
 
 describe("VariationListViewModel", () => {
-  let variations: Move[];
+  let variations: Variation[];
 
   beforeEach(() => {
-    variations = [new Move("", new RepertoirePosition("", "", Side.White))];
+    variations = [[{ san: "", sourceFen: "", resultingFen: "" }]];
   });
 
   describe("onDeleteMove", () => {
@@ -21,9 +19,9 @@ describe("VariationListViewModel", () => {
         }
       });
 
-      component.vm.onDeleteMove(variations[0]);
+      component.vm.onDeleteMove(variations[0][0]);
 
-      expect(component.emitted().onDeleteMove).toEqual([[variations[0]]]);
+      expect(component.emitted().onDeleteMove).toEqual([[variations[0][0]]]);
     });
   });
 
@@ -36,10 +34,10 @@ describe("VariationListViewModel", () => {
         }
       });
 
-      component.vm.onSelectMove(variations[0].position);
+      component.vm.onSelectMove(variations[0][0].resultingFen);
 
       expect(component.emitted().onSelectMove).toEqual([
-        [variations[0].position]
+        [variations[0][0].resultingFen]
       ]);
     });
   });
