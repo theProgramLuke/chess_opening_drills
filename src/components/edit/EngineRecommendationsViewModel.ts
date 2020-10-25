@@ -1,8 +1,8 @@
 import _ from "lodash";
 import "reflect-metadata";
 import { Vue, Component, Prop } from "vue-property-decorator";
-import { Engine } from "node-uci";
 import { State } from "vuex-class";
+import { Engine } from "node-uci";
 
 import {
   EngineOption,
