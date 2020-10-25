@@ -1,15 +1,24 @@
-import { shallowMount, createLocalVue } from "@vue/test-utils";
+import { shallowMount, createLocalVue, Wrapper } from "@vue/test-utils";
 import _ from "lodash";
 import Vuex from "vuex";
 
 import TrainerViewModel from "@/components/train/TrainerViewModel.ts";
-import { TrainingOptions } from "@/components/train/TrainingModeSelectorViewModel";
-import { Move } from "@/store/move";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import {
+  TrainingOptions,
+  TrainingVariation
+} from "@/components/train/TrainingOptions";
 import { Side } from "@/store/side";
+import { Repertoire } from "@/store/repertoire/Repertoire";
+import { AddTrainingEventPayload } from "@/store/MutationPayloads";
+import { DrawShape } from "chessground/draw";
+import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
+import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
+import { TrainingMode } from "@/store/trainingMode";
 
-jest.mock("@/store/repertoirePosition");
-jest.mock("@/store/TrainingEvent");
+jest.mock("@/store/repertoire/Repertoire");
+jest.mock("@/store/repertoire/PositionCollection");
+jest.mock("@/store/repertoire/TrainingCollection");
+jest.mock("@/store/repertoire/RepetitionTraining");
 jest.useFakeTimers();
 
 const mutations = {
@@ -21,9 +30,20 @@ localVue.use(Vuex);
 const store = new Vuex.Store({ mutations });
 
 describe("TrainerViewModel", () => {
-  const mountComponent = (
-    options = new TrainingOptions([], [], false, false, 0, 0)
-  ) => {
+  const emptyOptions = new TrainingOptions([], [], false, false, 999, 999);
+  const emptySavedRepertoire = {
+    name: "",
+    positions: {},
+    tags: [],
+    training: {},
+    sideToTrain: Side.White
+  };
+  let emptyRepertoire: Repertoire;
+  let training: RepetitionTraining;
+
+  function mountComponent(
+    options: TrainingOptions = emptyOptions
+  ): Wrapper<TrainerViewModel> {
     const component = shallowMount(TrainerViewModel, {
       render: jest.fn(),
       propsData: {
@@ -34,37 +54,65 @@ describe("TrainerViewModel", () => {
     });
     component.vm.reloadPosition = jest.fn();
     return component;
-  };
+  }
+
+  function makeTrainingVariation(
+    sans: string[],
+    repertoire: Repertoire = emptyRepertoire
+  ): TrainingVariation {
+    const variation = _.map(sans, san => {
+      return { san, resultingFen: "", sourceFen: "" };
+    });
+
+    return { repertoire, variation };
+  }
 
   beforeEach(() => {
     _.forEach(mutations, mutation => mutation.mockReset());
+
+    emptyRepertoire = new Repertoire(emptySavedRepertoire);
+    emptyRepertoire.sideToTrain = Side.White;
+    training = new RepetitionTraining();
+    emptyRepertoire.training = new TrainingCollection();
+    (emptyRepertoire.training.getTrainingForMove as jest.Mock).mockReturnValue(
+      training
+    );
   });
 
-  const makeVariation = (sans: string[], side = Side.White) =>
-    _.map(sans, san => new Move(san, new RepertoirePosition("", "", side)));
-
   describe("activeVariation", () => {
-    it("should be training option move list at the current index", () => {
-      const variation = makeVariation(["e4"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
-      const component = mountComponent(
-        new TrainingOptions([], [variation], false, false, 0, 0)
+    it("should be the training option variation at the current index", () => {
+      const trainingVariation = makeTrainingVariation(["e4"]);
+      const options = new TrainingOptions(
+        [],
+        [trainingVariation],
+        false,
+        false,
+        0,
+        0
       );
+      const component = mountComponent(options);
       component.vm.variationIndex = 0;
 
       const actual = component.vm.activeVariation;
 
-      expect(actual).toBe(variation);
+      expect(actual).toBe(trainingVariation);
     });
   });
 
   describe("previewing", () => {
-    it("should be true if previewing is enabled and there are new moves on my turn in the active variation", () => {
-      const variation = makeVariation(["e4"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
-      variation[0].position.IncludeForTrainingMode = () => true;
-      variation[0].position.myTurn = true;
-      const options = new TrainingOptions([], [variation], true, false, 0, 0);
+    it.only("should be true if previewing is enabled and there are new moves on my turn in the active variation", () => {
+      const trainingVariation = makeTrainingVariation(["e4", "e5"]);
+      const options = new TrainingOptions(
+        [],
+        [trainingVariation],
+        true,
+        false,
+        0,
+        0
+      );
+      (training.includeForTrainingMode as jest.Mock).mockImplementation(
+        (mode: TrainingMode) => mode === TrainingMode.New
+      );
       const component = mountComponent(options);
       component.vm.variationIndex = 0;
       component.vm.previewedVariations = [];
@@ -75,10 +123,7 @@ describe("TrainerViewModel", () => {
     });
 
     it("should be false if not previewing", () => {
-      const variation = makeVariation(["e4"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
-      variation[0].position.IncludeForTrainingMode = () => true;
-      variation[0].position.myTurn = true;
+      const variation = makeTrainingVariation(["e4"]);
       const options = new TrainingOptions([], [variation], false, false, 0, 0);
       const component = mountComponent(options);
 
@@ -88,11 +133,14 @@ describe("TrainerViewModel", () => {
     });
 
     it("should be false if previewing and already previewed the variation", () => {
-      const variation = makeVariation(["e4"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
-      variation[0].position.IncludeForTrainingMode = () => true;
-      variation[0].position.myTurn = true;
-      const options = new TrainingOptions([], [variation], true, false, 0, 0);
+      const options = new TrainingOptions(
+        [],
+        [makeTrainingVariation(["e4"])],
+        true,
+        false,
+        0,
+        0
+      );
       const component = mountComponent(options);
       component.vm.variationIndex = 0;
       component.vm.previewedVariations = [0];
@@ -106,10 +154,15 @@ describe("TrainerViewModel", () => {
   describe("previewPositionFen", () => {
     it("should be the fen of the position to preview", () => {
       const fen = "some fen";
-      const variation = makeVariation(["e4"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
-      variation[0].position.fen = fen;
-      const options = new TrainingOptions([], [variation], true, false, 0, 0);
+      const options = new TrainingOptions(
+        [],
+        [makeTrainingVariation(["e4"])],
+        true,
+        false,
+        0,
+        0
+      );
+      options.variations[0].variation[0].sourceFen = fen;
       const component = mountComponent(options);
       component.vm.variationIndex = 0;
       component.vm.previewIndex = 0;
@@ -124,14 +177,10 @@ describe("TrainerViewModel", () => {
     it("should format the index and variations length", () => {
       const index = 1;
       const variationsLength = 5;
-      const variation = makeVariation(["e4"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
-      variation[0].position.IncludeForTrainingMode = () => true;
-      variation[0].position.myTurn = true;
       const component = mountComponent(
         new TrainingOptions(
           [],
-          _.times(variationsLength, () => variation),
+          _.times(variationsLength, () => makeTrainingVariation([])),
           false,
           false,
           0,
@@ -148,56 +197,57 @@ describe("TrainerViewModel", () => {
 
   describe("activePosition", () => {
     it("should be the active variation move at the ply count", () => {
-      const variation = makeVariation(["e4", "e5"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
+      const trainingVariation = makeTrainingVariation(["e4", "e5"]);
       const component = mountComponent(
-        new TrainingOptions([], [variation], false, false, 0, 0)
+        new TrainingOptions([], [trainingVariation], false, false, 0, 0)
       );
       component.vm.variationIndex = 0;
       component.vm.plyCount = 2;
 
       const actual = component.vm.activePosition;
 
-      expect(actual).toBe(variation[1].position);
+      expect(actual).toBe(trainingVariation.variation[1].sourceFen);
     });
   });
 
   describe("expectedMove", () => {
     it("should be the next move in the active variation", () => {
-      const variation = makeVariation(["e4", "e5"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
+      const trainingVariation = makeTrainingVariation(["e4", "e5"]);
       const component = mountComponent(
-        new TrainingOptions([], [variation], false, false, 0, 0)
+        new TrainingOptions([], [trainingVariation], false, false, 0, 0)
       );
       component.vm.variationIndex = 0;
       component.vm.plyCount = 0;
 
       const actual = component.vm.expectedMove;
 
-      expect(actual).toBe(variation[0]);
+      expect(actual).toBe(trainingVariation.variation[0]);
     });
 
     it("should be the next move in the active variation offset by 1 for black", () => {
-      const variation = makeVariation(["e4", "e5"], Side.Black);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
+      emptyRepertoire.sideToTrain = Side.Black;
+      const trainingVariation = makeTrainingVariation(
+        ["e4", "e5"],
+        emptyRepertoire
+      );
       const component = mountComponent(
-        new TrainingOptions([], [variation], false, false, 0, 0)
+        new TrainingOptions([], [trainingVariation], false, false, 0, 0)
       );
       component.vm.variationIndex = 0;
       component.vm.plyCount = 0;
 
       const actual = component.vm.expectedMove;
 
-      expect(actual).toBe(variation[1]);
+      expect(actual).toBe(trainingVariation.variation[1]);
     });
   });
 
   describe("boardOrientation", () => {
     it.each([Side.White, Side.Black])(
-      "should be the orientation %s of the active position",
+      "should be the orientation %s of the active variation repertoire side to train",
       side => {
-        const variation = makeVariation(["e4"], side);
-        variation[0].position.parents = [variation[0].position]; // fake previous move
+        emptyRepertoire.sideToTrain = side;
+        const variation = makeTrainingVariation(["e4"], emptyRepertoire);
         const component = mountComponent(
           new TrainingOptions([], [variation], false, false, 0, 0)
         );
@@ -213,8 +263,7 @@ describe("TrainerViewModel", () => {
 
   describe("complete", () => {
     it("should be true if all the variations have been trained", () => {
-      const variation = makeVariation(["e4"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
+      const variation = makeTrainingVariation(["e4"]);
       const component = mountComponent(
         new TrainingOptions([], [variation], false, false, 0, 0)
       );
@@ -226,8 +275,7 @@ describe("TrainerViewModel", () => {
     });
 
     it("should be false if not all the variations have been trained", () => {
-      const variation = makeVariation(["e4"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
+      const variation = makeTrainingVariation(["e4"]);
       const component = mountComponent(
         new TrainingOptions([], [variation], false, false, 0, 0)
       );
@@ -241,8 +289,7 @@ describe("TrainerViewModel", () => {
 
   describe("completionPercent", () => {
     it("should be the variation index / the count of variations", () => {
-      const variation = makeVariation(["e4"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
+      const variation = makeTrainingVariation(["e4"]);
       const component = mountComponent(
         new TrainingOptions(
           [],
@@ -310,32 +357,30 @@ describe("TrainerViewModel", () => {
       expect(actual).toEqual([]);
     });
 
-    it("should be a red chessground brush for the next move", () => {
-      const move = { orig: "e2", dest: "e4", brush: "red" };
-      const variation = makeVariation(["e4"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
-      variation[0].position.fen =
+    it("should be a red brush for the next move", () => {
+      const expected: DrawShape[] = [{ orig: "e2", dest: "e4", brush: "red" }];
+      const trainingVariation = makeTrainingVariation(["e4"]);
+      trainingVariation.variation[0].sourceFen =
         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
       const component = mountComponent(
-        new TrainingOptions([], [variation], false, false, 0, 0)
+        new TrainingOptions([], [trainingVariation], false, false, 0, 0)
       );
       component.vm.attempts = 3;
 
       const actual = component.vm.mistakeArrow;
 
-      expect(actual).toEqual([move]);
+      expect(actual).toEqual(expected);
     });
   });
 
   describe("onBoardMove", () => {
     let component = mountComponent();
-    let variation = makeVariation(["e4"]);
+    let trainingVariation = makeTrainingVariation(["e4"]);
 
     beforeEach(() => {
-      variation = makeVariation(["e4"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
+      trainingVariation = makeTrainingVariation(["e4"]);
       component = mountComponent(
-        new TrainingOptions([], [variation], false, false, 0, 0)
+        new TrainingOptions([], [trainingVariation], false, false, 0, 0)
       );
     });
 
@@ -391,17 +436,23 @@ describe("TrainerViewModel", () => {
       it("should add a training event", () => {
         const elapsed = 10;
         component.vm.getElapsedSeconds = jest.fn(() => elapsed);
+        const expected: AddTrainingEventPayload = {
+          event: {
+            attemptedMoves: [],
+            elapsedMilliseconds: elapsed
+            // TODO add timestamp to training events
+          },
+          fen: trainingVariation.variation[0].sourceFen,
+          san: trainingVariation.variation[0].san,
+          repertoire: trainingVariation.repertoire
+        };
 
         component.vm.onBoardMove({ fen: "fen" });
 
-        expect(mutations.addTrainingEvent).toBeCalledWith(expect.anything(), {
-          event: {
-            attempts: 1,
-            responseTimeSeconds: elapsed,
-            timestamp: 9001
-          },
-          position: variation[0].position
-        });
+        expect(mutations.addTrainingEvent).toBeCalledWith(
+          expect.anything(),
+          expected
+        );
       });
 
       it("should advance the training position", () => {
@@ -415,54 +466,57 @@ describe("TrainerViewModel", () => {
   });
 
   describe("moveIsCorrect", () => {
-    it("should be true if the fen matches the expected move", () => {
+    it("should be true if the fen matches the expected resulting fen", () => {
       const fen = "some fen";
-      const variation = makeVariation(["e4", "e5"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
-      variation[0].position.fen = fen;
+      const trainingVariation = makeTrainingVariation(["e4", "e5"]);
+      trainingVariation.variation[0].resultingFen = fen;
       const component = mountComponent(
-        new TrainingOptions([], [variation], false, false, 0, 0)
+        new TrainingOptions([], [trainingVariation], false, false, 0, 0)
       );
       component.vm.variationIndex = 0;
       component.vm.plyCount = 0;
 
-      const correct = component.vm.moveIsCorrect(fen);
+      const actual = component.vm.moveIsCorrect(fen);
 
-      expect(correct).toBeTruthy();
+      expect(actual).toBeTruthy();
     });
 
     it("should be false if the fen matches the expected move", () => {
-      const variation = makeVariation(["e4", "e5"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
-      variation[0].position.fen = "some fen";
+      const variation = makeTrainingVariation(["e4", "e5"]);
       const component = mountComponent(
         new TrainingOptions([], [variation], false, false, 0, 0)
       );
       component.vm.variationIndex = 0;
       component.vm.plyCount = 0;
 
-      const correct = component.vm.moveIsCorrect("other fen");
+      const actual = component.vm.moveIsCorrect("other fen");
 
-      expect(correct).toBeFalsy();
+      expect(actual).toBeFalsy();
     });
   });
 
   describe("nextTrainingPosition", () => {
     let component = mountComponent();
-    let variation = makeVariation([]);
+    let trainingVariation = makeTrainingVariation([]);
 
     beforeEach(() => {
-      variation = makeVariation(["e4", "e5", "Nf3", "Nf6", "Bc5"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
-      variation[0].position.myTurn = true;
-      variation[1].position.myTurn = false;
-      variation[2].position.myTurn = true;
-      variation[3].position.myTurn = false;
-      variation[4].position.myTurn = true;
+      trainingVariation = makeTrainingVariation([
+        "e4",
+        "e5",
+        "Nf3",
+        "Nf6",
+        "Bc5"
+      ]);
+      trainingVariation.repertoire.sideToTrain = Side.White;
+      trainingVariation.variation[0].sourceFen = " w ";
+      trainingVariation.variation[1].sourceFen = " b ";
+      trainingVariation.variation[2].sourceFen = " w ";
+      trainingVariation.variation[3].sourceFen = " b ";
+      trainingVariation.variation[4].sourceFen = " w ";
       component = mountComponent(
         new TrainingOptions(
           [],
-          [variation, _.cloneDeep(variation)],
+          [trainingVariation, _.cloneDeep(trainingVariation)],
           false,
           false,
           0,
@@ -489,7 +543,7 @@ describe("TrainerViewModel", () => {
     });
 
     it("should go to the next variation when the active one is completed", () => {
-      component.vm.plyCount = variation.length - 1;
+      component.vm.plyCount = trainingVariation.variation.length - 1;
 
       component.vm.nextTrainingPosition();
 
@@ -509,16 +563,17 @@ describe("TrainerViewModel", () => {
 
   describe("advancePreview", () => {
     const delay = 10;
-    let variation: Move[];
+    let trainingVariation: TrainingVariation;
 
     beforeEach(() => {
-      variation = makeVariation(["e4", "e5", "Nf3"]);
-      variation[0].position.parents = [variation[0].position]; // fake previous move
+      trainingVariation = makeTrainingVariation(["e4", "e5", "Nf3"]);
+
+      jest.clearAllTimers();
     });
 
     it("should advance to the next position", () => {
       const component = mountComponent(
-        new TrainingOptions([], [variation], false, false, 0, 0)
+        new TrainingOptions([], [trainingVariation], false, false, 0, 0)
       );
       component.vm.previewIndex = 0;
 
@@ -529,7 +584,7 @@ describe("TrainerViewModel", () => {
 
     it("should advance again after a delay", () => {
       const component = mountComponent(
-        new TrainingOptions([], [variation], false, false, delay, 0)
+        new TrainingOptions([], [trainingVariation], false, false, delay, 0)
       );
       const nextAdvance = jest.fn();
       component.vm.advancePreview();
@@ -542,7 +597,7 @@ describe("TrainerViewModel", () => {
 
     it("should not advance again before the delay finishes", () => {
       const component = mountComponent(
-        new TrainingOptions([], [variation], false, false, delay, 0)
+        new TrainingOptions([], [trainingVariation], false, false, delay, 0)
       );
       const nextAdvance = jest.fn();
       component.vm.advancePreview();
@@ -554,10 +609,8 @@ describe("TrainerViewModel", () => {
     });
 
     it("should be called after a delay on mount if previewing", () => {
-      variation[0].position.IncludeForTrainingMode = () => true;
-      variation[0].position.myTurn = true;
       const component = mountComponent(
-        new TrainingOptions([], [variation], true, false, delay, 0)
+        new TrainingOptions([], [trainingVariation], true, false, delay, 0)
       );
       const nextAdvance = jest.fn();
       component.vm.advancePreview = nextAdvance;
@@ -569,10 +622,8 @@ describe("TrainerViewModel", () => {
     });
 
     it("should not be called before a delay on mount if previewing", () => {
-      variation[0].position.IncludeForTrainingMode = () => true;
-      variation[0].position.myTurn = true;
       const component = mountComponent(
-        new TrainingOptions([], [variation], true, false, delay, 0)
+        new TrainingOptions([], [trainingVariation], true, false, delay, 0)
       );
       const nextAdvance = jest.fn();
       component.vm.advancePreview = nextAdvance;
@@ -585,22 +636,28 @@ describe("TrainerViewModel", () => {
 
     it("should mark the variation as previewed when all the positions have been shown", () => {
       const component = mountComponent(
-        new TrainingOptions([], [variation], false, false, delay, 0)
+        new TrainingOptions([], [trainingVariation], false, false, delay, 0)
       );
       component.vm.advancePreview();
 
-      _.times(variation.length, jest.advanceTimersToNextTimer);
+      _.times(
+        trainingVariation.variation.length,
+        jest.advanceTimersToNextTimer
+      );
 
       expect(component.vm.previewedVariations).toEqual([0]);
     });
 
     it("should start the next preview at the first move", () => {
       const component = mountComponent(
-        new TrainingOptions([], [variation], false, false, delay, 0)
+        new TrainingOptions([], [trainingVariation], false, false, delay, 0)
       );
       component.vm.advancePreview();
 
-      _.times(variation.length, jest.advanceTimersToNextTimer);
+      _.times(
+        trainingVariation.variation.length,
+        jest.advanceTimersToNextTimer
+      );
 
       expect(component.vm.previewIndex).toEqual(0);
     });

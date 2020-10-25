@@ -1,165 +1,201 @@
-import Vue from "vue";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+import { Mutation } from "vuex-class";
 import _ from "lodash";
 import { Chess } from "chess.js";
 import { DrawShape } from "chessground/draw";
 
 import chessboard from "@/components/common/chessboard.vue";
 import { Threats } from "@/components/common/chessboardViewModel";
-import { TrainingOptions } from "@/components/train/TrainingModeSelectorViewModel";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import {
+  TrainingOptions,
+  TrainingVariation
+} from "@/components/train/TrainingOptions";
 import { Side } from "@/store/side";
-import { Move } from "@/store/move";
-import { mapMutations } from "vuex";
-import { TrainingEvent } from "@/store/TrainingEvent";
+import { sideFromFen } from "@/store/repertoire/chessHelpers";
+import { AddTrainingEventPayload } from "@/store/MutationPayloads";
+import { Repertoire } from "@/store/repertoire/Repertoire";
+import { VariationMove } from "@/store/repertoire/PositionCollection";
 import { TrainingMode } from "@/store/trainingMode";
 
 const maxAttempts = 3;
 
-export default Vue.extend({
-  data: () => ({
-    variationIndex: 0,
-    plyCount: 0,
-    startTime: _.now(),
-    attempts: 0,
-    previewIndex: 0,
-    previewedVariations: [] as number[],
-    mistakeInVariation: false
-  }),
+@Component({ components: { chessboard } })
+export default class TrainerViewModel extends Vue {
+  variationIndex = 0;
+  previewIndex = 0;
+  plyCount = 0;
+  startTime: number = _.now();
+  attempts = 0;
+  previewedVariations: number[] = [];
+  mistakeInVariation = false;
 
-  components: {
-    chessboard
-  },
+  @Prop({ required: true })
+  options!: TrainingOptions;
 
-  props: {
-    options: {
-      type: TrainingOptions,
-      required: true
+  @Mutation
+  addTrainingEvent!: (payload: AddTrainingEventPayload) => void;
+
+  @Watch("previewing")
+  onPreviewingChange(newPreviewing: boolean): void {
+    if (newPreviewing) {
+      this.advancePreview();
     }
-  },
+  }
 
-  computed: {
-    previewing(): boolean {
-      const previewingEnabled = this.options.previewNewVariations;
+  private get anyNewPositionsInActiveVariation(): boolean {
+    if (_.isUndefined(this.activeVariation)) {
+      return false;
+    }
 
-      const anyNew =
-        _.find(
-          this.activeVariationPositions,
-          position =>
-            position.IncludeForTrainingMode(TrainingMode.New) && position.myTurn
-        ) || false;
-
-      const alreadyPreviewed = _.includes(
-        this.previewedVariations,
-        this.variationIndex
-      );
-
-      return previewingEnabled && anyNew && !alreadyPreviewed;
-    },
-
-    previewPositionFen(): string {
-      return this.activeVariationPositions[this.previewIndex].fen;
-    },
-
-    variationProgress(): string {
-      return this.variationIndex + " / " + this.options.variations.length;
-    },
-
-    activeVariation(): Move[] {
-      return this.options.variations[this.variationIndex];
-    },
-
-    activeVariationPositions(): RepertoirePosition[] {
-      if (this.activeVariation) {
-        const positions: RepertoirePosition[] = [];
-
-        if (this.activeVariation[0].position.forSide === Side.White) {
-          positions.push(this.activeVariation[0].position.parents[0]);
+    const newMoves = _.find(
+      this.activeVariation.variation,
+      (move: VariationMove) => {
+        if (_.isUndefined(this.activeVariation)) {
+          return false;
         }
 
-        _.forEach(this.activeVariation, move => positions.push(move.position));
-        return positions;
-      } else {
-        return [];
-      }
-    },
+        const training = this.activeVariation.repertoire.training.getTrainingForMove(
+          move.sourceFen,
+          move.san
+        );
 
-    activePosition(): RepertoirePosition {
-      return this.activeVariationPositions[this.plyCount];
-    },
-
-    expectedMove(): Move {
-      let offset = 0;
-      if (this.activeVariation[0].position.forSide === Side.Black) {
-        offset = 1;
-      }
-
-      return this.activeVariation[this.plyCount + offset];
-    },
-
-    boardOrientation(): Side {
-      return this.activePosition.forSide;
-    },
-
-    complete(): boolean {
-      return this.variationIndex >= this.options.variations.length;
-    },
-
-    completionPercent(): number {
-      return (100 * this.variationIndex) / this.options.variations.length;
-    },
-
-    previewPlaybackDelay(): number {
-      return this.options.playbackSpeed * 1000;
-    },
-
-    mistakeArrow(): DrawShape[] {
-      if (this.showMistakeArrow) {
-        const board = new Chess(this.activePosition.fen);
-        const index =
-          this.boardOrientation === Side.White
-            ? this.plyCount
-            : this.plyCount + 1;
-        const move = board.move(this.activeVariation[index].san);
-
-        if (move) {
-          return [{ orig: move.from, dest: move.to, brush: "red" }];
+        if (training) {
+          return training.includeForTrainingMode(TrainingMode.New);
         }
-      }
 
+        return false;
+      }
+    );
+
+    return !_.isUndefined(newMoves);
+  }
+
+  get previewing(): boolean {
+    const anyNew = this.anyNewPositionsInActiveVariation;
+
+    const previewingEnabled = this.options.previewNewVariations;
+
+    const alreadyPreviewed = _.includes(
+      this.previewedVariations,
+      this.variationIndex
+    );
+
+    return anyNew && previewingEnabled && !alreadyPreviewed;
+  }
+
+  get previewPositionFen(): string {
+    return this.activeVariationPositions[this.previewIndex];
+  }
+
+  get variationProgress(): string {
+    return this.variationIndex + " / " + this.options.variations.length;
+  }
+
+  get activeVariation(): TrainingVariation | undefined {
+    return this.options.variations[this.variationIndex];
+  }
+
+  get activeVariationPositions(): string[] {
+    if (_.isUndefined(this.activeVariation)) {
       return [];
-    },
-
-    showMistakeArrow(): boolean {
-      return this.attempts >= maxAttempts;
     }
-  },
 
-  watch: {
-    previewing(newPreviewing: boolean) {
-      if (newPreviewing) {
-        this.advancePreview();
+    const positions: string[] = [];
+
+    if (this.activeVariation.repertoire.sideToTrain === Side.White) {
+      positions.push(this.activeVariation.variation[0].sourceFen);
+    }
+
+    _.forEach(this.activeVariation.variation, (move: VariationMove) =>
+      positions.push(move.sourceFen)
+    );
+
+    return positions;
+  }
+
+  get activePosition(): string {
+    return this.activeVariationPositions[this.plyCount];
+  }
+
+  get expectedMove(): VariationMove | undefined {
+    if (_.isUndefined(this.activeVariation)) {
+      return undefined;
+    }
+
+    let offset = 0;
+    if (this.activeVariation.repertoire.sideToTrain === Side.Black) {
+      offset = 1;
+    }
+
+    return this.activeVariation.variation[this.plyCount + offset];
+  }
+
+  get boardOrientation(): Side {
+    if (_.isUndefined(this.activeVariation)) {
+      return Side.White;
+    }
+
+    return this.activeVariation.repertoire.sideToTrain;
+  }
+
+  get complete(): boolean {
+    return this.variationIndex >= this.options.variations.length;
+  }
+
+  get completionPercent(): number {
+    return (100 * this.variationIndex) / this.options.variations.length;
+  }
+
+  get previewPlaybackDelay(): number {
+    return this.options.playbackSpeed * 1000;
+  }
+
+  get mistakeArrow(): DrawShape[] {
+    if (_.isUndefined(this.activeVariation)) {
+      return [];
+    }
+
+    if (this.showMistakeArrow) {
+      const board = new Chess(this.activePosition);
+      const index =
+        this.boardOrientation === Side.White
+          ? this.plyCount
+          : this.plyCount + 1;
+      const move = board.move(this.activeVariation.variation[index].san);
+
+      if (move) {
+        return [{ orig: move.from, dest: move.to, brush: "red" }];
       }
     }
-  },
 
-  methods: {
-    ...mapMutations(["addTrainingEvent"]),
+    return [];
+  }
 
-    reloadPosition(): void {
-      (this.$refs.board as Vue & {
-        loadPosition: () => void;
-      }).loadPosition();
-    },
+  get showMistakeArrow(): boolean {
+    return this.attempts >= maxAttempts;
+  }
 
-    onBoardMove(threats: Threats) {
-      if (threats.fen && threats.fen !== this.activePosition.fen) {
+  reloadPosition(): void {
+    (this.$refs.board as Vue & {
+      loadPosition: () => void;
+    }).loadPosition();
+  }
+
+  onBoardMove(threats: Threats): void {
+    if (!_.isUndefined(this.activeVariation)) {
+      if (threats.fen && threats.fen !== this.activePosition) {
         this.attempts++;
         const correct = this.moveIsCorrect(threats.fen);
 
         if (correct) {
           this.addTrainingEvent({
-            position: this.activePosition,
-            event: new TrainingEvent(this.attempts, this.getElapsedSeconds())
+            repertoire: this.activeVariation.repertoire,
+            event: {
+              attemptedMoves: [], // TODO
+              elapsedMilliseconds: this.getElapsedSeconds()
+            },
+            fen: this.activePosition,
+            san: this.activeVariation.variation[this.plyCount].san
           });
 
           this.nextTrainingPosition();
@@ -169,28 +205,45 @@ export default Vue.extend({
           this.reloadPosition();
         }
       }
-    },
+    }
+  }
 
-    moveIsCorrect(fen: string): boolean {
-      return fen === this.expectedMove.position.fen;
-    },
+  moveIsCorrect(fen: string): boolean {
+    if (_.isUndefined(this.expectedMove)) {
+      return false;
+    }
 
-    nextTrainingPosition(): void {
+    return fen === this.expectedMove.resultingFen;
+  }
+
+  private get isTurnOfSideToTrain(): boolean {
+    if (_.isUndefined(this.activeVariation)) {
+      return false;
+    }
+
+    const sideToMove = sideFromFen(this.activePosition);
+    return sideToMove === this.activeVariation.repertoire.sideToTrain;
+  }
+
+  nextTrainingPosition(): void {
+    if (!_.isUndefined(this.activeVariation)) {
       this.attempts = 0;
 
       do {
         this.plyCount++;
 
-        if (this.plyCount >= this.activeVariation.length) {
+        if (this.plyCount >= this.activeVariation.variation.length) {
           this.nextVariation();
         }
-      } while (!this.complete && !this.activePosition.myTurn);
+      } while (!this.complete && !this.isTurnOfSideToTrain);
 
       this.startTime = _.now();
-    },
+    }
+  }
 
-    nextVariation() {
-      if (this.activeVariation.length === 1) {
+  nextVariation(): void {
+    if (!_.isUndefined(this.activeVariation)) {
+      if (this.activeVariation.variation.length === 1) {
         this.reloadPosition();
       }
 
@@ -204,14 +257,17 @@ export default Vue.extend({
       if (this.complete) {
         this.$emit("onCompleted");
       }
-    },
+    }
+  }
 
-    getElapsedSeconds(): number {
-      return (_.now() - this.startTime) / 1000;
-    },
+  // Method instead of computed so this won't be cached
+  getElapsedSeconds(): number {
+    return (_.now() - this.startTime) / 1000;
+  }
 
-    advancePreview() {
-      if (this.previewIndex < this.activeVariation.length) {
+  advancePreview(): void {
+    if (!_.isUndefined(this.activeVariation)) {
+      if (this.previewIndex < this.activeVariation.variation.length) {
         ++this.previewIndex;
         setTimeout(() => {
           this.advancePreview();
@@ -222,11 +278,11 @@ export default Vue.extend({
         this.startTime = _.now();
       }
     }
-  },
+  }
 
   mounted(): void {
     if (this.previewing) {
       setTimeout(() => this.advancePreview(), this.previewPlaybackDelay);
     }
   }
-});
+}

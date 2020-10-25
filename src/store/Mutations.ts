@@ -1,9 +1,9 @@
 import { Storage, PersistantStorage } from "@/store/PersistantStorage";
 import { Side } from "@/store/side";
 import { Repertoire } from "@/store/repertoire/Repertoire";
-import { TrainingEvent } from "@/store/repertoire/RepetitionTraining";
 import { TagTree } from "@/store/repertoire/TagTree";
 import { EngineMetadata } from "@/store/EngineHelpers";
+import { AddTrainingEventPayload } from "./MutationPayloads";
 
 export interface MutationState extends Storage {
   persisted: PersistantStorage;
@@ -94,12 +94,7 @@ export const mutations = {
 
   addTrainingEvent(
     state: MutationState,
-    payload: {
-      repertoire: Repertoire;
-      fen: string;
-      san: string;
-      event: TrainingEvent;
-    }
+    payload: AddTrainingEventPayload
   ): void {
     const moveTraining = payload.repertoire.training.getTrainingForMove(
       payload.fen,

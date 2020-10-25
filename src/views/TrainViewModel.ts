@@ -2,7 +2,7 @@ import Vue from "vue";
 import { mapState } from "vuex";
 
 import TrainingModeSelector from "@/components/train/TrainingModeSelector.vue";
-import { TrainingOptions } from "@/components/train/TrainingModeSelectorViewModel";
+import { TrainingOptions } from "@/components/train/TrainingOptions";
 import Trainer from "@/components/train/Trainer.vue";
 
 export enum TrainingState {
