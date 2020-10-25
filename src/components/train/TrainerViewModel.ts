@@ -13,7 +13,6 @@ import {
 import { Side } from "@/store/side";
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
 import { AddTrainingEventPayload } from "@/store/MutationPayloads";
-import { Repertoire } from "@/store/repertoire/Repertoire";
 import { VariationMove } from "@/store/repertoire/PositionCollection";
 import { TrainingMode } from "@/store/trainingMode";
 
