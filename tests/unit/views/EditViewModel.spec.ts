@@ -12,7 +12,10 @@ import {
   PositionCollection
 } from "@/store/repertoire/PositionCollection";
 import { fenAfterMove } from "@/store/repertoire/chessHelpers";
-import { RemoveRepertoireMovePayload } from "@/store/MutationPayloads";
+import {
+  RemoveRepertoireMovePayload,
+  AddRepertoireTagPayload
+} from "@/store/MutationPayloads";
 
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TagTree");
@@ -22,7 +25,8 @@ describe("EditViewModel", () => {
   const startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
   const mutations = {
     addRepertoireMove: jest.fn(),
-    removeRepertoireMove: jest.fn()
+    removeRepertoireMove: jest.fn(),
+    addRepertoireTag: jest.fn()
   };
   const localVue = createLocalVue();
   localVue.use(Vuex);
@@ -126,7 +130,7 @@ describe("EditViewModel", () => {
   });
 
   describe("onDeleteMove", () => {
-    it("should invoke the removeRepertoireMove mutation with the repertoire and move", () => {
+    it("should invoke the removeRepertoireMove mutation with the payload", () => {
       const component = mountComponent();
       const move: VariationMove = {
         san: "san",
@@ -142,6 +146,29 @@ describe("EditViewModel", () => {
       component.vm.onDeleteMove(move);
 
       expect(mutations.removeRepertoireMove).toBeCalledWith(
+        expect.anything(),
+        expected
+      );
+    });
+  });
+
+  describe("onCreateTag", () => {
+    it("should invoke the addRepetoireTag mutation with the payload", () => {
+      const component = mountComponent();
+      const parent = new TagTree("", "", "", []);
+      const name = "name";
+      const fen = "fen";
+      const expected: AddRepertoireTagPayload = {
+        repertoire: component.vm.whiteRepertoire,
+        name,
+        parent,
+        fen
+      };
+
+      component.vm.onCreateTag({ parent, name, fen });
+
+      expect(mutations.addRepertoireTag).toHaveBeenCalled();
+      expect(mutations.addRepertoireTag).toHaveBeenCalledWith(
         expect.anything(),
         expected
       );

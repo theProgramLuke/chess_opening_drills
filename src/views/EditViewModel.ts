@@ -22,6 +22,7 @@ import {
   RemoveRepertoireTagPayload
 } from "@/store/MutationPayloads";
 import { fenAfterMove } from "@/store/repertoire/chessHelpers";
+import { TagTree } from "@/store/repertoire/TagTree";
 
 @Component({
   components: {
@@ -75,6 +76,21 @@ export default class EditViewModel extends Vue {
     return this.activeRepertoire.positions.movesFromPosition(
       this.activePosition
     );
+  }
+
+  onCreateTag(partialPayload: Partial<AddRepertoireTagPayload>): void {
+    if (
+      !_.isUndefined(partialPayload.name) &&
+      !_.isUndefined(partialPayload.parent) &&
+      !_.isUndefined(partialPayload.fen)
+    ) {
+      this.addRepertoireTag({
+        repertoire: this.activeRepertoire,
+        parent: partialPayload.parent,
+        name: partialPayload.name,
+        fen: partialPayload.fen
+      });
+    }
   }
 
   onDeleteMove(move: VariationMove): void {

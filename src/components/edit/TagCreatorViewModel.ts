@@ -40,7 +40,11 @@ export default class TagCreatorViewModel extends Vue {
 
   onCreate(): void {
     if (this.validate()) {
-      this.$emit("onCreate", this.parentTag, this.name);
+      this.$emit("onCreate", {
+        parent: this.parentTag,
+        name: this.name,
+        fen: this.activePosition
+      });
       this.showDialog = false;
       this.name = "";
     }

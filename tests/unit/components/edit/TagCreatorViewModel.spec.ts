@@ -4,6 +4,7 @@ import TagCreatorViewModel from "@/components/edit/TagCreatorViewModel.ts";
 import { TagTree } from "@/store/repertoire/TagTree";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { PositionCollection } from "@/store/repertoire/PositionCollection";
+import { AddRepertoireTagPayload } from "@/store/MutationPayloads";
 
 jest.mock("@/store/repertoire/TagTree");
 jest.mock("@/store/repertoire/Repertoire");
@@ -103,12 +104,15 @@ describe("TagCreatorViewModel", () => {
         }
       });
       component.vm.validate = jest.fn(() => true);
+      const expected: Partial<AddRepertoireTagPayload> = {
+        parent: component.vm.parentTag,
+        name: component.vm.name,
+        fen: taggedPosition
+      };
 
       component.vm.onCreate();
 
-      expect(component.emitted().onCreate).toEqual([
-        [component.vm.parentTag, component.vm.name]
-      ]);
+      expect(component.emitted().onCreate).toEqual([[expected]]);
     });
 
     it("should not emit onCreate when onCreate invoked given an invalid form", () => {
