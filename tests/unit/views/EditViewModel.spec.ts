@@ -11,13 +11,14 @@ import {
   VariationMove,
   PositionCollection
 } from "@/store/repertoire/PositionCollection";
+import { fenAfterMove } from "@/store/repertoire/chessHelpers";
 
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TagTree");
 jest.mock("@/store/repertoire/PositionCollection");
 
 describe("EditViewModel", () => {
-  const startPosition = "starting fen";
+  const startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
   const mutations = {
     addRepertoireMove: jest.fn()
   };
@@ -160,10 +161,10 @@ describe("EditViewModel", () => {
     });
 
     it("should update the board with the new move", () => {
-      const expected = "fen";
+      const expected = fenAfterMove(startPosition, "e4");
       const component = mountComponent();
 
-      component.vm.onBoardMove({ fen: expected });
+      component.vm.onBoardMove({ fen: expected, history: ["e4"] });
       const actual = component.vm.activePosition;
 
       expect(actual).toEqual(expected);

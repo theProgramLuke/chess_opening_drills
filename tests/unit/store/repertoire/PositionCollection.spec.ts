@@ -416,6 +416,26 @@ describe("PositionCollection", () => {
 
       expect(actual).toEqual(expected);
     });
+
+    it("should not include duplicate variations", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+      let fen = repertoire.addMove(startPosition, "e4");
+      repertoire.addMove(fen, "e5");
+      fen = repertoire.addMove(startPosition, "e4");
+      repertoire.addMove(fen, "e6");
+
+      const parents = repertoire.getSourceVariations(fen);
+
+      expect(parents).toEqual([
+        [
+          {
+            sourceFen: startPosition,
+            resultingFen: fen,
+            san: "e4"
+          }
+        ]
+      ]);
+    });
   });
 
   describe("asPgn", () => {

@@ -192,7 +192,7 @@ export class PositionCollection implements PositionCollectionInterface {
 
     _.remove(truncatedVariations, _.isEmpty);
 
-    return truncatedVariations;
+    return _.uniqWith(truncatedVariations, _.isEqual);
   }
 
   private removeOrphans(startPosition: string): string[] {

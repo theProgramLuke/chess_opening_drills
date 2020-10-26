@@ -9,23 +9,23 @@ describe("MoveListViewModel", () => {
       const component = shallowMount(MoveListViewModel, {
         render: jest.fn(),
         propsData: {
-          turnLists: []
+          variations: []
         }
       });
 
       expect(component.vm.pageIndex).toBe(1);
     });
 
-    it("should be reset to 1 when turnLists is updated", async () => {
+    it("should be reset to 1 when variations is updated", async () => {
       const component = shallowMount(MoveListViewModel, {
         render: jest.fn(),
         propsData: {
-          turnLists: []
+          variations: []
         }
       });
       component.vm.pageIndex = 10;
 
-      await component.setProps({ turnLists: [0, 1] });
+      await component.setProps({ variations: [0, 1] });
 
       expect(component.vm.pageIndex).toBe(1);
     });
@@ -36,7 +36,7 @@ describe("MoveListViewModel", () => {
       const component = shallowMount(MoveListViewModel, {
         render: jest.fn(),
         propsData: {
-          turnLists: []
+          variations: []
         }
       });
       const move: VariationMove = { resultingFen: "", san: "", sourceFen: "" };

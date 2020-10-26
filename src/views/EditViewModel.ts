@@ -21,7 +21,7 @@ import {
   RemoveRepertoireMovePayload,
   RemoveRepertoireTagPayload
 } from "@/store/MutationPayloads";
-import { sideFromFen } from "@/store/repertoire/chessHelpers";
+import { fenAfterMove } from "@/store/repertoire/chessHelpers";
 
 @Component({
   components: {
@@ -83,11 +83,12 @@ export default class EditViewModel extends Vue {
     if (threats.fen && threats.fen !== this.activePosition) {
       this.addRepertoireMove({
         repertoire: this.activeRepertoire,
-        fen: threats.fen,
+        fen: this.activePosition,
         san: lastMoveSan
       });
 
-      this.activePosition = threats.fen;
+      this.activePosition =
+        fenAfterMove(this.activePosition, lastMoveSan) || this.activePosition;
     }
   }
 

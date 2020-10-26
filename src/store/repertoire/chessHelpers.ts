@@ -3,10 +3,22 @@ import { Chess } from "chess.js";
 import { PgnMove, PgnGame } from "pgn-parser";
 import { Side } from "@/store/side";
 
+export function normalizeFen(nextFen: string, enPassant: boolean) {
+  const fenSections = nextFen.split(" ");
+
+  if (!enPassant) {
+    fenSections[3] = "-"; // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+  }
+
+  nextFen = _.join(_.slice(fenSections, 0, 4), " "); // omits half move clock and full move number
+  return nextFen;
+}
+
 export function fenAfterMove(fen: string, san: string): string | undefined {
   const game = new Chess(fen + " 0 1"); // add back half move clock and full move number to be valid FEN
+  const move = game.move(san);
 
-  if (game.move(san)) {
+  if (move) {
     let nextFen = game.fen();
 
     const enPassant = _.some(
@@ -16,13 +28,7 @@ export function fenAfterMove(fen: string, san: string): string | undefined {
       move => move.flags.includes("e") // "e" is en passant flag https://github.com/jhlywa/chess.js/
     );
 
-    const fenSections = nextFen.split(" ");
-
-    if (!enPassant) {
-      fenSections[3] = "-"; // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
-    }
-
-    nextFen = _.join(_.slice(fenSections, 0, 4), " "); // omits half move clock and full move number
+    nextFen = normalizeFen(nextFen, enPassant); // omits half move clock and full move number
 
     return nextFen;
   }

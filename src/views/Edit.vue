@@ -18,7 +18,7 @@
               @onCreate="addRepertoireTag")
           
           v-tab-item.pa-2(key=1, value="tab-1")
-            move-list(:turnLists="sourceVariations", @onSelectMove="updateBoard")
+            move-list(:variations="sourceVariations", @onSelectMove="updateBoard")
 
             variation-list(
               :variations="nextMoves",
