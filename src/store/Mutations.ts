@@ -1,16 +1,19 @@
 import { Storage, PersistantStorage } from "@/store/PersistantStorage";
 import { Side } from "@/store/side";
 import { Repertoire } from "@/store/repertoire/Repertoire";
-import { TagTree } from "@/store/repertoire/TagTree";
 import { EngineMetadata } from "@/store/EngineHelpers";
-import { AddTrainingEventPayload } from "./MutationPayloads";
+import {
+  AddTrainingEventPayload,
+  AddRepertoireMovePayload,
+  SetColorPayload,
+  AddRepertoireTagPayload,
+  RemoveRepertoireMovePayload,
+  RemoveRepertoireTagPayload,
+  AddMovesFromPgnPayload
+} from "@/store/MutationPayloads";
 
 export interface MutationState extends Storage {
   persisted: PersistantStorage;
-}
-
-function getRepertoireForSide(state: MutationState, forSide: Side) {
-  return forSide === Side.White ? state.whiteRepertoire : state.blackRepertoire;
 }
 
 function setRepertoireForSide(
@@ -43,27 +46,14 @@ export const mutations = {
     state.persisted.pieceTheme = pieceTheme;
   },
 
-  setColor(
-    state: MutationState,
-    payload: {
-      colorToSet:
-        | "primary"
-        | "secondary"
-        | "accent"
-        | "error"
-        | "warning"
-        | "info"
-        | "success";
-      color: string;
-    }
-  ): void {
+  setColor(state: MutationState, payload: SetColorPayload): void {
     state[payload.colorToSet] = payload.color;
     state.persisted[payload.colorToSet] = payload.color;
   },
 
   addRepertoireMove(
     state: MutationState,
-    payload: { repertoire: Repertoire; fen: string; san: string }
+    payload: AddRepertoireMovePayload
   ): void {
     payload.repertoire.positions.addMove(payload.fen, payload.san);
 
@@ -76,12 +66,7 @@ export const mutations = {
 
   addRepertoireTag(
     state: MutationState,
-    payload: {
-      repertoire: Repertoire;
-      parent: TagTree;
-      name: string;
-      fen: string;
-    }
+    payload: AddRepertoireTagPayload
   ): void {
     payload.parent.addTag(payload.name, payload.fen);
 
@@ -113,7 +98,7 @@ export const mutations = {
 
   removeRepertoireTag(
     state: MutationState,
-    payload: { repertoire: Repertoire; parent: TagTree; fen: string }
+    payload: RemoveRepertoireTagPayload
   ): void {
     payload.parent.removeTag(payload.fen);
 
@@ -126,7 +111,7 @@ export const mutations = {
 
   removeRepertoireMove(
     state: MutationState,
-    payload: { repertoire: Repertoire; fen: string; san: string }
+    payload: RemoveRepertoireMovePayload
   ): void {
     payload.repertoire.positions.deleteMove(payload.fen, payload.san);
 
@@ -139,7 +124,7 @@ export const mutations = {
 
   addPositionsFromPgn(
     state: MutationState,
-    payload: { repertoire: Repertoire; pgnGame: string }
+    payload: AddMovesFromPgnPayload
   ): void {
     payload.repertoire.positions.loadPgn(payload.pgnGame);
 

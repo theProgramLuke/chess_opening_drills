@@ -1,57 +1,64 @@
-import { shallowMount, createLocalVue } from "@vue/test-utils";
+import { shallowMount, createLocalVue, Wrapper } from "@vue/test-utils";
 import _ from "lodash";
 import Vuex, { Store } from "vuex";
 
 import EditViewModel from "@/views/EditViewModel.ts";
-import { Repertoire } from "@/store/repertoire";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { Repertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
-import { RepertoireTag } from "@/store/repertoireTag";
-import { Turn } from "@/store/turn";
-import { Move } from "@/store/move";
+import { TagTree } from "@/store/repertoire/TagTree";
+import {
+  Variation,
+  VariationMove,
+  PositionCollection
+} from "@/store/repertoire/PositionCollection";
 
-jest.mock("@/store/repertoire");
-jest.mock("@/store/repertoireTag");
-jest.mock("@/store/repertoirePosition");
-
-const mutations = {
-  addRepertoirePosition: jest.fn(),
-  addRepertoireTag: jest.fn()
-};
-let startPosition: RepertoirePosition;
-let state: { whiteRepertoire: Repertoire; blackRepertoire: Repertoire };
-const localVue = createLocalVue();
-localVue.use(Vuex);
-let store: Store<unknown>;
-
-beforeEach(() => {
-  startPosition = new RepertoirePosition("", "", Side.White);
-  state = {
-    whiteRepertoire: new Repertoire(
-      [],
-      [new RepertoireTag(Side.White, "", startPosition, "", [])]
-    ),
-    blackRepertoire: new Repertoire([], [])
-  };
-
-  store = new Vuex.Store({ state, mutations });
-});
-
-const makeTurn = (count = 0) =>
-  new Turn(
-    new Move(count.toString(), new RepertoirePosition("", "", Side.White))
-  );
+jest.mock("@/store/repertoire/Repertoire");
+jest.mock("@/store/repertoire/TagTree");
+jest.mock("@/store/repertoire/PositionCollection");
 
 describe("EditViewModel", () => {
-  const mountComponent = () =>
-    shallowMount(EditViewModel, {
+  const startPosition = "starting fen";
+  const mutations = {
+    addRepertoireMove: jest.fn()
+  };
+  const localVue = createLocalVue();
+  localVue.use(Vuex);
+
+  let store: Store<unknown>;
+  let state: { whiteRepertoire: Repertoire; blackRepertoire: Repertoire };
+
+  function mountComponent(): Wrapper<EditViewModel> {
+    return shallowMount(EditViewModel, {
       render: jest.fn(),
       localVue,
       store
     });
+  }
 
   beforeEach(() => {
     _.forEach(mutations, mutation => mutation.mockReset());
+
+    state = {
+      whiteRepertoire: new Repertoire({
+        positions: {},
+        training: {},
+        tags: { name: "", id: "", fen: "", children: [] },
+        sideToTrain: Side.White
+      }),
+      blackRepertoire: new Repertoire({
+        positions: {},
+        training: {},
+        tags: { name: "", id: "", fen: "", children: [] },
+        sideToTrain: Side.White
+      })
+    };
+    state.whiteRepertoire.tags = new TagTree("", "", "", []);
+    state.whiteRepertoire.tags.fen = startPosition;
+
+    state.whiteRepertoire.positions = new PositionCollection({});
+    state.blackRepertoire.positions = new PositionCollection({});
+
+    store = new Vuex.Store({ state, mutations });
   });
 
   describe("created", () => {
@@ -64,38 +71,42 @@ describe("EditViewModel", () => {
     });
   });
 
-  describe("turnLists", () => {
-    it("should be the turn lists of the active position", () => {
-      const turnList = [_.times(1, makeTurn), _.times(5, makeTurn)];
-      (startPosition.GetTurnLists as jest.Mock).mockReturnValue(turnList);
+  describe("sourceVariations", () => {
+    it("should be the source variations of the active position", () => {
+      const turnList: Variation[] = [];
+      (state.whiteRepertoire.positions
+        .getSourceVariations as jest.Mock).mockReturnValue(turnList);
       const component = mountComponent();
 
-      const actual = component.vm.turnLists;
+      const actual = component.vm.sourceVariations;
 
       expect(actual).toBe(turnList);
     });
 
-    it("should be [[]] if there are no moves", () => {
-      (startPosition.GetTurnLists as jest.Mock).mockReturnValue(false);
+    it("should be an empty array if there are no moves", () => {
+      (state.whiteRepertoire.positions
+        .getSourceVariations as jest.Mock).mockReturnValue([]);
       const component = mountComponent();
 
-      const actual = component.vm.turnLists;
+      const actual = component.vm.sourceVariations;
 
-      expect(actual).toEqual([[]]);
+      expect(actual).toEqual([]);
     });
   });
 
   describe("nextMoves", () => {
     it("should be the next moves of the active position", () => {
-      startPosition.children = [
-        new Move("0", new RepertoirePosition("", "", Side.White)),
-        new Move("1", new RepertoirePosition("", "", Side.White))
-      ];
+      const moves: VariationMove[] = [];
+      (state.whiteRepertoire.positions
+        .movesFromPosition as jest.Mock).mockReturnValue(moves);
       const component = mountComponent();
 
       const actual = component.vm.nextMoves;
 
-      expect(actual).toEqual(startPosition.children);
+      expect(actual).toEqual(moves);
+      expect(state.whiteRepertoire.positions.movesFromPosition).toBeCalledWith(
+        startPosition
+      );
     });
   });
 
@@ -103,7 +114,7 @@ describe("EditViewModel", () => {
     it("should update the active position and board orientation", () => {
       const side = Side.Black;
       const component = mountComponent();
-      const updatedPosition = new RepertoirePosition("some fen", "", side);
+      const updatedPosition = "new fen b -";
 
       component.vm.updateBoard(updatedPosition);
 
@@ -121,37 +132,17 @@ describe("EditViewModel", () => {
 
       component.vm.onBoardMove({ fen, history });
 
-      expect(mutations.addRepertoirePosition).toMatchSnapshot();
+      expect(mutations.addRepertoireMove).toHaveBeenCalled();
     });
 
     it("should update the board with the new move", () => {
+      const fen = "fen";
       const component = mountComponent();
       component.vm.updateBoard = jest.fn();
 
-      component.vm.onBoardMove({ fen: "fen" });
+      component.vm.onBoardMove({ fen });
 
-      expect(component.vm.updateBoard).toBeCalledWith(
-        expect.any(RepertoirePosition)
-      );
-    });
-  });
-
-  describe("addNewRepertoireTag", () => {
-    it("should invoke the addRepertoireTag mutation", () => {
-      const component = mountComponent();
-
-      component.vm.addNewRepertoireTag(
-        new RepertoireTag(
-          Side.White,
-          "",
-          new RepertoirePosition("", "", Side.White),
-          "",
-          []
-        ),
-        "name"
-      );
-
-      expect(mutations.addRepertoireTag).toMatchSnapshot();
+      expect(component.vm.updateBoard).toBeCalledWith(fen);
     });
   });
 
@@ -160,18 +151,24 @@ describe("EditViewModel", () => {
     const scrollDown = { deltaY: -1 };
 
     it("should go to the next position on scroll down", () => {
-      const nextPosition = new RepertoirePosition("", "", Side.White);
-      startPosition.children.push(new Move("", nextPosition));
+      const nextMove: VariationMove = {
+        resultingFen: "next fen",
+        sourceFen: "",
+        san: ""
+      };
+      (state.whiteRepertoire.positions
+        .movesFromPosition as jest.Mock).mockReturnValue([nextMove]);
       const component = mountComponent();
       component.vm.updateBoard = jest.fn();
 
       component.vm.onScroll(scrollUp);
 
-      expect(component.vm.updateBoard).toBeCalledWith(nextPosition);
+      expect(component.vm.updateBoard).toBeCalledWith(nextMove.resultingFen);
     });
 
     it("should stay at the active position on scroll down when there are no next moves", () => {
-      startPosition.children = [];
+      (state.whiteRepertoire.positions
+        .movesFromPosition as jest.Mock).mockReturnValue([]);
       const component = mountComponent();
       component.vm.updateBoard = jest.fn();
 
@@ -181,18 +178,20 @@ describe("EditViewModel", () => {
     });
 
     it("should go to the previous position on scroll up", () => {
-      const nextPosition = new RepertoirePosition("", "", Side.White);
-      startPosition.parents.push(nextPosition);
+      const parent = "parent";
+      (state.whiteRepertoire.positions
+        .parentPositions as jest.Mock).mockReturnValue([parent]);
       const component = mountComponent();
       component.vm.updateBoard = jest.fn();
 
       component.vm.onScroll(scrollDown);
 
-      expect(component.vm.updateBoard).toBeCalledWith(nextPosition);
+      expect(component.vm.updateBoard).toBeCalledWith(parent);
     });
 
     it("should stay at the active position on scroll up when there are no previous moves", () => {
-      startPosition.parents = [];
+      (state.whiteRepertoire.positions
+        .parentPositions as jest.Mock).mockReturnValue([]);
       const component = mountComponent();
       component.vm.updateBoard = jest.fn();
 

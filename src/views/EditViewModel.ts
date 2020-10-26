@@ -1,6 +1,7 @@
-import Vue from "vue";
 import _ from "lodash";
-import { mapState, mapMutations } from "vuex";
+import "reflect-metadata";
+import { Vue, Component, Prop } from "vue-property-decorator";
+import { State, Mutation } from "vuex-class";
 
 import chessboard from "@/components/common/chessboard.vue";
 import TagTree from "@/components/edit/TagTree.vue";
@@ -8,118 +9,112 @@ import MoveList from "@/components/edit/MoveList.vue";
 import VariationList from "@/components/edit/VariationList.vue";
 import EngineRecommendations from "@/components/edit/EngineRecommendations.vue";
 import { Threats } from "@/components/common/chessboardViewModel";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Turn } from "@/store/turn";
-import { Move } from "@/store/move";
+import { Repertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
-import { RepertoireTag } from "@/store/repertoireTag";
+import {
+  Variation,
+  VariationMove
+} from "@/store/repertoire/PositionCollection";
+import {
+  AddRepertoireMovePayload,
+  AddRepertoireTagPayload,
+  RemoveRepertoireMovePayload,
+  RemoveRepertoireTagPayload
+} from "@/store/MutationPayloads";
+import { sideFromFen } from "@/store/repertoire/chessHelpers";
 
-interface EditViewModelData {
-  activePosition: RepertoirePosition;
-  boardOrientation: Side;
-}
-
-export default Vue.extend({
-  data(): EditViewModelData {
-    return {
-      activePosition: new RepertoirePosition(
-        "8/8/8/8/8/8/8/8 w KQkq - 0 1",
-        "",
-        Side.White
-      ),
-      boardOrientation: Side.White
-    };
-  },
-
+@Component({
   components: {
     chessboard,
     TagTree,
     MoveList,
     VariationList,
     EngineRecommendations
-  },
-
-  computed: {
-    ...mapState(["whiteRepertoire", "blackRepertoire"]),
-
-    turnLists(): Turn[][] {
-      return this.activePosition.GetTurnLists() || [[]];
-    },
-
-    nextMoves(): Move[] {
-      return this.activePosition.children;
-    }
-  },
-
-  methods: {
-    ...mapMutations([
-      "addRepertoirePosition",
-      "addRepertoireTag",
-      "removeRepertoireTag",
-      "removeRepertoireMove"
-    ]),
-
-    updateBoard(position: RepertoirePosition) {
-      this.activePosition = position;
-      this.boardOrientation = position.forSide;
-    },
-
-    onBoardMove(threats: Threats) {
-      const lastMoveSan = _.last(threats.history) || "";
-
-      if (threats.fen && threats.fen !== this.activePosition.fen) {
-        const position = new RepertoirePosition(
-          threats.fen,
-          "",
-          this.activePosition.forSide
-        );
-
-        const move = new Move(lastMoveSan, position);
-
-        this.addRepertoirePosition({
-          parent: this.activePosition,
-          newMove: move
-        });
-
-        this.updateBoard(move.position);
-      }
-    },
-
-    addNewRepertoireTag(parent: RepertoireTag, name: string): void {
-      this.addRepertoireTag({
-        parent: parent,
-        tag: new RepertoireTag(
-          parent.forSide,
-          name,
-          this.activePosition,
-          this.activePosition.fen,
-          []
-        )
-      });
-    },
-
-    goToNextPosition() {
-      if (!_.isEmpty(this.activePosition.children)) {
-        this.updateBoard(this.activePosition.children[0].position);
-      }
-    },
-
-    goToPreviousPosition() {
-      if (!_.isEmpty(this.activePosition.parents)) {
-        this.updateBoard(this.activePosition.parents[0]);
-      }
-    },
-
-    onScroll(event: { deltaY: number }) {
-      if (event.deltaY > 0) {
-        this.goToNextPosition();
-      } else {
-        this.goToPreviousPosition();
-      }
-    }
-  },
-
-  created() {
-    this.updateBoard(this.whiteRepertoire.tags[0].position);
   }
-});
+})
+export default class EditViewModel extends Vue {
+  activeRepertoire!: Repertoire;
+  activePosition = "8/8/8/8/8/8/8/8 w KQkq -";
+  boardOrientation: Side = Side.White;
+
+  @State
+  whiteRepertoire!: Repertoire;
+
+  @State
+  blackRepertoire!: Repertoire;
+
+  @Mutation
+  addRepertoireMove!: (payload: AddRepertoireMovePayload) => void;
+
+  @Mutation
+  addRepertoireTag!: (payload: AddRepertoireTagPayload) => void;
+
+  @Mutation
+  removeRepertoireTag!: (payload: RemoveRepertoireTagPayload) => void;
+
+  @Mutation
+  removeRepertoireMov!: (payload: RemoveRepertoireMovePayload) => void;
+
+  get sourceVariations(): Variation[] {
+    return this.activeRepertoire.positions.getSourceVariations(
+      this.activePosition
+    );
+  }
+
+  get nextMoves(): VariationMove[] {
+    return this.activeRepertoire.positions.movesFromPosition(
+      this.activePosition
+    );
+  }
+
+  updateBoard(fen: string): void {
+    this.activePosition = fen;
+    this.boardOrientation = sideFromFen(fen);
+  }
+
+  onBoardMove(threats: Threats): void {
+    const lastMoveSan = _.last(threats.history) || "";
+    if (threats.fen && threats.fen !== this.activePosition) {
+      this.addRepertoireMove({
+        repertoire: this.activeRepertoire,
+        fen: threats.fen,
+        san: lastMoveSan
+      });
+
+      this.updateBoard(threats.fen);
+    }
+  }
+
+  goToNextPosition(): void {
+    const childMoves = this.activeRepertoire.positions.movesFromPosition(
+      this.activePosition
+    );
+
+    if (!_.isEmpty(childMoves)) {
+      this.updateBoard(childMoves[0].resultingFen);
+    }
+  }
+
+  goToPreviousPosition(): void {
+    const parentPositions = this.activeRepertoire.positions.parentPositions(
+      this.activePosition
+    );
+
+    if (!_.isEmpty(parentPositions)) {
+      this.updateBoard(parentPositions[0]);
+    }
+  }
+
+  onScroll(event: { deltaY: number }): void {
+    if (event.deltaY > 0) {
+      this.goToNextPosition();
+    } else {
+      this.goToPreviousPosition();
+    }
+  }
+
+  created(): void {
+    this.updateBoard(this.whiteRepertoire.tags.fen);
+    this.activeRepertoire = this.whiteRepertoire;
+  }
+}
