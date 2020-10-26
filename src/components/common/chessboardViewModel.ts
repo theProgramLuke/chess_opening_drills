@@ -287,7 +287,7 @@ export default Vue.extend({
 
   mounted() {
     this.onResize();
-    this.loadPosition();
+    this.loadPosition(this.fen);
   },
 
   data: function() {

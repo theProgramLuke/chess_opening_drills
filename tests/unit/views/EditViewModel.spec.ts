@@ -65,9 +65,21 @@ describe("EditViewModel", () => {
     it("should be created with the white repertoire start position", () => {
       const component = mountComponent();
 
-      const activePosition = component.vm.activePosition;
+      const actual = component.vm.activePosition;
 
-      expect(component.vm.activePosition).toBe(startPosition);
+      expect(actual).toBe(startPosition);
+    });
+  });
+
+  describe("activePositionLegalFen", () => {
+    it("should be the active position fen with 0 1 appended to be legal fen", () => {
+      const fen = "fen";
+      const component = mountComponent();
+      component.vm.activePosition = fen;
+
+      const actual = component.vm.activePositionLegalFen;
+
+      expect(actual).toBe("fen 0 1");
     });
   });
 
@@ -111,16 +123,28 @@ describe("EditViewModel", () => {
   });
 
   describe("updateBoard", () => {
-    it("should update the active position and board orientation", () => {
-      const side = Side.Black;
+    it("should update the active position", () => {
       const component = mountComponent();
-      const updatedPosition = "new fen b -";
+      const updatedPosition = "new fen";
 
       component.vm.updateBoard(updatedPosition);
 
-      expect(component.vm.boardOrientation).toEqual(side);
       expect(component.vm.activePosition).toBe(updatedPosition);
     });
+  });
+
+  describe("boardOrientation", () => {
+    it.each([Side.White, Side.Black])(
+      "should be the side to train of the active repertoire",
+      side => {
+        state.whiteRepertoire.sideToTrain = side;
+        const component = mountComponent();
+
+        const actual = component.vm.boardOrientation;
+
+        expect(actual).toEqual(side);
+      }
+    );
   });
 
   describe("onBoardMove", () => {
@@ -136,13 +160,13 @@ describe("EditViewModel", () => {
     });
 
     it("should update the board with the new move", () => {
-      const fen = "fen";
+      const expected = "fen";
       const component = mountComponent();
-      component.vm.updateBoard = jest.fn();
 
-      component.vm.onBoardMove({ fen });
+      component.vm.onBoardMove({ fen: expected });
+      const actual = component.vm.activePosition;
 
-      expect(component.vm.updateBoard).toBeCalledWith(fen);
+      expect(actual).toEqual(expected);
     });
   });
 

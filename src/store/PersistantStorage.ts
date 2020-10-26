@@ -68,28 +68,16 @@ function GetDefaultStorage() {
       success: "#4CAF50",
       boardTheme: "maple",
       pieceTheme: "staunty",
-      whiteRepertoire: new Repertoire({
-        positions: {},
-        tags: {
-          name: "White Repertoire",
-          fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
-          id: "",
-          children: []
-        },
-        sideToTrain: Side.White,
-        training: {}
-      }).asSaved(),
-      blackRepertoire: new Repertoire({
-        positions: {},
-        tags: {
-          name: "Black Repertoire",
-          fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
-          id: "",
-          children: []
-        },
-        sideToTrain: Side.Black,
-        training: {}
-      }).asSaved(),
+      whiteRepertoire: Repertoire.newSavedRepertoire(
+        "White Repertoire",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
+        Side.White
+      ),
+      blackRepertoire: Repertoire.newSavedRepertoire(
+        "Black Repertoire",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
+        Side.Black
+      ),
       backupDirectory: path.join(defaultCwd, "backups"),
       dailyBackupLimit: 14,
       monthlyBackupLimit: 6,

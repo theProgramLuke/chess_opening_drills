@@ -2,7 +2,6 @@ import _ from "lodash";
 
 import {
   PositionCollection,
-  VariationMove,
   DeleteMoveObserver,
   Variation
 } from "@/store/repertoire/PositionCollection";

@@ -34,8 +34,7 @@ import { sideFromFen } from "@/store/repertoire/chessHelpers";
 })
 export default class EditViewModel extends Vue {
   activeRepertoire!: Repertoire;
-  activePosition = "8/8/8/8/8/8/8/8 w KQkq -";
-  boardOrientation: Side = Side.White;
+  activePosition = "";
 
   @State
   whiteRepertoire!: Repertoire;
@@ -53,7 +52,15 @@ export default class EditViewModel extends Vue {
   removeRepertoireTag!: (payload: RemoveRepertoireTagPayload) => void;
 
   @Mutation
-  removeRepertoireMov!: (payload: RemoveRepertoireMovePayload) => void;
+  removeRepertoireMove!: (payload: RemoveRepertoireMovePayload) => void;
+
+  get activePositionLegalFen(): string {
+    return `${this.activePosition} 0 1`;
+  }
+
+  get boardOrientation(): Side {
+    return this.activeRepertoire.sideToTrain;
+  }
 
   get sourceVariations(): Variation[] {
     return this.activeRepertoire.positions.getSourceVariations(
@@ -69,7 +76,6 @@ export default class EditViewModel extends Vue {
 
   updateBoard(fen: string): void {
     this.activePosition = fen;
-    this.boardOrientation = sideFromFen(fen);
   }
 
   onBoardMove(threats: Threats): void {
@@ -81,7 +87,7 @@ export default class EditViewModel extends Vue {
         san: lastMoveSan
       });
 
-      this.updateBoard(threats.fen);
+      this.activePosition = threats.fen;
     }
   }
 
@@ -114,7 +120,7 @@ export default class EditViewModel extends Vue {
   }
 
   created(): void {
-    this.updateBoard(this.whiteRepertoire.tags.fen);
+    this.activePosition = this.whiteRepertoire.tags.fen;
     this.activeRepertoire = this.whiteRepertoire;
   }
 }

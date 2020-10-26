@@ -1,27 +1,31 @@
 <template lang="pug">
-  v-treeview.float-left(:items="combinedTags", dense, open-on-click)
-    template(v-slot:label="{ item }")
-      div
-        v-btn.original-case(@click="onSelect(item.position)", text, left) {{ item.name }}
+  div
+    v-treeview.float-left(v-for="repertoire in repertoires", :items="[repertoire.tags]", dense, open-on-click)
+      template(v-slot:label="{ item }")
+        div
+          v-btn.original-case(@click="onSelect(item.fen)", text, left) {{ item.name }}
 
-        br.d-none.d-sm-flex.d-md-none
+          br.d-none.d-sm-flex.d-md-none
 
-        div.float-right
-          tag-importer(
-            v-if="(item.id === 'whiteStart'|| item.id === 'blackStart')",
-            :tag="item")
+          div.float-right
+            tag-importer(
+              v-if="(item.id === '0'|| item.id === '1')",
+              :repertoire="repertoire",
+              :tag="item")
 
-          tag-creator(
-            :parentTag="item",
-            :activePosition="activePosition",
-            @onCreate="onCreate")
+            tag-creator(
+              :repertoire="repertoire",
+              :parentTag="item",
+              :activePosition="activePosition",
+              @onCreate="onCreate")
 
-          tag-deleter(
-            :tag="item",
-            :disabled="(item.id === 'whiteStart'|| item.id === 'blackStart')",
-            @onDelete="onDelete")
+            tag-deleter(
+              :repertoire="repertoire",
+              :tag="item",
+              :disabled="(item.id === 'whiteStart'|| item.id === 'blackStart')",
+              @onDelete="onDelete")
 
-          tag-exporter(:tag="item")
+            tag-exporter(:repertoire="repertoire", :tag="item")
 </template>
 
 <script lang="ts" src="./TagTreeViewModel.ts" />

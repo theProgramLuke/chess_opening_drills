@@ -28,6 +28,23 @@ describe("TagTreeViewModel", () => {
     blackRepertoire.tags = new TagTree("", "", "", []);
   });
 
+  describe("repertoires", () => {
+    it("should be the white and black repertoires", () => {
+      const component = shallowMount(TagTreeViewModel, {
+        render: jest.fn(),
+        propsData: {
+          whiteRepertoire,
+          blackRepertoire,
+          activePosition
+        }
+      });
+
+      const actual = component.vm.repertoires;
+
+      expect(actual).toEqual([whiteRepertoire, blackRepertoire]);
+    });
+  });
+
   describe("onCreate", () => {
     it("should emit onCreate with the parent tag and name", () => {
       const parent = whiteRepertoire.tags;

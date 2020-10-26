@@ -44,6 +44,27 @@ export class Repertoire {
     this.training = TrainingCollection.fromSaved(saved.training);
   }
 
+  static newSavedRepertoire(
+    name: string,
+    startFen: string,
+    sideToTrain: Side
+  ): SavedRepertoire {
+    return {
+      positions: {
+        options: {
+          directed: true,
+          multigraph: false,
+          compound: false
+        },
+        nodes: [{ v: startFen }],
+        edges: []
+      },
+      sideToTrain,
+      tags: new TagTree(name, startFen, "0", []).asSaved(),
+      training: new TrainingCollection().asSaved()
+    };
+  }
+
   asSaved(): SavedRepertoire {
     return {
       sideToTrain: this.sideToTrain,

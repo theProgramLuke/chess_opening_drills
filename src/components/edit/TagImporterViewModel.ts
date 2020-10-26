@@ -11,7 +11,7 @@ import { AddPositionsFromPgnPayload } from "@/store/MutationPayloads";
 @Component
 export default class TagImporterViewModel extends Vue {
   showDialog = false;
-  inputFile?: File = undefined;
+  inputFile: File = new File([], "");
   inputFileRules: InputValidationRules = [
     (value: string) => {
       return !!value || "Must specify a file to import.";
@@ -31,6 +31,7 @@ export default class TagImporterViewModel extends Vue {
   addPositionsFromPgn!: (payload: AddPositionsFromPgnPayload) => void;
 
   async onImport() {
+    // TODO handle no input file
     if (this.inputFile) {
       this.inputFile.text().then(pgn => {
         try {

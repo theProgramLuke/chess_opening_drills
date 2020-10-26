@@ -22,7 +22,9 @@ export default class TagTreeViewModel extends Vue {
   @Prop({ required: true })
   activePosition!: string;
 
-  // TODO view transformation
+  get repertoires(): Repertoire[] {
+    return [this.whiteRepertoire, this.blackRepertoire];
+  }
 
   @Emit("onCreate")
   onCreate(parent: TagTree, name: string): void {

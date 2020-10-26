@@ -15,10 +15,10 @@
               :activePosition="activePosition",
               @onSelect="updateBoard",
               @onDelete="removeRepertoireTag",
-              @onCreate="addNewRepertoireTag")
+              @onCreate="addRepertoireTag")
           
           v-tab-item.pa-2(key=1, value="tab-1")
-            move-list(:turnLists="turnLists", @onSelectMove="updateBoard")
+            move-list(:turnLists="sourceVariations", @onSelectMove="updateBoard")
 
             variation-list(
               :variations="nextMoves",
@@ -33,8 +33,8 @@
 
       v-col.ma-0(cols="8", @wheel="onScroll")
         chessboard(
-          v-if="activePosition.fen",
-          :fen="activePosition.fen",
+          v-if="activePositionLegalFen",
+          :fen="activePositionLegalFen",
           :orientation="boardOrientation",
           @onMove="onBoardMove")
 </template>
