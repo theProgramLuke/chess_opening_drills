@@ -3,10 +3,6 @@
 import _ from "lodash";
 
 // import PositionsPerTagViewModel from "@/components/reports/PositionsPerTagViewModel";
-// import { Repertoire } from "@/store/repertoire";
-// import { RepertoireTag } from "@/store/repertoireTag";
-// import { RepertoirePosition } from "@/store/repertoirePosition";
-// import { Side } from "@/store/side";
 
 // const state = {
 //   whiteRepertoire: new Repertoire([], []),

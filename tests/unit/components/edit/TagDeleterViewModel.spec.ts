@@ -1,6 +1,6 @@
 import { shallowMount } from "@vue/test-utils";
 
-import TagDeleterViewModel from "@/components/edit/TagDeleterViewModel.ts";
+import TagDeleterViewModel from "@/components/edit/TagDeleterViewModel";
 import { TagTree } from "@/store/repertoire/TagTree";
 
 jest.mock("@/store/repertoire/TagTree");

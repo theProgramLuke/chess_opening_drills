@@ -1,6 +1,7 @@
 import { shallowMount, createLocalVue, Wrapper } from "@vue/test-utils";
 import _ from "lodash";
 import Vuex from "vuex";
+import { DrawShape } from "chessground/draw";
 
 import TrainerViewModel from "@/components/train/TrainerViewModel.ts";
 import {
@@ -10,13 +11,12 @@ import {
 import { Side } from "@/store/side";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { AddTrainingEventPayload } from "@/store/MutationPayloads";
-import { DrawShape } from "chessground/draw";
 import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 import { TrainingMode } from "@/store/trainingMode";
+import { TagTree } from "@/store/repertoire/TagTree";
 
 jest.mock("@/store/repertoire/Repertoire");
-jest.mock("@/store/repertoire/PositionCollection");
 jest.mock("@/store/repertoire/TrainingCollection");
 jest.mock("@/store/repertoire/RepetitionTraining");
 jest.useFakeTimers();
@@ -34,7 +34,7 @@ describe("TrainerViewModel", () => {
   const emptySavedRepertoire = {
     name: "",
     positions: {},
-    tags: [],
+    tags: new TagTree("", "", "", []),
     training: {},
     sideToTrain: Side.White
   };

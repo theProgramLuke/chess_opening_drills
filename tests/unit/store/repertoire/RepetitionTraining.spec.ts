@@ -12,11 +12,11 @@ import {
   MillisecondsPerDay
 } from "@/store/repertoire/SuperMemo2";
 import { TrainingMode } from "@/store/trainingMode";
-import { millisecondsPerDay } from "@/store/repertoirePosition";
 
 jest.mock("lodash/now");
 
 const nowTimestamp = 24601;
+export const millisecondsPerDay = 86400000;
 
 beforeEach(() => {
   (now as jest.Mock).mockReset();
