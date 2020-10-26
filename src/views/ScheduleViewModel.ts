@@ -1,8 +1,9 @@
-import Vue from "vue";
-import { mapState } from "vuex";
+import "reflect-metadata";
+import { Vue, Component } from "vue-property-decorator";
+import { State } from "vuex-class";
 import _ from "lodash";
 
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { Repertoire } from "@/store/repertoire/Repertoire";
 
 interface CalendarEvent {
   name: string;
@@ -12,55 +13,57 @@ interface CalendarEvent {
   color?: string;
 }
 
-function eventsFromRepertoire(
-  positions: RepertoirePosition[]
-): CalendarEvent[] {
-  const days: Record<string, number> = {};
-  _.forEach(positions, position => {
-    if (position.nextRepetitionTimestamp) {
-      const date = new Date(position.nextRepetitionTimestamp);
-      const day = `${date.getUTCFullYear()}-${date.getUTCMonth() +
-        1}-${date.getUTCDate()}`;
-      if (days[day]) {
-        days[day]++;
-      } else {
-        days[day] = 1;
-      }
-    }
-  });
-  const events: CalendarEvent[] = [];
+function eventsFromRepertoire(repertoire: Repertoire): CalendarEvent[] {
+  // const days: Record<string, number> = {};
+  // _.forEach(positions, position => {
+  //   if (position.nextRepetitionTimestamp) {
+  //     const date = new Date(position.nextRepetitionTimestamp);
+  //     const day = `${date.getUTCFullYear()}-${date.getUTCMonth() +
+  //       1}-${date.getUTCDate()}`;
+  //     if (days[day]) {
+  //       days[day]++;
+  //     } else {
+  //       days[day] = 1;
+  //     }
+  //   }
+  // });
+  // const events: CalendarEvent[] = [];
 
-  _.forEach(days, (count, day) => {
-    events.push({
-      name: `${count} positions`,
-      start: new Date(day),
-      end: new Date(day),
-      timed: false,
-      color: "primary"
-    });
-  });
+  // _.forEach(days, (count, day) => {
+  //   events.push({
+  //     name: `${count} positions`,
+  //     start: new Date(day),
+  //     end: new Date(day),
+  //     timed: false,
+  //     color: "primary"
+  //   });
+  // });
 
-  return events;
+  // return events;
+  // TODO
+  return [];
 }
 
-export default Vue.extend({
-  data: () => ({
-    start: 0,
-    end: 0
-  }),
+@Component
+export default class ScheduleViewModel extends Vue {
+  start = 0;
+  end = 0;
 
-  computed: {
-    ...mapState(["whiteRepertoire", "blackRepertoire"]),
+  @State
+  whiteRepertoire!: Repertoire;
 
-    events(): CalendarEvent[] {
-      return eventsFromRepertoire(
-        _.concat(this.whiteRepertoire.positions, this.blackRepertoire.positions)
-      );
-    }
-  },
+  @State
+  blackRepertoire!: Repertoire;
+
+  get events(): CalendarEvent[] {
+    return _.concat(
+      eventsFromRepertoire(this.whiteRepertoire),
+      eventsFromRepertoire(this.blackRepertoire)
+    );
+  }
 
   created(): void {
     this.start = _.now();
     this.end = _.now() + 7 * 4 * 24 * 60 * 60 * 1000; // Highlight the next 4 weeks
   }
-});
+}
