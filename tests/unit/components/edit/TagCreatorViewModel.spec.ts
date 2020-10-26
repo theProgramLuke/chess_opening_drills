@@ -18,11 +18,10 @@ describe("TagCreatorViewModel", () => {
     tag = new TagTree("", "", "", []);
     tag.fen = taggedPosition;
     repertoire = new Repertoire({
-      name: "",
       positions: {},
       training: {},
       sideToTrain: 0,
-      tags: []
+      tags: new TagTree("", "", "", [])
     });
     repertoire.positions = new PositionCollection({});
   });

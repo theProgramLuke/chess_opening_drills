@@ -23,11 +23,10 @@ describe("TagImporterViewModel", () => {
   beforeEach(() => {
     tag = new TagTree("", "", "", []);
     repertoire = new Repertoire({
-      name: "",
       training: {},
       positions: {},
       sideToTrain: Side.White,
-      tags: []
+      tags: new TagTree("", "", "", [])
     });
 
     mutations.addPositionsFromPgn.mockClear();

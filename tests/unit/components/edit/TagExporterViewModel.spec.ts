@@ -27,10 +27,9 @@ describe("TagExporterViewModel", () => {
     tag.fen = tagPosition;
 
     repertoire = new Repertoire({
-      name: "",
       training: {},
       positions: {},
-      tags: [],
+      tags: new TagTree("", "", "", []),
       sideToTrain: Side.White
     });
     repertoire.positions = new PositionCollection({});

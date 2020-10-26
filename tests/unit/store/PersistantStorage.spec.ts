@@ -15,7 +15,6 @@ jest.mock("@/store/BackupManager");
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 const emptySavedRepertoire: SavedRepertoire = {
-  name: "",
   training: {},
   sideToTrain: 0,
   positions: {},

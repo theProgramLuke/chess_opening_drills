@@ -21,7 +21,6 @@ describe("mutations", () => {
   let state: MutationState;
 
   const emptySavedRepertoire: SavedRepertoire = {
-    name: "",
     training: {},
     sideToTrain: 0,
     positions: {},
