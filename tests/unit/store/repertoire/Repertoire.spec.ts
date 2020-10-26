@@ -29,7 +29,6 @@ describe("Repertoire", () => {
   describe("asSaved/fromSaved", () => {
     it("should save the repertoire", () => {
       const expected: SavedRepertoire = {
-        name: "my white repertoire",
         sideToTrain: Side.White,
         positions: new PositionCollection({}).asSaved(),
         tags: { name: "", fen: "", id: "", children: [] },
@@ -49,7 +48,6 @@ describe("Repertoire", () => {
   describe("training", () => {
     it("should be updated with the new move when a move is added to the positions for the side to train", () => {
       const repertoire = new Repertoire({
-        name: "",
         sideToTrain: Side.White,
         positions: {},
         tags: new TagTree("", "", "", []),
@@ -67,7 +65,6 @@ describe("Repertoire", () => {
 
     it("should not be updated with the new move when a move is added to the positions for the side not to train", () => {
       const repertoire = new Repertoire({
-        name: "",
         sideToTrain: Side.White,
         positions: {},
         tags: new TagTree("", "", "", []),
@@ -85,7 +82,6 @@ describe("Repertoire", () => {
 
     it("should be updated with the deleted moves and positions when a move is deleted", () => {
       const repertoire = new Repertoire({
-        name: "",
         sideToTrain: Side.White,
         positions: {},
         tags: new TagTree("", "", "", []),
@@ -110,7 +106,6 @@ describe("Repertoire", () => {
   describe("tags", () => {
     it("should each be updated with the deleted positions when a position is deleted", () => {
       const repertoire = new Repertoire({
-        name: "",
         sideToTrain: Side.White,
         positions: {},
         tags: new TagTree("", "", "", []),
@@ -138,7 +133,6 @@ describe("Repertoire", () => {
 
     beforeEach(() => {
       repertoire = new Repertoire({
-        name: "",
         sideToTrain: Side.White,
         positions: {},
         tags: new TagTree("", "", "", []),

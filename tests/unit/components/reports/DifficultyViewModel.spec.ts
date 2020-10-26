@@ -18,7 +18,6 @@ jest.mock("@/store/repertoire/RepetitionTraining");
 jest.mock("@/store/repertoire/TrainingCollection");
 
 const emptySavedRepertoire: SavedRepertoire = {
-  name: "",
   positions: {},
   training: {},
   tags: { name: "", fen: "", id: "", children: [] },

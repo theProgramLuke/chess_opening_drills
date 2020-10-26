@@ -15,7 +15,6 @@ describe("TagTreeViewModel", () => {
 
   beforeEach(() => {
     const emptyRepertoire: SavedRepertoire = {
-      name: "",
       training: {},
       positions: {},
       sideToTrain: Side.White,

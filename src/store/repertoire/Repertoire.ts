@@ -17,7 +17,6 @@ import { TrainingMode } from "@/store/trainingMode";
 import { filterPrefixLists } from "@/store/ListHelpers";
 
 export interface SavedRepertoire {
-  name: string;
   sideToTrain: Side;
   positions: SavedPositionCollection;
   tags: SavedTagTree;
@@ -25,14 +24,12 @@ export interface SavedRepertoire {
 }
 
 export class Repertoire {
-  name: string;
   sideToTrain: Side;
   positions: PositionCollection;
   tags: TagTree;
   training: TrainingCollection;
 
   constructor(saved: SavedRepertoire) {
-    this.name = saved.name;
     this.sideToTrain = saved.sideToTrain;
     this.positions = new PositionCollection(
       saved.positions,
@@ -49,7 +46,6 @@ export class Repertoire {
 
   asSaved(): SavedRepertoire {
     return {
-      name: this.name,
       sideToTrain: this.sideToTrain,
       positions: this.positions.asSaved(),
       tags: this.tags.asSaved(),

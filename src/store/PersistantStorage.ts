@@ -69,7 +69,6 @@ function GetDefaultStorage() {
       boardTheme: "maple",
       pieceTheme: "staunty",
       whiteRepertoire: new Repertoire({
-        name: "White Repertoire",
         positions: {},
         tags: {
           name: "White Repertoire",
@@ -81,7 +80,6 @@ function GetDefaultStorage() {
         training: {}
       }).asSaved(),
       blackRepertoire: new Repertoire({
-        name: "Black Repertoire",
         positions: {},
         tags: {
           name: "Black Repertoire",

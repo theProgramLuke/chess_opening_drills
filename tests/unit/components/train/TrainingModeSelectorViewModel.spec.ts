@@ -17,7 +17,6 @@ jest.mock("@/store/repertoire/TagTree");
 
 describe("TrainingModeSelectorViewModel", () => {
   const emptySavedRepertoire: SavedRepertoire = {
-    name: "",
     positions: {},
     training: {},
     tags: { name: "", fen: "", id: "", children: [] },
