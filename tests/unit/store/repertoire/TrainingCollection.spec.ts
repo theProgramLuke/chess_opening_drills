@@ -103,6 +103,12 @@ describe("TrainingCollection", () => {
 
       expect(training.getTrainingForMove(fen, other)).toBeDefined();
     });
+
+    it("should not throw an exception if the move does not exist", () => {
+      const training = new TrainingCollection();
+
+      training.deleteMove("fen", "san");
+    });
   });
 
   describe("deletePosition", () => {

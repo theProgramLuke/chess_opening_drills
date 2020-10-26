@@ -35,6 +35,7 @@ import { fenAfterMove } from "@/store/repertoire/chessHelpers";
 export default class EditViewModel extends Vue {
   activeRepertoire!: Repertoire;
   activePosition = "";
+  recomputeCounter = 0;
 
   @State
   whiteRepertoire!: Repertoire;
@@ -69,6 +70,8 @@ export default class EditViewModel extends Vue {
   }
 
   get nextMoves(): VariationMove[] {
+    this.recomputeCounter;
+
     return this.activeRepertoire.positions.movesFromPosition(
       this.activePosition
     );
@@ -80,6 +83,8 @@ export default class EditViewModel extends Vue {
       fen: move.sourceFen,
       san: move.san
     });
+
+    ++this.recomputeCounter;
   }
 
   updateBoard(fen: string): void {

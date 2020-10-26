@@ -44,10 +44,12 @@ export class TrainingCollection {
   }
 
   deleteMove(fen: string, san: string): void {
-    delete this.repetitionTraining[fen][san];
+    if (!_.isUndefined(this.repetitionTraining[fen])) {
+      delete this.repetitionTraining[fen][san];
 
-    if (_.isEmpty(this.repetitionTraining[fen])) {
-      this.deletePosition(fen);
+      if (_.isEmpty(this.repetitionTraining[fen])) {
+        this.deletePosition(fen);
+      }
     }
   }
 
