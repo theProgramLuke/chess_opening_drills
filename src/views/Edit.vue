@@ -9,7 +9,7 @@
           v-tab(key=3, href="#tab-3") Engine
 
           v-tab-item(key=0, value="tab-0")
-            tag-tree(
+            tag-list(
               :whiteRepertoire="whiteRepertoire",
               :blackRepertoire="blackRepertoire",
               :activePosition="activePosition",

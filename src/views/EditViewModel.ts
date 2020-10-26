@@ -4,7 +4,7 @@ import { Vue, Component } from "vue-property-decorator";
 import { State, Mutation } from "vuex-class";
 
 import chessboard from "@/components/common/chessboard.vue";
-import TagTree from "@/components/edit/TagTree.vue";
+import TagList from "@/components/edit/TagList.vue";
 import MoveList from "@/components/edit/MoveList.vue";
 import VariationList from "@/components/edit/VariationList.vue";
 import EngineRecommendations from "@/components/edit/EngineRecommendations.vue";
@@ -26,7 +26,7 @@ import { fenAfterMove } from "@/store/repertoire/chessHelpers";
 @Component({
   components: {
     chessboard,
-    TagTree,
+    TagList,
     MoveList,
     VariationList,
     EngineRecommendations

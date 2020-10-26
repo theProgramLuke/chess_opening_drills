@@ -1,6 +1,6 @@
 import { shallowMount } from "@vue/test-utils";
 
-import TagTreeViewModel from "@/components/edit/TagTreeViewModel.ts";
+import TagListViewModel from "@/components/edit/TagListViewModel";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { TagTree } from "@/store/repertoire/TagTree";
 import { Side } from "@/store/side";
@@ -8,7 +8,7 @@ import { Side } from "@/store/side";
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TagTree");
 
-describe("TagTreeViewModel", () => {
+describe("TagListViewModel", () => {
   let whiteRepertoire: Repertoire;
   let blackRepertoire: Repertoire;
   const activePosition = "some fen";
@@ -30,7 +30,7 @@ describe("TagTreeViewModel", () => {
 
   describe("repertoires", () => {
     it("should be the white and black repertoires", () => {
-      const component = shallowMount(TagTreeViewModel, {
+      const component = shallowMount(TagListViewModel, {
         render: jest.fn(),
         propsData: {
           whiteRepertoire,
@@ -49,7 +49,7 @@ describe("TagTreeViewModel", () => {
     it("should emit onCreate with the parent tag and name", () => {
       const parent = whiteRepertoire.tags;
       const name = "name";
-      const component = shallowMount(TagTreeViewModel, {
+      const component = shallowMount(TagListViewModel, {
         render: jest.fn(),
         propsData: {
           whiteRepertoire,
@@ -67,7 +67,7 @@ describe("TagTreeViewModel", () => {
   describe("onDelete", () => {
     it("should emit onDelete with the tag", () => {
       const tag = whiteRepertoire.tags;
-      const component = shallowMount(TagTreeViewModel, {
+      const component = shallowMount(TagListViewModel, {
         render: jest.fn(),
         propsData: {
           whiteRepertoire,
@@ -84,7 +84,7 @@ describe("TagTreeViewModel", () => {
 
   describe("onSelect", () => {
     it("should emit onSelect with the position", () => {
-      const component = shallowMount(TagTreeViewModel, {
+      const component = shallowMount(TagListViewModel, {
         render: jest.fn(),
         propsData: {
           whiteRepertoire,

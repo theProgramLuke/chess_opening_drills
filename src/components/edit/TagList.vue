@@ -28,7 +28,7 @@
             tag-exporter(:repertoire="repertoire", :tag="item")
 </template>
 
-<script lang="ts" src="./TagTreeViewModel.ts" />
+<script lang="ts" src="./TagListViewModel.ts" />
 
 <style lang="scss" scoped>
 .original-case {

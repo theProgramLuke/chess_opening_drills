@@ -12,7 +12,7 @@ import { Repertoire } from "@/store/repertoire/Repertoire";
 @Component({
   components: { TagDeleter, TagCreator, TagExporter, TagImporter }
 })
-export default class TagTreeViewModel extends Vue {
+export default class TagListViewModel extends Vue {
   @Prop({ required: true })
   whiteRepertoire!: Repertoire;
 
