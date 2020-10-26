@@ -1,4 +1,5 @@
-import Vue from "vue";
+import "reflect-metadata";
+import { Vue, Component } from "vue-property-decorator";
 
 import DifficultyReport from "@/components/reports/Difficulty.vue";
 import PositionsPerTagReport from "@/components/reports/PositionsPerTag.vue";
@@ -12,21 +13,20 @@ enum ReportToShow {
   Retention = "Training Retention"
 }
 
-export default Vue.extend({
-  data: () => ({
-    selectedReportType: ReportToShow.PositionsPerTag,
-    reportTypes: [
-      ReportToShow.PositionsPerTag,
-      ReportToShow.Learned,
-      ReportToShow.Retention,
-      ReportToShow.Difficulty
-    ]
-  }),
-
+@Component({
   components: {
     DifficultyReport,
     PositionsPerTagReport,
     LearnedReport,
     RetentionReport
   }
-});
+})
+export default class ReportsViewModel extends Vue {
+  selectedReportType: ReportToShow = ReportToShow.PositionsPerTag;
+  reportTypes: ReportToShow[] = [
+    ReportToShow.PositionsPerTag,
+    ReportToShow.Learned,
+    ReportToShow.Retention,
+    ReportToShow.Difficulty
+  ];
+}

@@ -1,6 +1,6 @@
 import _ from "lodash";
 import "reflect-metadata";
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 import { State, Mutation } from "vuex-class";
 
 import chessboard from "@/components/common/chessboard.vue";
