@@ -26,15 +26,18 @@ beforeEach(() => {
 });
 
 describe("Repertoire", () => {
-  describe("asSaved", () => {
+  describe("asSaved/fromSaved", () => {
     it("should save the repertoire", () => {
       const expected: SavedRepertoire = {
         name: "my white repertoire",
         sideToTrain: Side.White,
         positions: new PositionCollection({}).asSaved(),
-        tags: [],
+        tags: { name: "", fen: "", id: "", children: [] },
         training: new TrainingCollection().asSaved()
       };
+      const tags = new TagTree("", "", "", []);
+      (tags.asSaved as jest.Mock).mockReturnValue(expected.tags);
+      (TagTree.fromSaved as jest.Mock).mockReturnValue(tags);
       const repertoire = new Repertoire(_.cloneDeep(expected));
 
       const actual = repertoire.asSaved();
@@ -49,7 +52,7 @@ describe("Repertoire", () => {
         name: "",
         sideToTrain: Side.White,
         positions: {},
-        tags: [],
+        tags: new TagTree("", "", "", []),
         training: {}
       });
       const fen = "fen w ";
@@ -67,7 +70,7 @@ describe("Repertoire", () => {
         name: "",
         sideToTrain: Side.White,
         positions: {},
-        tags: [],
+        tags: new TagTree("", "", "", []),
         training: {}
       });
       const fen = "fen b ";
@@ -85,9 +88,10 @@ describe("Repertoire", () => {
         name: "",
         sideToTrain: Side.White,
         positions: {},
-        tags: [],
+        tags: new TagTree("", "", "", []),
         training: {}
       });
+      repertoire.tags = new TagTree("", "", "", []);
       const fen = "fen";
       const san = "san";
       const positions = ["some", "positions"];
@@ -109,19 +113,18 @@ describe("Repertoire", () => {
         name: "",
         sideToTrain: Side.White,
         positions: {},
-        tags: [new TagTree("", "", "", []), new TagTree("", "", "", [])],
+        tags: new TagTree("", "", "", []),
         training: {}
       });
+      repertoire.tags = new TagTree("", "", "", []);
       const positions = ["some", "positions"];
 
       (repertoire.positions as PositionCollection & {
         deleteMoveObserver: DeleteMoveObserver;
       }).deleteMoveObserver("", "", positions);
 
-      _.forEach(repertoire.tags, tag =>
-        _.forEach(positions, position =>
-          expect(tag.removeTag).toBeCalledWith(position)
-        )
+      _.forEach(positions, position =>
+        expect(repertoire.tags.removeTag).toBeCalledWith(position)
       );
     });
   });
@@ -138,11 +141,7 @@ describe("Repertoire", () => {
         name: "",
         sideToTrain: Side.White,
         positions: {},
-        tags: [
-          new TagTree("", "", "", []),
-          new TagTree("", "", "", []),
-          new TagTree("", "", "", [])
-        ],
+        tags: new TagTree("", "", "", []),
         training: {}
       });
       // tag0
@@ -162,9 +161,14 @@ describe("Repertoire", () => {
         ["san0", "san1", "san2", "san3"],
         ["san4", "san5"]
       ];
-      repertoire.tags[0].fen = positions[0][0];
-      repertoire.tags[1].fen = positions[0][2];
-      repertoire.tags[2].fen = positions[1][0];
+      repertoire.tags = new TagTree("", "", "", []);
+      repertoire.tags.fen = positions[0][0];
+      repertoire.tags.children = [
+        new TagTree("", "", "", []),
+        new TagTree("", "", "", [])
+      ];
+      repertoire.tags.children[0].fen = positions[0][2];
+      repertoire.tags.children[1].fen = positions[1][0];
       const descendants: Record<string, string[]> = {
         [positions[0][0]]: _.takeRight(positions[0], 4),
         [positions[0][1]]: _.takeRight(positions[0], 3),
@@ -279,7 +283,7 @@ describe("Repertoire", () => {
       );
 
       const actual = repertoire.getTrainingVariations(
-        [repertoire.tags[0]],
+        [repertoire.tags],
         [trainingMode]
       );
 
@@ -292,7 +296,7 @@ describe("Repertoire", () => {
         .includeForTrainingMode as jest.Mock).mockImplementation(() => false);
 
       const actual = repertoire.getTrainingVariations(
-        [repertoire.tags[0]],
+        [repertoire.tags],
         [trainingMode]
       );
 
@@ -311,7 +315,7 @@ describe("Repertoire", () => {
         .includeForTrainingMode as jest.Mock).mockImplementation(() => false);
 
       const actual = repertoire.getTrainingVariations(
-        [repertoire.tags[0]],
+        [repertoire.tags],
         [TrainingMode.Scheduled]
       );
 
@@ -330,7 +334,7 @@ describe("Repertoire", () => {
         .includeForTrainingMode as jest.Mock).mockImplementation(() => true);
 
       const actual = repertoire.getTrainingVariations(
-        [repertoire.tags[0]],
+        [repertoire.tags],
         [TrainingMode.Scheduled]
       );
 
@@ -343,7 +347,7 @@ describe("Repertoire", () => {
         .includeForTrainingMode as jest.Mock).mockImplementation(() => true);
 
       const actual = repertoire.getTrainingVariations(
-        [repertoire.tags[0], repertoire.tags[1]],
+        [repertoire.tags, repertoire.tags.children[0]],
         [TrainingMode.Scheduled]
       );
 
@@ -351,7 +355,7 @@ describe("Repertoire", () => {
     });
 
     it("should get no variations if no training modes are specified", () => {
-      const actual = repertoire.getTrainingVariations(repertoire.tags, []);
+      const actual = repertoire.getTrainingVariations([repertoire.tags], []);
 
       expect(actual).toEqual([]);
     });
@@ -364,7 +368,7 @@ describe("Repertoire", () => {
         .includeForTrainingMode as jest.Mock).mockImplementation(() => true);
 
       const actual = repertoire.getTrainingVariations(
-        [repertoire.tags[0], repertoire.tags[2]],
+        [repertoire.tags, repertoire.tags.children[1]],
         [TrainingMode.Scheduled]
       );
 

@@ -19,7 +19,7 @@ const emptySavedRepertoire: SavedRepertoire = {
   training: {},
   sideToTrain: 0,
   positions: {},
-  tags: []
+  tags: { name: "", fen: "", id: "", children: [] }
 };
 
 describe("PersistantStorage", () => {

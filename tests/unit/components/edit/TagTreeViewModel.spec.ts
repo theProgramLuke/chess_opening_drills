@@ -19,19 +19,19 @@ describe("TagTreeViewModel", () => {
       training: {},
       positions: {},
       sideToTrain: Side.White,
-      tags: []
+      tags: { name: "", fen: "", id: "", children: [] }
     };
 
     whiteRepertoire = new Repertoire(emptyRepertoire);
     blackRepertoire = new Repertoire(emptyRepertoire);
 
-    whiteRepertoire.tags = [];
-    blackRepertoire.tags = [];
+    whiteRepertoire.tags = new TagTree("", "", "", []);
+    blackRepertoire.tags = new TagTree("", "", "", []);
   });
 
   describe("onCreate", () => {
     it("should emit onCreate with the parent tag and name", () => {
-      const parent = whiteRepertoire.tags[0];
+      const parent = whiteRepertoire.tags;
       const name = "name";
       const component = shallowMount(TagTreeViewModel, {
         render: jest.fn(),
@@ -50,7 +50,7 @@ describe("TagTreeViewModel", () => {
 
   describe("onDelete", () => {
     it("should emit onDelete with the tag", () => {
-      const tag = whiteRepertoire.tags[0];
+      const tag = whiteRepertoire.tags;
       const component = shallowMount(TagTreeViewModel, {
         render: jest.fn(),
         propsData: {

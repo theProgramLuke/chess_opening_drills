@@ -20,7 +20,7 @@ describe("TrainingModeSelectorViewModel", () => {
     name: "",
     positions: {},
     training: {},
-    tags: [],
+    tags: { name: "", fen: "", id: "", children: [] },
     sideToTrain: Side.White
   };
 

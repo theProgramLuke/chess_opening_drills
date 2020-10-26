@@ -2,12 +2,12 @@ import ElectronStore from "electron-store";
 import _ from "lodash";
 import fs from "graceful-fs";
 import path from "path";
-
-import { Side } from "./side";
-import { EngineMetadata } from "./EngineHelpers";
-import { BackupManager } from "./BackupManager";
 import electron from "electron";
-import { Repertoire, SavedRepertoire } from "./repertoire/Repertoire";
+
+import { Side } from "@/store/side";
+import { EngineMetadata } from "@/store/EngineHelpers";
+import { BackupManager } from "@/store/BackupManager";
+import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 
 export interface SavedStorage {
   darkMode: boolean;
@@ -71,14 +71,24 @@ function GetDefaultStorage() {
       whiteRepertoire: new Repertoire({
         name: "White Repertoire",
         positions: {},
-        tags: [],
+        tags: {
+          name: "White Repertoire",
+          fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
+          id: "",
+          children: []
+        },
         sideToTrain: Side.White,
         training: {}
       }).asSaved(),
       blackRepertoire: new Repertoire({
         name: "Black Repertoire",
         positions: {},
-        tags: [],
+        tags: {
+          name: "Black Repertoire",
+          fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
+          id: "",
+          children: []
+        },
         sideToTrain: Side.Black,
         training: {}
       }).asSaved(),

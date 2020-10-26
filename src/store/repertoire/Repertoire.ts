@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import { TagTree } from "@/store/repertoire/TagTree";
+import { TagTree, SavedTagTree } from "@/store/repertoire/TagTree";
 import {
   PositionCollection,
   SavedPositionCollection,
@@ -20,7 +20,7 @@ export interface SavedRepertoire {
   name: string;
   sideToTrain: Side;
   positions: SavedPositionCollection;
-  tags: TagTree[];
+  tags: SavedTagTree;
   training: SavedTrainingCollection;
 }
 
@@ -28,7 +28,7 @@ export class Repertoire {
   name: string;
   sideToTrain: Side;
   positions: PositionCollection;
-  tags: TagTree[];
+  tags: TagTree;
   training: TrainingCollection;
 
   constructor(saved: SavedRepertoire) {
@@ -43,7 +43,7 @@ export class Repertoire {
         this.deleteMove(fen, san, deletedPositions);
       }
     );
-    this.tags = saved.tags;
+    this.tags = TagTree.fromSaved(saved.tags);
     this.training = TrainingCollection.fromSaved(saved.training);
   }
 
@@ -52,7 +52,7 @@ export class Repertoire {
       name: this.name,
       sideToTrain: this.sideToTrain,
       positions: this.positions.asSaved(),
-      tags: this.tags,
+      tags: this.tags.asSaved(),
       training: this.training.asSaved()
     };
   }
@@ -148,7 +148,7 @@ export class Repertoire {
     _.forEach(deletedPositions, position => {
       this.training.deletePosition(position);
 
-      _.forEach(this.tags, tag => tag.removeTag(position));
+      this.tags.removeTag(position);
     });
   }
 }

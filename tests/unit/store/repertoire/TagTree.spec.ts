@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Guid } from "guid-typescript";
 
-import { TagTree } from "@/store/repertoire/TagTree";
+import { TagTree, SavedTagTree } from "@/store/repertoire/TagTree";
 
 describe("TagTree", () => {
   describe("removeTag", () => {
@@ -35,6 +35,25 @@ describe("TagTree", () => {
       parent.addTag(name, fen);
 
       expect(parent.children).toEqual([expected]);
+    });
+  });
+
+  describe("asSaved/fromSaved", () => {
+    it("should create and restore a tag tree", () => {
+      const saved: SavedTagTree = {
+        name: "name0",
+        fen: "fen0",
+        id: "id0",
+        children: [
+          { name: "name1", fen: "fen1", id: "id1", children: [] },
+          { name: "name2", fen: "fen2", id: "id2", children: [] }
+        ]
+      };
+
+      const restored = TagTree.fromSaved(saved);
+      const actual = restored.asSaved();
+
+      expect(actual).toEqual(saved);
     });
   });
 });

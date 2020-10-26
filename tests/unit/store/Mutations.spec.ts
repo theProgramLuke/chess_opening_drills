@@ -25,7 +25,7 @@ describe("mutations", () => {
     training: {},
     sideToTrain: 0,
     positions: {},
-    tags: []
+    tags: { name: "", fen: "", id: "", children: [] }
   };
 
   beforeEach(() => {
