@@ -12,6 +12,7 @@ import {
   PositionCollection
 } from "@/store/repertoire/PositionCollection";
 import { fenAfterMove } from "@/store/repertoire/chessHelpers";
+import { RemoveRepertoireMovePayload } from "@/store/MutationPayloads";
 
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TagTree");
@@ -20,7 +21,8 @@ jest.mock("@/store/repertoire/PositionCollection");
 describe("EditViewModel", () => {
   const startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
   const mutations = {
-    addRepertoireMove: jest.fn()
+    addRepertoireMove: jest.fn(),
+    removeRepertoireMove: jest.fn()
   };
   const localVue = createLocalVue();
   localVue.use(Vuex);
@@ -119,6 +121,29 @@ describe("EditViewModel", () => {
       expect(actual).toEqual(moves);
       expect(state.whiteRepertoire.positions.movesFromPosition).toBeCalledWith(
         startPosition
+      );
+    });
+  });
+
+  describe("onDeleteMove", () => {
+    it("should invoke the removeRepertoireMove mutation with the repertoire and move", () => {
+      const component = mountComponent();
+      const move: VariationMove = {
+        san: "san",
+        sourceFen: "fen0",
+        resultingFen: "fen1"
+      };
+      const expected: RemoveRepertoireMovePayload = {
+        repertoire: component.vm.whiteRepertoire,
+        fen: move.sourceFen,
+        san: move.san
+      };
+
+      component.vm.onDeleteMove(move);
+
+      expect(mutations.removeRepertoireMove).toBeCalledWith(
+        expect.anything(),
+        expected
       );
     });
   });

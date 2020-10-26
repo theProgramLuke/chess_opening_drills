@@ -74,6 +74,14 @@ export default class EditViewModel extends Vue {
     );
   }
 
+  onDeleteMove(move: VariationMove): void {
+    this.removeRepertoireMove({
+      repertoire: this.activeRepertoire,
+      fen: move.sourceFen,
+      san: move.san
+    });
+  }
+
   updateBoard(fen: string): void {
     this.activePosition = fen;
   }

@@ -11,7 +11,7 @@ export default class MoveDeleterViewModel extends Vue {
   move!: VariationMove;
 
   @Emit("onDelete")
-  onDelete() {
+  onDelete(): VariationMove {
     return this.move;
   }
 }
