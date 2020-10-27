@@ -1,140 +1,98 @@
-import Vue from "vue";
-// import _ from "lodash";
-// import { mapState } from "vuex";
+import "reflect-metadata";
+import { Vue, Component } from "vue-property-decorator";
+import { State } from "vuex-class";
+import _ from "lodash";
 
-// import Plot from "@/components/common/Plot.vue";
+import Plot from "@/components/common/Plot.vue";
+import { Config } from "plotly.js";
+import { Repertoire } from "@/store/repertoire/Repertoire";
+import { TagTree } from "@/store/repertoire/TagTree";
+import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 
-// interface TagCounts {
-//   labels: string[];
-//   counts: number[];
-//   parents: string[];
-//   texts: string[];
-// }
+@Component({ name: "MovesPerTagReport", components: { Plot } })
+export default class MovesPerTagViewModel extends Vue {
+  options: Partial<Config> = { displayModeBar: false };
 
-// function tagCountsRecursive(
-//   tag: RepertoireTag,
-//   labels: string[],
-//   counts: number[],
-//   parents: string[],
-//   texts: string[],
-//   parentLabel = ""
-// ): number {
-//   labels.push(tag.name);
-//   parents.push(parentLabel);
+  @State
+  whiteRepertoire!: Repertoire;
 
-//   let childCount = 0;
-//   tag.position.VisitChildren(() => childCount++);
-//   const index = counts.push(childCount) - 1;
-//   texts.push("");
+  @State
+  blackRepertoire!: Repertoire;
 
-//   let childrenSum = 0;
+  @State
+  darkMode!: boolean;
 
-//   _.forEach(
-//     tag.children,
-//     child =>
-//       (childrenSum += tagCountsRecursive(
-//         child,
-//         labels,
-//         counts,
-//         parents,
-//         texts,
-//         tag.name
-//       ))
-//   );
+  get showNoPositions(): boolean {
+    return (
+      _.isEmpty(this.whiteRepertoire.training.getMoves()) &&
+      _.isEmpty(this.blackRepertoire.training.getMoves())
+    );
+  }
 
-//   counts[index] = _.max([counts[index] - childrenSum, 0]) || 0;
-//   texts[index] = childCount.toString();
+  get plotData() {
+    const whiteTagCounts = this.getTagCounts(this.whiteRepertoire);
+    const blackTagCounts = this.getTagCounts(this.blackRepertoire);
 
-//   return childCount;
-// }
+    return [
+      {
+        type: "sunburst",
+        labels: _.concat(whiteTagCounts.labels, blackTagCounts.labels),
+        parents: _.concat(whiteTagCounts.parents, blackTagCounts.parents),
+        values: _.concat(whiteTagCounts.counts, blackTagCounts.counts),
+        maxdepth: 3
+        // hoverinfo: "label+"
+      }
+    ];
+  }
 
-// function tagCounts(repertoire: Repertoire): TagCounts {
-//   const labels: string[] = [];
-//   const counts: number[] = [];
-//   const parents: string[] = [];
-//   const texts: string[] = [];
+  private getTagCounts(
+    repertoire: Repertoire
+  ): { labels: string[]; parents: string[]; counts: number[] } {
+    const labels: string[] = [];
+    const parents: string[] = [];
+    const counts: number[] = [];
 
-//   tagCountsRecursive(repertoire.tags[0], labels, counts, parents, texts);
+    this.getTagCountsRecursive(
+      repertoire,
+      repertoire.tags,
+      [],
+      labels,
+      parents,
+      counts
+    );
 
-//   return { labels, counts, parents, texts };
-// }
+    return { labels, parents, counts };
+  }
 
-// function disambiguateCounts(
-//   whiteTagCounts: TagCounts,
-//   blackTagCounts: TagCounts
-// ): { whiteTagCounts: TagCounts; blackTagCounts: TagCounts } {
-//   const needsDisambiguation = _.intersection(
-//     whiteTagCounts.labels,
-//     blackTagCounts.labels
-//   );
+  private labelFromTagPath(path: string[]): string {
+    return path.join(" / ");
+  }
 
-//   _.forEach(needsDisambiguation, name => {
-//     whiteTagCounts.labels = _.map(
-//       whiteTagCounts.labels,
-//       _.partial(_.replace, _, name, `White / ${name}`)
-//     );
-//     whiteTagCounts.parents = _.map(
-//       whiteTagCounts.parents,
-//       _.partial(_.replace, _, name, `White / ${name}`)
-//     );
-//     blackTagCounts.parents = _.map(
-//       blackTagCounts.parents,
-//       _.partial(_.replace, _, name, `Black / ${name}`)
-//     );
-//     blackTagCounts.labels = _.map(
-//       blackTagCounts.labels,
-//       _.partial(_.replace, _, name, `Black / ${name}`)
-//     );
-//   });
+  private getTagCountsRecursive(
+    repertoire: Repertoire,
+    tag: TagTree,
+    path: string[],
+    labels: string[],
+    parents: string[],
+    counts: number[]
+  ): void {
+    path.push(tag.name);
 
-//   return { whiteTagCounts, blackTagCounts };
-// }
+    _.forEach(tag.children, childTag =>
+      this.getTagCountsRecursive(
+        repertoire,
+        childTag,
+        _.clone(path),
+        labels,
+        parents,
+        counts
+      )
+    );
 
-// TODO
-export default Vue.extend({
-  name: "PositionsPerTagReport"
+    const tagTrainings = repertoire.getTrainingForTags([tag]);
 
-  // data: () => ({
-  //   options: { displayModeBar: false },
-  //   layout: {}
-  // }),
-
-  // components: {
-  //   Plot
-  // },
-
-  // computed: {
-  //   ...mapState(["darkMode", "whiteRepertoire", "blackRepertoire"]),
-
-  //   showNoPositions(): boolean {
-  //     return (
-  //       this.whiteRepertoire.positions.length === 1 &&
-  //       this.blackRepertoire.positions.length === 1
-  //     );
-  //   },
-
-  //   plotData() {
-  //     const whiteTagCounts = tagCounts(this.whiteRepertoire);
-  //     const blackTagCounts = tagCounts(this.blackRepertoire);
-  //     const disambiguated = disambiguateCounts(whiteTagCounts, blackTagCounts);
-
-  //     return [
-  //       {
-  //         type: "sunburst",
-  //         labels: _.concat(
-  //           disambiguated.whiteTagCounts.labels,
-  //           disambiguated.blackTagCounts.labels
-  //         ),
-  //         parents: _.concat(
-  //           disambiguated.whiteTagCounts.parents,
-  //           disambiguated.blackTagCounts.parents
-  //         ),
-  //         values: _.concat(whiteTagCounts.counts, blackTagCounts.counts),
-  //         hovertext: _.concat(whiteTagCounts.texts, blackTagCounts.texts),
-  //         maxdepth: 3,
-  //         hoverinfo: "label+percent parent+text"
-  //       }
-  //     ];
-  //   }
-  // }
-});
+    labels.push(this.labelFromTagPath(path));
+    parents.push(this.labelFromTagPath(_.initial(path)));
+    counts.push(tagTrainings.length);
+  }
+}
