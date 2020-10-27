@@ -126,7 +126,7 @@ export const mutations = {
     state: MutationState,
     payload: AddMovesFromPgnPayload
   ): void {
-    payload.repertoire.positions.loadPgn(payload.pgnGame);
+    payload.repertoire.positions.loadPgn(payload.pgn);
 
     setRepertoireForSide(
       state,

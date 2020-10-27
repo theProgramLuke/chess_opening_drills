@@ -2,11 +2,6 @@ import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TrainingEvent } from "@/store/repertoire/RepetitionTraining";
 import { TagTree } from "@/store/repertoire/TagTree";
 
-export interface AddPositionsFromPgnPayload {
-  repertoire: Repertoire;
-  pgn: string;
-}
-
 export interface AddTrainingEventPayload {
   repertoire: Repertoire;
   fen: string;
@@ -47,7 +42,7 @@ export interface RemoveRepertoireMovePayload {
 
 export interface AddMovesFromPgnPayload {
   repertoire: Repertoire;
-  pgnGame: string;
+  pgn: string;
 }
 
 export interface RemoveRepertoireTagPayload {

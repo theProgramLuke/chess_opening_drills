@@ -22,7 +22,6 @@ import {
   RemoveRepertoireTagPayload
 } from "@/store/MutationPayloads";
 import { fenAfterMove } from "@/store/repertoire/chessHelpers";
-import { TagTree } from "@/store/repertoire/TagTree";
 
 @Component({
   components: {

@@ -175,13 +175,13 @@ describe("mutations", () => {
 
   describe("addPositionsFromPgn", () => {
     it("should loadPgn on the repertoire positions", () => {
-      const pgnGame = "";
+      const pgn = "";
       const repertoire = new Repertoire(emptySavedRepertoire);
       repertoire.positions = new PositionCollection({});
 
-      mutations.addPositionsFromPgn(state, { repertoire, pgnGame });
+      mutations.addPositionsFromPgn(state, { repertoire, pgn });
 
-      expect(repertoire.positions.loadPgn).toBeCalledWith(pgnGame);
+      expect(repertoire.positions.loadPgn).toBeCalledWith(pgn);
     });
   });
 

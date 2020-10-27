@@ -6,7 +6,7 @@ import { InputValidationRules } from "vuetify";
 
 import { TagTree } from "@/store/repertoire/TagTree";
 import { Repertoire } from "@/store/repertoire/Repertoire";
-import { AddPositionsFromPgnPayload } from "@/store/MutationPayloads";
+import { AddMovesFromPgnPayload } from "@/store/MutationPayloads";
 
 @Component
 export default class TagImporterViewModel extends Vue {
@@ -28,7 +28,7 @@ export default class TagImporterViewModel extends Vue {
   repertoire!: Repertoire;
 
   @Mutation
-  addPositionsFromPgn!: (payload: AddPositionsFromPgnPayload) => void;
+  addPositionsFromPgn!: (payload: AddMovesFromPgnPayload) => void;
 
   async onImport() {
     // TODO handle no input file
