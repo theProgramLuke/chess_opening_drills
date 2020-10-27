@@ -21,12 +21,12 @@ describe("TagImporterViewModel", () => {
   let repertoire: Repertoire;
 
   beforeEach(() => {
-    tag = new TagTree("", "", "", []);
+    tag = new TagTree("", "", []);
     repertoire = new Repertoire({
       training: {},
       positions: {},
       sideToTrain: Side.White,
-      tags: new TagTree("", "", "", [])
+      tags: new TagTree("", "", [])
     });
 
     mutations.addPositionsFromPgn.mockClear();

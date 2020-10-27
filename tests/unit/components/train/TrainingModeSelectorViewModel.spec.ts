@@ -36,7 +36,7 @@ describe("TrainingModeSelectorViewModel", () => {
     });
 
   function mockTag(name: number): TagTree {
-    const tag = new TagTree("", "", "", []);
+    const tag = new TagTree("", "", []);
     tag.name = `${name}`;
     return tag;
   }

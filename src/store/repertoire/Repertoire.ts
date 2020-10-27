@@ -60,7 +60,7 @@ export class Repertoire {
         edges: []
       },
       sideToTrain,
-      tags: new TagTree(name, startFen, "0", []).asSaved(),
+      tags: new TagTree(name, startFen, []).asSaved(),
       training: new TrainingCollection().asSaved()
     };
   }

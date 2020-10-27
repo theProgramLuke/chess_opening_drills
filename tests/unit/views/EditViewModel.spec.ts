@@ -59,7 +59,7 @@ describe("EditViewModel", () => {
         sideToTrain: Side.White
       })
     };
-    state.whiteRepertoire.tags = new TagTree("", "", "", []);
+    state.whiteRepertoire.tags = new TagTree("", "", []);
     state.whiteRepertoire.tags.fen = startPosition;
 
     state.whiteRepertoire.positions = new PositionCollection({});
@@ -153,9 +153,9 @@ describe("EditViewModel", () => {
   });
 
   describe("onCreateTag", () => {
-    it("should invoke the addRepetoireTag mutation with the payload", () => {
+    it("should invoke the addRepertoireTag mutation with the payload", () => {
       const component = mountComponent();
-      const parent = new TagTree("", "", "", []);
+      const parent = new TagTree("", "", []);
       const name = "name";
       const fen = "fen";
       const expected: AddRepertoireTagPayload = {

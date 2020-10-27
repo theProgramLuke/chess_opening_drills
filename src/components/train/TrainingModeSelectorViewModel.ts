@@ -37,7 +37,7 @@ export default class TrainingModeSelectorViewModel extends Vue {
   blackRepertoire!: Repertoire;
 
   get combinedTags(): TagTree[] {
-    return _.concat(this.whiteRepertoire.tags, this.blackRepertoire.tags);
+    return [this.whiteRepertoire.tags, this.blackRepertoire.tags];
   }
 
   get showPreviewInput(): boolean {

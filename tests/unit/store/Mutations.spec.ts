@@ -115,7 +115,7 @@ describe("mutations", () => {
 
   describe("addRepertoireTag", () => {
     it("should AddChild to the parent tag", () => {
-      const parent = new TagTree("", "", "", []);
+      const parent = new TagTree("", "", []);
       const repertoire = new Repertoire(emptySavedRepertoire);
       const fen = "fen";
       const name = "name";
@@ -151,7 +151,7 @@ describe("mutations", () => {
   describe("removeRepertoireTag", () => {
     it("should removeTag to the parent tag", () => {
       const repertoire = new Repertoire(emptySavedRepertoire);
-      const parent = new TagTree("", "", "", []);
+      const parent = new TagTree("", "", []);
       const fen = "fen";
 
       mutations.removeRepertoireTag(state, { repertoire, parent, fen });

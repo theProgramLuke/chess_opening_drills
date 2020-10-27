@@ -34,7 +34,7 @@ describe("Repertoire", () => {
         tags: { name: "", fen: "", id: "", children: [] },
         training: new TrainingCollection().asSaved()
       };
-      const tags = new TagTree("", "", "", []);
+      const tags = new TagTree("", "", []);
       (tags.asSaved as jest.Mock).mockReturnValue(expected.tags);
       (TagTree.fromSaved as jest.Mock).mockReturnValue(tags);
       const repertoire = new Repertoire(_.cloneDeep(expected));
@@ -50,7 +50,7 @@ describe("Repertoire", () => {
       const repertoire = new Repertoire({
         sideToTrain: Side.White,
         positions: {},
-        tags: new TagTree("", "", "", []),
+        tags: new TagTree("", "", []),
         training: {}
       });
       const fen = "fen w ";
@@ -67,7 +67,7 @@ describe("Repertoire", () => {
       const repertoire = new Repertoire({
         sideToTrain: Side.White,
         positions: {},
-        tags: new TagTree("", "", "", []),
+        tags: new TagTree("", "", []),
         training: {}
       });
       const fen = "fen b ";
@@ -84,10 +84,10 @@ describe("Repertoire", () => {
       const repertoire = new Repertoire({
         sideToTrain: Side.White,
         positions: {},
-        tags: new TagTree("", "", "", []),
+        tags: new TagTree("", "", []),
         training: {}
       });
-      repertoire.tags = new TagTree("", "", "", []);
+      repertoire.tags = new TagTree("", "", []);
       const fen = "fen";
       const san = "san";
       const positions = ["some", "positions"];
@@ -108,10 +108,10 @@ describe("Repertoire", () => {
       const repertoire = new Repertoire({
         sideToTrain: Side.White,
         positions: {},
-        tags: new TagTree("", "", "", []),
+        tags: new TagTree("", "", []),
         training: {}
       });
-      repertoire.tags = new TagTree("", "", "", []);
+      repertoire.tags = new TagTree("", "", []);
       const positions = ["some", "positions"];
 
       (repertoire.positions as PositionCollection & {
@@ -135,7 +135,7 @@ describe("Repertoire", () => {
       repertoire = new Repertoire({
         sideToTrain: Side.White,
         positions: {},
-        tags: new TagTree("", "", "", []),
+        tags: new TagTree("", "", []),
         training: {}
       });
       // tag0
@@ -155,11 +155,11 @@ describe("Repertoire", () => {
         ["san0", "san1", "san2", "san3"],
         ["san4", "san5"]
       ];
-      repertoire.tags = new TagTree("", "", "", []);
+      repertoire.tags = new TagTree("", "", []);
       repertoire.tags.fen = positions[0][0];
       repertoire.tags.children = [
-        new TagTree("", "", "", []),
-        new TagTree("", "", "", [])
+        new TagTree("", "", []),
+        new TagTree("", "", [])
       ];
       repertoire.tags.children[0].fen = positions[0][2];
       repertoire.tags.children[1].fen = positions[1][0];

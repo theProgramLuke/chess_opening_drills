@@ -14,10 +14,10 @@ export class TagTree {
   id: string;
   children: TagTree[];
 
-  constructor(name: string, fen: string, id: string, children: TagTree[]) {
+  constructor(name: string, fen: string, children: TagTree[], id?: string) {
     this.name = name;
     this.fen = fen;
-    this.id = id;
+    this.id = id || Guid.create().toString();
     this.children = children;
   }
 
@@ -27,7 +27,7 @@ export class TagTree {
   }
 
   addTag(name: string, fen: string): void {
-    const child = new TagTree(name, fen, Guid.create().toString(), []);
+    const child = new TagTree(name, fen, []);
 
     this.children.push(child);
   }
@@ -45,8 +45,8 @@ export class TagTree {
     return new TagTree(
       saved.name,
       saved.fen,
-      saved.id,
-      _.map(saved.children, TagTree.fromSaved)
+      _.map(saved.children, TagTree.fromSaved),
+      saved.id
     );
   }
 }

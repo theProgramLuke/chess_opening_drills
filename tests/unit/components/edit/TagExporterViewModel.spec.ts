@@ -22,14 +22,14 @@ describe("TagExporterViewModel", () => {
   let tag: TagTree;
 
   beforeEach(() => {
-    tag = new TagTree("", "", "", []);
+    tag = new TagTree("", "", []);
     tag.name = tagName;
     tag.fen = tagPosition;
 
     repertoire = new Repertoire({
       training: {},
       positions: {},
-      tags: new TagTree("", "", "", []),
+      tags: new TagTree("", "", []),
       sideToTrain: Side.White
     });
     repertoire.positions = new PositionCollection({});

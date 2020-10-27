@@ -24,8 +24,8 @@ describe("TagListViewModel", () => {
     whiteRepertoire = new Repertoire(emptyRepertoire);
     blackRepertoire = new Repertoire(emptyRepertoire);
 
-    whiteRepertoire.tags = new TagTree("", "", "", []);
-    blackRepertoire.tags = new TagTree("", "", "", []);
+    whiteRepertoire.tags = new TagTree("", "", []);
+    blackRepertoire.tags = new TagTree("", "", []);
   });
 
   describe("repertoires", () => {

@@ -49,7 +49,7 @@
       v-card-actions
         v-btn(
           @click="onStartTraining"
-          :disabled="trainingPositions.length < 1",
+          :disabled="trainingVariations.length < 1",
           color="primary",
           x-large) {{ startTrainingLabel }}
 </template>

@@ -7,14 +7,20 @@ describe("TagTree", () => {
   describe("removeTag", () => {
     it("should delete a tag and all of its successors", () => {
       const fenToDelete = "delete me";
-      const tree = new TagTree("root", "", _.uniqueId(), [
-        new TagTree("a", "", _.uniqueId(), [])
-      ]);
+      const tree = new TagTree(
+        "root",
+        "",
+        [new TagTree("a", "", [], _.uniqueId())],
+        _.uniqueId()
+      );
       const expected = _.cloneDeep(tree);
       tree.children.push(
-        new TagTree("b", fenToDelete, "", [
-          new TagTree("c", "", _.uniqueId(), [])
-        ])
+        new TagTree(
+          "b",
+          fenToDelete,
+          [new TagTree("c", "", [], _.uniqueId())],
+          ""
+        )
       );
 
       tree.removeTag(fenToDelete);
@@ -28,8 +34,8 @@ describe("TagTree", () => {
       const name = "name";
       const fen = "fen";
       const id = "some guid";
-      const parent = new TagTree("root", _.uniqueId(), _.uniqueId(), []);
-      const expected = new TagTree(name, fen, id, []);
+      const parent = new TagTree("root", _.uniqueId(), [], _.uniqueId());
+      const expected = new TagTree(name, fen, [], id);
       (Guid.create as jest.Mock).mockReturnValueOnce(id);
 
       parent.addTag(name, fen);

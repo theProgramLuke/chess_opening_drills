@@ -34,7 +34,7 @@ describe("TrainerViewModel", () => {
   const emptySavedRepertoire = {
     name: "",
     positions: {},
-    tags: new TagTree("", "", "", []),
+    tags: new TagTree("", "", []),
     training: {},
     sideToTrain: Side.White
   };

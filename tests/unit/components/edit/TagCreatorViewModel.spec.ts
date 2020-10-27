@@ -16,13 +16,13 @@ describe("TagCreatorViewModel", () => {
   const taggedPosition = "fen";
 
   beforeEach(() => {
-    tag = new TagTree("", "", "", []);
+    tag = new TagTree("", "", []);
     tag.fen = taggedPosition;
     repertoire = new Repertoire({
       positions: {},
       training: {},
       sideToTrain: 0,
-      tags: new TagTree("", "", "", [])
+      tags: new TagTree("", "", [])
     });
     repertoire.positions = new PositionCollection({});
   });

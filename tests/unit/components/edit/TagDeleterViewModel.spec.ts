@@ -9,7 +9,7 @@ describe("TagDeleterViewModel", () => {
   let tag: TagTree;
 
   beforeEach(() => {
-    tag = new TagTree("", "", "", []);
+    tag = new TagTree("", "", []);
   });
 
   describe("showDialog", () => {
