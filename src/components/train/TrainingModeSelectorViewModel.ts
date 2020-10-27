@@ -9,6 +9,7 @@ import {
   TrainingOptions,
   TrainingVariation
 } from "@/components/train/TrainingOptions";
+import { sideFromFen } from "@/store/repertoire/chessHelpers";
 
 const minPlaybackSpeed = 0.2;
 const maxPlaybackSpeed = 5;
@@ -92,8 +93,19 @@ export default class TrainingModeSelectorViewModel extends Vue {
   }
 
   get startTrainingLabel(): string {
-    const moveCount = 5; // TODO
-    return `Start Training (${moveCount} positions)`;
+    let moveCount = 0;
+
+    _.forEach(this.trainingVariations, trainingVariation => {
+      const sideToTrain = trainingVariation.repertoire.sideToTrain;
+      _.forEach(trainingVariation.variation, move => {
+        const sideOfMove = sideFromFen(move.sourceFen);
+        if (sideOfMove === sideToTrain) {
+          ++moveCount;
+        }
+      });
+    });
+
+    return `Start Training (${moveCount} moves)`;
   }
 
   get difficultyModeLimitLabel(): string {

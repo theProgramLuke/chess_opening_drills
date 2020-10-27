@@ -169,16 +169,20 @@ describe("TrainingModeSelectorViewModel", () => {
   });
 
   describe("startTrainingLabel", () => {
-    it("should format the playback speed", () => {
+    it("should count the moves to be trained", () => {
       const component = mountComponent();
+      const variations = [
+        makeVariation(["e4", "e5", "Nc3", "Nf6", "f4"]),
+        makeVariation(["d4", "Nf6", "c4", "g6", "Nf3"])
+      ];
       (component.vm.whiteRepertoire
-        .getTrainingVariations as jest.Mock).mockReturnValue([
-        makeVariation(["e4", "e5", "Nc3", "Nf6", "f4"])
-      ]);
+        .getTrainingVariations as jest.Mock).mockReturnValue(variations);
+      component.vm.whiteRepertoire.sideToTrain = Side.White;
+      component.vm.blackRepertoire.sideToTrain = Side.Black;
 
       const actual = component.vm.startTrainingLabel;
 
-      expect(actual).toEqual("Start Training (5 positions)");
+      expect(actual).toEqual("Start Training (10 moves)");
     });
   });
 
