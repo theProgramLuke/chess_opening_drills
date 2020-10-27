@@ -11,7 +11,7 @@ import {
   TrainingVariation
 } from "@/components/train/TrainingOptions";
 import { Side } from "@/store/side";
-import { sideFromFen } from "@/store/repertoire/chessHelpers";
+import { sideFromFen, normalizeFen } from "@/store/repertoire/chessHelpers";
 import { AddTrainingEventPayload } from "@/store/MutationPayloads";
 import { VariationMove } from "@/store/repertoire/PositionCollection";
 import { TrainingMode } from "@/store/trainingMode";
@@ -95,7 +95,20 @@ export default class TrainerViewModel extends Vue {
   }
 
   get activeVariation(): TrainingVariation | undefined {
-    return this.options.variations[this.variationIndex];
+    const trainingVariation = this.options.variations[this.variationIndex];
+
+    if (trainingVariation) {
+      if (
+        trainingVariation.repertoire.sideToTrain !==
+        sideFromFen(trainingVariation.variation[0].sourceFen)
+      ) {
+        trainingVariation.variation.shift();
+      }
+
+      return trainingVariation;
+    } else {
+      return undefined;
+    }
   }
 
   get activeVariationPositions(): string[] {
@@ -105,13 +118,14 @@ export default class TrainerViewModel extends Vue {
 
     const positions: string[] = [];
 
-    if (this.activeVariation.repertoire.sideToTrain === Side.White) {
-      positions.push(this.activeVariation.variation[0].sourceFen);
-    }
-
     _.forEach(this.activeVariation.variation, (move: VariationMove) =>
       positions.push(move.sourceFen)
     );
+
+    const lastMove = _.last(this.activeVariation.variation);
+    if (lastMove) {
+      positions.push(lastMove.resultingFen);
+    }
 
     return positions;
   }
@@ -129,12 +143,7 @@ export default class TrainerViewModel extends Vue {
       return undefined;
     }
 
-    let offset = 0;
-    if (this.activeVariation.repertoire.sideToTrain === Side.Black) {
-      offset = 1;
-    }
-
-    return this.activeVariation.variation[this.plyCount + offset];
+    return this.activeVariation.variation[this.plyCount];
   }
 
   get boardOrientation(): Side {
@@ -163,7 +172,7 @@ export default class TrainerViewModel extends Vue {
     }
 
     if (this.showMistakeArrow) {
-      const board = new Chess(this.activePosition);
+      const board = new Chess(this.activePositionLegalFen);
       const index =
         this.boardOrientation === Side.White
           ? this.plyCount
@@ -171,7 +180,8 @@ export default class TrainerViewModel extends Vue {
       const move = board.move(this.activeVariation.variation[index].san);
 
       if (move) {
-        return [{ orig: move.from, dest: move.to, brush: "red" }];
+        const arrow = { orig: move.from, dest: move.to, brush: "red" };
+        return [arrow];
       }
     }
 
@@ -190,7 +200,7 @@ export default class TrainerViewModel extends Vue {
 
   onBoardMove(threats: Threats): void {
     if (!_.isUndefined(this.activeVariation)) {
-      if (threats.fen && threats.fen !== this.activePosition) {
+      if (threats.fen && threats.fen !== this.activePositionLegalFen) {
         this.attempts++;
         const correct = this.moveIsCorrect(threats.fen);
 
@@ -220,7 +230,9 @@ export default class TrainerViewModel extends Vue {
       return false;
     }
 
-    return fen === this.expectedMove.resultingFen;
+    const expectedFen = this.expectedMove.resultingFen;
+    const attemptedFen = normalizeFen(fen, false); // TODO possible en passant
+    return attemptedFen === expectedFen;
   }
 
   private get isTurnOfSideToTrain(): boolean {
@@ -274,9 +286,9 @@ export default class TrainerViewModel extends Vue {
 
   advancePreview(): void {
     if (!_.isUndefined(this.activeVariation)) {
-      if (this.previewIndex < this.activeVariation.variation.length) {
-        ++this.previewIndex;
+      if (this.previewIndex <= this.activeVariation.variation.length) {
         setTimeout(() => {
+          ++this.previewIndex;
           this.advancePreview();
         }, this.previewPlaybackDelay);
       } else {

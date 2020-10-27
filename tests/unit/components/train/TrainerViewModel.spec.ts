@@ -180,7 +180,7 @@ describe("TrainerViewModel", () => {
       const component = mountComponent(
         new TrainingOptions(
           [],
-          _.times(variationsLength, () => makeTrainingVariation([])),
+          _.times(variationsLength, () => makeTrainingVariation(["e4", "e5"])),
           false,
           false,
           0,
@@ -222,23 +222,6 @@ describe("TrainerViewModel", () => {
       const actual = component.vm.expectedMove;
 
       expect(actual).toBe(trainingVariation.variation[0]);
-    });
-
-    it("should be the next move in the active variation offset by 1 for black", () => {
-      emptyRepertoire.sideToTrain = Side.Black;
-      const trainingVariation = makeTrainingVariation(
-        ["e4", "e5"],
-        emptyRepertoire
-      );
-      const component = mountComponent(
-        new TrainingOptions([], [trainingVariation], false, false, 0, 0)
-      );
-      component.vm.variationIndex = 0;
-      component.vm.plyCount = 0;
-
-      const actual = component.vm.expectedMove;
-
-      expect(actual).toBe(trainingVariation.variation[1]);
     });
   });
 
@@ -361,7 +344,7 @@ describe("TrainerViewModel", () => {
       const expected: DrawShape[] = [{ orig: "e2", dest: "e4", brush: "red" }];
       const trainingVariation = makeTrainingVariation(["e4"]);
       trainingVariation.variation[0].sourceFen =
-        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
       const component = mountComponent(
         new TrainingOptions([], [trainingVariation], false, false, 0, 0)
       );
@@ -466,8 +449,8 @@ describe("TrainerViewModel", () => {
   });
 
   describe("moveIsCorrect", () => {
-    it("should be true if the fen matches the expected resulting fen", () => {
-      const fen = "some fen";
+    it("should be true if the normalized fen matches the expected resulting fen", () => {
+      const fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
       const trainingVariation = makeTrainingVariation(["e4", "e5"]);
       trainingVariation.variation[0].resultingFen = fen;
       const component = mountComponent(
@@ -476,7 +459,9 @@ describe("TrainerViewModel", () => {
       component.vm.variationIndex = 0;
       component.vm.plyCount = 0;
 
-      const actual = component.vm.moveIsCorrect(fen);
+      const actual = component.vm.moveIsCorrect(
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+      );
 
       expect(actual).toBeTruthy();
     });
@@ -539,7 +524,7 @@ describe("TrainerViewModel", () => {
 
       component.vm.nextTrainingPosition();
 
-      expect(component.vm.plyCount).toEqual(3);
+      expect(component.vm.plyCount).toEqual(2);
     });
 
     it("should go to the next variation when the active one is completed", () => {
@@ -571,18 +556,7 @@ describe("TrainerViewModel", () => {
       jest.clearAllTimers();
     });
 
-    it("should advance to the next position", () => {
-      const component = mountComponent(
-        new TrainingOptions([], [trainingVariation], false, false, 0, 0)
-      );
-      component.vm.previewIndex = 0;
-
-      component.vm.advancePreview();
-
-      expect(component.vm.previewIndex).toEqual(1);
-    });
-
-    it("should advance again after a delay", () => {
+    it("should advance to the next position after a delay", () => {
       const component = mountComponent(
         new TrainingOptions([], [trainingVariation], false, false, delay, 0)
       );
@@ -643,7 +617,7 @@ describe("TrainerViewModel", () => {
       component.vm.advancePreview();
 
       _.times(
-        trainingVariation.variation.length,
+        trainingVariation.variation.length + 1,
         jest.advanceTimersToNextTimer
       );
 
@@ -657,7 +631,7 @@ describe("TrainerViewModel", () => {
       component.vm.advancePreview();
 
       _.times(
-        trainingVariation.variation.length,
+        trainingVariation.variation.length + 1,
         jest.advanceTimersToNextTimer
       );
 
