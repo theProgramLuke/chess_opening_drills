@@ -23,6 +23,9 @@ export default class LearnedViewModel extends Vue {
   @State
   blackRepertoire!: Repertoire;
 
+  @State
+  darkMode!: boolean;
+
   get combinedTags(): TagTree[] {
     return [this.whiteRepertoire.tags, this.blackRepertoire.tags];
   }
