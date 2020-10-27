@@ -115,24 +115,19 @@ describe("LearnedViewModel", () => {
         component.vm.whiteRepertoire.tags,
         component.vm.blackRepertoire.tags
       ];
-      const whiteVariation = makeVariation(["e4", "e5", "Nf3"]);
-      const blackVariation = makeVariation(["c4", "Nf6"]);
-      (component.vm.whiteRepertoire
-        .getTrainingVariations as jest.Mock).mockReturnValue([whiteVariation]);
-      (component.vm.blackRepertoire
-        .getTrainingVariations as jest.Mock).mockReturnValue([blackVariation]);
       const newTraining = new RepetitionTraining();
       const trainedTraining = new RepetitionTraining();
       (newTraining.includeForTrainingMode as jest.Mock).mockReturnValue(true);
       (trainedTraining.includeForTrainingMode as jest.Mock).mockReturnValue(
         false
       );
-      component.vm.whiteRepertoire.training = new TrainingCollection({});
-      component.vm.blackRepertoire.training = new TrainingCollection({});
-      (component.vm.whiteRepertoire.training
-        .getTrainingForMove as jest.Mock).mockReturnValue(trainedTraining);
-      (component.vm.blackRepertoire.training
-        .getTrainingForMove as jest.Mock).mockReturnValue(newTraining);
+      (component.vm.whiteRepertoire
+        .getTrainingForTags as jest.Mock).mockReturnValue([
+        trainedTraining,
+        newTraining
+      ]);
+      (component.vm.blackRepertoire
+        .getTrainingForTags as jest.Mock).mockReturnValue([trainedTraining]);
 
       const plotData = component.vm.plotData;
 

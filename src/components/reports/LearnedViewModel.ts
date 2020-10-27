@@ -7,10 +7,7 @@ import { PlotData, Config } from "plotly.js";
 import Plot from "@/components/common/Plot.vue";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TagTree } from "@/store/repertoire/TagTree";
-import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 import { TrainingMode } from "@/store/trainingMode";
-import { sideFromFen } from "@/store/repertoire/chessHelpers";
-import { VariationMove } from "@/store/repertoire/PositionCollection";
 
 @Component({ name: "LearnedReport", components: { Plot } })
 export default class LearnedViewModel extends Vue {
@@ -44,7 +41,7 @@ export default class LearnedViewModel extends Vue {
     const repertoires = [this.whiteRepertoire, this.blackRepertoire];
 
     _.forEach(repertoires, repertoire => {
-      const filteredTraining = this.getFilteredTraining(repertoire);
+      const filteredTraining = repertoire.getTrainingForTags(this.selectedTags);
 
       _.forEach(filteredTraining, training => {
         if (training.includeForTrainingMode(TrainingMode.New)) {
@@ -63,38 +60,5 @@ export default class LearnedViewModel extends Vue {
         values: [learnedTrainingCount, newTrainingCount]
       }
     ];
-  }
-
-  private getFilteredTraining(repertoire: Repertoire): RepetitionTraining[] {
-    const filteredTraining: RepetitionTraining[] = [];
-
-    const variations = repertoire.getTrainingVariations(this.selectedTags, [
-      TrainingMode.Cram
-    ]); // Get all descendant variations
-
-    let filteredMoves: VariationMove[] = [];
-
-    _.forEach(variations, variation => {
-      _.forEach(variation, move => {
-        filteredMoves.push(move);
-      });
-    });
-
-    filteredMoves = _.uniqWith(filteredMoves, _.isEqual);
-
-    _.forEach(filteredMoves, move => {
-      if (repertoire.sideToTrain === sideFromFen(move.sourceFen)) {
-        const moveTraining = repertoire.training.getTrainingForMove(
-          move.sourceFen,
-          move.san
-        );
-
-        if (moveTraining) {
-          filteredTraining.push(moveTraining);
-        }
-      }
-    });
-
-    return filteredTraining;
   }
 }

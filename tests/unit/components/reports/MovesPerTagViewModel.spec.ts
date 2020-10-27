@@ -1,8 +1,11 @@
-// import { shallowMount, createLocalVue } from "@vue/test-utils";
-// import Vuex from "vuex";
+import { shallowMount, createLocalVue } from "@vue/test-utils";
+import Vuex from "vuex";
 import _ from "lodash";
 
-// import PositionsPerTagViewModel from "@/components/reports/PositionsPerTagViewModel";
+import MovesPerTagViewModel from "@/components/reports/MovesPerTagViewModel";
+// import { Repertoire } from "@/store/repertoire/Repertoire";
+
+// jest.mock("@/store/repertoire/Repertoire");
 
 // const state = {
 //   whiteRepertoire: new Repertoire([], []),
@@ -13,7 +16,7 @@ import _ from "lodash";
 // localVue.use(Vuex);
 // const store = new Vuex.Store({ state });
 
-describe("PositionsPerTagViewModel", () => {
+describe("MovesPerTagViewModel", () => {
   it("is not implemented", _.noop);
   // describe("showNoPositions", () => {
   //   it("should be true if the repertoire only have the starting positions", () => {
@@ -28,12 +31,9 @@ describe("PositionsPerTagViewModel", () => {
   //       store,
   //       render: jest.fn()
   //     });
-
   //     const show = component.vm.showNoPositions;
-
   //     expect(show).toBeTruthy();
   //   });
-
   //   it("should be false if either repertoire has more than the starting positions", () => {
   //     state.whiteRepertoire.positions = [
   //       new RepertoirePosition("", "", Side.White),
@@ -47,13 +47,10 @@ describe("PositionsPerTagViewModel", () => {
   //       store,
   //       render: jest.fn()
   //     });
-
   //     const show = component.vm.showNoPositions;
-
   //     expect(show).toBeFalsy();
   //   });
   // });
-
   // describe("plotData", () => {
   //   it("should be sunburst data of the repertoire counts per tag", () => {
   //     state.whiteRepertoire.positions = [
@@ -102,9 +99,7 @@ describe("PositionsPerTagViewModel", () => {
   //       store,
   //       render: jest.fn()
   //     });
-
   //     const plotData = component.vm.plotData;
-
   //     expect(plotData).toEqual([
   //       {
   //         labels: ["White", "White / French", "Black", "Black / French"],

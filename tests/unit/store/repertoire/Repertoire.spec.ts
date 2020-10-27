@@ -382,5 +382,51 @@ describe("Repertoire", () => {
 
       expect(actual).toEqual([]);
     });
+
+    describe("getTrainingForTags", () => {
+      it("should get an empty array that descend if no tags are specified", () => {
+        const actual = repertoire.getTrainingForTags([]);
+
+        expect(actual).toEqual([]);
+      });
+
+      it("should get the training positions that descend from any of the tags", () => {
+        // tag0
+        // fen0 -> fen1 (san0)
+        //   fen1 -> fen2 (san1)
+        //   tag1
+        //   fen2 -> fen3 (san2)
+        //   fen3 -> fen4 (san3)
+        // tag2
+        // fen5 -> fen6 (san4)
+        //   fen6 -> fen7 (san5)
+        // positions = [
+        //   ["fen0", "fen1", "fen2", "fen3", "fen4"],
+        //   ["fen5", "fen6", "fen7"]
+        // ];
+        // moves = [
+        //   ["san0", "san1", "san2", "san3"],
+        //   ["san4", "san5"]
+        // ];
+        const expected: RepetitionTraining[] = [
+          training[positions[0][0]][moves[0][0]],
+          training[positions[0][1]][moves[0][1]],
+          training[positions[0][2]][moves[0][2]],
+          training[positions[0][3]][moves[0][3]]
+        ];
+        (training[positions[0][0]][moves[0][0]]
+          .includeForTrainingMode as jest.Mock).mockImplementation(() => true);
+        (training[positions[0][1]][moves[0][1]]
+          .includeForTrainingMode as jest.Mock).mockImplementation(() => true);
+        (training[positions[0][2]][moves[0][2]]
+          .includeForTrainingMode as jest.Mock).mockImplementation(() => true);
+        (training[positions[0][3]][moves[0][3]]
+          .includeForTrainingMode as jest.Mock).mockImplementation(() => true);
+
+        const actual = repertoire.getTrainingForTags([repertoire.tags]);
+
+        expect(actual).toEqual(expected);
+      });
+    });
   });
 });

@@ -15,6 +15,7 @@ import {
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
 import { TrainingMode } from "@/store/trainingMode";
 import { filterPrefixLists } from "@/store/ListHelpers";
+import { RepetitionTraining } from "./RepetitionTraining";
 
 export interface SavedRepertoire {
   sideToTrain: Side;
@@ -99,6 +100,36 @@ export class Repertoire {
     return filterPrefixLists(variations);
   }
 
+  getTrainingForTags(tags: TagTree[]): RepetitionTraining[] {
+    const filteredTraining: RepetitionTraining[] = [];
+
+    const filteredTags: TagTree[] = _.filter(tags, tag =>
+      this.tags.includesTag(tag.id)
+    );
+
+    const descendantMoves: VariationMove[] = this.getMovesDescendingFromTags(
+      filteredTags
+    );
+
+    const trainingMoves: VariationMove[] = this.filterMovesToTrain(
+      descendantMoves,
+      [TrainingMode.Cram]
+    );
+
+    _.forEach(trainingMoves, move => {
+      const moveTraining = this.training.getTrainingForMove(
+        move.sourceFen,
+        move.san
+      );
+
+      if (moveTraining) {
+        filteredTraining.push(moveTraining);
+      }
+    });
+
+    return filteredTraining;
+  }
+
   private getVariationsToTrainFromMoves(
     trainingMoves: VariationMove[]
   ): Variation[] {
@@ -119,7 +150,13 @@ export class Repertoire {
 
   private getMovesDescendingFromTags(tags: TagTree[]): VariationMove[] {
     const descendantPositions = _.uniq(
-      _.flatten(_.map(tags, tag => this.positions.descendantPositions(tag.fen)))
+      _.flatten(
+        _.map(tags, tag => {
+          const positions = this.positions.descendantPositions(tag.fen);
+          positions.unshift(tag.fen);
+          return positions;
+        })
+      )
     );
 
     return _.uniq(
