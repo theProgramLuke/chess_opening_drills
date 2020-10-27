@@ -93,9 +93,11 @@ describe("TagListViewModel", () => {
         }
       });
 
-      component.vm.onSelect(activePosition);
+      component.vm.onSelect(whiteRepertoire, activePosition);
 
-      expect(component.emitted().onSelect).toEqual([[activePosition]]);
+      expect(component.emitted().onSelect).toEqual([
+        [whiteRepertoire, activePosition]
+      ]);
     });
   });
 });
