@@ -4,6 +4,7 @@ import { State } from "vuex-class";
 import _ from "lodash";
 
 import { Repertoire } from "@/store/repertoire/Repertoire";
+import { TrainingMoveSpecification } from "@/store/repertoire/TrainingCollection";
 
 interface CalendarEvent {
   name: string;
@@ -13,35 +14,48 @@ interface CalendarEvent {
   color?: string;
 }
 
-function eventsFromRepertoire(repertoire: Repertoire): CalendarEvent[] {
-  // const days: Record<string, number> = {};
-  // _.forEach(positions, position => {
-  //   if (position.nextRepetitionTimestamp) {
-  //     const date = new Date(position.nextRepetitionTimestamp);
-  //     const day = `${date.getUTCFullYear()}-${date.getUTCMonth() +
-  //       1}-${date.getUTCDate()}`;
-  //     if (days[day]) {
-  //       days[day]++;
-  //     } else {
-  //       days[day] = 1;
-  //     }
-  //   }
-  // });
-  // const events: CalendarEvent[] = [];
+function eventsFromRepertoire(repertoires: Repertoire[]): CalendarEvent[] {
+  const days: Record<string, number> = {};
 
-  // _.forEach(days, (count, day) => {
-  //   events.push({
-  //     name: `${count} positions`,
-  //     start: new Date(day),
-  //     end: new Date(day),
-  //     timed: false,
-  //     color: "primary"
-  //   });
-  // });
+  _.forEach(repertoires, repertoire => {
+    _.forEach(
+      repertoire.training.getMoves(),
+      (trainingMove: TrainingMoveSpecification) => {
+        const moveTraining = repertoire.training.getTrainingForMove(
+          trainingMove.fen,
+          trainingMove.san
+        );
+        if (moveTraining && moveTraining.scheduledRepetitionTimestamp) {
+          const date = new Date(moveTraining.scheduledRepetitionTimestamp);
+          const day = `${date.getUTCFullYear()}-${date.getUTCMonth()}-${date.getUTCDate()}`;
 
-  // return events;
-  // TODO
-  return [];
+          if (days[day]) {
+            days[day]++;
+          } else {
+            days[day] = 1;
+          }
+        }
+      }
+    );
+  });
+
+  const events: CalendarEvent[] = [];
+
+  _.forEach(days, (count, day) => {
+    const daySplits: number[] = _.map(_.split(day, "-"), split =>
+      _.toNumber(split)
+    );
+
+    events.push({
+      name: `${count} positions`,
+      start: new Date(daySplits[0], daySplits[1], daySplits[2]),
+      end: new Date(daySplits[0], daySplits[1], daySplits[2]),
+      timed: false,
+      color: "primary"
+    });
+  });
+
+  return events;
 }
 
 @Component
@@ -56,10 +70,7 @@ export default class ScheduleViewModel extends Vue {
   blackRepertoire!: Repertoire;
 
   get events(): CalendarEvent[] {
-    return _.concat(
-      eventsFromRepertoire(this.whiteRepertoire),
-      eventsFromRepertoire(this.blackRepertoire)
-    );
+    return eventsFromRepertoire([this.whiteRepertoire, this.blackRepertoire]);
   }
 
   created(): void {
