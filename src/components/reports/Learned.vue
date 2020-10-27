@@ -12,7 +12,7 @@
           open-on-click)
       
       v-col(cols=9)
-        v-alert(v-if="showNoPositions", color="error") No positions have been entered
+        v-alert(v-if="showNoPositions", color="error") No moves have been selected or entered
 
         plot(
           v-else,

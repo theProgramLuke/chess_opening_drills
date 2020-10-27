@@ -161,6 +161,7 @@ describe("Repertoire", () => {
         new TagTree("", "", []),
         new TagTree("", "", [])
       ];
+      (repertoire.tags.includesTag as jest.Mock).mockReturnValue(true);
       repertoire.tags.children[0].fen = positions[0][2];
       repertoire.tags.children[1].fen = positions[1][0];
       const descendants: Record<string, string[]> = {
@@ -367,6 +368,19 @@ describe("Repertoire", () => {
       );
 
       expect(actual).toEqual(expected);
+    });
+
+    it("should ignore tags to train that are not in the repertoire tags", () => {
+      (repertoire.tags.includesTag as jest.Mock).mockReturnValue(false);
+      (training[positions[0][3]][moves[0][3]]
+        .includeForTrainingMode as jest.Mock).mockImplementation(() => true);
+
+      const actual = repertoire.getTrainingVariations(
+        [repertoire.tags],
+        [TrainingMode.Scheduled]
+      );
+
+      expect(actual).toEqual([]);
     });
   });
 });

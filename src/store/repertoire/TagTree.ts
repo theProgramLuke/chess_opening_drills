@@ -30,15 +30,21 @@ export class TagTree {
     this.isRootTag = isRootTag;
   }
 
-  removeTag(fen: string): void {
-    _.remove(this.children, child => child.fen === fen);
-    _.forEach(this.children, child => child.removeTag(fen));
+  includesTag(id: string): boolean {
+    return (
+      this.id === id || _.some(this.children, child => child.includesTag(id))
+    );
   }
 
   addTag(name: string, fen: string): void {
     const child = new TagTree(name, fen, []);
 
     this.children.push(child);
+  }
+
+  removeTag(fen: string): void {
+    _.remove(this.children, child => child.fen === fen);
+    _.forEach(this.children, child => child.removeTag(fen));
   }
 
   asSaved(): SavedTagTree {

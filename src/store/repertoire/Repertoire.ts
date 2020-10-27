@@ -79,8 +79,12 @@ export class Repertoire {
     tagsToTrain: TagTree[],
     trainingModes: TrainingMode[]
   ): Variation[] {
+    const filteredTags: TagTree[] = _.filter(tagsToTrain, tag =>
+      this.tags.includesTag(tag.id)
+    );
+
     const descendantMoves: VariationMove[] = this.getMovesDescendingFromTags(
-      tagsToTrain
+      filteredTags
     );
 
     const trainingMoves: VariationMove[] = this.filterMovesToTrain(
