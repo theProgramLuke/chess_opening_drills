@@ -2,11 +2,11 @@ import "reflect-metadata";
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import _ from "lodash";
+import { PlotData, Config } from "plotly.js";
 
 import Plot from "@/components/common/Plot.vue";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TagTree } from "@/store/repertoire/TagTree";
-import { PlotData, Config } from "plotly.js";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 import { TrainingMode } from "@/store/trainingMode";
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
