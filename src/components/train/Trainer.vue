@@ -5,14 +5,14 @@
         chessboard(
           v-if="!previewing"
           ref="board",
-          :fen="activePosition.fen",
+          :fen="activePositionLegalFen",
           :orientation="boardOrientation",
           :drawShapes="mistakeArrow",
           @onMove="onBoardMove")
 
         chessboard.grayscale(
           v-else,
-          :fen="previewPositionFen",
+          :fen="previewPositionLegalFen",
           :orientation="boardOrientation")
 
       v-progress-linear(

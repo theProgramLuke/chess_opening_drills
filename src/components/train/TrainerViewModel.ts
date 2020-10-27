@@ -86,6 +86,10 @@ export default class TrainerViewModel extends Vue {
     return this.activeVariationPositions[this.previewIndex];
   }
 
+  get previewPositionLegalFen(): string {
+    return `${this.previewPositionFen} 0 1`;
+  }
+
   get variationProgress(): string {
     return this.variationIndex + " / " + this.options.variations.length;
   }
@@ -114,6 +118,10 @@ export default class TrainerViewModel extends Vue {
 
   get activePosition(): string {
     return this.activeVariationPositions[this.plyCount];
+  }
+
+  get activePositionLegalFen(): string {
+    return `${this.activePosition} 0 1`;
   }
 
   get expectedMove(): VariationMove | undefined {

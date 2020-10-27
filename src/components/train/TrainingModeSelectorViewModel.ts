@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
 import _ from "lodash";
 

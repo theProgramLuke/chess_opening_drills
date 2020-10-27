@@ -7,7 +7,7 @@ function IsPrefix<T>(list: T[], potentialPrefix: T[]): boolean {
 
   let foundMismatch = false;
   _.forEach(potentialPrefix, (entry, index) => {
-    if (!foundMismatch && entry !== list[index]) {
+    if (!foundMismatch && !_.isEqual(entry, list[index])) {
       foundMismatch = true;
     }
   });
