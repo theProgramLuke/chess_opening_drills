@@ -8,7 +8,8 @@ import {
   EngineOption,
   ProcessAnalysis,
   EngineOutput,
-  EngineMetadata
+  EngineMetadata,
+  EngineData
 } from "@/store/EngineHelpers";
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
 import { Side } from "@/store/side";
@@ -59,12 +60,14 @@ export default class EngineRecommendationsViewModel extends Vue {
 
       this.engine
         .goInfinite({})
-        .on("data", data => this.receiveRecommendation(data, throttledSort));
+        .on("data", data =>
+          this.receiveRecommendation(data as EngineData, throttledSort)
+        );
     }
   }
 
   receiveRecommendation(
-    data: any,
+    data: EngineData,
     sorter: Function,
     processor = ProcessAnalysis
   ): void {
