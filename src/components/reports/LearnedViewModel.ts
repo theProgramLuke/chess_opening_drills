@@ -6,7 +6,7 @@ import _ from "lodash";
 import Plot from "@/components/common/Plot.vue";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TagTree } from "@/store/repertoire/TagTree";
-import { PlotData } from "plotly.js";
+import { PlotData, Config } from "plotly.js";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 import { TrainingMode } from "@/store/trainingMode";
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
@@ -14,6 +14,7 @@ import { VariationMove } from "@/store/repertoire/PositionCollection";
 
 @Component({ name: "LearnedReport", components: { Plot } })
 export default class LearnedViewModel extends Vue {
+  options: Partial<Config> = { displayModeBar: false };
   selectedTags: TagTree[] = [];
 
   @State
@@ -93,53 +94,4 @@ export default class LearnedViewModel extends Vue {
 
     return filteredTraining;
   }
-
-  // data: () => ({
-  //   options: { displayModeBar: false },
-  //   layout: {},
-  //   selectedTags: [] as RepertoireTag[]
-  // }),
-  // computed: {
-  //   ...mapState(["darkMode", "whiteRepertoire", "blackRepertoire"]),
-  //   // TODO
-  //   // combinedTags(): RepertoireTag[] {
-  //   //   return _.concat(this.whiteRepertoire.tags, this.blackRepertoire.tags);
-  //   // },
-  //   showNoPositions(): boolean {
-  //     return (
-  //       this.whiteRepertoire.positions.length === 1 &&
-  //       this.blackRepertoire.positions.length === 1
-  //     );
-  //   },
-  //   selectedPositions(): RepertoirePosition[] {
-  //     const positions: RepertoirePosition[] = [];
-  //     _.forEach(this.selectedTags, tag =>
-  //       tag.position.VisitChildren(position => {
-  //         if (position.myTurn) {
-  //           positions.push(position);
-  //         }
-  //       })
-  //     );
-  //     return _.uniq(positions);
-  //   },
-  //   plotData() {
-  //     let trainedPositions = 0;
-  //     let newPositions = 0;
-  //     _.forEach(this.selectedPositions, position => {
-  //       if (position.IncludeForTrainingMode(TrainingMode.New)) {
-  //         ++newPositions;
-  //       } else {
-  //         ++trainedPositions;
-  //       }
-  //     });
-  //     return [
-  //       {
-  //         type: "pie",
-  //         hole: 0.7,
-  //         labels: ["Trained", "New"],
-  //         values: [trainedPositions, newPositions]
-  //       }
-  //     ];
-  //   }
-  // }
 }

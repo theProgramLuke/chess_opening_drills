@@ -9,7 +9,7 @@ import RetentionReport from "@/components/reports/Retention.vue";
 enum ReportToShow {
   PositionsPerTag = "Positions per Tag",
   Difficulty = "Difficulty Distribution",
-  Learned = "Learned Positions",
+  Learned = "Learned Moves",
   Retention = "Training Retention"
 }
 
