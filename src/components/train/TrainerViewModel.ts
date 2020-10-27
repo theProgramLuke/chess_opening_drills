@@ -24,7 +24,7 @@ export default class TrainerViewModel extends Vue {
   previewIndex = 0;
   plyCount = 0;
   startTime: number = _.now();
-  attempts = 0;
+  attempts: string[] = [];
   previewedVariations: number[] = [];
   mistakeInVariation = false;
 
@@ -189,7 +189,7 @@ export default class TrainerViewModel extends Vue {
   }
 
   get showMistakeArrow(): boolean {
-    return this.attempts >= maxAttempts;
+    return this.attempts.length >= maxAttempts;
   }
 
   reloadPosition(): void {
@@ -201,14 +201,13 @@ export default class TrainerViewModel extends Vue {
   onBoardMove(threats: Threats): void {
     if (!_.isUndefined(this.activeVariation)) {
       if (threats.fen && threats.fen !== this.activePositionLegalFen) {
-        this.attempts++;
         const correct = this.moveIsCorrect(threats.fen);
 
         if (correct) {
           this.addTrainingEvent({
             repertoire: this.activeVariation.repertoire,
             event: {
-              attemptedMoves: [], // TODO
+              attemptedMoves: this.attempts,
               elapsedMilliseconds: this.getElapsedSeconds()
             },
             fen: this.activePosition,
@@ -217,8 +216,8 @@ export default class TrainerViewModel extends Vue {
 
           this.nextTrainingPosition();
         } else {
+          this.attempts.push(_.last(threats.history) || "not a move");
           this.mistakeInVariation = true;
-
           this.reloadPosition();
         }
       }
@@ -246,7 +245,7 @@ export default class TrainerViewModel extends Vue {
 
   nextTrainingPosition(): void {
     if (!_.isUndefined(this.activeVariation)) {
-      this.attempts = 0;
+      this.attempts = [];
 
       do {
         this.plyCount++;

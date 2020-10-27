@@ -15,6 +15,7 @@ import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 import { TrainingMode } from "@/store/trainingMode";
 import { TagTree } from "@/store/repertoire/TagTree";
+import { fenAfterMove } from "@/store/repertoire/chessHelpers";
 
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TrainingCollection");
@@ -309,7 +310,7 @@ describe("TrainerViewModel", () => {
       "should be true if the max attempts is met or exceeded with %s",
       attempts => {
         const component = mountComponent();
-        component.vm.attempts = attempts;
+        component.vm.attempts = _.times(attempts, () => "");
 
         const actual = component.vm.showMistakeArrow;
 
@@ -321,7 +322,7 @@ describe("TrainerViewModel", () => {
       "should be false if the attempts are less than the max attempts",
       attempts => {
         const component = mountComponent();
-        component.vm.attempts = attempts;
+        component.vm.attempts = _.times(attempts, () => "");
 
         const actual = component.vm.showMistakeArrow;
 
@@ -333,7 +334,7 @@ describe("TrainerViewModel", () => {
   describe("mistakeArrow", () => {
     it("should be an empty list if not showing te mistake arrow", () => {
       const component = mountComponent();
-      component.vm.attempts = 0;
+      component.vm.attempts = [];
 
       const actual = component.vm.mistakeArrow;
 
@@ -348,7 +349,7 @@ describe("TrainerViewModel", () => {
       const component = mountComponent(
         new TrainingOptions([], [trainingVariation], false, false, 0, 0)
       );
-      component.vm.attempts = 3;
+      component.vm.attempts = ["", "", ""];
 
       const actual = component.vm.mistakeArrow;
 
@@ -376,7 +377,7 @@ describe("TrainerViewModel", () => {
         component.vm.onBoardMove({ fen: "fen" });
         const actualAttempts = component.vm.attempts;
 
-        expect(actualAttempts).toEqual(1);
+        expect(actualAttempts.length).toEqual(1);
       });
 
       it("should not advance the training position", () => {
@@ -413,7 +414,7 @@ describe("TrainerViewModel", () => {
         component.vm.onBoardMove({ fen: "fen" });
         const actualAttempts = component.vm.attempts;
 
-        expect(actualAttempts).toEqual(0);
+        expect(actualAttempts).toEqual([]);
       });
 
       it("should add a training event", () => {
@@ -423,12 +424,33 @@ describe("TrainerViewModel", () => {
           event: {
             attemptedMoves: [],
             elapsedMilliseconds: elapsed
-            // TODO add timestamp to training events
           },
           fen: trainingVariation.variation[0].sourceFen,
           san: trainingVariation.variation[0].san,
           repertoire: trainingVariation.repertoire
         };
+
+        component.vm.onBoardMove({ fen: "fen" });
+
+        expect(mutations.addTrainingEvent).toBeCalledWith(
+          expect.anything(),
+          expected
+        );
+      });
+
+      it("should track the attempted moves for the training event", () => {
+        const elapsed = 10;
+        component.vm.getElapsedSeconds = jest.fn(() => elapsed);
+        const expected: AddTrainingEventPayload = {
+          event: {
+            attemptedMoves: ["e3", "d4"],
+            elapsedMilliseconds: elapsed
+          },
+          fen: trainingVariation.variation[0].sourceFen,
+          san: trainingVariation.variation[0].san,
+          repertoire: trainingVariation.repertoire
+        };
+        component.vm.attempts = expected.event.attemptedMoves;
 
         component.vm.onBoardMove({ fen: "fen" });
 
@@ -512,11 +534,11 @@ describe("TrainerViewModel", () => {
     });
 
     it("should reset the attempts", () => {
-      component.vm.attempts = 4;
+      component.vm.attempts = ["", "", "", ""];
 
       component.vm.nextTrainingPosition();
 
-      expect(component.vm.attempts).toEqual(0);
+      expect(component.vm.attempts).toEqual([]);
     });
 
     it("should advance the ply count to the next position index for my turn", () => {
