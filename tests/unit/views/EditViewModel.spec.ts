@@ -186,6 +186,19 @@ describe("EditViewModel", () => {
     });
   });
 
+  describe("onTagSelect", () => {
+    it("should update the active position and repertoire", () => {
+      const component = mountComponent();
+      component.vm.updateBoard = jest.fn();
+      const fen = "fen";
+
+      component.vm.onTagSelect(component.vm.blackRepertoire, fen);
+
+      expect(component.vm.updateBoard).toBeCalledWith(fen);
+      expect(component.vm.activeRepertoire).toBe(component.vm.blackRepertoire);
+    });
+  });
+
   describe("boardOrientation", () => {
     it.each([Side.White, Side.Black])(
       "should be the side to train of the active repertoire",

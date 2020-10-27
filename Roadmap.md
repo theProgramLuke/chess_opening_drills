@@ -3,6 +3,8 @@
 _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/issues)._
 
 - persist edit position annotations (arrows etc)
+- comments for new storage
+- append comments on import PGN overlap
 - configurable max training attempts
 - scrollable moves list
 - per position training history

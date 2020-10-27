@@ -3,7 +3,7 @@
     v-treeview.float-left(v-for="repertoire in repertoires", :items="[repertoire.tags]", dense, open-on-click)
       template(v-slot:label="{ item }")
         div
-          v-btn.original-case(@click="onSelect(item.fen)", text, left) {{ item.name }}
+          v-btn.original-case(@click="onSelect(repertoire, item.fen)", text, left) {{ item.name }}
 
           br.d-none.d-sm-flex.d-md-none
 

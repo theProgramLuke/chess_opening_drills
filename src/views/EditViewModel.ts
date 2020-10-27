@@ -33,7 +33,7 @@ import { fenAfterMove } from "@/store/repertoire/chessHelpers";
   }
 })
 export default class EditViewModel extends Vue {
-  activeRepertoire!: Repertoire;
+  activeRepertoire: Repertoire = 0 as any;
   activePosition = "";
   recomputeCounter = 0;
 
@@ -106,14 +106,21 @@ export default class EditViewModel extends Vue {
     this.activePosition = fen;
   }
 
+  onTagSelect(repertoire: Repertoire, fen: string): void {
+    this.activeRepertoire = repertoire;
+    this.updateBoard(fen);
+  }
+
   onBoardMove(threats: Threats): void {
     const lastMoveSan = _.last(threats.history) || "";
     if (threats.fen && threats.fen !== this.activePosition) {
-      this.addRepertoireMove({
-        repertoire: this.activeRepertoire,
-        fen: this.activePosition,
-        san: lastMoveSan
-      });
+      if (!_.some(this.nextMoves, move => move.resultingFen === threats.fen)) {
+        this.addRepertoireMove({
+          repertoire: this.activeRepertoire,
+          fen: this.activePosition,
+          san: lastMoveSan
+        });
+      }
 
       this.activePosition =
         fenAfterMove(this.activePosition, lastMoveSan) || this.activePosition;

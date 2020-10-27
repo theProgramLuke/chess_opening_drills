@@ -13,7 +13,7 @@
               :whiteRepertoire="whiteRepertoire",
               :blackRepertoire="blackRepertoire",
               :activePosition="activePosition",
-              @onSelect="updateBoard",
+              @onSelect="onTagSelect",
               @onDelete="removeRepertoireTag",
               @onCreate="addRepertoireTag")
           
