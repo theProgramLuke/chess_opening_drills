@@ -18,7 +18,7 @@ describe("TagListViewModel", () => {
       training: {},
       positions: {},
       sideToTrain: Side.White,
-      tags: { name: "", fen: "", id: "", children: [] }
+      tags: { name: "", fen: "", id: "", children: [], isRootTag: false }
     };
 
     whiteRepertoire = new Repertoire(emptyRepertoire);

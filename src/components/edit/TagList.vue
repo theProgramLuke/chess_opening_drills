@@ -9,7 +9,7 @@
 
           div.float-right
             tag-importer(
-              v-if="(item.id === '0'|| item.id === '1')",
+              v-if="(item.isRootTag)",
               :repertoire="repertoire",
               :tag="item")
 

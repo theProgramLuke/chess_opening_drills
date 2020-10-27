@@ -31,7 +31,7 @@ describe("Repertoire", () => {
       const expected: SavedRepertoire = {
         sideToTrain: Side.White,
         positions: new PositionCollection({}).asSaved(),
-        tags: { name: "", fen: "", id: "", children: [] },
+        tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
         training: new TrainingCollection().asSaved()
       };
       const tags = new TagTree("", "", []);

@@ -20,7 +20,7 @@ jest.mock("@/store/repertoire/TrainingCollection");
 const emptySavedRepertoire: SavedRepertoire = {
   positions: {},
   training: {},
-  tags: { name: "", fen: "", id: "", children: [] },
+  tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
   sideToTrain: Side.White
 };
 

@@ -47,7 +47,8 @@ export class Repertoire {
   static newSavedRepertoire(
     name: string,
     startFen: string,
-    sideToTrain: Side
+    sideToTrain: Side,
+    isRootTag = false
   ): SavedRepertoire {
     return {
       positions: {
@@ -60,7 +61,7 @@ export class Repertoire {
         edges: []
       },
       sideToTrain,
-      tags: new TagTree(name, startFen, []).asSaved(),
+      tags: new TagTree(name, startFen, [], isRootTag).asSaved(),
       training: new TrainingCollection().asSaved()
     };
   }

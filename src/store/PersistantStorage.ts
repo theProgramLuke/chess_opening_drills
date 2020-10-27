@@ -71,12 +71,14 @@ function GetDefaultStorage() {
       whiteRepertoire: Repertoire.newSavedRepertoire(
         "White Repertoire",
         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
-        Side.White
+        Side.White,
+        true
       ),
       blackRepertoire: Repertoire.newSavedRepertoire(
         "Black Repertoire",
         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
-        Side.Black
+        Side.Black,
+        true
       ),
       backupDirectory: path.join(defaultCwd, "backups"),
       dailyBackupLimit: 14,

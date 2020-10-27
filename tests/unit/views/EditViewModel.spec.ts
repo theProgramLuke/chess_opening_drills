@@ -49,13 +49,13 @@ describe("EditViewModel", () => {
       whiteRepertoire: new Repertoire({
         positions: {},
         training: {},
-        tags: { name: "", id: "", fen: "", children: [] },
+        tags: { name: "", id: "", fen: "", children: [], isRootTag: false },
         sideToTrain: Side.White
       }),
       blackRepertoire: new Repertoire({
         positions: {},
         training: {},
-        tags: { name: "", id: "", fen: "", children: [] },
+        tags: { name: "", id: "", fen: "", children: [], isRootTag: false },
         sideToTrain: Side.White
       })
     };

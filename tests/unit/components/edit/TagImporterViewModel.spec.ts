@@ -26,7 +26,7 @@ describe("TagImporterViewModel", () => {
       training: {},
       positions: {},
       sideToTrain: Side.White,
-      tags: new TagTree("", "", [])
+      tags: new TagTree("", "", []).asSaved()
     });
 
     mutations.addPositionsFromPgn.mockClear();

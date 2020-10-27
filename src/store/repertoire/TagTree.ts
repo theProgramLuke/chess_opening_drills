@@ -5,6 +5,7 @@ export interface SavedTagTree {
   name: string;
   fen: string;
   id: string;
+  isRootTag: boolean;
   children: SavedTagTree[];
 }
 
@@ -12,13 +13,21 @@ export class TagTree {
   name: string;
   fen: string;
   id: string;
+  isRootTag: boolean;
   children: TagTree[];
 
-  constructor(name: string, fen: string, children: TagTree[], id?: string) {
+  constructor(
+    name: string,
+    fen: string,
+    children: TagTree[],
+    isRootTag = false,
+    id?: string
+  ) {
     this.name = name;
     this.fen = fen;
     this.id = id || Guid.create().toString();
     this.children = children;
+    this.isRootTag = isRootTag;
   }
 
   removeTag(fen: string): void {
@@ -37,7 +46,8 @@ export class TagTree {
       name: this.name,
       fen: this.fen,
       id: this.id,
-      children: _.map(this.children, child => child.asSaved())
+      children: _.map(this.children, child => child.asSaved()),
+      isRootTag: this.isRootTag
     };
   }
 
@@ -46,6 +56,7 @@ export class TagTree {
       saved.name,
       saved.fen,
       _.map(saved.children, TagTree.fromSaved),
+      saved.isRootTag,
       saved.id
     );
   }

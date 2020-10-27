@@ -3,24 +3,19 @@ import { Guid } from "guid-typescript";
 
 import { TagTree, SavedTagTree } from "@/store/repertoire/TagTree";
 
+jest.mock("guid-typescript");
+
+const guid = "some guid";
+(Guid.create as jest.Mock).mockReturnValue(guid);
+
 describe("TagTree", () => {
   describe("removeTag", () => {
     it("should delete a tag and all of its successors", () => {
       const fenToDelete = "delete me";
-      const tree = new TagTree(
-        "root",
-        "",
-        [new TagTree("a", "", [], _.uniqueId())],
-        _.uniqueId()
-      );
+      const tree = new TagTree("root", "", [new TagTree("a", "", [])]);
       const expected = _.cloneDeep(tree);
       tree.children.push(
-        new TagTree(
-          "b",
-          fenToDelete,
-          [new TagTree("c", "", [], _.uniqueId())],
-          ""
-        )
+        new TagTree("b", fenToDelete, [new TagTree("c", "", [])])
       );
 
       tree.removeTag(fenToDelete);
@@ -33,14 +28,13 @@ describe("TagTree", () => {
     it("should add a tag with a random GUID id and the given name and fen", () => {
       const name = "name";
       const fen = "fen";
-      const id = "some guid";
-      const parent = new TagTree("root", _.uniqueId(), [], _.uniqueId());
-      const expected = new TagTree(name, fen, [], id);
-      (Guid.create as jest.Mock).mockReturnValueOnce(id);
+      const parent = new TagTree("root", _.uniqueId(), [], true, _.uniqueId());
+      const child = new TagTree(name, fen, []);
 
       parent.addTag(name, fen);
 
-      expect(parent.children).toEqual([expected]);
+      expect(parent.children).toEqual([child]);
+      expect(child.id).toBe(guid);
     });
   });
 
@@ -50,9 +44,22 @@ describe("TagTree", () => {
         name: "name0",
         fen: "fen0",
         id: "id0",
+        isRootTag: true,
         children: [
-          { name: "name1", fen: "fen1", id: "id1", children: [] },
-          { name: "name2", fen: "fen2", id: "id2", children: [] }
+          {
+            name: "name1",
+            fen: "fen1",
+            id: "id1",
+            children: [],
+            isRootTag: false
+          },
+          {
+            name: "name2",
+            fen: "fen2",
+            id: "id2",
+            children: [],
+            isRootTag: false
+          }
         ]
       };
 
