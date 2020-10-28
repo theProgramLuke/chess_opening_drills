@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
 import { TagTree } from "@/store/repertoire/TagTree";
+import { RemoveRepertoireTagPayload } from "@/store/MutationPayloads";
 
 @Component
 export default class TagDeleterViewModel extends Vue {
@@ -13,8 +14,8 @@ export default class TagDeleterViewModel extends Vue {
   disabled!: boolean;
 
   @Emit("onDelete")
-  onDelete() {
+  onDelete(): Pick<RemoveRepertoireTagPayload, "id"> {
     this.showDialog = false;
-    return this.tag;
+    return { id: this.tag.id };
   }
 }

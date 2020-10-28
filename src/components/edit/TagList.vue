@@ -9,7 +9,7 @@
 
           div.float-right
             tag-importer(
-              v-if="(item.isRootTag)",
+              v-if="item.isRootTag",
               :repertoire="repertoire",
               :tag="item")
 
@@ -22,7 +22,7 @@
             tag-deleter(
               :repertoire="repertoire",
               :tag="item",
-              :disabled="(item.id === 'whiteStart'|| item.id === 'blackStart')",
+              :disabled="item.isRootTag",
               @onDelete="onDelete")
 
             tag-exporter(:repertoire="repertoire", :tag="item")

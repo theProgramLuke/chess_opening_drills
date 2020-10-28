@@ -14,7 +14,9 @@ import {
 import { fenAfterMove } from "@/store/repertoire/chessHelpers";
 import {
   RemoveRepertoireMovePayload,
-  AddRepertoireTagPayload
+  AddRepertoireTagPayload,
+  RemoveRepertoireTagPayload,
+  AddRepertoireMovePayload
 } from "@/store/MutationPayloads";
 
 jest.mock("@/store/repertoire/Repertoire");
@@ -26,7 +28,8 @@ describe("EditViewModel", () => {
   const mutations = {
     addRepertoireMove: jest.fn(),
     removeRepertoireMove: jest.fn(),
-    addRepertoireTag: jest.fn()
+    addRepertoireTag: jest.fn(),
+    removeRepertoireTag: jest.fn()
   };
   const localVue = createLocalVue();
   localVue.use(Vuex);
@@ -167,8 +170,27 @@ describe("EditViewModel", () => {
 
       component.vm.onCreateTag({ parent, name, fen });
 
-      expect(mutations.addRepertoireTag).toHaveBeenCalled();
       expect(mutations.addRepertoireTag).toHaveBeenCalledWith(
+        expect.anything(),
+        expected
+      );
+    });
+  });
+
+  describe("onRemoveTag", () => {
+    it("should invoke the removeRepertoireTag mutation with the payload", () => {
+      const component = mountComponent();
+      const parent = new TagTree("", "", []);
+      const fen = "fen";
+      const expected: RemoveRepertoireTagPayload = {
+        repertoire: component.vm.whiteRepertoire,
+        parent,
+        fen
+      };
+
+      component.vm.onRemoveTag({ parent, fen });
+
+      expect(mutations.removeRepertoireTag).toHaveBeenCalledWith(
         expect.anything(),
         expected
       );
@@ -216,13 +238,19 @@ describe("EditViewModel", () => {
   describe("onBoardMove", () => {
     it("should add a repertoire position with the new move", () => {
       const component = mountComponent();
-      const fen = "new move fen";
       const san = "e5";
-      const history = ["e4", san];
+      const expected: AddRepertoireMovePayload = {
+        repertoire: component.vm.whiteRepertoire,
+        fen: startPosition,
+        san
+      };
 
-      component.vm.onBoardMove({ fen, history });
+      component.vm.onBoardMove({ fen: "new fen", history: ["e4", san] });
 
-      expect(mutations.addRepertoireMove).toHaveBeenCalled();
+      expect(mutations.addRepertoireMove).toHaveBeenCalledWith(
+        expect.anything(),
+        expected
+      );
     });
 
     it("should update the board with the new move", () => {

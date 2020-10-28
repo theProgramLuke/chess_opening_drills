@@ -59,14 +59,14 @@ describe("TagTree", () => {
 
   describe("removeTag", () => {
     it("should delete a tag and all of its successors", () => {
-      const fenToDelete = "delete me";
+      const idToDelete = "delete me";
       const tree = new TagTree("root", "", [new TagTree("a", "", [])]);
       const expected = _.cloneDeep(tree);
       tree.children.push(
-        new TagTree("b", fenToDelete, [new TagTree("c", "", [])])
+        new TagTree("b", "", [new TagTree("c", "", [])], false, idToDelete)
       );
 
-      tree.removeTag(fenToDelete);
+      tree.removeTag(idToDelete);
 
       expect(tree).toEqual(expected);
     });

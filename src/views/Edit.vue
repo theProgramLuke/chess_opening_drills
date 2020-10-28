@@ -14,8 +14,8 @@
               :blackRepertoire="blackRepertoire",
               :activePosition="activePosition",
               @onSelect="onTagSelect",
-              @onDelete="removeRepertoireTag",
-              @onCreate="addRepertoireTag")
+              @onDelete="onRemoveTag",
+              @onCreate="onCreateTag")
           
           v-tab-item.pa-2(key=1, value="tab-1")
             move-list(:variations="sourceVariations", @onSelectMove="updateBoard")

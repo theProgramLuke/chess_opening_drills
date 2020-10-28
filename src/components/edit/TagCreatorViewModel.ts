@@ -5,6 +5,7 @@ import { InputValidationRule } from "vuetify";
 
 import { TagTree } from "@/store/repertoire/TagTree";
 import { Repertoire } from "@/store/repertoire/Repertoire";
+import { AddRepertoireTagPayload } from "@/store/MutationPayloads";
 
 @Component
 export default class TagCreatorViewModel extends Vue {
@@ -40,11 +41,12 @@ export default class TagCreatorViewModel extends Vue {
 
   onCreate(): void {
     if (this.validate()) {
-      this.$emit("onCreate", {
+      const emitted: Omit<AddRepertoireTagPayload, "repertoire"> = {
         parent: this.parentTag,
         name: this.name,
         fen: this.activePosition
-      });
+      };
+      this.$emit("onCreate", emitted);
       this.showDialog = false;
       this.name = "";
     }

@@ -47,6 +47,5 @@ export interface AddMovesFromPgnPayload {
 
 export interface RemoveRepertoireTagPayload {
   repertoire: Repertoire;
-  parent: TagTree;
-  fen: string;
+  id: string;
 }

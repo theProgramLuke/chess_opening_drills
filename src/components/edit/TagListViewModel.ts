@@ -6,7 +6,6 @@ import TagDeleter from "@/components/edit/TagDeleter.vue";
 import TagCreator from "@/components/edit/TagCreator.vue";
 import TagExporter from "@/components/edit/TagExporter.vue";
 import TagImporter from "@/components/edit/TagImporter.vue";
-import { TagTree } from "@/store/repertoire/TagTree";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 
 @Component({
@@ -27,17 +26,17 @@ export default class TagListViewModel extends Vue {
   }
 
   @Emit("onCreate")
-  onCreate(parent: TagTree, name: string): void {
+  onCreate(): void {
     _.noop();
   }
 
   @Emit("onDelete")
-  onDelete(tag: TagTree): void {
+  onDelete(): void {
     _.noop();
   }
 
   @Emit("onSelect")
-  onSelect(repertoire: Repertoire, fen: string) {
+  onSelect() {
     _.noop();
   }
 }

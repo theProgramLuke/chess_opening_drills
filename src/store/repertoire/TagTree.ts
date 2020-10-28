@@ -42,9 +42,9 @@ export class TagTree {
     this.children.push(child);
   }
 
-  removeTag(fen: string): void {
-    _.remove(this.children, child => child.fen === fen);
-    _.forEach(this.children, child => child.removeTag(fen));
+  removeTag(id: string): void {
+    _.remove(this.children, child => child.id === id);
+    _.forEach(this.children, child => child.removeTag(id));
   }
 
   asSaved(): SavedTagTree {

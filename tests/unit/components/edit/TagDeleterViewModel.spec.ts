@@ -36,7 +36,7 @@ describe("TagDeleterViewModel", () => {
 
       component.vm.onDelete();
 
-      expect(component.emitted().onDelete).toEqual([[tag]]);
+      expect(component.emitted().onDelete).toEqual([[{ id: tag.id }]]);
     });
 
     it("should set showDialog to false", () => {

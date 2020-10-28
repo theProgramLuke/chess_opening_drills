@@ -100,7 +100,7 @@ export const mutations = {
     state: MutationState,
     payload: RemoveRepertoireTagPayload
   ): void {
-    payload.parent.removeTag(payload.fen);
+    payload.repertoire.tags.removeTag(payload.id);
 
     setRepertoireForSide(
       state,

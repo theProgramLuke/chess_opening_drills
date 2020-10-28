@@ -151,12 +151,12 @@ describe("mutations", () => {
   describe("removeRepertoireTag", () => {
     it("should removeTag to the parent tag", () => {
       const repertoire = new Repertoire(emptySavedRepertoire);
-      const parent = new TagTree("", "", []);
-      const fen = "fen";
+      repertoire.tags = new TagTree("", "", []);
+      const id = "id";
 
-      mutations.removeRepertoireTag(state, { repertoire, parent, fen });
+      mutations.removeRepertoireTag(state, { repertoire, id });
 
-      expect(parent.removeTag).toBeCalledWith(fen);
+      expect(repertoire.tags.removeTag).toBeCalledWith(id);
     });
   });
 

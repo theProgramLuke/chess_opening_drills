@@ -35,7 +35,7 @@ import { fenAfterMove } from "@/store/repertoire/chessHelpers";
 export default class EditViewModel extends Vue {
   activeRepertoire: Repertoire = 0 as any;
   activePosition = "";
-  recomputeCounter = 0;
+  recomputeNextMovesCounter = 0;
 
   @State
   whiteRepertoire!: Repertoire;
@@ -70,26 +70,20 @@ export default class EditViewModel extends Vue {
   }
 
   get nextMoves(): VariationMove[] {
-    this.recomputeCounter;
+    this.recomputeNextMovesCounter;
 
     return this.activeRepertoire.positions.movesFromPosition(
       this.activePosition
     );
   }
 
-  onCreateTag(partialPayload: Partial<AddRepertoireTagPayload>): void {
-    if (
-      !_.isUndefined(partialPayload.name) &&
-      !_.isUndefined(partialPayload.parent) &&
-      !_.isUndefined(partialPayload.fen)
-    ) {
-      this.addRepertoireTag({
-        repertoire: this.activeRepertoire,
-        parent: partialPayload.parent,
-        name: partialPayload.name,
-        fen: partialPayload.fen
-      });
-    }
+  onCreateTag(
+    partialPayload: Omit<AddRepertoireTagPayload, "repertoire">
+  ): void {
+    this.addRepertoireTag({
+      ...partialPayload,
+      repertoire: this.activeRepertoire
+    });
   }
 
   onDeleteMove(move: VariationMove): void {
@@ -99,7 +93,16 @@ export default class EditViewModel extends Vue {
       san: move.san
     });
 
-    ++this.recomputeCounter;
+    ++this.recomputeNextMovesCounter;
+  }
+
+  onRemoveTag(
+    partialPayload: Omit<RemoveRepertoireTagPayload, "repertoire">
+  ): void {
+    this.removeRepertoireTag({
+      ...partialPayload,
+      repertoire: this.activeRepertoire
+    });
   }
 
   updateBoard(fen: string): void {
