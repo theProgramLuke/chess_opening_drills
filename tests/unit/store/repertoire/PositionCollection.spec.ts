@@ -377,6 +377,15 @@ describe("PositionCollection", () => {
   });
 
   describe("getSourceVariations", () => {
+    it("should be an empty list for the start position", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+      addMovesToRepertoire(repertoire, ["e4", "e5", "Nf3", "Nc6", "d4"]);
+
+      const actual = repertoire.getSourceVariations(startPosition);
+
+      expect(actual).toEqual([]);
+    });
+
     it("should get the variations that gives rise to the position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const expected: Variation[] = [

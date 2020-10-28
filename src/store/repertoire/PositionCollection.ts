@@ -193,7 +193,9 @@ export class PositionCollection implements PositionCollectionInterface {
     const parents = this.graph.predecessors(fen);
 
     if (!(parents instanceof Array) || _.isEmpty(parents)) {
-      collector.push(path);
+      if (!_.isEmpty(path)) {
+        collector.push(path);
+      }
     } else {
       _.forEach(parents, parent => {
         const move = this.graph.edge(parent, fen);
