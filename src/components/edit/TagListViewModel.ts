@@ -38,7 +38,7 @@ export default class TagListViewModel extends Vue {
   }
 
   @Emit("onSelect")
-  onSelect(repertoire: Repertoire, fen: string) {
+  onSelect(_repertoire: Repertoire, _fen: string) {
     _.noop();
   }
 }

@@ -34,7 +34,7 @@ export interface PositionCollectionInterface {
   movesFromPosition: (fen: string) => VariationMove[];
   parentPositions: (fen: string) => string[];
   descendantPositions: (fen: string) => string[];
-  asSaved: () => Record<string, any>;
+  asSaved: () => SavedPositionCollection;
   asPgn: (fen: string) => string;
   loadPgn: (pgn: string) => void;
   getChildVariations: (fen: string) => Variation[];

@@ -53,7 +53,7 @@ export default class MoveListViewModel extends Vue {
   }
 
   @Emit("onSelectMove")
-  onSelectMove(move: VariationMove): void {
+  onSelectMove(_move: VariationMove): void {
     _.noop();
   }
 }
