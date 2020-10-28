@@ -1,8 +1,7 @@
 <template lang="pug">
-  div
+  div(:key="forceRender")
     v-treeview.float-left(
       v-for="repertoire in repertoires",
-      :key="forceRender",
       :items="[repertoire.tags]",
       dense,
       open-on-click)
