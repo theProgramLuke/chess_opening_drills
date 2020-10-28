@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import _ from "lodash";
-import { PlotData, Config } from "plotly.js";
+import { PlotData, Config, Layout } from "plotly.js";
 
 import Plot from "@/components/common/Plot.vue";
 import { Repertoire } from "@/store/repertoire/Repertoire";
@@ -12,6 +12,7 @@ import { TrainingMode } from "@/store/trainingMode";
 @Component({ name: "LearnedReport", components: { Plot } })
 export default class LearnedViewModel extends Vue {
   options: Partial<Config> = { displayModeBar: false };
+  layout: Partial<Layout> = { margin: { b: 125 } };
   selectedTags: TagTree[] = [];
 
   @State

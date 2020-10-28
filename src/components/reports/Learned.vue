@@ -19,6 +19,7 @@
           v-else,
           :data="plotData",
           :options="options",
+          :layout="layout",
           :dark="darkMode")
 </template>
 

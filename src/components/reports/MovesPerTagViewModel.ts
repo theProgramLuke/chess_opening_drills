@@ -4,14 +4,14 @@ import { State } from "vuex-class";
 import _ from "lodash";
 
 import Plot from "@/components/common/Plot.vue";
-import { Config } from "plotly.js";
+import { Config, Layout } from "plotly.js";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TagTree } from "@/store/repertoire/TagTree";
-import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 
 @Component({ name: "MovesPerTagReport", components: { Plot } })
 export default class MovesPerTagViewModel extends Vue {
   options: Partial<Config> = { displayModeBar: false };
+  layout: Partial<Layout> = { margin: { b: 125 } };
 
   @State
   whiteRepertoire!: Repertoire;

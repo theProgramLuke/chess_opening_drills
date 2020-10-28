@@ -2,11 +2,10 @@ import "reflect-metadata";
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import _ from "lodash";
-import { Layout, Config, PlotData } from "plotly.js";
+import { Layout, Config } from "plotly.js";
 
 import Plot from "@/components/common/Plot.vue";
 import { Repertoire } from "@/store/repertoire/Repertoire";
-import { TrainingMoveSpecification } from "@/store/repertoire/TrainingCollection";
 
 @Component({ name: "DifficultyReport", components: { Plot } })
 export default class DifficultyViewModel extends Vue {
