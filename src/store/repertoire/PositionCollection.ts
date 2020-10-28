@@ -178,21 +178,32 @@ export class PositionCollection implements PositionCollectionInterface {
   }
 
   getSourceVariations(fen: string): Variation[] {
-    const startPosition = this.graph.sources()[0];
-    const allVariations = this.getChildVariations(startPosition);
+    const collector: Variation[] = [];
 
-    const truncatedVariations = _.map(allVariations, variation => {
-      const positionIndex = _.findIndex(
-        variation,
-        move => move.resultingFen === fen
-      );
+    this.getSourceVariationsRecursive(fen, collector);
 
-      return _.take(variation, positionIndex + 1);
-    });
+    return collector;
+  }
 
-    _.remove(truncatedVariations, _.isEmpty);
+  private getSourceVariationsRecursive(
+    fen: string,
+    collector: Variation[],
+    path: Variation = []
+  ): void {
+    const parents = this.graph.predecessors(fen);
 
-    return _.uniqWith(truncatedVariations, _.isEqual);
+    if (!(parents instanceof Array) || _.isEmpty(parents)) {
+      collector.push(path);
+    } else {
+      _.forEach(parents, parent => {
+        const move = this.graph.edge(parent, fen);
+
+        const clonedPath = _.clone(path);
+        clonedPath.unshift({ ...move, sourceFen: parent, resultingFen: fen });
+
+        this.getSourceVariationsRecursive(parent, collector, clonedPath);
+      });
+    }
   }
 
   private removeOrphans(startPosition: string): string[] {

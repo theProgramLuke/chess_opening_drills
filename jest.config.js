@@ -24,5 +24,6 @@ module.exports = {
       pug: { doctype: "html" }
     }
   },
-  snapshotSerializers: ["jest-serializer-vue"]
+  snapshotSerializers: ["jest-serializer-vue"],
+  testPathIgnorePatterns: ["/.vscode/"]
 };
