@@ -9,9 +9,9 @@ import {
 import { Side } from "@/store/side";
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
 
-type TurnMove = string | undefined;
+type TurnMove = VariationMove | undefined;
 
-interface Turn {
+export interface Turn {
   turnNumber: number;
   whiteMove: TurnMove;
   blackMove: TurnMove;
@@ -36,7 +36,7 @@ export default class MoveListViewModel extends Vue {
         sans.push(undefined);
       }
 
-      _.forEach(variation, move => sans.push(move.san));
+      _.forEach(variation, move => sans.push(move));
 
       const turns: Turn[] = [];
 
