@@ -180,15 +180,13 @@ describe("EditViewModel", () => {
   describe("onRemoveTag", () => {
     it("should invoke the removeRepertoireTag mutation with the payload", () => {
       const component = mountComponent();
-      const parent = new TagTree("", "", []);
-      const fen = "fen";
+      const id = "id";
       const expected: RemoveRepertoireTagPayload = {
         repertoire: component.vm.whiteRepertoire,
-        parent,
-        fen
+        id
       };
 
-      component.vm.onRemoveTag({ parent, fen });
+      component.vm.onRemoveTag({ id });
 
       expect(mutations.removeRepertoireTag).toHaveBeenCalledWith(
         expect.anything(),

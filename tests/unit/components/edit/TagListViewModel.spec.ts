@@ -46,9 +46,7 @@ describe("TagListViewModel", () => {
   });
 
   describe("onCreate", () => {
-    it("should emit onCreate with the parent tag and name", () => {
-      const parent = whiteRepertoire.tags;
-      const name = "name";
+    it("should emit onCreate", () => {
       const component = shallowMount(TagListViewModel, {
         render: jest.fn(),
         propsData: {
@@ -58,15 +56,14 @@ describe("TagListViewModel", () => {
         }
       });
 
-      component.vm.onCreate(parent, name);
+      component.vm.onCreate();
 
-      expect(component.emitted().onCreate).toEqual([[parent, name]]);
+      expect(component.emitted().onCreate).toEqual([[]]);
     });
   });
 
   describe("onDelete", () => {
-    it("should emit onDelete with the tag", () => {
-      const tag = whiteRepertoire.tags;
+    it("should emit onDelete", () => {
       const component = shallowMount(TagListViewModel, {
         render: jest.fn(),
         propsData: {
@@ -76,9 +73,9 @@ describe("TagListViewModel", () => {
         }
       });
 
-      component.vm.onDelete(tag);
+      component.vm.onDelete();
 
-      expect(component.emitted().onDelete).toEqual([[tag]]);
+      expect(component.emitted().onDelete).toEqual([[]]);
     });
   });
 
