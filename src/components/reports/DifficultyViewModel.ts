@@ -8,26 +8,6 @@ import Plot from "@/components/common/Plot.vue";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TrainingMoveSpecification } from "@/store/repertoire/TrainingCollection";
 
-function easinessFromRepertoire(repertoire: Repertoire): number[] {
-  const easiness: number[] = [];
-
-  _.forEach(
-    repertoire.training.getMoves(),
-    (trainingMove: TrainingMoveSpecification) => {
-      const training = repertoire.training.getTrainingForMove(
-        trainingMove.fen,
-        trainingMove.san
-      );
-
-      if (!_.isUndefined(training)) {
-        easiness.push(training.easiness);
-      }
-    }
-  );
-
-  return easiness;
-}
-
 @Component({ name: "DifficultyReport", components: { Plot } })
 export default class DifficultyViewModel extends Vue {
   options: Partial<Config> = { displayModeBar: false };
@@ -53,20 +33,20 @@ export default class DifficultyViewModel extends Vue {
   blackRepertoire!: Repertoire;
 
   get whiteEasiness(): number[] {
-    return easinessFromRepertoire(this.whiteRepertoire);
+    return this.easinessFromRepertoire(this.whiteRepertoire);
   }
 
   get blackEasiness(): number[] {
-    return easinessFromRepertoire(this.blackRepertoire);
+    return this.easinessFromRepertoire(this.blackRepertoire);
   }
 
   get showNoPositions(): boolean {
     return _.isEmpty(this.whiteEasiness) && _.isEmpty(this.blackEasiness);
   }
 
-  get plotData(): Partial<PlotData>[] {
-    const common: Partial<PlotData> = {
-      xbins: { start: 0, end: 15, size: 15 },
+  get plotData() {
+    const common = {
+      xbins: { start: 0, end: 15 },
       type: "histogram"
     };
     return [
@@ -81,5 +61,12 @@ export default class DifficultyViewModel extends Vue {
         x: this.whiteEasiness
       }
     ];
+  }
+
+  private easinessFromRepertoire(repertoire: Repertoire): number[] {
+    return _.map(
+      repertoire.getTrainingForTags([repertoire.tags]),
+      training => training.easiness
+    );
   }
 }
