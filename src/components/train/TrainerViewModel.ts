@@ -202,6 +202,7 @@ export default class TrainerViewModel extends Vue {
     if (!_.isUndefined(this.activeVariation)) {
       if (threats.fen && threats.fen !== this.activePositionLegalFen) {
         const correct = this.moveIsCorrect(threats.fen);
+        this.attempts.push(_.last(threats.history) || "not a move");
 
         if (correct) {
           this.addTrainingEvent({
@@ -216,7 +217,6 @@ export default class TrainerViewModel extends Vue {
 
           this.nextTrainingPosition();
         } else {
-          this.attempts.push(_.last(threats.history) || "not a move");
           this.mistakeInVariation = true;
           this.reloadPosition();
         }

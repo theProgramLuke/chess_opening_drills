@@ -420,9 +420,10 @@ describe("TrainerViewModel", () => {
       it("should add a training event", () => {
         const elapsed = 10;
         component.vm.getElapsedSeconds = jest.fn(() => elapsed);
+        const san = "san";
         const expected: AddTrainingEventPayload = {
           event: {
-            attemptedMoves: [],
+            attemptedMoves: [san],
             elapsedMilliseconds: elapsed
           },
           fen: trainingVariation.variation[0].sourceFen,
@@ -430,7 +431,7 @@ describe("TrainerViewModel", () => {
           repertoire: trainingVariation.repertoire
         };
 
-        component.vm.onBoardMove({ fen: "fen" });
+        component.vm.onBoardMove({ fen: "fen", history: ["not the san", san] });
 
         expect(mutations.addTrainingEvent).toBeCalledWith(
           expect.anything(),
