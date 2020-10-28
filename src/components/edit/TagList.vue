@@ -1,6 +1,12 @@
 <template lang="pug">
   div
-    v-treeview.float-left(v-for="repertoire in repertoires", :items="[repertoire.tags]", dense, open-on-click)
+    v-treeview.float-left(
+      v-for="repertoire in repertoires",
+      :key="forceRender",
+      :items="[repertoire.tags]",
+      dense,
+      open-on-click)
+
       template(v-slot:label="{ item }")
         div
           v-btn.original-case(@click="onSelect(repertoire, item.fen)", text, left) {{ item.name }}

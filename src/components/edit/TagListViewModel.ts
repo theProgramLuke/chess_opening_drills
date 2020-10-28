@@ -12,6 +12,8 @@ import { Repertoire } from "@/store/repertoire/Repertoire";
   components: { TagDeleter, TagCreator, TagExporter, TagImporter }
 })
 export default class TagListViewModel extends Vue {
+  forceRender = 0;
+
   @Prop({ required: true })
   whiteRepertoire!: Repertoire;
 
@@ -32,7 +34,7 @@ export default class TagListViewModel extends Vue {
 
   @Emit("onDelete")
   onDelete(): void {
-    _.noop();
+    ++this.forceRender;
   }
 
   @Emit("onSelect")
