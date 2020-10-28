@@ -5,10 +5,6 @@ import _ from "lodash";
 import DifficultyViewModel from "@/components/reports/DifficultyViewModel";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
-import {
-  TrainingCollection,
-  TrainingMoveSpecification
-} from "@/store/repertoire/TrainingCollection";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 import { Writeable } from "../../../TestHelpers";
 
