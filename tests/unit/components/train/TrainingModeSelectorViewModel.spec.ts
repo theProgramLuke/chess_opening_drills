@@ -1,5 +1,6 @@
 import { shallowMount } from "@vue/test-utils";
 import _ from "lodash";
+import shuffle from "lodash/shuffle";
 
 import TrainingModeSelectorViewModel from "@/components/train/TrainingModeSelectorViewModel.ts";
 import {
@@ -14,6 +15,7 @@ import { Variation } from "@/store/repertoire/PositionCollection";
 
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TagTree");
+jest.mock("lodash/shuffle");
 
 describe("TrainingModeSelectorViewModel", () => {
   const emptySavedRepertoire: SavedRepertoire = {
@@ -154,6 +156,38 @@ describe("TrainingModeSelectorViewModel", () => {
         modes
         // TODO 1.6
       );
+    });
+
+    it("should be shuffled if shuffled is true", () => {
+      const component = mountComponent();
+      const whiteVariations: Variation[] = [makeVariation(["e4", "e5"])];
+      const blackVariations: Variation[] = [makeVariation(["e4", "e6"])];
+      const expected: TrainingVariation[] = [
+        {
+          repertoire: component.vm.whiteRepertoire,
+          variation: whiteVariations[0]
+        },
+        {
+          repertoire: component.vm.blackRepertoire,
+          variation: blackVariations[0]
+        }
+      ];
+      const modes = [TrainingMode.Difficult, TrainingMode.Scheduled];
+      const topics = _.times(10, mockTag);
+      component.vm.selectedModes = modes;
+      component.vm.selectedTopics = topics;
+      (component.vm.whiteRepertoire
+        .getTrainingVariations as jest.Mock).mockReturnValue(whiteVariations);
+      (component.vm.blackRepertoire
+        .getTrainingVariations as jest.Mock).mockReturnValue(blackVariations);
+      const shuffledVariations = ["shuffled"];
+      (shuffle as jest.Mock).mockReturnValue(shuffledVariations);
+      component.vm.shouldShuffle = true;
+
+      const actual = component.vm.trainingVariations;
+
+      expect(actual).toBe(shuffledVariations);
+      expect(shuffle).toBeCalledWith(expected);
     });
   });
 

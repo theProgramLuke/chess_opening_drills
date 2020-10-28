@@ -46,6 +46,8 @@
 
       v-checkbox(label="Review entire variations", v-model="entireVariations")
 
+      v-checkbox(label="Shuffle variations", v-model="shouldShuffle")
+
       v-card-actions
         v-btn(
           @click="onStartTraining"

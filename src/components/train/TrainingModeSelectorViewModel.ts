@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
 import _ from "lodash";
+import shuffle from "lodash/shuffle";
 
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TagTree } from "@/store/repertoire/TagTree";
@@ -31,6 +32,7 @@ export default class TrainingModeSelectorViewModel extends Vue {
   entireVariations = true;
   playbackSpeedSlideValue = 10;
   difficultyModeLimit = 15;
+  shouldShuffle = false;
 
   @Prop({ required: true })
   whiteRepertoire!: Repertoire;
@@ -84,7 +86,12 @@ export default class TrainingModeSelectorViewModel extends Vue {
       });
     });
 
-    return trainingVariations;
+    if (this.shouldShuffle) {
+      const shuffled = shuffle(trainingVariations);
+      return shuffled;
+    } else {
+      return trainingVariations;
+    }
   }
 
   get playbackSpeedLabel(): string {
