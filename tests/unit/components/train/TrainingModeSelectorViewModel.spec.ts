@@ -69,6 +69,22 @@ describe("TrainingModeSelectorViewModel", () => {
     });
   });
 
+  describe("combinedTags", () => {
+    it("should be the root tags of the repertoires", () => {
+      const component = mountComponent();
+      component.vm.whiteRepertoire.tags = new TagTree("", "", []);
+      component.vm.blackRepertoire.tags = new TagTree("", "", []);
+      const expected = [
+        component.vm.whiteRepertoire.tags,
+        component.vm.blackRepertoire.tags
+      ];
+
+      const actual = component.vm.combinedTags;
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
   describe("showDifficultyModeInput", () => {
     it("should be true if the difficult training mode is selected", () => {
       const component = mountComponent();
