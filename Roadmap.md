@@ -8,6 +8,7 @@ _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/i
 - configurable max training attempts
 - scrollable moves list
 - per position training history
+- compressed storage? this might be slow
 - Repertoire health
   - warning for multiple move choices from same position on my turn
   - blunder detection
