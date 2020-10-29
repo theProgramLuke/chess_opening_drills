@@ -223,6 +223,17 @@ describe("TrainerViewModel", () => {
 
       expect(actual).toBe(trainingVariation.variation[0]);
     });
+
+    it("should be undefined if the active variation is not defined", () => {
+      const component = mountComponent();
+      jest
+        .spyOn(component.vm, "activeVariation", "get")
+        .mockReturnValue(undefined);
+
+      const actual = component.vm.expectedMove;
+
+      expect(actual).toBeUndefined();
+    });
   });
 
   describe("boardOrientation", () => {
@@ -242,6 +253,17 @@ describe("TrainerViewModel", () => {
         expect(actual).toBe(side);
       }
     );
+
+    it("should be white if the active variation is not defined", () => {
+      const component = mountComponent();
+      jest
+        .spyOn(component.vm, "activeVariation", "get")
+        .mockReturnValue(undefined);
+
+      const actual = component.vm.boardOrientation;
+
+      expect(actual).toEqual(Side.White);
+    });
   });
 
   describe("complete", () => {
