@@ -1,6 +1,13 @@
-import _ from "lodash";
-
 import { Engine } from "node-uci";
+
+export interface EngineData {
+  depth?: number;
+  score?: {
+    value: number;
+  };
+  pv?: string;
+  multipv?: number;
+}
 
 export interface SourceEngineOption {
   type: "spin" | "check" | "combo" | "string" | "button";
@@ -71,8 +78,15 @@ export interface EngineOutput {
   id: number;
 }
 
-export function ProcessAnalysis(engineData: any): EngineOutput | undefined {
-  if (engineData.depth && engineData.score && engineData.pv) {
+export function ProcessAnalysis(
+  engineData: EngineData
+): EngineOutput | undefined {
+  if (
+    engineData.depth &&
+    engineData.score &&
+    engineData.pv &&
+    engineData.multipv
+  ) {
     return {
       evaluation: engineData.score.value / 100,
       depth: engineData.depth,

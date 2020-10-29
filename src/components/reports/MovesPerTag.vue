@@ -11,4 +11,4 @@
       :dark="darkMode")
 </template>
 
-<script lang="ts" src="./PositionsPerTagViewModel.ts" />
+<script lang="ts" src="./MovesPerTagViewModel.ts" />

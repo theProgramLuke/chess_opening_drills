@@ -3,53 +3,44 @@ import Vuex from "vuex";
 import _ from "lodash";
 
 import LearnedViewModel from "@/components/reports/LearnedViewModel";
-import { Repertoire } from "@/store/repertoire";
-import { RepertoireTag } from "@/store/repertoireTag";
+import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { TrainingMode } from "@/store/trainingMode";
+import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
+import { Variation } from "@/store/repertoire/PositionCollection";
+import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 
-jest.mock("@/store/repertoire");
-jest.mock("@/store/repertoireTag");
-jest.mock("@/store/repertoirePosition");
+jest.mock("@/store/repertoire/Repertoire");
+jest.mock("@/store/repertoire/TagTree");
+jest.mock("@/store/repertoire/RepetitionTraining");
+jest.mock("@/store/repertoire/TrainingCollection");
+
+const emptySavedRepertoire: SavedRepertoire = {
+  positions: {},
+  training: {},
+  tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
+  sideToTrain: Side.White
+};
 
 const state = {
-  whiteRepertoire: new Repertoire([], []),
-  blackRepertoire: new Repertoire([], [])
+  whiteRepertoire: new Repertoire(emptySavedRepertoire),
+  blackRepertoire: new Repertoire(emptySavedRepertoire)
 };
+state.whiteRepertoire.training = new TrainingCollection();
+state.blackRepertoire.training = new TrainingCollection();
+state.whiteRepertoire.sideToTrain = Side.White;
+state.blackRepertoire.sideToTrain = Side.Black;
 
 const localVue = createLocalVue();
 localVue.use(Vuex);
 const store = new Vuex.Store({ state });
 
-const mockedRepertoirePosition = (includeAsNew = false, myTurn = true) => {
-  const position = new RepertoirePosition("", "", Side.White);
-  position.IncludeForTrainingMode = (mode: TrainingMode) =>
-    mode === TrainingMode.New && includeAsNew;
-  position.myTurn = myTurn;
-  return position;
-};
-
-const mockedRepertoireTag = (
-  position = new RepertoirePosition("", "", Side.White)
-) => {
-  const tag = new RepertoireTag(Side.White, "", position, "", []);
-  tag.position = position;
-  return tag;
-};
-
 describe("LearnedViewModel", () => {
-  describe("combinedTags", () => {
+  describe("repertoires", () => {
     it("should get the concatenated tags of the repertoires", () => {
-      state.whiteRepertoire.tags = [
-        mockedRepertoireTag(),
-        mockedRepertoireTag()
-      ];
-      state.blackRepertoire.tags = [mockedRepertoireTag()];
-      const expectedTags = _.concat(
+      const expectedTags = [
         state.whiteRepertoire.tags,
         state.blackRepertoire.tags
-      );
+      ];
       const component = shallowMount(LearnedViewModel, {
         localVue,
         store,
@@ -63,13 +54,13 @@ describe("LearnedViewModel", () => {
   });
 
   describe("showNoPositions", () => {
-    it("should be true if the repertoire only have the starting positions", () => {
-      state.whiteRepertoire.positions = [
-        new RepertoirePosition("", "", Side.White)
-      ];
-      state.blackRepertoire.positions = [
-        new RepertoirePosition("", "", Side.White)
-      ];
+    it("should be true if the repertoires have no positions", () => {
+      (state.whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue(
+        []
+      );
+      (state.blackRepertoire.training.getMoves as jest.Mock).mockReturnValue(
+        []
+      );
       const component = shallowMount(LearnedViewModel, {
         localVue,
         store,
@@ -82,13 +73,13 @@ describe("LearnedViewModel", () => {
     });
 
     it("should be false if either repertoire has more than the starting positions", () => {
-      state.whiteRepertoire.positions = [
-        new RepertoirePosition("", "", Side.White),
-        new RepertoirePosition("", "", Side.White)
-      ];
-      state.blackRepertoire.positions = [
-        new RepertoirePosition("", "", Side.White)
-      ];
+      state.whiteRepertoire.training = new TrainingCollection();
+      (state.whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue([
+        "anything"
+      ]);
+      (state.blackRepertoire.training.getMoves as jest.Mock).mockReturnValue(
+        []
+      );
       const component = shallowMount(LearnedViewModel, {
         localVue,
         store,
@@ -102,28 +93,41 @@ describe("LearnedViewModel", () => {
   });
 
   describe("plotData", () => {
-    it("should get a pie chart for the unique positions on my turn of the selected tags", () => {
-      const position = mockedRepertoirePosition();
-      const trainedPositions = 3;
-      const newPositions = 5;
-      const positions = [
-        ..._.times(trainedPositions, () => mockedRepertoirePosition(false)),
-        ..._.times(newPositions, () => mockedRepertoirePosition(true)),
-        mockedRepertoirePosition(false, false), // not myTurn, ignored
-        mockedRepertoirePosition(true, false)
-      ];
-      position.VisitChildren = (fn: (position: RepertoirePosition) => void) => {
-        _.forEach(positions, fn);
-      };
+    function makeVariation(sans: string[]): Variation {
+      let turn = Side.White;
+
+      return _.map(sans, san => {
+        const sourceFen = turn === Side.White ? " w " : " b ";
+        turn = turn === Side.White ? Side.Black : Side.White;
+        return { san, resultingFen: "", sourceFen };
+      });
+    }
+
+    it("should get a pie chart for count of moves that are trained and new from the selected tags", () => {
+      const trainedMoves = 2;
+      const newMoves = 1;
       const component = shallowMount(LearnedViewModel, {
         localVue,
         store,
         render: jest.fn()
       });
       component.vm.selectedTags = [
-        mockedRepertoireTag(position),
-        mockedRepertoireTag(position)
+        component.vm.whiteRepertoire.tags,
+        component.vm.blackRepertoire.tags
       ];
+      const newTraining = new RepetitionTraining();
+      const trainedTraining = new RepetitionTraining();
+      (newTraining.includeForTrainingMode as jest.Mock).mockReturnValue(true);
+      (trainedTraining.includeForTrainingMode as jest.Mock).mockReturnValue(
+        false
+      );
+      (component.vm.whiteRepertoire
+        .getTrainingForTags as jest.Mock).mockReturnValue([
+        trainedTraining,
+        newTraining
+      ]);
+      (component.vm.blackRepertoire
+        .getTrainingForTags as jest.Mock).mockReturnValue([trainedTraining]);
 
       const plotData = component.vm.plotData;
 
@@ -131,8 +135,8 @@ describe("LearnedViewModel", () => {
         {
           type: "pie",
           hole: 0.7,
-          labels: ["Trained", "New"],
-          values: [trainedPositions, newPositions]
+          labels: ["Learned", "New"],
+          values: [trainedMoves, newMoves]
         }
       ]);
     });

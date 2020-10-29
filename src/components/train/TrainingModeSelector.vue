@@ -46,10 +46,12 @@
 
       v-checkbox(label="Review entire variations", v-model="entireVariations")
 
+      v-checkbox(label="Shuffle variations", v-model="shouldShuffle")
+
       v-card-actions
         v-btn(
           @click="onStartTraining"
-          :disabled="trainingPositions.length < 1",
+          :disabled="trainingVariations.length < 1",
           color="primary",
           x-large) {{ startTrainingLabel }}
 </template>

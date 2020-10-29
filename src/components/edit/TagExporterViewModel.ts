@@ -1,36 +1,32 @@
-import Vue from "vue";
+import "reflect-metadata";
+import { Vue, Component, Prop } from "vue-property-decorator";
 import { saveAs } from "file-saver";
 
-import { RepertoireTag } from "@/store/repertoireTag";
+import { TagTree } from "@/store/repertoire/TagTree";
+import { Repertoire } from "@/store/repertoire/Repertoire";
 
-export default Vue.extend({
-  data: () => ({
-    showDialog: false
-  }),
+@Component
+export default class TagExporterViewModel extends Vue {
+  showDialog = false;
 
-  props: {
-    tag: {
-      type: RepertoireTag,
-      required: true
-    }
-  },
+  @Prop({ required: true })
+  repertoire!: Repertoire;
 
-  computed: {
-    pgnText(): string {
-      return this.tag.position.AsPgn();
-    }
-  },
+  @Prop({ required: true })
+  tag!: TagTree;
 
-  methods: {
-    copy(): void {
-      navigator.clipboard.writeText(this.pgnText);
-    },
-
-    save(): void {
-      saveAs(
-        new Blob([this.pgnText], { type: "text/plain;charset=utf-8" }),
-        `Exported ${this.tag.name}.pgn`
-      );
-    }
+  get pgnText(): string {
+    return this.repertoire.positions.asPgn(this.tag.fen);
   }
-});
+
+  copy(): void {
+    navigator.clipboard.writeText(this.pgnText);
+  }
+
+  save(): void {
+    saveAs(
+      new Blob([this.pgnText], { type: "text/plain;charset=utf-8" }),
+      `Exported ${this.tag.name}.pgn`
+    );
+  }
+}

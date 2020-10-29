@@ -1,16 +1,14 @@
 import { shallowMount } from "@vue/test-utils";
 
-import MoveDeleterViewModel from "@/components/edit/MoveDeleterViewModel.ts";
-import { Move } from "@/store/move";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Side } from "@/store/side";
+import MoveDeleterViewModel from "@/components/edit/MoveDeleterViewModel";
+import { VariationMove } from "@/store/repertoire/PositionCollection";
 
 describe("MoveDeleterViewModel", () => {
-  let move: Move;
-
-  beforeEach(() => {
-    move = new Move("", new RepertoirePosition("", "", Side.White));
-  });
+  const move: VariationMove = {
+    sourceFen: "",
+    resultingFen: "",
+    san: ""
+  };
 
   describe("showDialog", () => {
     it("should start by not showing the dialog", () => {

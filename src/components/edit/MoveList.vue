@@ -7,13 +7,17 @@
       v-window-item(v-for="(turnList, index) in turnLists", :key="index")
         v-simple-table
           tbody
-            tr(v-for="(turn, turnNumber) in turnList")
-              td {{ turnNumber + 1 }}
+            tr(v-for="(turn) in turnList")
+              td {{ turn.turnNumber }}
               td
-                v-btn.original-case(@click="onSelectMove(turn.whiteMove.position)")
+                v-btn.original-case(
+                  v-if="turn.whiteMove !== undefined",
+                  @click="onSelectMove(turn.whiteMove)")
                   | {{ turn.whiteMove.san }}
-              td(v-if="turn.blackMove !== undefined")
-                v-btn.original-case(@click="onSelectMove(turn.blackMove.position)")
+              td
+                v-btn.original-case(
+                  v-if="turn.blackMove !== undefined",
+                  @click="onSelectMove(turn.blackMove)")
                   | {{ turn.blackMove.san }}
                   
     v-pagination(

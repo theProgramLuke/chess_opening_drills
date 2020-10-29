@@ -9,6 +9,7 @@ import { Api } from "chessground/api";
 import { DrawShape } from "chessground/draw";
 import { Color, Dests, Key } from "chessground/types";
 import { Side } from "@/store/side";
+import { normalizeFen } from "@/store/repertoire/chessHelpers";
 
 export declare type Threats = {
   history?: string[];
@@ -236,7 +237,10 @@ export default Vue.extend({
       _.forEach(this.game.moves(), move => {
         const game = new Chess(this.game.fen());
         const legalMove = game.move(move);
-        if (legalMove && game.fen() === fen) {
+        if (
+          legalMove &&
+          normalizeFen(game.fen(), false) === normalizeFen(fen || "", false)
+        ) {
           foundMove = legalMove;
         }
       });

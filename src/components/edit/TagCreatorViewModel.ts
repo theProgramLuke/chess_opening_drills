@@ -1,45 +1,54 @@
-import Vue from "vue";
+import _ from "lodash";
+import "reflect-metadata";
+import { Vue, Component, Prop } from "vue-property-decorator";
+import { InputValidationRule } from "vuetify";
 
-import { RepertoireTag } from "@/store/repertoireTag";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { TagTree } from "@/store/repertoire/TagTree";
+import { Repertoire } from "@/store/repertoire/Repertoire";
+import { AddRepertoireTagPayload } from "@/store/MutationPayloads";
 
-export default Vue.extend({
-  data: () => ({
-    showDialog: false,
-    valid: false,
-    name: "",
-    nameRules: [(value: string) => !!value || "Name is required"]
-  }),
+@Component
+export default class TagCreatorViewModel extends Vue {
+  showDialog = false;
+  valid = false;
+  name = "";
+  nameRules: InputValidationRule[] = [
+    (value: string) => !!value || "Name is required"
+  ];
 
-  props: {
-    parentTag: {
-      type: RepertoireTag,
-      required: true
-    },
+  @Prop({ required: true })
+  parentTag!: TagTree;
 
-    activePosition: {
-      type: RepertoirePosition,
-      required: true
-    }
-  },
+  @Prop({ required: true })
+  repertoire!: Repertoire;
 
-  computed: {
-    disabled(): boolean {
-      return !this.parentTag.position.IsChildPosition(this.activePosition);
-    }
-  },
+  @Prop({ required: true })
+  activePosition!: string;
 
-  methods: {
-    validate(): boolean {
-      return (this.$refs.form as Vue & { validate: () => boolean }).validate();
-    },
+  get disabled(): boolean {
+    const descendants = this.repertoire.positions.descendantPositions(
+      this.parentTag.fen
+    );
+    return !(
+      this.activePosition === this.parentTag.fen ||
+      _.includes(descendants, this.activePosition)
+    );
+  }
 
-    onCreate(): void {
-      if (this.validate()) {
-        this.$emit("onCreate", this.parentTag, this.name);
-        this.showDialog = false;
-        this.name = "";
-      }
+  validate(): boolean {
+    return (this.$refs.form as Vue & { validate: () => boolean }).validate();
+  }
+
+  onCreate(): void {
+    if (this.validate()) {
+      const emitted: Omit<AddRepertoireTagPayload, "repertoire"> = {
+        parent: this.parentTag,
+        name: this.name,
+        fen: this.activePosition
+      };
+      this.$emit("onCreate", emitted);
+      this.showDialog = false;
+      this.name = "";
     }
   }
-});
+}

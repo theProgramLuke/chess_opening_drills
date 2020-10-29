@@ -1,196 +1,265 @@
-import Vue from "vue";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+import { Mutation } from "vuex-class";
 import _ from "lodash";
 import { Chess } from "chess.js";
 import { DrawShape } from "chessground/draw";
 
 import chessboard from "@/components/common/chessboard.vue";
 import { Threats } from "@/components/common/chessboardViewModel";
-import { TrainingOptions } from "@/components/train/TrainingModeSelectorViewModel";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import {
+  TrainingOptions,
+  TrainingVariation
+} from "@/components/train/TrainingOptions";
 import { Side } from "@/store/side";
-import { Move } from "@/store/move";
-import { mapMutations } from "vuex";
-import { TrainingEvent } from "@/store/TrainingEvent";
+import { sideFromFen, normalizeFen } from "@/store/repertoire/chessHelpers";
+import { AddTrainingEventPayload } from "@/store/MutationPayloads";
+import { VariationMove } from "@/store/repertoire/PositionCollection";
 import { TrainingMode } from "@/store/trainingMode";
 
 const maxAttempts = 3;
 
-export default Vue.extend({
-  data: () => ({
-    variationIndex: 0,
-    plyCount: 0,
-    startTime: _.now(),
-    attempts: 0,
-    previewIndex: 0,
-    previewedVariations: [] as number[],
-    mistakeInVariation: false
-  }),
+@Component({ components: { chessboard } })
+export default class TrainerViewModel extends Vue {
+  variationIndex = 0;
+  previewIndex = 0;
+  plyCount = 0;
+  startTime: number = _.now();
+  attempts: string[] = [];
+  previewedVariations: number[] = [];
+  mistakeInVariation = false;
 
-  components: {
-    chessboard
-  },
+  @Prop({ required: true })
+  options!: TrainingOptions;
 
-  props: {
-    options: {
-      type: TrainingOptions,
-      required: true
+  @Mutation
+  addTrainingEvent!: (payload: AddTrainingEventPayload) => void;
+
+  @Watch("previewing")
+  onPreviewingChange(newPreviewing: boolean): void {
+    if (newPreviewing) {
+      this.advancePreview();
     }
-  },
+  }
 
-  computed: {
-    previewing(): boolean {
-      const previewingEnabled = this.options.previewNewVariations;
+  private get anyNewPositionsInActiveVariation(): boolean {
+    if (_.isUndefined(this.activeVariation)) {
+      return false;
+    }
 
-      const anyNew =
-        _.find(
-          this.activeVariationPositions,
-          position =>
-            position.IncludeForTrainingMode(TrainingMode.New) && position.myTurn
-        ) || false;
+    const repertoire = this.activeVariation.repertoire;
 
-      const alreadyPreviewed = _.includes(
-        this.previewedVariations,
-        this.variationIndex
-      );
+    const newMoves = _.find(
+      this.activeVariation.variation,
+      (move: VariationMove) => {
+        const training = repertoire.training.getTrainingForMove(
+          move.sourceFen,
+          move.san
+        );
 
-      return previewingEnabled && anyNew && !alreadyPreviewed;
-    },
-
-    previewPositionFen(): string {
-      return this.activeVariationPositions[this.previewIndex].fen;
-    },
-
-    variationProgress(): string {
-      return this.variationIndex + " / " + this.options.variations.length;
-    },
-
-    activeVariation(): Move[] {
-      return this.options.variations[this.variationIndex];
-    },
-
-    activeVariationPositions(): RepertoirePosition[] {
-      if (this.activeVariation) {
-        const positions: RepertoirePosition[] = [];
-
-        if (this.activeVariation[0].position.forSide === Side.White) {
-          positions.push(this.activeVariation[0].position.parents[0]);
+        if (training) {
+          return training.includeForTrainingMode(TrainingMode.New);
         }
 
-        _.forEach(this.activeVariation, move => positions.push(move.position));
-        return positions;
-      } else {
-        return [];
+        return false;
       }
-    },
+    );
 
-    activePosition(): RepertoirePosition {
-      return this.activeVariationPositions[this.plyCount];
-    },
+    return !_.isUndefined(newMoves);
+  }
 
-    expectedMove(): Move {
-      let offset = 0;
-      if (this.activeVariation[0].position.forSide === Side.Black) {
-        offset = 1;
-      }
+  get previewing(): boolean {
+    const anyNew = this.anyNewPositionsInActiveVariation;
 
-      return this.activeVariation[this.plyCount + offset];
-    },
+    const previewingEnabled = this.options.previewNewVariations;
 
-    boardOrientation(): Side {
-      return this.activePosition.forSide;
-    },
+    const alreadyPreviewed = _.includes(
+      this.previewedVariations,
+      this.variationIndex
+    );
 
-    complete(): boolean {
-      return this.variationIndex >= this.options.variations.length;
-    },
+    return anyNew && previewingEnabled && !alreadyPreviewed;
+  }
 
-    completionPercent(): number {
-      return (100 * this.variationIndex) / this.options.variations.length;
-    },
+  get previewPositionFen(): string {
+    return this.activeVariationPositions[this.previewIndex];
+  }
 
-    previewPlaybackDelay(): number {
-      return this.options.playbackSpeed * 1000;
-    },
+  get previewPositionLegalFen(): string {
+    return `${this.previewPositionFen} 0 1`;
+  }
 
-    mistakeArrow(): DrawShape[] {
-      if (this.showMistakeArrow) {
-        const board = new Chess(this.activePosition.fen);
-        const index =
-          this.boardOrientation === Side.White
-            ? this.plyCount
-            : this.plyCount + 1;
-        const move = board.move(this.activeVariation[index].san);
+  get variationProgress(): string {
+    return this.variationIndex + " / " + this.options.variations.length;
+  }
 
-        if (move) {
-          return [{ orig: move.from, dest: move.to, brush: "red" }];
-        }
+  get activeVariation(): TrainingVariation | undefined {
+    const trainingVariation = this.options.variations[this.variationIndex];
+
+    if (trainingVariation) {
+      if (
+        trainingVariation.repertoire.sideToTrain !==
+        sideFromFen(trainingVariation.variation[0].sourceFen)
+      ) {
+        trainingVariation.variation.shift();
       }
 
+      return trainingVariation;
+    } else {
+      return undefined;
+    }
+  }
+
+  get activeVariationPositions(): string[] {
+    if (_.isUndefined(this.activeVariation)) {
       return [];
-    },
-
-    showMistakeArrow(): boolean {
-      return this.attempts >= maxAttempts;
     }
-  },
 
-  watch: {
-    previewing(newPreviewing: boolean) {
-      if (newPreviewing) {
-        this.advancePreview();
+    const positions: string[] = [];
+
+    _.forEach(this.activeVariation.variation, (move: VariationMove) =>
+      positions.push(move.sourceFen)
+    );
+
+    const lastMove = _.last(this.activeVariation.variation);
+    if (lastMove) {
+      positions.push(lastMove.resultingFen);
+    }
+
+    return positions;
+  }
+
+  get activePosition(): string {
+    return this.activeVariationPositions[this.plyCount];
+  }
+
+  get activePositionLegalFen(): string {
+    return `${this.activePosition} 0 1`;
+  }
+
+  get expectedMove(): VariationMove | undefined {
+    if (_.isUndefined(this.activeVariation)) {
+      return undefined;
+    }
+
+    return this.activeVariation.variation[this.plyCount];
+  }
+
+  get boardOrientation(): Side {
+    if (_.isUndefined(this.activeVariation)) {
+      return Side.White;
+    }
+
+    return this.activeVariation.repertoire.sideToTrain;
+  }
+
+  get complete(): boolean {
+    return this.variationIndex >= this.options.variations.length;
+  }
+
+  get completionPercent(): number {
+    return (100 * this.variationIndex) / this.options.variations.length;
+  }
+
+  get previewPlaybackDelay(): number {
+    return this.options.playbackSpeed * 1000;
+  }
+
+  get mistakeArrow(): DrawShape[] {
+    if (_.isUndefined(this.activeVariation)) {
+      return [];
+    }
+
+    if (this.showMistakeArrow) {
+      const board = new Chess(this.activePositionLegalFen);
+      const index =
+        this.boardOrientation === Side.White
+          ? this.plyCount
+          : this.plyCount + 1;
+      const move = board.move(this.activeVariation.variation[index].san);
+
+      if (move) {
+        const arrow = { orig: move.from, dest: move.to, brush: "red" };
+        return [arrow];
       }
     }
-  },
 
-  methods: {
-    ...mapMutations(["addTrainingEvent"]),
+    return [];
+  }
 
-    reloadPosition(): void {
-      (this.$refs.board as Vue & {
-        loadPosition: () => void;
-      }).loadPosition();
-    },
+  get showMistakeArrow(): boolean {
+    return this.attempts.length >= maxAttempts;
+  }
 
-    onBoardMove(threats: Threats) {
-      if (threats.fen && threats.fen !== this.activePosition.fen) {
-        this.attempts++;
+  reloadPosition(): void {
+    (this.$refs.board as Vue & {
+      loadPosition: () => void;
+    }).loadPosition();
+  }
+
+  onBoardMove(threats: Threats): void {
+    if (!_.isUndefined(this.activeVariation)) {
+      if (threats.fen && threats.fen !== this.activePositionLegalFen) {
         const correct = this.moveIsCorrect(threats.fen);
+        this.attempts.push(_.last(threats.history) || "not a move");
 
         if (correct) {
           this.addTrainingEvent({
-            position: this.activePosition,
-            event: new TrainingEvent(this.attempts, this.getElapsedSeconds())
+            repertoire: this.activeVariation.repertoire,
+            event: {
+              attemptedMoves: this.attempts,
+              elapsedMilliseconds: this.getElapsedSeconds()
+            },
+            fen: this.activePosition,
+            san: this.activeVariation.variation[this.plyCount].san
           });
 
           this.nextTrainingPosition();
         } else {
           this.mistakeInVariation = true;
-
           this.reloadPosition();
         }
       }
-    },
+    }
+  }
 
-    moveIsCorrect(fen: string): boolean {
-      return fen === this.expectedMove.position.fen;
-    },
+  moveIsCorrect(fen: string): boolean {
+    if (_.isUndefined(this.expectedMove)) {
+      return false;
+    }
 
-    nextTrainingPosition(): void {
-      this.attempts = 0;
+    const expectedFen = this.expectedMove.resultingFen;
+    const attemptedFen = normalizeFen(fen, false); // TODO possible en passant
+    return attemptedFen === expectedFen;
+  }
+
+  private get isTurnOfSideToTrain(): boolean {
+    if (_.isUndefined(this.activeVariation)) {
+      return false;
+    }
+
+    const sideToMove = sideFromFen(this.activePosition);
+    return sideToMove === this.activeVariation.repertoire.sideToTrain;
+  }
+
+  nextTrainingPosition(): void {
+    if (!_.isUndefined(this.activeVariation)) {
+      this.attempts = [];
 
       do {
         this.plyCount++;
 
-        if (this.plyCount >= this.activeVariation.length) {
+        if (this.plyCount >= this.activeVariation.variation.length) {
           this.nextVariation();
         }
-      } while (!this.complete && !this.activePosition.myTurn);
+      } while (!this.complete && !this.isTurnOfSideToTrain);
 
       this.startTime = _.now();
-    },
+    }
+  }
 
-    nextVariation() {
-      if (this.activeVariation.length === 1) {
+  nextVariation(): void {
+    if (!_.isUndefined(this.activeVariation)) {
+      if (this.activeVariation.variation.length === 1) {
         this.reloadPosition();
       }
 
@@ -204,16 +273,19 @@ export default Vue.extend({
       if (this.complete) {
         this.$emit("onCompleted");
       }
-    },
+    }
+  }
 
-    getElapsedSeconds(): number {
-      return (_.now() - this.startTime) / 1000;
-    },
+  // Method instead of computed so this won't be cached
+  getElapsedSeconds(): number {
+    return (_.now() - this.startTime) / 1000;
+  }
 
-    advancePreview() {
-      if (this.previewIndex < this.activeVariation.length) {
-        ++this.previewIndex;
+  advancePreview(): void {
+    if (!_.isUndefined(this.activeVariation)) {
+      if (this.previewIndex <= this.activeVariation.variation.length) {
         setTimeout(() => {
+          ++this.previewIndex;
           this.advancePreview();
         }, this.previewPlaybackDelay);
       } else {
@@ -222,11 +294,11 @@ export default Vue.extend({
         this.startTime = _.now();
       }
     }
-  },
+  }
 
   mounted(): void {
     if (this.previewing) {
       setTimeout(() => this.advancePreview(), this.previewPlaybackDelay);
     }
   }
-});
+}

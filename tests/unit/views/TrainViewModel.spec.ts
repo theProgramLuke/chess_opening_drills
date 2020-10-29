@@ -1,7 +1,7 @@
 import { shallowMount } from "@vue/test-utils";
 
 import TrainViewModel, { TrainingState } from "@/views/TrainViewModel.ts";
-import { TrainingOptions } from "@/components/train/TrainingModeSelectorViewModel";
+import { TrainingOptions } from "@/components/train/TrainingOptions";
 
 describe("TrainViewModel", () => {
   const mountComponent = () =>

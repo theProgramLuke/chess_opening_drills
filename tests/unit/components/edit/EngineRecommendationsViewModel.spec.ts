@@ -4,22 +4,23 @@ import { Engine } from "node-uci";
 import { EventEmitter } from "events";
 
 import EngineRecommendationsViewModel from "@/components/edit/EngineRecommendationsViewModel.ts";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { sideFromFen } from "@/store/repertoire/chessHelpers";
+import { EngineOption } from "@/store/EngineHelpers";
 import { Side } from "@/store/side";
 
 jest.mock("node-uci");
 jest.mock("events");
-jest.mock("@/store/repertoirePosition");
+jest.mock("@/store/repertoire/chessHelpers");
 
 const state = {
   engineMetadata: { filePath: "", options: [{ name: "", value: "value" }] }
 };
-
 const localVue = createLocalVue();
 localVue.use(Vuex);
 const store = new Vuex.Store({ state });
 
 describe("EngineRecommendationsViewModel", () => {
+  const activePosition = "some fen";
   describe("activateEngine", () => {
     it("active=true should start an engine with the saved options", async () => {
       const component = shallowMount(EngineRecommendationsViewModel, {
@@ -27,12 +28,12 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition: new RepertoirePosition("", "", Side.Black)
+          activePosition
         }
       });
-      const options = [
-        { name: "name0", value: "value0" },
-        { name: "name1", value: "value1" }
+      const options: EngineOption[] = [
+        { name: "name0", value: "value0", type: "string", default: "" },
+        { name: "name1", value: "value1", type: "string", default: "" }
       ];
       component.vm.engineMetadata.options = options;
       component.vm.startGettingEngineRecommendations = jest.fn();
@@ -60,7 +61,7 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition: new RepertoirePosition("", "", Side.Black)
+          activePosition
         }
       });
       const engine = new Engine("");
@@ -85,11 +86,9 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition: new RepertoirePosition("", "", Side.Black)
+          activePosition
         }
       });
-      const fen = "some fen";
-      component.vm.activePosition.fen = fen;
       const emitter = new EventEmitter();
       component.vm.engine = new Engine("");
       component.vm.engine.goInfinite = jest.fn(() => emitter);
@@ -98,7 +97,7 @@ describe("EngineRecommendationsViewModel", () => {
 
       await component.vm.startGettingEngineRecommendations();
 
-      expect(component.vm.engine.position).toBeCalledWith(fen);
+      expect(component.vm.engine.position).toBeCalledWith(activePosition);
       expect(component.vm.receiveRecommendation).toBeCalled();
     });
   });
@@ -110,7 +109,7 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition: new RepertoirePosition("", "", Side.Black)
+          activePosition
         }
       });
       const sorter = jest.fn();
@@ -126,7 +125,7 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition: new RepertoirePosition("", "", Side.Black)
+          activePosition
         }
       });
       const sorter = jest.fn();
@@ -156,7 +155,7 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition: new RepertoirePosition("", "", Side.Black)
+          activePosition
         }
       });
       const recommendations = [
@@ -192,12 +191,13 @@ describe("EngineRecommendationsViewModel", () => {
     });
 
     it("should invert the evaluation order for black", () => {
+      (sideFromFen as jest.Mock).mockReturnValue(Side.Black);
       const component = shallowMount(EngineRecommendationsViewModel, {
         localVue,
         store,
         render: jest.fn(),
         propsData: {
-          activePosition: new RepertoirePosition("", "", Side.Black)
+          activePosition
         }
       });
       const recommendations = [
@@ -222,7 +222,6 @@ describe("EngineRecommendationsViewModel", () => {
         }
       ];
       component.vm.engineRecommendations = recommendations;
-      component.vm.activePosition.SideToMove = () => Side.Black;
 
       component.vm.sortEngineRecommendations();
 
@@ -241,7 +240,7 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition: new RepertoirePosition("", "", Side.Black)
+          activePosition
         }
       });
       const engine = new Engine("");

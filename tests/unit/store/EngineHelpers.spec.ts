@@ -102,7 +102,7 @@ describe("GetEngineMetadata", () => {
 
 describe("ProcessAnalysis", () => {
   it("should process the engine output", () => {
-    const variation = ["a2a3", "g8f6"];
+    const variation: string[] = ["a2a3", "g8f6"];
     const engineData = {
       score: { value: 350 },
       depth: 10,
@@ -122,13 +122,13 @@ describe("ProcessAnalysis", () => {
   });
 
   it("should be undefined if not given the depth", () => {
-    const actual = ProcessAnalysis({ score: { value: 10 }, pv: ["a2a3"] });
+    const actual = ProcessAnalysis({ score: { value: 10 }, pv: "a2a3" });
 
     expect(actual).toBeUndefined();
   });
 
   it("should be undefined if not given the score", () => {
-    const actual = ProcessAnalysis({ depth: 10, pv: ["a2a3"] });
+    const actual = ProcessAnalysis({ depth: 10, pv: "a2a3" });
 
     expect(actual).toBeUndefined();
   });

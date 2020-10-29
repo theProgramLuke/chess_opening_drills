@@ -3,40 +3,59 @@ import Vuex from "vuex";
 import _ from "lodash";
 
 import DifficultyViewModel from "@/components/reports/DifficultyViewModel";
-import { Repertoire } from "@/store/repertoire";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
-import { TrainingMode } from "@/store/trainingMode";
+import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
+import { Writeable } from "../../../TestHelpers";
 
-jest.mock("@/store/repertoire");
-jest.mock("@/store/repertoirePosition");
+jest.mock("@/store/repertoire/Repertoire");
+jest.mock("@/store/repertoire/TagTree");
+jest.mock("@/store/repertoire/RepetitionTraining");
+jest.mock("@/store/repertoire/TrainingCollection");
+
+const emptySavedRepertoire: SavedRepertoire = {
+  positions: {},
+  training: {},
+  tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
+  sideToTrain: Side.White
+};
+
+const notIncludedTraining = new RepetitionTraining();
+(notIncludedTraining.includeForTrainingMode as jest.Mock).mockReturnValue(
+  false
+);
+
+const includedTraining = new RepetitionTraining();
+(includedTraining.includeForTrainingMode as jest.Mock).mockReturnValue(true);
 
 const state = {
-  whiteRepertoire: new Repertoire([], []),
-  blackRepertoire: new Repertoire([], [])
+  whiteRepertoire: new Repertoire(emptySavedRepertoire),
+  blackRepertoire: new Repertoire(emptySavedRepertoire)
 };
 
 const localVue = createLocalVue();
 localVue.use(Vuex);
 const store = new Vuex.Store({ state });
 
-const positionsFromDifficulties = (
-  difficulties: number[]
-): RepertoirePosition[] => {
-  return _.map(difficulties, difficulty => {
-    const position = new RepertoirePosition("", "", Side.White);
-    position.easinessFactor = difficulty;
-    return position;
-  });
-};
-
 describe("DifficultyViewModel", () => {
+  function trainingFromDifficulties(
+    difficulties: number[]
+  ): RepetitionTraining[] {
+    return _.map(difficulties, difficulty => {
+      const training: Writeable<RepetitionTraining> = new RepetitionTraining();
+      training.easiness = difficulty;
+      return training as RepetitionTraining;
+    });
+  }
+
   describe("showNoPositions", () => {
     it("should be true if the repertoire has no trained positions", () => {
-      const position = new RepertoirePosition("", "", Side.White);
-      position.IncludeForTrainingMode = (mode: TrainingMode) =>
-        mode === TrainingMode.New;
-      state.whiteRepertoire.positions = [position];
+      (state.whiteRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
+        []
+      );
+      (state.blackRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
+        []
+      );
       const component = shallowMount(DifficultyViewModel, {
         localVue,
         store,
@@ -49,10 +68,14 @@ describe("DifficultyViewModel", () => {
     });
 
     it("should be false if the repertoire has trained positions", () => {
-      const position = new RepertoirePosition("", "", Side.White);
-      position.IncludeForTrainingMode = (mode: TrainingMode) =>
-        mode !== TrainingMode.New;
-      state.whiteRepertoire.positions = [position];
+      const fen = "fen";
+      const san = "san";
+      (state.whiteRepertoire.getTrainingForTags as jest.Mock).mockReturnValue([
+        "anything"
+      ]);
+      (state.blackRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
+        []
+      );
       const component = shallowMount(DifficultyViewModel, {
         localVue,
         store,
@@ -69,11 +92,11 @@ describe("DifficultyViewModel", () => {
     it("should be histogram data of the repertoire difficulty", () => {
       const whiteEasinessFactors = [0, 1, 2];
       const blackEasinessFactors = [3, 4];
-      state.whiteRepertoire.positions = positionsFromDifficulties(
-        whiteEasinessFactors
+      (state.whiteRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
+        trainingFromDifficulties(whiteEasinessFactors)
       );
-      state.blackRepertoire.positions = positionsFromDifficulties(
-        blackEasinessFactors
+      (state.blackRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
+        trainingFromDifficulties(blackEasinessFactors)
       );
       const component = shallowMount(DifficultyViewModel, {
         localVue,

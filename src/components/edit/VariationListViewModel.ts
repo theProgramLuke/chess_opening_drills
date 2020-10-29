@@ -1,29 +1,25 @@
-import Vue from "vue";
+import _ from "lodash";
+import "reflect-metadata";
+import { Vue, Component, Emit, Prop } from "vue-property-decorator";
 
 import MoveDeleter from "@/components/edit/MoveDeleter.vue";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Move } from "@/store/move";
+import {
+  Variation,
+  VariationMove
+} from "@/store/repertoire/PositionCollection";
 
-export default Vue.extend({
-  props: {
-    variations: {
-      type: Array,
-      required: true
-    }
-  },
+@Component({ components: { MoveDeleter } })
+export default class VariationListViewModel extends Vue {
+  @Prop({ required: true })
+  variations!: Variation[];
 
-  components: {
-    MoveDeleter
-  },
-
-  methods: {
-    onSelectMove(position: RepertoirePosition) {
-      this.$emit("onSelectMove", position);
-    },
-
-    onDeleteMove(move: Move) {
-      this.$emit("onDeleteMove", move);
-      this.$forceUpdate();
-    }
+  @Emit("onSelectMove")
+  onSelectMove(fen: string): void {
+    _.noop();
   }
-});
+
+  @Emit("onDeleteMove")
+  onDeleteMove(move: VariationMove): void {
+    this.$forceUpdate();
+  }
+}

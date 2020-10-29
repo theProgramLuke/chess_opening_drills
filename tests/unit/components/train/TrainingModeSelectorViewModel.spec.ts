@@ -1,37 +1,33 @@
 import { shallowMount } from "@vue/test-utils";
 import _ from "lodash";
+import shuffle from "lodash/shuffle";
 
-import TrainingModeSelectorViewModel, {
-  TrainingOptions
-} from "@/components/train/TrainingModeSelectorViewModel.ts";
-import { Repertoire } from "@/store/repertoire";
+import TrainingModeSelectorViewModel from "@/components/train/TrainingModeSelectorViewModel.ts";
 import {
-  GetTrainingMoveLists,
-  GetTrainingPositions,
-  RepertoireTag
-} from "@/store/repertoireTag";
-import { Side } from "@/store/side";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+  TrainingOptions,
+  TrainingVariation
+} from "@/components/train/TrainingOptions";
+import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
+import { TagTree } from "@/store/repertoire/TagTree";
 import { TrainingMode } from "@/store/trainingMode";
-import { Move } from "@/store/move";
+import { Side } from "@/store/side";
+import { Variation } from "@/store/repertoire/PositionCollection";
 
-jest.mock("@/store/repertoire");
-jest.mock("@/store/repertoireTag");
-jest.mock("@/store/repertoirePosition");
+jest.mock("@/store/repertoire/Repertoire");
+jest.mock("@/store/repertoire/TagTree");
+jest.mock("lodash/shuffle");
 
 describe("TrainingModeSelectorViewModel", () => {
-  const mockRepertoireTag = (name: number) =>
-    new RepertoireTag(
-      Side.White,
-      name.toString(),
-      new RepertoirePosition("", "", Side.White),
-      "",
-      []
-    );
+  const emptySavedRepertoire: SavedRepertoire = {
+    positions: {},
+    training: {},
+    tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
+    sideToTrain: Side.White
+  };
 
   const mountComponent = (
-    whiteRepertoire = new Repertoire([], []),
-    blackRepertoire = new Repertoire([], [])
+    whiteRepertoire = new Repertoire(emptySavedRepertoire),
+    blackRepertoire = new Repertoire(emptySavedRepertoire)
   ) =>
     shallowMount(TrainingModeSelectorViewModel, {
       render: jest.fn(),
@@ -41,19 +37,17 @@ describe("TrainingModeSelectorViewModel", () => {
       }
     });
 
-  describe("combinedTags", () => {
-    it("should concatenate the tags from the white and black repertoires", () => {
-      const expectedTags = _.times(10, mockRepertoireTag);
-      const component = mountComponent(
-        new Repertoire([], _.slice(expectedTags, 0, 3)),
-        new Repertoire([], _.slice(expectedTags, 3))
-      );
+  function mockTag(name: number): TagTree {
+    const tag = new TagTree("", "", []);
+    tag.name = `${name}`;
+    return tag;
+  }
 
-      const actual = component.vm.combinedTags;
-
-      expect(actual).toEqual(expectedTags);
+  function makeVariation(sans: string[]): Variation {
+    return _.map(sans, san => {
+      return { san, resultingFen: "", sourceFen: "" };
     });
-  });
+  }
 
   describe("showPreviewInput", () => {
     it("should be true if the new training mode is selected", () => {
@@ -72,6 +66,22 @@ describe("TrainingModeSelectorViewModel", () => {
       const actual = component.vm.showPreviewInput;
 
       expect(actual).toBeFalsy();
+    });
+  });
+
+  describe("combinedTags", () => {
+    it("should be the root tags of the repertoires", () => {
+      const component = mountComponent();
+      component.vm.whiteRepertoire.tags = new TagTree("", "", []);
+      component.vm.blackRepertoire.tags = new TagTree("", "", []);
+      const expected = [
+        component.vm.whiteRepertoire.tags,
+        component.vm.blackRepertoire.tags
+      ];
+
+      const actual = component.vm.combinedTags;
+
+      expect(actual).toEqual(expected);
     });
   });
 
@@ -125,20 +135,75 @@ describe("TrainingModeSelectorViewModel", () => {
     });
   });
 
-  describe("trainingPositions", () => {
+  describe("trainingVariations", () => {
     it("should get the positions to be trained", () => {
       const component = mountComponent();
+      const whiteVariations: Variation[] = [makeVariation(["e4", "e5"])];
+      const blackVariations: Variation[] = [makeVariation(["e4", "e6"])];
+      const expected: TrainingVariation[] = [
+        {
+          repertoire: component.vm.whiteRepertoire,
+          variation: whiteVariations[0]
+        },
+        {
+          repertoire: component.vm.blackRepertoire,
+          variation: blackVariations[0]
+        }
+      ];
       const modes = [TrainingMode.Difficult, TrainingMode.Scheduled];
-      const topics = _.times(10, mockRepertoireTag);
-      const positions = [new RepertoirePosition("", "", Side.White)];
+      const topics = _.times(10, mockTag);
       component.vm.selectedModes = modes;
       component.vm.selectedTopics = topics;
-      (GetTrainingPositions as jest.Mock).mockReturnValueOnce(positions);
+      (component.vm.whiteRepertoire
+        .getTrainingVariations as jest.Mock).mockReturnValue(whiteVariations);
+      (component.vm.blackRepertoire
+        .getTrainingVariations as jest.Mock).mockReturnValue(blackVariations);
 
-      const actual = component.vm.trainingPositions;
+      const actual = component.vm.trainingVariations;
 
-      expect(GetTrainingPositions).toBeCalledWith(modes, topics, 1.6);
-      expect(actual).toEqual(positions);
+      expect(actual).toEqual(expected);
+      expect(component.vm.whiteRepertoire.getTrainingVariations).toBeCalledWith(
+        topics,
+        modes
+        // TODO 1.6
+      );
+      expect(component.vm.whiteRepertoire.getTrainingVariations).toBeCalledWith(
+        topics,
+        modes
+        // TODO 1.6
+      );
+    });
+
+    it("should be shuffled if shuffled is true", () => {
+      const component = mountComponent();
+      const whiteVariations: Variation[] = [makeVariation(["e4", "e5"])];
+      const blackVariations: Variation[] = [makeVariation(["e4", "e6"])];
+      const expected: TrainingVariation[] = [
+        {
+          repertoire: component.vm.whiteRepertoire,
+          variation: whiteVariations[0]
+        },
+        {
+          repertoire: component.vm.blackRepertoire,
+          variation: blackVariations[0]
+        }
+      ];
+      const modes = [TrainingMode.Difficult, TrainingMode.Scheduled];
+      const topics = _.times(10, mockTag);
+      component.vm.selectedModes = modes;
+      component.vm.selectedTopics = topics;
+      (component.vm.whiteRepertoire
+        .getTrainingVariations as jest.Mock).mockReturnValue(whiteVariations);
+      (component.vm.blackRepertoire
+        .getTrainingVariations as jest.Mock).mockReturnValue(blackVariations);
+      const shuffledVariations = ["shuffled"];
+      (shuffle as jest.Mock).mockReturnValue(shuffledVariations);
+      component.vm.shouldShuffle = true;
+
+      const actual = component.vm.trainingVariations;
+
+      expect(actual).toBe(shuffledVariations);
+      expect(shuffle).toBeCalledWith(expected);
     });
   });
 
@@ -154,15 +219,20 @@ describe("TrainingModeSelectorViewModel", () => {
   });
 
   describe("startTrainingLabel", () => {
-    it("should format the playback speed", () => {
+    it("should count the moves to be trained", () => {
       const component = mountComponent();
-      (GetTrainingPositions as jest.Mock).mockReturnValueOnce(
-        _.times(5, () => new RepertoirePosition("", "", Side.White))
-      );
+      const variations = [
+        makeVariation(["e4", "e5", "Nc3", "Nf6", "f4"]),
+        makeVariation(["d4", "Nf6", "c4", "g6", "Nf3"])
+      ];
+      (component.vm.whiteRepertoire
+        .getTrainingVariations as jest.Mock).mockReturnValue(variations);
+      component.vm.whiteRepertoire.sideToTrain = Side.White;
+      component.vm.blackRepertoire.sideToTrain = Side.Black;
 
       const actual = component.vm.startTrainingLabel;
 
-      expect(actual).toEqual("Start Training (5 positions)");
+      expect(actual).toEqual("Start Training (10 moves)");
     });
   });
 
@@ -180,17 +250,17 @@ describe("TrainingModeSelectorViewModel", () => {
   describe("onStartTraining", () => {
     it("should emit onStartTraining with training options", () => {
       const component = mountComponent();
-      const expectedTags = _.times(5, mockRepertoireTag);
-      const expectedVariations = [
-        [
-          new Move("san0", new RepertoirePosition("", "", Side.White)),
-          new Move("san1", new RepertoirePosition("", "", Side.White))
-        ]
+      const expectedTags = _.times(5, mockTag);
+      const variations = [makeVariation(["d4", "Nf6"])];
+      const expectedVariations: TrainingVariation[] = [
+        {
+          repertoire: component.vm.whiteRepertoire,
+          variation: variations[0]
+        }
       ];
       component.vm.selectedTopics = expectedTags;
-      (GetTrainingMoveLists as jest.Mock).mockReturnValueOnce(
-        expectedVariations
-      );
+      (component.vm.whiteRepertoire
+        .getTrainingVariations as jest.Mock).mockReturnValue(variations);
 
       component.vm.onStartTraining();
 

@@ -1,8 +1,11 @@
-import Vue from "vue";
-import { mapState } from "vuex";
+import "reflect-metadata";
+import { Vue, Component } from "vue-property-decorator";
+import { State } from "vuex-class";
 import _ from "lodash";
+import now from "lodash/now";
 
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { Repertoire } from "@/store/repertoire/Repertoire";
+import { TrainingMoveSpecification } from "@/store/repertoire/TrainingCollection";
 
 interface CalendarEvent {
   name: string;
@@ -12,29 +15,45 @@ interface CalendarEvent {
   color?: string;
 }
 
-function eventsFromRepertoire(
-  positions: RepertoirePosition[]
-): CalendarEvent[] {
+function eventsFromRepertoire(repertoires: Repertoire[]): CalendarEvent[] {
   const days: Record<string, number> = {};
-  _.forEach(positions, position => {
-    if (position.nextRepetitionTimestamp) {
-      const date = new Date(position.nextRepetitionTimestamp);
-      const day = `${date.getUTCFullYear()}-${date.getUTCMonth() +
-        1}-${date.getUTCDate()}`;
-      if (days[day]) {
-        days[day]++;
-      } else {
-        days[day] = 1;
+
+  _.forEach(repertoires, repertoire => {
+    _.forEach(
+      repertoire.training.getMoves(),
+      (trainingMove: TrainingMoveSpecification) => {
+        const moveTraining = repertoire.training.getTrainingForMove(
+          trainingMove.fen,
+          trainingMove.san
+        );
+        if (
+          moveTraining &&
+          !_.isUndefined(moveTraining.scheduledRepetitionTimestamp)
+        ) {
+          const date = new Date(moveTraining.scheduledRepetitionTimestamp);
+          const day = `${date.getUTCFullYear()}-${date.getUTCMonth()}-${date.getUTCDate()}`;
+
+          if (days[day]) {
+            days[day]++;
+          } else {
+            days[day] = 1;
+          }
+        }
       }
-    }
+    );
   });
+
   const events: CalendarEvent[] = [];
 
   _.forEach(days, (count, day) => {
+    const daySplits: number[] = _.map(_.split(day, "-"), split =>
+      _.toNumber(split)
+    );
+
     events.push({
       name: `${count} positions`,
-      start: new Date(day),
-      end: new Date(day),
+      start: new Date(daySplits[0], daySplits[1], daySplits[2]),
+      end: new Date(daySplits[0], daySplits[1], daySplits[2]),
       timed: false,
       color: "primary"
     });
@@ -43,24 +62,20 @@ function eventsFromRepertoire(
   return events;
 }
 
-export default Vue.extend({
-  data: () => ({
-    start: 0,
-    end: 0
-  }),
+const millisecondsPerMonth = 7 * 4 * 24 * 60 * 60 * 1000;
 
-  computed: {
-    ...mapState(["whiteRepertoire", "blackRepertoire"]),
+@Component
+export default class ScheduleViewModel extends Vue {
+  start = now();
+  end = now() + millisecondsPerMonth; // Highlight the next 4 weeks;
 
-    events(): CalendarEvent[] {
-      return eventsFromRepertoire(
-        _.concat(this.whiteRepertoire.positions, this.blackRepertoire.positions)
-      );
-    }
-  },
+  @State
+  whiteRepertoire!: Repertoire;
 
-  created(): void {
-    this.start = _.now();
-    this.end = _.now() + 7 * 4 * 24 * 60 * 60 * 1000; // Highlight the next 4 weeks
+  @State
+  blackRepertoire!: Repertoire;
+
+  get events(): CalendarEvent[] {
+    return eventsFromRepertoire([this.whiteRepertoire, this.blackRepertoire]);
   }
-});
+}

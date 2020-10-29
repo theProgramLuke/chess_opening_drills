@@ -2,14 +2,12 @@ import ElectronStore from "electron-store";
 import _ from "lodash";
 import fs from "graceful-fs";
 import path from "path";
-
-import { RepertoireTag } from "./repertoireTag";
-import { Side } from "./side";
-import { RepertoirePosition } from "@/store/repertoirePosition";
-import { Repertoire, SavedRepertoire } from "./repertoire";
-import { EngineMetadata } from "./EngineHelpers";
-import { BackupManager } from "./BackupManager";
 import electron from "electron";
+
+import { Side } from "@/store/side";
+import { EngineMetadata } from "@/store/EngineHelpers";
+import { BackupManager } from "@/store/BackupManager";
+import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 
 export interface SavedStorage {
   darkMode: boolean;
@@ -56,20 +54,6 @@ export interface Storage {
 }
 
 function GetDefaultStorage() {
-  const whiteStartPosition = new RepertoirePosition(
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    "",
-    Side.White,
-    true
-  );
-
-  const blackStartPosition = new RepertoirePosition(
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    "",
-    Side.Black,
-    false
-  );
-
   const defaultCwd = (electron.app || electron.remote.app).getPath("userData");
 
   return new ElectronStore<SavedStorage>({
@@ -84,32 +68,18 @@ function GetDefaultStorage() {
       success: "#4CAF50",
       boardTheme: "maple",
       pieceTheme: "staunty",
-      whiteRepertoire: new Repertoire(
-        [whiteStartPosition],
-        [
-          new RepertoireTag(
-            Side.White,
-            "White",
-            whiteStartPosition,
-            whiteStartPosition.fen,
-            [],
-            "whiteStart"
-          )
-        ]
-      ).AsSaved(),
-      blackRepertoire: new Repertoire(
-        [blackStartPosition],
-        [
-          new RepertoireTag(
-            Side.Black,
-            "Black",
-            blackStartPosition,
-            blackStartPosition.fen,
-            [],
-            "blackStart"
-          )
-        ]
-      ).AsSaved(),
+      whiteRepertoire: Repertoire.newSavedRepertoire(
+        "White Repertoire",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
+        Side.White,
+        true
+      ),
+      blackRepertoire: Repertoire.newSavedRepertoire(
+        "Black Repertoire",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
+        Side.Black,
+        true
+      ),
       backupDirectory: path.join(defaultCwd, "backups"),
       dailyBackupLimit: 14,
       monthlyBackupLimit: 6,
@@ -235,19 +205,19 @@ export class PersistantStorage implements Storage {
   }
 
   get whiteRepertoire(): Repertoire {
-    return Repertoire.FromSaved(this.storage.get("whiteRepertoire"));
+    return new Repertoire(this.storage.get("whiteRepertoire"));
   }
 
   set whiteRepertoire(value: Repertoire) {
-    this.setStorage("whiteRepertoire", value.AsSaved());
+    this.setStorage("whiteRepertoire", value.asSaved());
   }
 
   get blackRepertoire(): Repertoire {
-    return Repertoire.FromSaved(this.storage.get("blackRepertoire"));
+    return new Repertoire(this.storage.get("blackRepertoire"));
   }
 
   set blackRepertoire(value: Repertoire) {
-    this.setStorage("blackRepertoire", value.AsSaved());
+    this.setStorage("blackRepertoire", value.asSaved());
   }
 
   get engineMetadata(): EngineMetadata | undefined {

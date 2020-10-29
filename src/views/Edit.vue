@@ -9,21 +9,21 @@
           v-tab(key=3, href="#tab-3") Engine
 
           v-tab-item(key=0, value="tab-0")
-            tag-tree(
+            tag-list(
               :whiteRepertoire="whiteRepertoire",
               :blackRepertoire="blackRepertoire",
               :activePosition="activePosition",
-              @onSelect="updateBoard",
-              @onDelete="removeRepertoireTag",
-              @onCreate="addNewRepertoireTag")
+              @onSelect="onTagSelect",
+              @onDelete="onRemoveTag",
+              @onCreate="onCreateTag")
           
           v-tab-item.pa-2(key=1, value="tab-1")
-            move-list(:turnLists="turnLists", @onSelectMove="updateBoard")
+            move-list(:variations="sourceVariations", @onSelectMove="updateBoard")
 
             variation-list(
               :variations="nextMoves",
               @onSelectMove="updateBoard",
-              @onDeleteMove="removeRepertoireMove")
+              @onDeleteMove="onDeleteMove")
 
           v-tab-item.pa-2(key=2, value="tab-2")
             v-textarea(v-model="activePosition.comment", outlined, no-resize)
@@ -33,8 +33,8 @@
 
       v-col.ma-0(cols="8", @wheel="onScroll")
         chessboard(
-          v-if="activePosition.fen",
-          :fen="activePosition.fen",
+          v-if="activePositionLegalFen",
+          :fen="activePositionLegalFen",
           :orientation="boardOrientation",
           @onMove="onBoardMove")
 </template>

@@ -2,32 +2,54 @@ import { shallowMount } from "@vue/test-utils";
 import { saveAs } from "file-saver";
 
 import TagExporterViewModel from "@/components/edit/TagExporterViewModel.ts";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { Repertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
-import { RepertoireTag } from "@/store/repertoireTag";
+import { PositionCollection } from "@/store/repertoire/PositionCollection";
+import { TagTree } from "@/store/repertoire/TagTree";
+import { Writeable } from "../../../TestHelpers";
 
-jest.mock("@/store/repertoirePosition");
-jest.mock("@/store/repertoireTag");
+jest.mock("@/store/repertoire/TagTree");
+jest.mock("@/store/repertoire/Repertoire");
+jest.mock("@/store/repertoire/PositionCollection");
 jest.mock("file-saver");
 
-type Writeable<T> = { -readonly [P in keyof T]: T[P] };
-
 describe("TagExporterViewModel", () => {
+  const pgnText = "some pgn text";
+  const tagName = "tag name";
+  const tagPosition = "some fen";
+
+  let repertoire: Repertoire;
+  let tag: TagTree;
+
+  beforeEach(() => {
+    tag = new TagTree("", "", []);
+    tag.name = tagName;
+    tag.fen = tagPosition;
+
+    repertoire = new Repertoire({
+      training: {},
+      positions: {},
+      tags: new TagTree("", "", []),
+      sideToTrain: Side.White
+    });
+    repertoire.positions = new PositionCollection({});
+    (repertoire.positions.asPgn as jest.Mock).mockReturnValue(pgnText);
+  });
+
   describe("pgnText", () => {
-    it("should get the pgn text of the position", () => {
-      const pgnText = "some pgn text";
-      const position = new RepertoirePosition("", "", Side.White);
-      position.AsPgn = jest.fn(() => pgnText);
+    it("should get the pgn text from the position", () => {
       const component = shallowMount(TagExporterViewModel, {
         render: jest.fn(),
         propsData: {
-          tag: new RepertoireTag(Side.White, "", position, "", [])
+          tag,
+          repertoire
         }
       });
 
       const actual = component.vm.pgnText;
 
       expect(actual).toEqual(pgnText);
+      expect(repertoire.positions.asPgn).toBeCalledWith(tagPosition);
     });
   });
 
@@ -37,14 +59,11 @@ describe("TagExporterViewModel", () => {
     });
 
     it("should save the pgn text", () => {
-      const name = "name";
-      const pgnText = "some pgn text";
-      const position = new RepertoirePosition("", "", Side.White);
-      position.AsPgn = jest.fn(() => pgnText);
       const component = shallowMount(TagExporterViewModel, {
         render: jest.fn(),
         propsData: {
-          tag: new RepertoireTag(Side.White, name, position, "", [])
+          tag,
+          repertoire
         }
       });
 
@@ -52,7 +71,7 @@ describe("TagExporterViewModel", () => {
 
       expect(saveAs).toBeCalledWith(
         new Blob([pgnText], { type: "text/plain;charset=utf-8" }),
-        `Exported ${name}.pgn`
+        `Exported ${tagName}.pgn`
       );
     });
   });
@@ -69,13 +88,11 @@ describe("TagExporterViewModel", () => {
     });
 
     it("should copy the pgn text", () => {
-      const pgnText = "some pgn text";
-      const position = new RepertoirePosition("", "", Side.White);
-      position.AsPgn = jest.fn(() => pgnText);
       const component = shallowMount(TagExporterViewModel, {
         render: jest.fn(),
         propsData: {
-          tag: new RepertoireTag(Side.White, "", position, "", [])
+          tag,
+          repertoire
         }
       });
 

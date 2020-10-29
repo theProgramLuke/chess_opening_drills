@@ -3,16 +3,23 @@ import fs from "graceful-fs";
 import ElectronStore from "electron-store";
 
 import { SavedStorage, PersistantStorage } from "@/store/PersistantStorage";
-import { Repertoire, SavedRepertoire } from "@/store/repertoire";
+import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { BackupManager } from "@/store/BackupManager";
 import { EngineMetadata } from "@/store/EngineHelpers";
 
 jest.mock("graceful-fs");
 jest.mock("electron-store");
-jest.mock("@/store/repertoire");
+jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/BackupManager");
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+
+const emptySavedRepertoire: SavedRepertoire = {
+  training: {},
+  sideToTrain: 0,
+  positions: {},
+  tags: { name: "", fen: "", id: "", children: [], isRootTag: false }
+};
 
 describe("PersistantStorage", () => {
   const storagePath = "some/path.json";
@@ -242,45 +249,37 @@ describe("PersistantStorage", () => {
 
   describe("whiteRepertoire", () => {
     it("should get the saved repertoire FromSaved", () => {
-      const repertoire = new Repertoire([], []);
-      Repertoire.FromSaved = jest.fn(() => repertoire);
-
       const actual = persistantStorage.whiteRepertoire;
 
       expect(store.get).toBeCalledWith("whiteRepertoire");
-      expect(actual).toBe(repertoire);
+      expect(actual).toEqual(expect.any(Repertoire));
     });
 
     it("should set the repertoire AsSaved", () => {
-      const savedRepertoire = new SavedRepertoire([], []);
-      const repertoire = new Repertoire([], []);
-      repertoire.AsSaved = jest.fn(() => savedRepertoire);
+      const repertoire = new Repertoire(emptySavedRepertoire);
+      repertoire.asSaved = jest.fn(() => emptySavedRepertoire);
 
       persistantStorage.whiteRepertoire = repertoire;
 
-      expect(store.set).toBeCalledWith("whiteRepertoire", savedRepertoire);
+      expect(store.set).toBeCalledWith("whiteRepertoire", emptySavedRepertoire);
     });
   });
 
   describe("blackRepertoire", () => {
     it("should get the saved repertoire FromSaved", () => {
-      const repertoire = new Repertoire([], []);
-      Repertoire.FromSaved = jest.fn(() => repertoire);
-
       const actual = persistantStorage.blackRepertoire;
 
       expect(store.get).toBeCalledWith("blackRepertoire");
-      expect(actual).toBe(repertoire);
+      expect(actual).toEqual(expect.any(Repertoire));
     });
 
     it("should set the repertoire AsSaved", () => {
-      const savedRepertoire = new SavedRepertoire([], []);
-      const repertoire = new Repertoire([], []);
-      repertoire.AsSaved = jest.fn(() => savedRepertoire);
+      const repertoire = new Repertoire(emptySavedRepertoire);
+      repertoire.asSaved = jest.fn(() => emptySavedRepertoire);
 
       persistantStorage.blackRepertoire = repertoire;
 
-      expect(store.set).toBeCalledWith("blackRepertoire", savedRepertoire);
+      expect(store.set).toBeCalledWith("blackRepertoire", emptySavedRepertoire);
     });
   });
 

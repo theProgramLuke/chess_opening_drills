@@ -42,7 +42,7 @@ before_cache:
   - rm -rf $HOME/.cache/electron-builder/wine
 
 after_success:
-  - codecov
+  - codecov --disable=gcov
 
 branches:
   except:

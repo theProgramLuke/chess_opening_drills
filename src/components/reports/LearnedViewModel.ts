@@ -1,73 +1,65 @@
-import Vue from "vue";
+import "reflect-metadata";
+import { Vue, Component } from "vue-property-decorator";
+import { State } from "vuex-class";
 import _ from "lodash";
-import { mapState } from "vuex";
+import { PlotData, Config, Layout } from "plotly.js";
 
 import Plot from "@/components/common/Plot.vue";
-import { RepertoireTag } from "@/store/repertoireTag";
+import { Repertoire } from "@/store/repertoire/Repertoire";
+import { TagTree } from "@/store/repertoire/TagTree";
 import { TrainingMode } from "@/store/trainingMode";
-import { RepertoirePosition } from "@/store/repertoirePosition";
 
-export default Vue.extend({
-  name: "LearnedReport",
+@Component({ name: "LearnedReport", components: { Plot } })
+export default class LearnedViewModel extends Vue {
+  options: Partial<Config> = { displayModeBar: false };
+  layout: Partial<Layout> = { margin: { b: 125 } };
+  selectedTags: TagTree[] = [];
 
-  data: () => ({
-    options: { displayModeBar: false },
-    layout: {},
-    selectedTags: [] as RepertoireTag[]
-  }),
+  @State
+  whiteRepertoire!: Repertoire;
 
-  components: {
-    Plot
-  },
+  @State
+  blackRepertoire!: Repertoire;
 
-  computed: {
-    ...mapState(["darkMode", "whiteRepertoire", "blackRepertoire"]),
+  @State
+  darkMode!: boolean;
 
-    combinedTags(): RepertoireTag[] {
-      return _.concat(this.whiteRepertoire.tags, this.blackRepertoire.tags);
-    },
+  get combinedTags(): TagTree[] {
+    return [this.whiteRepertoire.tags, this.blackRepertoire.tags];
+  }
 
-    showNoPositions(): boolean {
-      return (
-        this.whiteRepertoire.positions.length === 1 &&
-        this.blackRepertoire.positions.length === 1
-      );
-    },
+  get showNoPositions(): boolean {
+    return (
+      _.isEmpty(this.whiteRepertoire.training.getMoves()) &&
+      _.isEmpty(this.blackRepertoire.training.getMoves())
+    );
+  }
 
-    selectedPositions(): RepertoirePosition[] {
-      const positions: RepertoirePosition[] = [];
+  get plotData(): Partial<PlotData>[] {
+    let learnedTrainingCount = 0;
+    let newTrainingCount = 0;
 
-      _.forEach(this.selectedTags, tag =>
-        tag.position.VisitChildren(position => {
-          if (position.myTurn) {
-            positions.push(position);
-          }
-        })
-      );
+    const repertoires = [this.whiteRepertoire, this.blackRepertoire];
 
-      return _.uniq(positions);
-    },
+    _.forEach(repertoires, repertoire => {
+      const filteredTraining = repertoire.getTrainingForTags(this.selectedTags);
 
-    plotData() {
-      let trainedPositions = 0;
-      let newPositions = 0;
-
-      _.forEach(this.selectedPositions, position => {
-        if (position.IncludeForTrainingMode(TrainingMode.New)) {
-          ++newPositions;
+      _.forEach(filteredTraining, training => {
+        if (training.includeForTrainingMode(TrainingMode.New)) {
+          ++newTrainingCount;
         } else {
-          ++trainedPositions;
+          ++learnedTrainingCount;
         }
       });
+    });
 
-      return [
-        {
-          type: "pie",
-          hole: 0.7,
-          labels: ["Trained", "New"],
-          values: [trainedPositions, newPositions]
-        }
-      ];
-    }
+    return [
+      {
+        type: "pie",
+        hole: 0.7,
+        labels: ["Learned", "New"],
+        values: [learnedTrainingCount, newTrainingCount]
+      }
+    ];
   }
-});
+}

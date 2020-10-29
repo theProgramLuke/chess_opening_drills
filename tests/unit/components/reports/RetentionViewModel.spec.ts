@@ -1,74 +1,115 @@
-import { shallowMount, createLocalVue } from "@vue/test-utils";
-import Vuex from "vuex";
+import { shallowMount, createLocalVue, Wrapper } from "@vue/test-utils";
+import Vuex, { Store } from "vuex";
 import _ from "lodash";
 
 import RetentionViewModel from "@/components/reports/RetentionViewModel";
-import { Repertoire } from "@/store/repertoire";
-import { RepertoirePosition } from "@/store/repertoirePosition";
+import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
-import { TrainingMode } from "@/store/trainingMode";
-import { TrainingEvent } from "@/store/TrainingEvent";
+import {
+  RepetitionTraining,
+  TrainingHistoryEntry
+} from "@/store/repertoire/RepetitionTraining";
+import { Writeable } from "tests/TestHelpers";
 
-jest.mock("@/store/repertoire");
-jest.mock("@/store/repertoirePosition");
-
-const state = {
-  whiteRepertoire: new Repertoire([], []),
-  blackRepertoire: new Repertoire([], [])
-};
-
-const localVue = createLocalVue();
-localVue.use(Vuex);
-const store = new Vuex.Store({ state });
-
-const positionsFromData = (
-  counts: number[],
-  retentionSuccesses: number[]
-): RepertoirePosition[] => {
-  expect(counts.length).toEqual(retentionSuccesses.length);
-  return _.map(counts, (count, index) => {
-    const successes = retentionSuccesses[index];
-    expect(count).toBeGreaterThanOrEqual(successes);
-    const position = new RepertoirePosition("", "", Side.White);
-    position.trainingHistory = [
-      ..._.times(successes, () => new TrainingEvent(1, 0)),
-      ..._.times(count - successes, () => new TrainingEvent(2, 0))
-    ];
-    return position;
-  });
-};
+jest.mock("@/store/repertoire/Repertoire");
 
 describe("RetentionViewModel", () => {
+  const localVue = createLocalVue();
+  localVue.use(Vuex);
+
+  let store: Store<unknown>;
+  let state: { whiteRepertoire: Repertoire; blackRepertoire: Repertoire };
+  let component: Wrapper<RetentionViewModel>;
+
+  function mountComponent(): Wrapper<RetentionViewModel> {
+    return shallowMount(RetentionViewModel, {
+      localVue,
+      store,
+      render: jest.fn()
+    });
+  }
+
+  beforeEach(() => {
+    const emptySavedRepertoire: SavedRepertoire = {
+      positions: {},
+      training: {},
+      tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
+      sideToTrain: Side.White
+    };
+
+    state = {
+      whiteRepertoire: new Repertoire(emptySavedRepertoire),
+      blackRepertoire: new Repertoire(emptySavedRepertoire)
+    };
+
+    store = new Vuex.Store({ state });
+
+    component = mountComponent();
+  });
+
   describe("showNoPositions", () => {
     it("should be true if the repertoire has no trained positions", () => {
-      state.whiteRepertoire.positions = [];
-      state.blackRepertoire.positions = [];
-      const component = shallowMount(RetentionViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
+      (state.whiteRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
+        []
+      );
+      (state.blackRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
+        []
+      );
 
-      const show = component.vm.showNoPositions;
+      const actual = component.vm.showNoPositions;
 
-      expect(show).toBeTruthy();
+      expect(actual).toBeTruthy();
     });
 
     it("should be false if the repertoire has trained positions", () => {
-      state.blackRepertoire.positions = positionsFromData([1], [1]);
-      const component = shallowMount(RetentionViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
+      const fen = "fen";
+      const san = "san";
+      (state.whiteRepertoire.getTrainingForTags as jest.Mock).mockReturnValue([
+        "anything"
+      ]);
+      (state.blackRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
+        []
+      );
 
-      const show = component.vm.showNoPositions;
+      const actual = component.vm.showNoPositions;
 
-      expect(show).toBeFalsy();
+      expect(actual).toBeFalsy();
     });
   });
 
   describe("plotData", () => {
+    function makeHistoryEvents(successful: boolean): TrainingHistoryEntry {
+      return {
+        easiness: 0,
+        attemptedMoves: successful
+          ? ["single attempt"]
+          : ["multiple", "attempts"],
+        elapsedMilliseconds: 0,
+        grade: 0,
+        timestamp: 0
+      };
+    }
+
+    function trainingFromHistory(
+      counts: number[],
+      retentionSuccesses: number[]
+    ): RepetitionTraining[] {
+      expect(counts.length).toEqual(retentionSuccesses.length);
+      return _.map(counts, (count, index) => {
+        const successes = retentionSuccesses[index];
+        const training = new RepetitionTraining();
+
+        const history = _.concat(
+          _.times(count - successes, () => makeHistoryEvents(false)),
+          _.times(successes, () => makeHistoryEvents(true))
+        );
+
+        jest.spyOn(training, "history", "get").mockReturnValue(history);
+
+        return training as RepetitionTraining;
+      });
+    }
+
     it("should be scatter data of the positions training count and retention rate", () => {
       const blackTrainingCounts = [1, 0, 7, 3];
       const blackRetentionSuccesses = [1, 0, 4, 1];
@@ -76,19 +117,12 @@ describe("RetentionViewModel", () => {
       const whiteTrainingCounts = [9, 1];
       const whiteRetentionSuccesses = [9, 0];
       const whiteRetentionRates = [1, 0];
-      state.blackRepertoire.positions = positionsFromData(
-        blackTrainingCounts,
-        blackRetentionSuccesses
+      (state.whiteRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
+        trainingFromHistory(whiteTrainingCounts, whiteRetentionSuccesses)
       );
-      state.whiteRepertoire.positions = positionsFromData(
-        whiteTrainingCounts,
-        whiteRetentionSuccesses
+      (state.blackRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
+        trainingFromHistory(blackTrainingCounts, blackRetentionSuccesses)
       );
-      const component = shallowMount(RetentionViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
       const x = _.concat(
         _.compact(whiteTrainingCounts),
         _.compact(blackTrainingCounts)

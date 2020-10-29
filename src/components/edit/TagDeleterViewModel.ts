@@ -1,27 +1,21 @@
-import Vue from "vue";
+import "reflect-metadata";
+import { Vue, Component, Prop, Emit } from "vue-property-decorator";
+import { TagTree } from "@/store/repertoire/TagTree";
+import { RemoveRepertoireTagPayload } from "@/store/MutationPayloads";
 
-import { RepertoireTag } from "@/store/repertoireTag";
+@Component
+export default class TagDeleterViewModel extends Vue {
+  showDialog = false;
 
-export default Vue.extend({
-  data: () => ({
-    showDialog: false
-  }),
+  @Prop({ required: true })
+  tag!: TagTree;
 
-  props: {
-    tag: {
-      type: RepertoireTag,
-      required: true
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    }
-  },
+  @Prop({ required: false, default: false })
+  disabled!: boolean;
 
-  methods: {
-    onDelete() {
-      this.showDialog = false;
-      this.$emit("onDelete", this.tag);
-    }
+  @Emit("onDelete")
+  onDelete(): Pick<RemoveRepertoireTagPayload, "id"> {
+    this.showDialog = false;
+    return { id: this.tag.id };
   }
-});
+}

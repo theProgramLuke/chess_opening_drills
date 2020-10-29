@@ -1,111 +1,104 @@
-import Vue from "vue";
+import "reflect-metadata";
+import { Vue, Component } from "vue-property-decorator";
+import { State } from "vuex-class";
 import _ from "lodash";
-import { mapState } from "vuex";
+import { Config, Layout, PlotData } from "plotly.js";
 
+import { TagTree } from "@/store/repertoire/TagTree";
+import { Repertoire } from "@/store/repertoire/Repertoire";
 import Plot from "@/components/common/Plot.vue";
-import { Repertoire } from "@/store/repertoire";
+import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 
-interface RetentionData {
-  retentionRate: number;
-  attempts: number;
-}
-
-const getRetentionData = (repertoire: Repertoire): RetentionData[] => {
-  const trainedPositions = _.filter(
-    repertoire.positions,
-    position => position.trainingHistory.length > 0
-  );
-
-  return _.map(trainedPositions, position => {
-    const attempts = position.trainingHistory.length;
-    const successes = _.filter(
-      position.trainingHistory,
-      trainingEvent => trainingEvent.attempts === 1
-    ).length;
-    const retentionRate = successes / attempts;
-
-    return { attempts, retentionRate };
-  });
-};
-
-export default Vue.extend({
-  name: "RetentionReport",
-
-  data: () => ({
-    options: { displayModeBar: false },
-    layout: {
-      margin: { b: 125 },
-      xaxis: {
-        domain: [0, 0.8],
-        showgrid: false,
-        zeroline: false,
-        title: { text: "Training Repetition Count" }
-      },
-      yaxis: {
-        domain: [0, 0.8],
-        showgrid: false,
-        zeroline: false,
-        rangemode: "tozero",
-        title: { text: "Retention Rate" }
-      },
-      xaxis2: {
-        domain: [0.85, 1],
-        showgrid: false,
-        zeroline: false
-      },
-      yaxis2: {
-        domain: [0.85, 1],
-        showgrid: false,
-        zeroline: false
-      }
+@Component({ name: "RetentionReport", components: { Plot } })
+export default class RetentionViewModel extends Vue {
+  selectedTags: TagTree[] = [];
+  options: Partial<Config> = { displayModeBar: false };
+  layout: Partial<Layout> = {
+    margin: { b: 125 },
+    xaxis: {
+      domain: [0, 0.8],
+      showgrid: true,
+      zeroline: false,
+      title: { text: "Training Repetition Count" }
+    },
+    yaxis: {
+      domain: [0, 0.8],
+      showgrid: true,
+      zeroline: false,
+      rangemode: "nonnegative",
+      title: { text: "Retention Rate" }
+    },
+    xaxis2: {
+      domain: [0.85, 1],
+      showgrid: false,
+      zeroline: false
+    },
+    yaxis2: {
+      domain: [0.85, 1],
+      showgrid: false,
+      zeroline: false
     }
-  }),
+  };
 
-  components: {
-    Plot
-  },
+  @State
+  whiteRepertoire!: Repertoire;
 
-  computed: {
-    ...mapState(["darkMode", "whiteRepertoire", "blackRepertoire"]),
+  @State
+  blackRepertoire!: Repertoire;
 
-    whiteRetention(): RetentionData[] {
-      return getRetentionData(this.whiteRepertoire);
-    },
+  @State
+  darkMode!: boolean;
 
-    blackRetention(): RetentionData[] {
-      return getRetentionData(this.blackRepertoire);
-    },
-
-    showNoPositions(): boolean {
-      return _.isEmpty(this.whiteRetention) && _.isEmpty(this.blackRetention);
-    },
-
-    plotData(): any[] {
-      const retentions = _.concat(this.whiteRetention, this.blackRetention);
-      const x = _.map(retentions, retention => retention.attempts);
-      const y = _.map(retentions, retention => retention.retentionRate);
-
-      return [
-        {
-          x,
-          y,
-          mode: "markers",
-          name: "Positions",
-          type: "scatter"
-        },
-        {
-          x,
-          yaxis: "y2",
-          type: "histogram",
-          showlegend: false
-        },
-        {
-          y,
-          xaxis: "x2",
-          type: "histogram",
-          showlegend: false
-        }
-      ];
-    }
+  get showNoPositions(): boolean {
+    return _.isEmpty(this.whiteTraining) && _.isEmpty(this.blackTraining);
   }
-});
+
+  get plotData(): Partial<PlotData>[] {
+    const training = _.concat(this.whiteTraining, this.blackTraining);
+    _.remove(training, moveTraining => _.isEmpty(moveTraining.history));
+
+    const x = _.map(training, moveTraining => moveTraining.history.length);
+    const y = _.map(
+      training,
+      moveTraining =>
+        this.countTrainingSuccesses(moveTraining) / moveTraining.history.length
+    );
+
+    return [
+      {
+        x,
+        y,
+        mode: "markers",
+        name: "Positions",
+        type: "scatter"
+      },
+      {
+        x,
+        yaxis: "y2",
+        type: "histogram",
+        showlegend: false
+      },
+      {
+        y,
+        xaxis: "x2",
+        type: "histogram",
+        showlegend: false
+      }
+    ];
+  }
+
+  private get blackTraining(): RepetitionTraining[] {
+    return this.blackRepertoire.getTrainingForTags([this.blackRepertoire.tags]);
+  }
+
+  private get whiteTraining(): RepetitionTraining[] {
+    return this.whiteRepertoire.getTrainingForTags([this.whiteRepertoire.tags]);
+  }
+
+  private countTrainingSuccesses(moveTraining: RepetitionTraining) {
+    return _.filter(
+      moveTraining.history,
+      historyEvent => historyEvent.attemptedMoves.length === 1
+    ).length;
+  }
+}
