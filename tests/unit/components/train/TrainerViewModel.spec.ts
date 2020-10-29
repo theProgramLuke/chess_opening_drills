@@ -678,4 +678,28 @@ describe("TrainerViewModel", () => {
       expect(component.vm.advancePreview).not.toBeCalled();
     });
   });
+
+  describe("previewPositionLegalFen", () => {
+    it("should be the legal fen for the position to preview", () => {
+      const component = mountComponent();
+      jest
+        .spyOn(component.vm, "previewPositionFen", "get")
+        .mockReturnValue("fen");
+
+      const actual = component.vm.previewPositionLegalFen;
+
+      expect(actual).toEqual("fen 0 1");
+    });
+  });
+
+  describe("activePositionLegalFen", () => {
+    it("should be the legal fen for the active position", () => {
+      const component = mountComponent();
+      jest.spyOn(component.vm, "activePosition", "get").mockReturnValue("fen");
+
+      const actual = component.vm.activePositionLegalFen;
+
+      expect(actual).toEqual("fen 0 1");
+    });
+  });
 });
