@@ -46,14 +46,12 @@ export default class TrainerViewModel extends Vue {
       return false;
     }
 
+    const repertoire = this.activeVariation.repertoire;
+
     const newMoves = _.find(
       this.activeVariation.variation,
       (move: VariationMove) => {
-        if (_.isUndefined(this.activeVariation)) {
-          return false;
-        }
-
-        const training = this.activeVariation.repertoire.training.getTrainingForMove(
+        const training = repertoire.training.getTrainingForMove(
           move.sourceFen,
           move.san
         );
