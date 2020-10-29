@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import _ from "lodash";
+import now from "lodash/now";
 
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TrainingMoveSpecification } from "@/store/repertoire/TrainingCollection";
@@ -25,7 +26,10 @@ function eventsFromRepertoire(repertoires: Repertoire[]): CalendarEvent[] {
           trainingMove.fen,
           trainingMove.san
         );
-        if (moveTraining && moveTraining.scheduledRepetitionTimestamp) {
+        if (
+          moveTraining &&
+          !_.isUndefined(moveTraining.scheduledRepetitionTimestamp)
+        ) {
           const date = new Date(moveTraining.scheduledRepetitionTimestamp);
           const day = `${date.getUTCFullYear()}-${date.getUTCMonth()}-${date.getUTCDate()}`;
 
@@ -58,10 +62,12 @@ function eventsFromRepertoire(repertoires: Repertoire[]): CalendarEvent[] {
   return events;
 }
 
+const millisecondsPerMonth = 7 * 4 * 24 * 60 * 60 * 1000;
+
 @Component
 export default class ScheduleViewModel extends Vue {
-  start = 0;
-  end = 0;
+  start = now();
+  end = now() + millisecondsPerMonth; // Highlight the next 4 weeks;
 
   @State
   whiteRepertoire!: Repertoire;
@@ -71,10 +77,5 @@ export default class ScheduleViewModel extends Vue {
 
   get events(): CalendarEvent[] {
     return eventsFromRepertoire([this.whiteRepertoire, this.blackRepertoire]);
-  }
-
-  created(): void {
-    this.start = _.now();
-    this.end = _.now() + 7 * 4 * 24 * 60 * 60 * 1000; // Highlight the next 4 weeks
   }
 }

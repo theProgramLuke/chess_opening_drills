@@ -12,13 +12,13 @@
               td
                 v-btn.original-case(
                   v-if="turn.whiteMove !== undefined",
-                  @click="onSelectMove(turn.whiteMove.position)")
-                  | {{ turn.whiteMove }}
+                  @click="onSelectMove(turn.whiteMove)")
+                  | {{ turn.whiteMove.san }}
               td
                 v-btn.original-case(
                   v-if="turn.blackMove !== undefined",
-                  @click="onSelectMove(turn.blackMove.position)")
-                  | {{ turn.blackMove }}
+                  @click="onSelectMove(turn.blackMove)")
+                  | {{ turn.blackMove.san }}
                   
     v-pagination(
       v-if="turnLists.length > 1",
