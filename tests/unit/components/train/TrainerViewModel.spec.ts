@@ -659,5 +659,23 @@ describe("TrainerViewModel", () => {
 
       expect(component.vm.previewIndex).toEqual(0);
     });
+
+    it("should be called after previewing is set to true", () => {
+      const component = mountComponent();
+      component.vm.advancePreview = jest.fn();
+
+      component.vm.onPreviewingChange(true);
+
+      expect(component.vm.advancePreview).toBeCalled();
+    });
+
+    it("should not be called after previewing is set to false", () => {
+      const component = mountComponent();
+      component.vm.advancePreview = jest.fn();
+
+      component.vm.onPreviewingChange(false);
+
+      expect(component.vm.advancePreview).not.toBeCalled();
+    });
   });
 });
