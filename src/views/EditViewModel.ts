@@ -33,7 +33,8 @@ import { fenAfterMove, normalizeFen } from "@/store/repertoire/chessHelpers";
   }
 })
 export default class EditViewModel extends Vue {
-  activeRepertoire!: Repertoire;
+  // hack so that this will be reactive https://github.com/vuejs/vue-class-component/issues/211
+  activeRepertoire: Repertoire = (null as unknown) as Repertoire;
   activePosition = "";
   recomputeNextMovesCounter = 0;
 
