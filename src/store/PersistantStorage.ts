@@ -1,5 +1,4 @@
 import ElectronStore from "electron-store";
-import _ from "lodash";
 import fs from "graceful-fs";
 import path from "path";
 import electron from "electron";

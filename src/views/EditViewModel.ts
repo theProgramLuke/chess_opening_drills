@@ -33,7 +33,7 @@ import { fenAfterMove } from "@/store/repertoire/chessHelpers";
   }
 })
 export default class EditViewModel extends Vue {
-  activeRepertoire: Repertoire = 0 as any;
+  activeRepertoire!: Repertoire;
   activePosition = "";
   recomputeNextMovesCounter = 0;
 
