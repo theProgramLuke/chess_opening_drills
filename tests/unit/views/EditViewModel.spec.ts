@@ -219,6 +219,17 @@ describe("EditViewModel", () => {
     });
   });
 
+  describe("onTagSelect", () => {
+    it("should update the active position and repertoire", () => {
+      const component = mountComponent();
+      const fen = "fen";
+
+      component.vm.onSelectMove({ resultingFen: fen, sourceFen: "", san: "" });
+
+      expect(component.vm.activePosition).toEqual(fen);
+    });
+  });
+
   describe("boardOrientation", () => {
     it.each([Side.White, Side.Black])(
       "should be the side to train of the active repertoire",
@@ -259,6 +270,24 @@ describe("EditViewModel", () => {
       const actual = component.vm.activePosition;
 
       expect(actual).toEqual(expected);
+    });
+
+    it("should not add a repertoire position if the move already exists", () => {
+      const component = mountComponent();
+      const san = "e4";
+      const alreadyExistingFen = fenAfterMove(startPosition, san) || "";
+      expect(alreadyExistingFen).not.toEqual("");
+      jest.spyOn(component.vm, "nextMoves", "get").mockReturnValue([
+        {
+          sourceFen: startPosition,
+          resultingFen: alreadyExistingFen,
+          san
+        }
+      ]);
+
+      component.vm.onBoardMove({ fen: startPosition, history: [san] });
+
+      expect(mutations.addRepertoireMove).not.toBeCalled();
     });
   });
 
