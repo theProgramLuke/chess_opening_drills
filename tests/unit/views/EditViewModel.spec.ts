@@ -271,6 +271,24 @@ describe("EditViewModel", () => {
 
       expect(actual).toEqual(expected);
     });
+
+    it("should not add a repertoire position if the move already exists", () => {
+      const component = mountComponent();
+      const san = "e4";
+      const alreadyExistingFen = fenAfterMove(startPosition, san) || "";
+      expect(alreadyExistingFen).not.toEqual("");
+      jest.spyOn(component.vm, "nextMoves", "get").mockReturnValue([
+        {
+          sourceFen: startPosition,
+          resultingFen: alreadyExistingFen,
+          san
+        }
+      ]);
+
+      component.vm.onBoardMove({ fen: startPosition, history: [san] });
+
+      expect(mutations.addRepertoireMove).not.toBeCalled();
+    });
   });
 
   describe("onScroll", () => {
