@@ -21,7 +21,7 @@ import {
   RemoveRepertoireMovePayload,
   RemoveRepertoireTagPayload
 } from "@/store/MutationPayloads";
-import { fenAfterMove } from "@/store/repertoire/chessHelpers";
+import { fenAfterMove, normalizeFen } from "@/store/repertoire/chessHelpers";
 
 @Component({
   components: {
@@ -33,7 +33,8 @@ import { fenAfterMove } from "@/store/repertoire/chessHelpers";
   }
 })
 export default class EditViewModel extends Vue {
-  activeRepertoire!: Repertoire;
+  // hack so that this will be reactive https://github.com/vuejs/vue-class-component/issues/211
+  activeRepertoire: Repertoire = (null as unknown) as Repertoire;
   activePosition = "";
   recomputeNextMovesCounter = 0;
 
@@ -105,6 +106,10 @@ export default class EditViewModel extends Vue {
     });
   }
 
+  onSelectMove(move: VariationMove): void {
+    this.updateBoard(move.resultingFen);
+  }
+
   updateBoard(fen: string): void {
     this.activePosition = fen;
   }
@@ -116,8 +121,13 @@ export default class EditViewModel extends Vue {
 
   onBoardMove(threats: Threats): void {
     const lastMoveSan = _.last(threats.history) || "";
-    if (threats.fen && threats.fen !== this.activePosition) {
-      if (!_.some(this.nextMoves, move => move.resultingFen === threats.fen)) {
+    if (threats.fen) {
+      const moveAlreadyExists = _.some(
+        this.nextMoves,
+        move => move.sourceFen === normalizeFen(threats.fen || "", false)
+      );
+
+      if (!moveAlreadyExists) {
         this.addRepertoireMove({
           repertoire: this.activeRepertoire,
           fen: this.activePosition,
