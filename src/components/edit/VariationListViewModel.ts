@@ -14,7 +14,7 @@ export default class VariationListViewModel extends Vue {
   variations!: Variation[];
 
   @Emit("onSelectMove")
-  onSelectMove(fen: string): void {
+  onSelectMove(move: VariationMove): void {
     _.noop();
   }
 

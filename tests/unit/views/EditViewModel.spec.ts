@@ -219,6 +219,17 @@ describe("EditViewModel", () => {
     });
   });
 
+  describe("onTagSelect", () => {
+    it("should update the active position and repertoire", () => {
+      const component = mountComponent();
+      const fen = "fen";
+
+      component.vm.onSelectMove({ resultingFen: fen, sourceFen: "", san: "" });
+
+      expect(component.vm.activePosition).toEqual(fen);
+    });
+  });
+
   describe("boardOrientation", () => {
     it.each([Side.White, Side.Black])(
       "should be the side to train of the active repertoire",

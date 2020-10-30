@@ -105,6 +105,10 @@ export default class EditViewModel extends Vue {
     });
   }
 
+  onSelectMove(move: VariationMove): void {
+    this.updateBoard(move.resultingFen);
+  }
+
   updateBoard(fen: string): void {
     this.activePosition = fen;
   }

@@ -4,7 +4,7 @@
 
     v-card.d-inline-block.pa-1(v-for="move in variations", outlined, tile)
       v-card-actions
-        v-btn.original-case(@click="onSelectMove(move.position)", color="primary")
+        v-btn.original-case(@click="onSelectMove(move)", color="primary")
           | {{ move.san }}
 
         move-deleter(:move="move", @onDelete="onDeleteMove")

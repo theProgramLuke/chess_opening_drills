@@ -18,11 +18,11 @@
               @onCreate="onCreateTag")
           
           v-tab-item.pa-2(key=1, value="tab-1")
-            move-list(:variations="sourceVariations", @onSelectMove="updateBoard")
+            move-list(:variations="sourceVariations", @onSelectMove="onSelectMove")
 
             variation-list(
               :variations="nextMoves",
-              @onSelectMove="updateBoard",
+              @onSelectMove="onSelectMove",
               @onDeleteMove="onDeleteMove")
 
           v-tab-item.pa-2(key=2, value="tab-2")
