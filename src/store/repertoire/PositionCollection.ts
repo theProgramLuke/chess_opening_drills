@@ -7,9 +7,15 @@ import {
   fenAfterMove,
   variationsFromPgnGame
 } from "@/store/repertoire/chessHelpers";
+import { DrawShape } from "chessground/draw";
 
 export interface MoveData {
   san: string;
+}
+
+export interface PositionData {
+  comments: string;
+  drawings: DrawShape[];
 }
 
 export interface VariationMove extends MoveData {
@@ -42,7 +48,7 @@ export interface PositionCollectionInterface {
 }
 
 export class PositionCollection implements PositionCollectionInterface {
-  private graph: Graph<never, never, MoveData>;
+  private graph: Graph<never, PositionData | undefined, MoveData>;
   private onAddMove: AddMoveObserver;
   private onDeleteMove: DeleteMoveObserver;
 
@@ -109,6 +115,14 @@ export class PositionCollection implements PositionCollectionInterface {
 
   descendantPositions(fen: string): string[] {
     return _.tail(alg.preorder(this.graph, [fen]));
+  }
+
+  setPositionData(fen: string, data: PositionData): void {
+    this.graph.setNode(fen, data);
+  }
+
+  getPositionData(fen: string): PositionData {
+    return this.graph.node(fen) || { comments: "", drawings: [] };
   }
 
   asSaved(): SavedPositionCollection {
@@ -201,7 +215,11 @@ export class PositionCollection implements PositionCollectionInterface {
         const move = this.graph.edge(parent, fen);
 
         const clonedPath = _.clone(path);
-        clonedPath.unshift({ ...move, sourceFen: parent, resultingFen: fen });
+        clonedPath.unshift({
+          ...move,
+          sourceFen: parent,
+          resultingFen: fen
+        });
 
         this.getSourceVariationsRecursive(parent, collector, clonedPath);
       });

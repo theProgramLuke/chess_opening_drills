@@ -3,7 +3,8 @@ import _ from "lodash";
 import {
   PositionCollection,
   DeleteMoveObserver,
-  Variation
+  Variation,
+  PositionData
 } from "@/store/repertoire/PositionCollection";
 
 const startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
@@ -222,6 +223,33 @@ describe("PositionCollection", () => {
       repertoire.addMove(startPosition, san);
 
       expect(onAddMove).not.toBeCalled();
+    });
+  });
+
+  describe("getPositionData", () => {
+    it("should get the data stored for a position", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+      const expected: PositionData = {
+        comments: "some comments",
+        drawings: [{ brush: "a brush", orig: "a1", dest: "a2" }]
+      };
+
+      repertoire.setPositionData(startPosition, expected);
+      const actual = repertoire.getPositionData(startPosition);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should get empty comments and drawings if there is no stored data", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+      const expected: PositionData = {
+        comments: "",
+        drawings: []
+      };
+
+      const actual = repertoire.getPositionData(startPosition);
+
+      expect(actual).toEqual(expected);
     });
   });
 
