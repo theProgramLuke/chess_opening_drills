@@ -367,7 +367,7 @@ describe("EditViewModel", () => {
   });
 
   describe("activePositionDrawings", () => {
-    it("should get the drawings for the active position", () => {
+    it("should get a clone of the drawings for the active position", () => {
       const expected: DrawShape[] = [];
       (whiteRepertoire.positions
         .getPositionDrawings as jest.Mock).mockReturnValue(expected);
@@ -376,7 +376,8 @@ describe("EditViewModel", () => {
 
       const actual = component.vm.activePositionDrawings;
 
-      expect(actual).toBe(expected);
+      expect(actual).toEqual(expected);
+      expect(actual).not.toBe(expected);
       expect(whiteRepertoire.positions.getPositionDrawings).toBeCalledWith(fen);
     });
 
@@ -391,6 +392,26 @@ describe("EditViewModel", () => {
       component.vm.activePosition = fen;
 
       component.vm.activePositionDrawings = drawings;
+
+      expect(mutations.setPositionDrawings).toBeCalledWith(
+        expect.anything(),
+        expected
+      );
+    });
+  });
+
+  describe("onDrawingsChanged", () => {
+    it("should set the drawings for the active position", () => {
+      const drawings: DrawShape[] = [];
+      const fen = "some fen";
+      const expected: SetPositionDrawingsPayload = {
+        repertoire: whiteRepertoire,
+        fen,
+        drawings
+      };
+      component.vm.activePosition = fen;
+
+      component.vm.onDrawingsChanged(drawings);
 
       expect(mutations.setPositionDrawings).toBeCalledWith(
         expect.anything(),

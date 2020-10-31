@@ -102,17 +102,24 @@ export default class EditViewModel extends Vue {
   }
 
   get activePositionDrawings(): DrawShape[] {
-    return this.activeRepertoire.positions.getPositionDrawings(
-      this.activePosition
+    return _.cloneDeep(
+      this.activeRepertoire.positions.getPositionDrawings(this.activePosition)
     );
   }
 
   set activePositionDrawings(drawings: DrawShape[]) {
+    console.log(drawings);
     this.setPositionDrawings({
       repertoire: this.activeRepertoire,
       fen: this.activePosition,
       drawings
     });
+  }
+
+  onDrawingsChanged(drawings: DrawShape[]): void {
+    if (!_.isEqual(drawings, this.activePositionDrawings)) {
+      this.activePositionDrawings = drawings;
+    }
   }
 
   onCreateTag(

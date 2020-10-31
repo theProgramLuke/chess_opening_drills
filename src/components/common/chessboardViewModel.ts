@@ -75,7 +75,15 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(["boardTheme", "pieceTheme", "moveAnimationSpeed"])
+    ...mapState(["boardTheme", "pieceTheme", "moveAnimationSpeed"]),
+
+    drawings(): DrawShape[] {
+      if (!_.isUndefined(this.board)) {
+        return this.board.state.drawable.shapes;
+      } else {
+        return [];
+      }
+    }
   },
 
   watch: {
@@ -89,7 +97,14 @@ export default Vue.extend({
 
     drawShapes(shapes: DrawShape[]) {
       if (this.board) {
-        this.board.setShapes(shapes);
+        this.board.setShapes(_.cloneDeep(shapes));
+      }
+    },
+
+    drawings: {
+      deep: true,
+      handler(drawings: DrawShape[]) {
+        this.$emit("onDrawingsChanged", drawings);
       }
     }
   },
@@ -281,7 +296,7 @@ export default Vue.extend({
         movable: { events: { after: this.changeTurn() } }
       });
 
-      this.board.setShapes(this.drawShapes);
+      this.board.setShapes(_.cloneDeep(this.drawShapes));
 
       if (fen) {
         this.afterMove();

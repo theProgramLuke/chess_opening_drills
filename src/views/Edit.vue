@@ -36,7 +36,9 @@
           v-if="activePositionLegalFen",
           :fen="activePositionLegalFen",
           :orientation="boardOrientation",
-          @onMove="onBoardMove")
+          :drawShapes="activePositionDrawings"
+          @onMove="onBoardMove",
+          @onDrawingsChanged="onDrawingsChanged")
 </template>
 
 <script lang="ts" src="./EditViewModel.ts" />
