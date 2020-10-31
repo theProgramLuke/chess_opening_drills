@@ -1,6 +1,7 @@
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TrainingEvent } from "@/store/repertoire/RepetitionTraining";
 import { TagTree } from "@/store/repertoire/TagTree";
+import { DrawShape } from "chessground/draw";
 
 export interface AddTrainingEventPayload {
   repertoire: Repertoire;
@@ -48,4 +49,16 @@ export interface AddMovesFromPgnPayload {
 export interface RemoveRepertoireTagPayload {
   repertoire: Repertoire;
   id: string;
+}
+
+export interface SetPositionCommentsPayload {
+  repertoire: Repertoire;
+  fen: string;
+  comments: string;
+}
+
+export interface SetPositionDrawingsPayload {
+  repertoire: Repertoire;
+  fen: string;
+  drawings: DrawShape[];
 }

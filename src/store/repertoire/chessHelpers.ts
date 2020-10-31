@@ -36,7 +36,7 @@ export function fenAfterMove(fen: string, san: string): string | undefined {
 
 function variationsFromGame(
   pgnMoves: PgnMove[],
-  collector: string[][],
+  collector: PgnMove[][],
   history: PgnMove[] = []
 ): void {
   _.forEach(pgnMoves, pgnMove => {
@@ -49,12 +49,12 @@ function variationsFromGame(
     history.push(_.omit(pgnMove, "ravs"));
   });
 
-  const moves = _.map(history, move => move.move || "");
+  const moves = _.map(history, move => move);
   collector.push(moves);
 }
 
-export function variationsFromPgnGame(game: PgnGame): string[][] {
-  const variations: string[][] = [];
+export function variationsFromPgnGame(game: PgnGame): PgnMove[][] {
+  const variations: PgnMove[][] = [];
   variationsFromGame(game.moves, variations);
 
   return variations;

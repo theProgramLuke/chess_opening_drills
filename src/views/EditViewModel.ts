@@ -19,9 +19,12 @@ import {
   AddRepertoireMovePayload,
   AddRepertoireTagPayload,
   RemoveRepertoireMovePayload,
-  RemoveRepertoireTagPayload
+  RemoveRepertoireTagPayload,
+  SetPositionCommentsPayload,
+  SetPositionDrawingsPayload
 } from "@/store/MutationPayloads";
 import { fenAfterMove, normalizeFen } from "@/store/repertoire/chessHelpers";
+import { DrawShape } from "chessground/draw";
 
 @Component({
   components: {
@@ -56,6 +59,12 @@ export default class EditViewModel extends Vue {
   @Mutation
   removeRepertoireMove!: (payload: RemoveRepertoireMovePayload) => void;
 
+  @Mutation
+  setPositionComments!: (payload: SetPositionCommentsPayload) => void;
+
+  @Mutation
+  setPositionDrawings!: (payload: SetPositionDrawingsPayload) => void;
+
   get activePositionLegalFen(): string {
     return `${this.activePosition} 0 1`;
   }
@@ -76,6 +85,41 @@ export default class EditViewModel extends Vue {
     return this.activeRepertoire.positions.movesFromPosition(
       this.activePosition
     );
+  }
+
+  get activePositionComments(): string {
+    return this.activeRepertoire.positions.getPositionComments(
+      this.activePosition
+    );
+  }
+
+  set activePositionComments(comments: string) {
+    this.setPositionComments({
+      repertoire: this.activeRepertoire,
+      fen: this.activePosition,
+      comments
+    });
+  }
+
+  get activePositionDrawings(): DrawShape[] {
+    return _.cloneDeep(
+      this.activeRepertoire.positions.getPositionDrawings(this.activePosition)
+    );
+  }
+
+  set activePositionDrawings(drawings: DrawShape[]) {
+    console.log(drawings);
+    this.setPositionDrawings({
+      repertoire: this.activeRepertoire,
+      fen: this.activePosition,
+      drawings
+    });
+  }
+
+  onDrawingsChanged(drawings: DrawShape[]): void {
+    if (!_.isEqual(drawings, this.activePositionDrawings)) {
+      this.activePositionDrawings = drawings;
+    }
   }
 
   onCreateTag(

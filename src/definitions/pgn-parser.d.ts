@@ -1,10 +1,14 @@
 declare module "pgn-parser" {
+  export interface PgnComment {
+    text: string;
+  }
+
   export interface PgnMove {
     moveNumber?: number;
     move?: string;
     nags?: string[];
     ravs?: PgnRav[];
-    comments?: string;
+    comments?: PgnComment[];
   }
 
   export interface PgnHeader {
@@ -20,7 +24,7 @@ declare module "pgn-parser" {
   export interface PgnGame {
     commentsAboveHeader: string;
     headers: PgnHeader[];
-    comments: string;
+    comments: PgnComment[];
     moves: PgnMove[];
     result: string;
   }

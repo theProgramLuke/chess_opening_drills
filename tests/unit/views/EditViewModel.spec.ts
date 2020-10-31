@@ -16,8 +16,11 @@ import {
   RemoveRepertoireMovePayload,
   AddRepertoireTagPayload,
   RemoveRepertoireTagPayload,
-  AddRepertoireMovePayload
+  AddRepertoireMovePayload,
+  SetPositionCommentsPayload,
+  SetPositionDrawingsPayload
 } from "@/store/MutationPayloads";
+import { DrawShape } from "chessground/draw";
 
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TagTree");
@@ -29,15 +32,37 @@ describe("EditViewModel", () => {
     addRepertoireMove: jest.fn(),
     removeRepertoireMove: jest.fn(),
     addRepertoireTag: jest.fn(),
-    removeRepertoireTag: jest.fn()
+    removeRepertoireTag: jest.fn(),
+    setPositionComments: jest.fn(),
+    setPositionDrawings: jest.fn()
   };
-  const localVue = createLocalVue();
-  localVue.use(Vuex);
-
-  let store: Store<unknown>;
-  let state: { whiteRepertoire: Repertoire; blackRepertoire: Repertoire };
+  let component: Wrapper<EditViewModel>;
+  let whiteRepertoire: Repertoire;
+  let blackRepertoire: Repertoire;
 
   function mountComponent(): Wrapper<EditViewModel> {
+    const localVue = createLocalVue();
+    localVue.use(Vuex);
+
+    const emptyRepertoire = {
+      positions: {},
+      training: {},
+      tags: { name: "", id: "", fen: "", children: [], isRootTag: false },
+      sideToTrain: Side.White
+    };
+    whiteRepertoire = new Repertoire(emptyRepertoire);
+    blackRepertoire = new Repertoire(emptyRepertoire);
+    whiteRepertoire.tags = new TagTree("", "", []);
+    whiteRepertoire.tags.fen = startPosition;
+    whiteRepertoire.positions = new PositionCollection({});
+    blackRepertoire.positions = new PositionCollection({});
+    const state = {
+      whiteRepertoire,
+      blackRepertoire
+    };
+
+    const store = new Vuex.Store({ state, mutations });
+
     return shallowMount(EditViewModel, {
       render: jest.fn(),
       localVue,
@@ -48,33 +73,11 @@ describe("EditViewModel", () => {
   beforeEach(() => {
     _.forEach(mutations, mutation => mutation.mockReset());
 
-    state = {
-      whiteRepertoire: new Repertoire({
-        positions: {},
-        training: {},
-        tags: { name: "", id: "", fen: "", children: [], isRootTag: false },
-        sideToTrain: Side.White
-      }),
-      blackRepertoire: new Repertoire({
-        positions: {},
-        training: {},
-        tags: { name: "", id: "", fen: "", children: [], isRootTag: false },
-        sideToTrain: Side.White
-      })
-    };
-    state.whiteRepertoire.tags = new TagTree("", "", []);
-    state.whiteRepertoire.tags.fen = startPosition;
-
-    state.whiteRepertoire.positions = new PositionCollection({});
-    state.blackRepertoire.positions = new PositionCollection({});
-
-    store = new Vuex.Store({ state, mutations });
+    component = mountComponent();
   });
 
   describe("created", () => {
     it("should be created with the white repertoire start position", () => {
-      const component = mountComponent();
-
       const actual = component.vm.activePosition;
 
       expect(actual).toBe(startPosition);
@@ -84,7 +87,6 @@ describe("EditViewModel", () => {
   describe("activePositionLegalFen", () => {
     it("should be the active position fen with 0 1 appended to be legal fen", () => {
       const fen = "fen";
-      const component = mountComponent();
       component.vm.activePosition = fen;
 
       const actual = component.vm.activePositionLegalFen;
@@ -96,9 +98,8 @@ describe("EditViewModel", () => {
   describe("sourceVariations", () => {
     it("should be the source variations of the active position", () => {
       const turnList: Variation[] = [];
-      (state.whiteRepertoire.positions
+      (whiteRepertoire.positions
         .getSourceVariations as jest.Mock).mockReturnValue(turnList);
-      const component = mountComponent();
 
       const actual = component.vm.sourceVariations;
 
@@ -106,9 +107,8 @@ describe("EditViewModel", () => {
     });
 
     it("should be an empty array if there are no moves", () => {
-      (state.whiteRepertoire.positions
+      (whiteRepertoire.positions
         .getSourceVariations as jest.Mock).mockReturnValue([]);
-      const component = mountComponent();
 
       const actual = component.vm.sourceVariations;
 
@@ -119,14 +119,13 @@ describe("EditViewModel", () => {
   describe("nextMoves", () => {
     it("should be the next moves of the active position", () => {
       const moves: VariationMove[] = [];
-      (state.whiteRepertoire.positions
+      (whiteRepertoire.positions
         .movesFromPosition as jest.Mock).mockReturnValue(moves);
-      const component = mountComponent();
 
       const actual = component.vm.nextMoves;
 
       expect(actual).toEqual(moves);
-      expect(state.whiteRepertoire.positions.movesFromPosition).toBeCalledWith(
+      expect(whiteRepertoire.positions.movesFromPosition).toBeCalledWith(
         startPosition
       );
     });
@@ -134,14 +133,13 @@ describe("EditViewModel", () => {
 
   describe("onDeleteMove", () => {
     it("should invoke the removeRepertoireMove mutation with the payload", () => {
-      const component = mountComponent();
       const move: VariationMove = {
         san: "san",
         sourceFen: "fen0",
         resultingFen: "fen1"
       };
       const expected: RemoveRepertoireMovePayload = {
-        repertoire: component.vm.whiteRepertoire,
+        repertoire: whiteRepertoire,
         fen: move.sourceFen,
         san: move.san
       };
@@ -157,7 +155,6 @@ describe("EditViewModel", () => {
 
   describe("onCreateTag", () => {
     it("should invoke the addRepertoireTag mutation with the payload", () => {
-      const component = mountComponent();
       const parent = new TagTree("", "", []);
       const name = "name";
       const fen = "fen";
@@ -179,7 +176,6 @@ describe("EditViewModel", () => {
 
   describe("onRemoveTag", () => {
     it("should invoke the removeRepertoireTag mutation with the payload", () => {
-      const component = mountComponent();
       const id = "id";
       const expected: RemoveRepertoireTagPayload = {
         repertoire: component.vm.whiteRepertoire,
@@ -197,7 +193,6 @@ describe("EditViewModel", () => {
 
   describe("updateBoard", () => {
     it("should update the active position", () => {
-      const component = mountComponent();
       const updatedPosition = "new fen";
 
       component.vm.updateBoard(updatedPosition);
@@ -208,7 +203,6 @@ describe("EditViewModel", () => {
 
   describe("onTagSelect", () => {
     it("should update the active position and repertoire", () => {
-      const component = mountComponent();
       component.vm.updateBoard = jest.fn();
       const fen = "fen";
 
@@ -221,7 +215,6 @@ describe("EditViewModel", () => {
 
   describe("onTagSelect", () => {
     it("should update the active position and repertoire", () => {
-      const component = mountComponent();
       const fen = "fen";
 
       component.vm.onSelectMove({ resultingFen: fen, sourceFen: "", san: "" });
@@ -234,8 +227,7 @@ describe("EditViewModel", () => {
     it.each([Side.White, Side.Black])(
       "should be the side to train of the active repertoire",
       side => {
-        state.whiteRepertoire.sideToTrain = side;
-        const component = mountComponent();
+        whiteRepertoire.sideToTrain = side;
 
         const actual = component.vm.boardOrientation;
 
@@ -246,10 +238,9 @@ describe("EditViewModel", () => {
 
   describe("onBoardMove", () => {
     it("should add a repertoire position with the new move", () => {
-      const component = mountComponent();
       const san = "e5";
       const expected: AddRepertoireMovePayload = {
-        repertoire: component.vm.whiteRepertoire,
+        repertoire: whiteRepertoire,
         fen: startPosition,
         san
       };
@@ -264,7 +255,6 @@ describe("EditViewModel", () => {
 
     it("should update the board with the new move", () => {
       const expected = fenAfterMove(startPosition, "e4");
-      const component = mountComponent();
 
       component.vm.onBoardMove({ fen: expected, history: ["e4"] });
       const actual = component.vm.activePosition;
@@ -273,7 +263,6 @@ describe("EditViewModel", () => {
     });
 
     it("should not add a repertoire position if the move already exists", () => {
-      const component = mountComponent();
       const san = "e4";
       const alreadyExistingFen = fenAfterMove(startPosition, san) || "";
       expect(alreadyExistingFen).not.toEqual("");
@@ -301,9 +290,8 @@ describe("EditViewModel", () => {
         sourceFen: "",
         san: ""
       };
-      (state.whiteRepertoire.positions
+      (whiteRepertoire.positions
         .movesFromPosition as jest.Mock).mockReturnValue([nextMove]);
-      const component = mountComponent();
       component.vm.updateBoard = jest.fn();
 
       component.vm.onScroll(scrollUp);
@@ -312,9 +300,8 @@ describe("EditViewModel", () => {
     });
 
     it("should stay at the active position on scroll down when there are no next moves", () => {
-      (state.whiteRepertoire.positions
+      (whiteRepertoire.positions
         .movesFromPosition as jest.Mock).mockReturnValue([]);
-      const component = mountComponent();
       component.vm.updateBoard = jest.fn();
 
       component.vm.onScroll(scrollUp);
@@ -324,9 +311,9 @@ describe("EditViewModel", () => {
 
     it("should go to the previous position on scroll up", () => {
       const parent = "parent";
-      (state.whiteRepertoire.positions
-        .parentPositions as jest.Mock).mockReturnValue([parent]);
-      const component = mountComponent();
+      (whiteRepertoire.positions.parentPositions as jest.Mock).mockReturnValue([
+        parent
+      ]);
       component.vm.updateBoard = jest.fn();
 
       component.vm.onScroll(scrollDown);
@@ -335,14 +322,101 @@ describe("EditViewModel", () => {
     });
 
     it("should stay at the active position on scroll up when there are no previous moves", () => {
-      (state.whiteRepertoire.positions
-        .parentPositions as jest.Mock).mockReturnValue([]);
-      const component = mountComponent();
+      (whiteRepertoire.positions.parentPositions as jest.Mock).mockReturnValue(
+        []
+      );
       component.vm.updateBoard = jest.fn();
 
       component.vm.onScroll(scrollDown);
 
       expect(component.vm.updateBoard).not.toBeCalled();
+    });
+  });
+
+  describe("activePositionComments", () => {
+    it("should get the comments for the active position", () => {
+      const expected = "comment";
+      (whiteRepertoire.positions
+        .getPositionComments as jest.Mock).mockReturnValue(expected);
+      const fen = "fen";
+      component.vm.activePosition = fen;
+
+      const actual = component.vm.activePositionComments;
+
+      expect(actual).toBe(expected);
+      expect(whiteRepertoire.positions.getPositionComments).toBeCalledWith(fen);
+    });
+
+    it("should set the comments for the active position", () => {
+      const comments = "some comment";
+      const fen = "some fen";
+      const expected: SetPositionCommentsPayload = {
+        repertoire: whiteRepertoire,
+        fen,
+        comments
+      };
+      component.vm.activePosition = fen;
+
+      component.vm.activePositionComments = comments;
+
+      expect(mutations.setPositionComments).toBeCalledWith(
+        expect.anything(),
+        expected
+      );
+    });
+  });
+
+  describe("activePositionDrawings", () => {
+    it("should get a clone of the drawings for the active position", () => {
+      const expected: DrawShape[] = [];
+      (whiteRepertoire.positions
+        .getPositionDrawings as jest.Mock).mockReturnValue(expected);
+      const fen = "fen";
+      component.vm.activePosition = fen;
+
+      const actual = component.vm.activePositionDrawings;
+
+      expect(actual).toEqual(expected);
+      expect(actual).not.toBe(expected);
+      expect(whiteRepertoire.positions.getPositionDrawings).toBeCalledWith(fen);
+    });
+
+    it("should set the drawings for the active position", () => {
+      const drawings: DrawShape[] = [];
+      const fen = "some fen";
+      const expected: SetPositionDrawingsPayload = {
+        repertoire: whiteRepertoire,
+        fen,
+        drawings
+      };
+      component.vm.activePosition = fen;
+
+      component.vm.activePositionDrawings = drawings;
+
+      expect(mutations.setPositionDrawings).toBeCalledWith(
+        expect.anything(),
+        expected
+      );
+    });
+  });
+
+  describe("onDrawingsChanged", () => {
+    it("should set the drawings for the active position", () => {
+      const drawings: DrawShape[] = [];
+      const fen = "some fen";
+      const expected: SetPositionDrawingsPayload = {
+        repertoire: whiteRepertoire,
+        fen,
+        drawings
+      };
+      component.vm.activePosition = fen;
+
+      component.vm.onDrawingsChanged(drawings);
+
+      expect(mutations.setPositionDrawings).toBeCalledWith(
+        expect.anything(),
+        expected
+      );
     });
   });
 });

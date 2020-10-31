@@ -8,6 +8,10 @@ import {
   RepetitionTraining,
   TrainingEvent
 } from "@/store/repertoire/RepetitionTraining";
+import {
+  SetPositionCommentsPayload,
+  SetPositionDrawingsPayload
+} from "@/store/MutationPayloads";
 
 jest.mock("@/store/PersistantStorage");
 jest.mock("@/store/repertoire/Repertoire");
@@ -251,6 +255,44 @@ describe("mutations", () => {
         expect(state.persisted.moveAnimationSpeed).toBe(speed);
       }
     );
+  });
+
+  describe("setPositionComments", () => {
+    it("should set the position comments", () => {
+      const repertoire = new Repertoire(emptySavedRepertoire);
+      repertoire.positions = new PositionCollection({});
+      const payload: SetPositionCommentsPayload = {
+        repertoire,
+        fen: "some fen",
+        comments: "some comments"
+      };
+
+      mutations.setPositionComments(state, payload);
+
+      expect(repertoire.positions.setPositionComments).toBeCalledWith(
+        payload.fen,
+        payload.comments
+      );
+    });
+  });
+
+  describe("setPositionDrawings", () => {
+    it("should set the position drawings", () => {
+      const repertoire = new Repertoire(emptySavedRepertoire);
+      repertoire.positions = new PositionCollection({});
+      const payload: SetPositionDrawingsPayload = {
+        repertoire,
+        fen: "some fen",
+        drawings: []
+      };
+
+      mutations.setPositionDrawings(state, payload);
+
+      expect(repertoire.positions.setPositionDrawings).toBeCalledWith(
+        payload.fen,
+        payload.drawings
+      );
+    });
   });
 
   describe("clear", () => {

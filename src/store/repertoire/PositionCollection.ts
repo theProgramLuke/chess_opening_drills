@@ -7,6 +7,12 @@ import {
   fenAfterMove,
   variationsFromPgnGame
 } from "@/store/repertoire/chessHelpers";
+import { DrawShape } from "chessground/draw";
+
+interface PositionAnnotations {
+  comments: string;
+  drawings: DrawShape[];
+}
 
 export interface MoveData {
   san: string;
@@ -39,10 +45,14 @@ export interface PositionCollectionInterface {
   loadPgn: (pgn: string) => void;
   getChildVariations: (fen: string) => Variation[];
   getSourceVariations: (fen: string) => Variation[];
+  setPositionComments: (fen: string, comments: string) => void;
+  getPositionComments: (fen: string) => string;
+  setPositionDrawings: (fen: string, drawings: DrawShape[]) => void;
+  getPositionDrawings: (fen: string) => DrawShape[];
 }
 
 export class PositionCollection implements PositionCollectionInterface {
-  private graph: Graph<never, never, MoveData>;
+  private graph: Graph<never, PositionAnnotations | undefined, MoveData>;
   private onAddMove: AddMoveObserver;
   private onDeleteMove: DeleteMoveObserver;
 
@@ -111,6 +121,48 @@ export class PositionCollection implements PositionCollectionInterface {
     return _.tail(alg.preorder(this.graph, [fen]));
   }
 
+  setPositionComments(fen: string, comments: string): void {
+    const annotations = this.getPositionAnnotations(fen);
+    annotations.comments = comments;
+    this.setPositionAnnotations(fen, annotations);
+  }
+
+  getPositionComments(fen: string): string {
+    return this.getPositionAnnotations(fen).comments;
+  }
+
+  setPositionDrawings(fen: string, drawings: DrawShape[]): void {
+    const annotations = this.getPositionAnnotations(fen);
+    annotations.drawings = drawings;
+    this.setPositionAnnotations(fen, annotations);
+  }
+
+  getPositionDrawings(fen: string): DrawShape[] {
+    return this.getPositionAnnotations(fen).drawings;
+  }
+
+  private setPositionAnnotations(
+    fen: string,
+    data: PositionAnnotations,
+    append = false
+  ): void {
+    if (append) {
+      const existingData = this.getPositionAnnotations(fen);
+      data.drawings = _.concat(existingData.drawings, data.drawings);
+
+      if (!_.isEmpty(existingData.comments)) {
+        data.comments = `${existingData.comments}
+${data.comments}`;
+      }
+    }
+
+    this.graph.setNode(fen, data);
+  }
+
+  private getPositionAnnotations(fen: string): PositionAnnotations {
+    return this.graph.node(fen) || { comments: "", drawings: [] };
+  }
+
   asSaved(): SavedPositionCollection {
     return json.write(this.graph);
   }
@@ -165,7 +217,20 @@ export class PositionCollection implements PositionCollectionInterface {
         }
 
         _.forEach(variation, move => {
-          fen = this.addMove(fen, move);
+          if (!_.isUndefined(move.move)) {
+            fen = this.addMove(fen, move.move);
+
+            if (!_.isUndefined(move.comments) && !_.isEmpty(move.comments)) {
+              this.setPositionAnnotations(
+                fen,
+                {
+                  comments: move.comments[0].text,
+                  drawings: []
+                },
+                true
+              );
+            }
+          }
         });
       });
     });
@@ -201,7 +266,11 @@ export class PositionCollection implements PositionCollectionInterface {
         const move = this.graph.edge(parent, fen);
 
         const clonedPath = _.clone(path);
-        clonedPath.unshift({ ...move, sourceFen: parent, resultingFen: fen });
+        clonedPath.unshift({
+          ...move,
+          sourceFen: parent,
+          resultingFen: fen
+        });
 
         this.getSourceVariationsRecursive(parent, collector, clonedPath);
       });
