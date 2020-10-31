@@ -108,7 +108,6 @@ export default class EditViewModel extends Vue {
   }
 
   set activePositionDrawings(drawings: DrawShape[]) {
-    console.log(drawings);
     this.setPositionDrawings({
       repertoire: this.activeRepertoire,
       fen: this.activePosition,

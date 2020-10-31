@@ -1,6 +1,6 @@
 import { shallowMount, createLocalVue, Wrapper } from "@vue/test-utils";
 import _ from "lodash";
-import Vuex, { Store } from "vuex";
+import Vuex from "vuex";
 
 import EditViewModel from "@/views/EditViewModel.ts";
 import { Repertoire } from "@/store/repertoire/Repertoire";

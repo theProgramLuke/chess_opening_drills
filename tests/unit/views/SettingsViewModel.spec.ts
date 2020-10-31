@@ -1,4 +1,4 @@
-import { shallowMount, createLocalVue } from "@vue/test-utils";
+import { shallowMount, createLocalVue, Wrapper } from "@vue/test-utils";
 import Vue from "vue";
 import Vuex from "vuex";
 import Vuetify from "vuetify";
@@ -6,67 +6,94 @@ import _ from "lodash";
 
 import SettingsViewModel from "@/views/SettingsViewModel.ts";
 import { EngineMetadata } from "@/store/EngineHelpers";
+import { SetColorPayload } from "@/store/MutationPayloads";
+import { GetMetadataFromEngine } from "@/store/EngineHelpers";
 
 jest.mock("fs");
-
-const state = {
-  darkMode: true,
-  boardTheme: "some board theme",
-  pieceTheme: "some piece theme",
-  engineMetadata: undefined as EngineMetadata | undefined,
-  backupDirectory: undefined as string | undefined,
-  dailyBackupLimit: 0,
-  monthlyBackupLimit: 0,
-  yearlyBackupLimit: 0,
-  enableBackups: false,
-  moveAnimationSpeed: 0
-};
-
-const mutations = {
-  setDarkMode: jest.fn(),
-  setColor: jest.fn(),
-  setBoardTheme: jest.fn(),
-  setPieceTheme: jest.fn(),
-  setEngineMetadata: jest.fn(),
-  setBackupDirectory: jest.fn(),
-  setDailyBackupLimit: jest.fn(),
-  setMonthlyBackupLimit: jest.fn(),
-  setYearlyBackupLimit: jest.fn(),
-  setEnableBackups: jest.fn(),
-  setMoveAnimationSpeed: jest.fn(),
-  clearStorage: jest.fn()
-};
+jest.mock("@/store/EngineHelpers");
 
 Vue.use(Vuetify);
 
-const localVue = createLocalVue();
-localVue.use(Vuex);
-const store = new Vuex.Store({ state, mutations });
-
-beforeEach(() => {
-  _.forEach(mutations, mutation => mutation.mockReset());
-});
-
 describe("SettingsViewModel", () => {
+  let state: {
+    darkMode: boolean;
+    boardTheme: string;
+    pieceTheme: string;
+    engineMetadata?: EngineMetadata;
+    backupDirectory?: string;
+    dailyBackupLimit: number;
+    monthlyBackupLimit: number;
+    yearlyBackupLimit: number;
+    enableBackups: boolean;
+    moveAnimationSpeed: number;
+  };
+
+  const mutations = {
+    setDarkMode: jest.fn(),
+    setColor: jest.fn(),
+    setBoardTheme: jest.fn(),
+    setPieceTheme: jest.fn(),
+    setEngineMetadata: jest.fn(),
+    setBackupDirectory: jest.fn(),
+    setDailyBackupLimit: jest.fn(),
+    setMonthlyBackupLimit: jest.fn(),
+    setYearlyBackupLimit: jest.fn(),
+    setEnableBackups: jest.fn(),
+    setMoveAnimationSpeed: jest.fn(),
+    clearStorage: jest.fn()
+  };
+
+  let component: Wrapper<SettingsViewModel>;
+
+  function mountComponent(): Wrapper<SettingsViewModel> {
+    const localVue = createLocalVue();
+    localVue.use(Vuex);
+
+    const store = new Vuex.Store({ state, mutations });
+
+    return shallowMount(SettingsViewModel, {
+      localVue,
+      store,
+      render: jest.fn()
+    });
+  }
+
+  beforeEach(() => {
+    _.forEach(mutations, mutation => mutation.mockReset());
+
+    state = {
+      darkMode: true,
+      boardTheme: "some board theme",
+      pieceTheme: "some piece theme",
+      engineMetadata: undefined as EngineMetadata | undefined,
+      backupDirectory: undefined as string | undefined,
+      dailyBackupLimit: 0,
+      monthlyBackupLimit: 0,
+      yearlyBackupLimit: 0,
+      enableBackups: false,
+      moveAnimationSpeed: 0
+    };
+
+    component = mountComponent();
+
+    component.vm.$vuetify.theme = {
+      dark: expect.anything(),
+      disable: expect.anything(),
+      default: expect.anything(),
+      options: expect.anything(),
+      themes: expect.anything(),
+      currentTheme: {}
+    };
+  });
+
   describe("selectedDarkMode", () => {
     it.each([true, false])("should get the state darkMode %s", darkMode => {
-      store.state.darkMode = darkMode;
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
+      state.darkMode = darkMode;
 
       expect(component.vm.selectedDarkMode).toBe(darkMode);
     });
 
     it.each([true, false])("should set the state darkMode %s", darkMode => {
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
-
       component.vm.selectedDarkMode = darkMode;
 
       expect(mutations.setDarkMode).toBeCalledWith(state, darkMode);
@@ -75,36 +102,28 @@ describe("SettingsViewModel", () => {
 
   describe("selectedColorValue", () => {
     it("should get the color for the current theme", () => {
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        vuetify: new Vuetify(),
-        render: jest.fn()
-      });
       const color = "primary";
-      const colorValue = "#000000";
+      const expected = "#000000";
       component.vm.selectedColor = color;
-      component.vm.$vuetify.theme.currentTheme[color] = colorValue;
+      component.vm.$vuetify.theme.currentTheme[color] = expected;
 
-      expect(component.vm.selectedColorValue).toBe(colorValue);
+      const actual = component.vm.selectedColorValue;
+
+      expect(actual).toBe(expected);
     });
 
     it("should get the color for the current theme", () => {
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
       const color = "primary";
       const colorValue = "red";
       component.vm.selectedColor = color;
 
       component.vm.selectedColorValue = colorValue;
 
-      expect(mutations.setColor).toBeCalledWith(state, {
+      const expected: SetColorPayload = {
         colorToSet: color,
-        color: colorValue
-      });
+        value: colorValue
+      };
+      expect(mutations.setColor).toBeCalledWith(state, expected);
     });
   });
 
@@ -112,12 +131,7 @@ describe("SettingsViewModel", () => {
     it.each(["brown", "maple"])(
       "should get the state board theme %s",
       boardTheme => {
-        store.state.boardTheme = boardTheme;
-        const component = shallowMount(SettingsViewModel, {
-          localVue,
-          store,
-          render: jest.fn()
-        });
+        state.boardTheme = boardTheme;
 
         expect(component.vm.selectedBoardTheme).toBe(boardTheme);
       }
@@ -126,12 +140,6 @@ describe("SettingsViewModel", () => {
     it.each(["brown", "maple"])(
       "should set the state board theme %s",
       boardTheme => {
-        const component = shallowMount(SettingsViewModel, {
-          localVue,
-          store,
-          render: jest.fn()
-        });
-
         component.vm.selectedBoardTheme = boardTheme;
 
         expect(mutations.setBoardTheme).toBeCalledWith(state, boardTheme);
@@ -143,12 +151,7 @@ describe("SettingsViewModel", () => {
     it.each(["brown", "maple"])(
       "should get the state board theme %s",
       pieceTheme => {
-        store.state.pieceTheme = pieceTheme;
-        const component = shallowMount(SettingsViewModel, {
-          localVue,
-          store,
-          render: jest.fn()
-        });
+        state.pieceTheme = pieceTheme;
 
         expect(component.vm.selectedPieceTheme).toBe(pieceTheme);
       }
@@ -157,12 +160,6 @@ describe("SettingsViewModel", () => {
     it.each(["brown", "maple"])(
       "should set the state board theme %s",
       pieceTheme => {
-        const component = shallowMount(SettingsViewModel, {
-          localVue,
-          store,
-          render: jest.fn()
-        });
-
         component.vm.selectedPieceTheme = pieceTheme;
 
         expect(mutations.setPieceTheme).toBeCalledWith(state, pieceTheme);
@@ -172,118 +169,78 @@ describe("SettingsViewModel", () => {
 
   describe("selectedEngine", () => {
     it("should get undefined if engine metadata is undefined", () => {
-      store.state.engineMetadata = undefined;
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
+      state.engineMetadata = undefined;
 
       expect(component.vm.selectedEngine).toBeUndefined();
     });
 
     it("should get a file with the metadata file path", () => {
       const filePath = "path";
-      store.state.engineMetadata = { name: "", filePath, options: [] };
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
+      state.engineMetadata = { name: "", filePath, options: [] };
+      const component = mountComponent();
 
       expect(component.vm.selectedEngine).toEqual(new File([], filePath));
     });
 
     it("should set undefined if the new engine is undefined", async () => {
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
-
       component.vm.selectedEngine = undefined;
 
       expect(mutations.setEngineMetadata).toBeCalledWith(state, undefined);
     });
 
     it("should set the engine metadata from the file path", async () => {
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
-      const filePath = "path";
-      const metadata = { name: "name", filePath: "filePath", options: [] };
-      component.vm.getMetadataFromEngine = jest.fn(async () => metadata);
+      const expected = new File([], "");
+      // const expected = { name: "name", filePath: "filePath", options: [] };
+      // (GetMetadataFromEngine as jest.Mock).mockReturnValue(expected);
+      component.vm.setSelectedEngineAsync = jest.fn();
 
-      await (component.vm.selectedEngine = new File([], filePath));
+      component.vm.selectedEngine = expected;
 
-      expect(mutations.setEngineMetadata).toBeCalledWith(state, metadata);
+      expect(component.vm.setSelectedEngineAsync).toBeCalledWith(expected);
+    });
+  });
+
+  describe("setSelectedEngineAsync", () => {
+    it("should set the engine metadata from the file path", async () => {
+      const expected = { name: "name", filePath: "filePath", options: [] };
+      (GetMetadataFromEngine as jest.Mock).mockResolvedValue(expected);
+
+      await component.vm.setSelectedEngineAsync(new File([], ""));
+
+      expect(mutations.setEngineMetadata).toBeCalledWith(state, expected);
+      expect(component.vm.selectedEngineMetadata).toBe(expected);
+    });
+
+    it("should set the engine metadata as undefined when the file is undefined", async () => {
+      await component.vm.setSelectedEngineAsync(undefined);
+
+      expect(mutations.setEngineMetadata).toBeCalledWith(state, undefined);
+      expect(component.vm.selectedEngineMetadata).toBe(undefined);
     });
   });
 
   describe("selectedEngineMetadata", () => {
-    it("should get a clone of the engine metadata", () => {
-      store.state.engineMetadata = {
-        name: "",
-        filePath: "path",
-        options: []
-      };
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
+    it("should set the engine metadata to be a clone of the state engine on mount", () => {
+      const expected = { name: "name", filePath: "path", options: [] };
+      state.engineMetadata = expected;
+      const component = mountComponent();
 
-      const actual = component.vm.selectedEngineMetadata;
-
-      expect(actual).toEqual(store.state.engineMetadata);
-      expect(actual).not.toBe(store.state.engineMetadata);
-    });
-  });
-
-  describe("updateEngineMetadata", () => {
-    it("should set the engine metadata", () => {
-      store.state.engineMetadata = {
-        name: "",
-        filePath: "path",
-        options: []
-      };
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
-
-      component.vm.updateEngineMetadata();
-
-      expect(mutations.setEngineMetadata).toBeCalledWith(
-        state,
-        store.state.engineMetadata
-      );
+      expect(component.vm.selectedEngineMetadata).toEqual(expected);
+      expect(component.vm.selectedEngineMetadata).not.toBe(expected);
     });
   });
 
   describe("selectedBackupDirectory", () => {
     it("should get the state backup directory", () => {
       const backupDirectory = "backups";
-      store.state.backupDirectory = backupDirectory;
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
+
+      state.backupDirectory = backupDirectory;
 
       expect(component.vm.selectedBackupDirectory).toBe(backupDirectory);
     });
 
     it("should set the state backup directory", () => {
       const backupDirectory = "backups";
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
 
       component.vm.selectedBackupDirectory = backupDirectory;
 
@@ -297,23 +254,13 @@ describe("SettingsViewModel", () => {
   describe("selectedDailyBackupLimit", () => {
     it("should get the state daily backup limit", () => {
       const limit = 5;
-      store.state.dailyBackupLimit = limit;
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
+      state.dailyBackupLimit = limit;
 
       expect(component.vm.selectedDailyBackupLimit).toBe(limit);
     });
 
     it("should set the state daily backup limit", () => {
       const limit = 5;
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
 
       component.vm.selectedDailyBackupLimit = limit;
 
@@ -324,23 +271,13 @@ describe("SettingsViewModel", () => {
   describe("selectedMonthlyBackupLimit", () => {
     it("should get the state monthly backup limit", () => {
       const limit = 5;
-      store.state.monthlyBackupLimit = limit;
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
+      state.monthlyBackupLimit = limit;
 
       expect(component.vm.selectedMonthlyBackupLimit).toBe(limit);
     });
 
     it("should set the state monthly backup limit", () => {
       const limit = 5;
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
 
       component.vm.selectedMonthlyBackupLimit = limit;
 
@@ -351,23 +288,13 @@ describe("SettingsViewModel", () => {
   describe("selectedYearlyBackupLimit", () => {
     it("should get the state yearly backup limit", () => {
       const limit = 5;
-      store.state.yearlyBackupLimit = limit;
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
+      state.yearlyBackupLimit = limit;
 
       expect(component.vm.selectedYearlyBackupLimit).toBe(limit);
     });
 
     it("should set the state yearly backup limit", () => {
       const limit = 5;
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
 
       component.vm.selectedYearlyBackupLimit = limit;
 
@@ -377,23 +304,12 @@ describe("SettingsViewModel", () => {
 
   describe("selectedEnableBackups", () => {
     it.each([true, false])("should get the state enable backups %s", enable => {
-      store.state.enableBackups = enable;
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
+      state.enableBackups = enable;
 
       expect(component.vm.selectedEnableBackups).toBe(enable);
     });
 
     it.each([true, false])("should set the state enable backups %s", enable => {
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
-
       component.vm.selectedEnableBackups = enable;
 
       expect(mutations.setEnableBackups).toBeCalledWith(state, enable);
@@ -404,24 +320,12 @@ describe("SettingsViewModel", () => {
     it.each([100, 200])(
       "should get the state move animation speed %s",
       speed => {
-        store.state.moveAnimationSpeed = speed;
-        const component = shallowMount(SettingsViewModel, {
-          localVue,
-          store,
-          render: jest.fn()
-        });
-
+        state.moveAnimationSpeed = speed;
         expect(component.vm.selectedMoveAnimationSpeed).toBe(speed);
       }
     );
 
     it.each([100, 200])("should set the state move animation speed", speed => {
-      const component = shallowMount(SettingsViewModel, {
-        localVue,
-        store,
-        render: jest.fn()
-      });
-
       component.vm.selectedMoveAnimationSpeed = speed;
 
       expect(mutations.setMoveAnimationSpeed).toBeCalledWith(state, speed);

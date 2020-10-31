@@ -1,201 +1,223 @@
-import Vue from "vue";
-import { mapState, mapMutations } from "vuex";
+import "reflect-metadata";
+import { Vue, Component, Watch } from "vue-property-decorator";
+import { State, Mutation } from "vuex-class";
 import _ from "lodash";
 
 import chessboard from "@/components/common/chessboard.vue";
 import { BoardThemes, PieceThemes } from "@/views/ChessgroundThemes";
 import { GetMetadataFromEngine, EngineMetadata } from "@/store/EngineHelpers";
+import {
+  SetBackupDirectoryPayload,
+  SetBackupLimitPayload,
+  SetEnableBackupsPayload,
+  SetBoardThemePayload,
+  SetColorPayload,
+  SetDarkModePayload,
+  SetEngineMetadataPayload,
+  SetPieceThemePayload,
+  SetMoveAnimationSpeedPayload,
+  ColorName
+} from "@/store/MutationPayloads";
 
-interface SettingsViewModelData {
-  panels?: number;
-  colorPanels?: number;
-  colorOptions: string[];
-  selectedColor: string;
-  boardThemes: string[];
-  pieceThemes: string[];
-}
+@Component({ components: { chessboard } })
+export default class SettingsViewModel extends Vue {
+  readonly colorOptions: ColorName[] = [
+    "primary",
+    "secondary",
+    "accent",
+    "error",
+    "warning",
+    "info",
+    "success"
+  ];
+  readonly boardThemes = BoardThemes;
+  readonly pieceThemes = PieceThemes;
+  selectedColor: ColorName | "" = "";
+  // hack so that this will be reactive https://github.com/vuejs/vue-class-component/issues/211
+  selectedEngineMetadata?: EngineMetadata = (null as unknown) as EngineMetadata;
 
-export default Vue.extend({
-  data(): SettingsViewModelData {
-    return {
-      panels: undefined,
-      colorPanels: undefined,
-      colorOptions: [
-        "primary",
-        "secondary",
-        "accent",
-        "error",
-        "warning",
-        "info",
-        "success"
-      ],
-      selectedColor: "",
-      boardThemes: BoardThemes,
-      pieceThemes: PieceThemes
-    };
-  },
-
-  components: {
-    chessboard
-  },
-
-  computed: {
-    ...mapState([
-      "darkMode",
-      "boardTheme",
-      "pieceTheme",
-      "engineMetadata",
-      "backupDirectory",
-      "dailyBackupLimit",
-      "monthlyBackupLimit",
-      "yearlyBackupLimit",
-      "enableBackups",
-      "moveAnimationSpeed"
-    ]),
-
-    selectedDarkMode: {
-      get(): boolean {
-        return this.darkMode;
-      },
-      set(darkMode: boolean): void {
-        this.setDarkMode(darkMode);
-      }
-    },
-
-    selectedColorValue: {
-      get(): string {
-        return this.$vuetify.theme.currentTheme[this.selectedColor] as string;
-      },
-      set(color: string): void {
-        this.setColor({
-          colorToSet: this.selectedColor,
-          color: color
-        });
-      }
-    },
-
-    selectedBoardTheme: {
-      get(): string {
-        return this.boardTheme;
-      },
-      set(boardTheme: string): void {
-        this.setBoardTheme(boardTheme);
-      }
-    },
-
-    selectedPieceTheme: {
-      get(): string {
-        return this.pieceTheme;
-      },
-      set(pieceTheme: string): void {
-        this.setPieceTheme(pieceTheme);
-      }
-    },
-
-    selectedEngineMetadata(): EngineMetadata {
-      return _.cloneDeep(this.engineMetadata);
-    },
-
-    selectedEngine: {
-      get(): File | undefined {
-        if (this.selectedEngineMetadata) {
-          return new File([], this.selectedEngineMetadata.filePath);
-        }
-
-        return undefined;
-      },
-      async set(newEngine?: File): Promise<void> {
-        if (newEngine) {
-          await this.getMetadataFromEngine(newEngine.path).then(
-            this.setEngineMetadata
-          );
-        } else {
-          this.setEngineMetadata(undefined);
-        }
-      }
-    },
-
-    selectedBackupDirectory: {
-      get(): string | undefined {
-        return this.backupDirectory;
-      },
-
-      set(backupDirectory: string | undefined): void {
-        this.setBackupDirectory(backupDirectory);
-      }
-    },
-
-    selectedDailyBackupLimit: {
-      get(): number {
-        return this.dailyBackupLimit;
-      },
-
-      set(limit: number): void {
-        this.setDailyBackupLimit(limit);
-      }
-    },
-
-    selectedMonthlyBackupLimit: {
-      get(): number {
-        return this.monthlyBackupLimit;
-      },
-
-      set(limit: number): void {
-        this.setMonthlyBackupLimit(limit);
-      }
-    },
-
-    selectedYearlyBackupLimit: {
-      get(): number {
-        return this.yearlyBackupLimit;
-      },
-
-      set(limit: number): void {
-        this.setYearlyBackupLimit(limit);
-      }
-    },
-
-    selectedEnableBackups: {
-      get(): boolean {
-        return this.enableBackups;
-      },
-
-      set(enable: boolean): void {
-        this.setEnableBackups(enable);
-      }
-    },
-
-    selectedMoveAnimationSpeed: {
-      get(): number {
-        return this.moveAnimationSpeed;
-      },
-
-      set(speed: number): void {
-        this.setMoveAnimationSpeed(speed);
-      }
-    }
-  },
-
-  methods: {
-    ...mapMutations([
-      "setDarkMode",
-      "setColor",
-      "setBoardTheme",
-      "setPieceTheme",
-      "setEngineMetadata",
-      "setBackupDirectory",
-      "setDailyBackupLimit",
-      "setMonthlyBackupLimit",
-      "setYearlyBackupLimit",
-      "setEnableBackups",
-      "setMoveAnimationSpeed",
-      "clearStorage"
-    ]),
-
-    updateEngineMetadata(): void {
-      this.setEngineMetadata(this.selectedEngineMetadata);
-    },
-
-    getMetadataFromEngine: GetMetadataFromEngine
+  mounted(): void {
+    this.selectedEngineMetadata = _.cloneDeep(this.engineMetadata);
   }
-});
+
+  @State
+  private darkMode!: boolean;
+
+  @State
+  private boardTheme!: string;
+
+  @State
+  private pieceTheme!: string;
+
+  @State
+  private engineMetadata?: EngineMetadata;
+
+  @State
+  private backupDirectory?: string;
+
+  @State
+  private dailyBackupLimit!: number;
+
+  @State
+  private monthlyBackupLimit!: number;
+
+  @State
+  private yearlyBackupLimit!: number;
+
+  @State
+  private enableBackups!: boolean;
+
+  @State
+  private moveAnimationSpeed!: number;
+
+  @Mutation
+  setDarkMode!: (payload: SetDarkModePayload) => void;
+
+  @Mutation
+  setColor!: (payload: SetColorPayload) => void;
+
+  @Mutation
+  setBoardTheme!: (payload: SetBoardThemePayload) => void;
+
+  @Mutation
+  setPieceTheme!: (payload: SetPieceThemePayload) => void;
+
+  @Mutation
+  setEngineMetadata!: (payload: SetEngineMetadataPayload) => void;
+
+  @Mutation
+  setBackupDirectory!: (payload: SetBackupDirectoryPayload) => void;
+
+  @Mutation
+  setDailyBackupLimit!: (payload: SetBackupLimitPayload) => void;
+
+  @Mutation
+  setMonthlyBackupLimit!: (payload: SetBackupLimitPayload) => void;
+
+  @Mutation
+  setYearlyBackupLimit!: (payload: SetBackupLimitPayload) => void;
+
+  @Mutation
+  setEnableBackups!: (payload: SetEnableBackupsPayload) => void;
+
+  @Mutation
+  setMoveAnimationSpeed!: (payload: SetMoveAnimationSpeedPayload) => void;
+
+  @Mutation
+  clearStorage!: () => void;
+
+  @Watch("selectedEngineMetadata", { deep: true })
+  setSelectedEngineMetadata(metadata: SetEngineMetadataPayload): void {
+    this.setEngineMetadata(_.cloneDeep(metadata));
+  }
+
+  get selectedDarkMode(): boolean {
+    return this.darkMode;
+  }
+
+  set selectedDarkMode(darkMode: boolean) {
+    this.setDarkMode(darkMode);
+  }
+
+  get selectedColorValue(): string {
+    return this.$vuetify.theme.currentTheme[this.selectedColor] as string;
+  }
+
+  set selectedColorValue(value: string) {
+    if (this.selectedColor !== "")
+      this.setColor({
+        colorToSet: this.selectedColor,
+        value
+      });
+  }
+
+  get selectedBoardTheme() {
+    return this.boardTheme;
+  }
+
+  set selectedBoardTheme(boardTheme: string) {
+    this.setBoardTheme(boardTheme);
+  }
+
+  get selectedPieceTheme(): string {
+    return this.pieceTheme;
+  }
+
+  set selectedPieceTheme(pieceTheme: string) {
+    this.setPieceTheme(pieceTheme);
+  }
+
+  get selectedEngine(): File | undefined {
+    if (this.selectedEngineMetadata) {
+      const engineFile = new File([], this.selectedEngineMetadata.filePath);
+      return engineFile;
+    }
+
+    return undefined;
+  }
+
+  set selectedEngine(newEngine: File | undefined) {
+    this.setSelectedEngineAsync(newEngine);
+  }
+
+  async setSelectedEngineAsync(newEngine: File | undefined) {
+    if (newEngine) {
+      const path = newEngine.path || newEngine.name;
+      await GetMetadataFromEngine(path).then(metadata => {
+        this.setEngineMetadata(metadata);
+        this.selectedEngineMetadata = metadata;
+      });
+    } else {
+      this.setEngineMetadata(undefined);
+      this.selectedEngineMetadata = undefined;
+    }
+  }
+
+  get selectedBackupDirectory(): string | undefined {
+    return this.backupDirectory;
+  }
+
+  set selectedBackupDirectory(backupDirectory: string | undefined) {
+    this.setBackupDirectory(backupDirectory);
+  }
+
+  get selectedDailyBackupLimit(): number {
+    return this.dailyBackupLimit;
+  }
+
+  set selectedDailyBackupLimit(limit: number) {
+    this.setDailyBackupLimit(limit);
+  }
+
+  get selectedMonthlyBackupLimit(): number {
+    return this.monthlyBackupLimit;
+  }
+
+  set selectedMonthlyBackupLimit(limit: number) {
+    this.setMonthlyBackupLimit(limit);
+  }
+
+  get selectedYearlyBackupLimit(): number {
+    return this.yearlyBackupLimit;
+  }
+
+  set selectedYearlyBackupLimit(limit: number) {
+    this.setYearlyBackupLimit(limit);
+  }
+
+  get selectedEnableBackups(): boolean {
+    return this.enableBackups;
+  }
+
+  set selectedEnableBackups(enable: boolean) {
+    this.setEnableBackups(enable);
+  }
+
+  get selectedMoveAnimationSpeed(): number {
+    return this.moveAnimationSpeed;
+  }
+
+  set selectedMoveAnimationSpeed(speed: number) {
+    this.setMoveAnimationSpeed(speed);
+  }
+}

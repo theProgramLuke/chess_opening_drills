@@ -1,7 +1,7 @@
 <template lang="pug">
   v-container
     v-row
-      v-expansion-panels(v-model="panels", hover, popout)
+      v-expansion-panels(hover, popout)
         v-expansion-panel
           v-expansion-panel-header Application Appearance
           v-expansion-panel-content.pa-2
@@ -100,7 +100,6 @@
                         v-card-actions.pa-2
                           v-slider.mt-4(
                             v-if="option.type === 'spin'",
-                            @change="updateEngineMetadata",
                             :label="option.name",
                             :min="option.min",
                             :max="option.max",
@@ -111,19 +110,16 @@
                             template(v-slot:append)
                               v-text-field.my-0.py-0(
                                 v-model="option.value",
-                                @change="updateEngineMetadata",
                                 type="number",
                                 hide-details,
                                 single-line)
                           v-switch(
                             v-if="option.type === 'check'",
-                            @change="updateEngineMetadata",
                             :label="option.name",
                             v-model="option.value"
                             dense)
                           v-select.mt-4(
                             v-if="option.type === 'combo'"
-                            @change="updateEngineMetadata",
                             :label="option.name",
                             :items="option.options",
                             v-model="option.value",
@@ -131,7 +127,6 @@
                             dense)
                           v-text-field.mt-4(
                             v-if="option.type === 'string'"
-                            @change="updateEngineMetadata",
                             :label="option.name",
                             v-model="option.value",
                             hide-details,

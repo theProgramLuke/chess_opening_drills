@@ -97,7 +97,7 @@ describe("mutations", () => {
       const colorToSet = "primary";
       const color = "some theme";
 
-      mutations.setColor(state, { colorToSet, color });
+      mutations.setColor(state, { colorToSet, value: color });
 
       expect(state.primary).toBe(color);
       expect(state.persisted.primary).toBe(color);

@@ -11,7 +11,15 @@ import {
   RemoveRepertoireTagPayload,
   AddMovesFromPgnPayload,
   SetPositionCommentsPayload,
-  SetPositionDrawingsPayload
+  SetPositionDrawingsPayload,
+  SetDarkModePayload,
+  SetPieceThemePayload,
+  SetBoardThemePayload,
+  SetBackupDirectoryPayload,
+  SetBackupLimitPayload,
+  SetMoveAnimationSpeedPayload,
+  SetEngineMetadataPayload,
+  SetEnableBackupsPayload
 } from "@/store/MutationPayloads";
 
 export interface MutationState extends Storage {
@@ -29,24 +37,24 @@ function saveRepertoire(state: MutationState, repertoire: Repertoire) {
 }
 
 export const mutations = {
-  setDarkMode(state: MutationState, darkMode: boolean): void {
+  setDarkMode(state: MutationState, darkMode: SetDarkModePayload): void {
     state.darkMode = darkMode;
     state.persisted.darkMode = darkMode;
   },
 
-  setBoardTheme(state: MutationState, boardTheme: string): void {
+  setBoardTheme(state: MutationState, boardTheme: SetBoardThemePayload): void {
     state.boardTheme = boardTheme;
     state.persisted.boardTheme = boardTheme;
   },
 
-  setPieceTheme(state: MutationState, pieceTheme: string): void {
+  setPieceTheme(state: MutationState, pieceTheme: SetPieceThemePayload): void {
     state.pieceTheme = pieceTheme;
     state.persisted.pieceTheme = pieceTheme;
   },
 
   setColor(state: MutationState, payload: SetColorPayload): void {
-    state[payload.colorToSet] = payload.color;
-    state.persisted[payload.colorToSet] = payload.color;
+    state[payload.colorToSet] = payload.value;
+    state.persisted[payload.colorToSet] = payload.value;
   },
 
   addRepertoireMove(
@@ -125,7 +133,6 @@ export const mutations = {
     state: MutationState,
     payload: SetPositionDrawingsPayload
   ): void {
-    console.log(payload);
     payload.repertoire.positions.setPositionDrawings(
       payload.fen,
       payload.drawings
@@ -136,38 +143,56 @@ export const mutations = {
 
   setEngineMetadata(
     state: MutationState,
-    engineMetadata?: EngineMetadata
+    engineMetadata: SetEngineMetadataPayload
   ): void {
     state.engineMetadata = engineMetadata;
     state.persisted.engineMetadata = engineMetadata;
   },
 
-  setBackupDirectory(state: MutationState, backupDirectory: string): void {
+  setBackupDirectory(
+    state: MutationState,
+    backupDirectory: SetBackupDirectoryPayload
+  ): void {
     state.backupDirectory = backupDirectory;
     state.persisted.backupDirectory = backupDirectory;
   },
 
-  setDailyBackupLimit(state: MutationState, limit: number): void {
+  setDailyBackupLimit(
+    state: MutationState,
+    limit: SetBackupLimitPayload
+  ): void {
     state.dailyBackupLimit = limit;
     state.persisted.dailyBackupLimit = limit;
   },
 
-  setMonthlyBackupLimit(state: MutationState, limit: number): void {
+  setMonthlyBackupLimit(
+    state: MutationState,
+    limit: SetBackupLimitPayload
+  ): void {
     state.monthlyBackupLimit = limit;
     state.persisted.monthlyBackupLimit = limit;
   },
 
-  setYearlyBackupLimit(state: MutationState, limit: number): void {
+  setYearlyBackupLimit(
+    state: MutationState,
+    limit: SetBackupLimitPayload
+  ): void {
     state.yearlyBackupLimit = limit;
     state.persisted.yearlyBackupLimit = limit;
   },
 
-  setEnableBackups(state: MutationState, enable: boolean): void {
+  setEnableBackups(
+    state: MutationState,
+    enable: SetEnableBackupsPayload
+  ): void {
     state.enableBackups = enable;
     state.persisted.enableBackups = enable;
   },
 
-  setMoveAnimationSpeed(state: MutationState, speed: number): void {
+  setMoveAnimationSpeed(
+    state: MutationState,
+    speed: SetMoveAnimationSpeedPayload
+  ): void {
     state.moveAnimationSpeed = speed;
     state.persisted.moveAnimationSpeed = speed;
   },
