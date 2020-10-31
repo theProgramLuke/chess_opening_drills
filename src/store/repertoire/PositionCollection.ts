@@ -45,6 +45,12 @@ export interface PositionCollectionInterface {
   loadPgn: (pgn: string) => void;
   getChildVariations: (fen: string) => Variation[];
   getSourceVariations: (fen: string) => Variation[];
+  setPositionAnnotations: (
+    fen: string,
+    annotations: PositionAnnotations,
+    append: boolean
+  ) => void;
+  getPositionAnnotations: (fen: string) => PositionAnnotations;
 }
 
 export class PositionCollection implements PositionCollectionInterface {

@@ -12,6 +12,7 @@ import { Threats } from "@/components/common/chessboardViewModel";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
 import {
+  PositionAnnotations,
   Variation,
   VariationMove
 } from "@/store/repertoire/PositionCollection";
@@ -75,6 +76,19 @@ export default class EditViewModel extends Vue {
 
     return this.activeRepertoire.positions.movesFromPosition(
       this.activePosition
+    );
+  }
+
+  get activePositionAnnotations(): PositionAnnotations {
+    return this.activeRepertoire.positions.getPositionAnnotations(
+      this.activePosition
+    );
+  }
+
+  set activePositionAnnotations(annotations: PositionAnnotations) {
+    this.activeRepertoire.positions.setPositionAnnotations(
+      this.activePosition,
+      annotations
     );
   }
 

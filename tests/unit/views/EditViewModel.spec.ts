@@ -9,7 +9,8 @@ import { TagTree } from "@/store/repertoire/TagTree";
 import {
   Variation,
   VariationMove,
-  PositionCollection
+  PositionCollection,
+  PositionAnnotations
 } from "@/store/repertoire/PositionCollection";
 import { fenAfterMove } from "@/store/repertoire/chessHelpers";
 import {
@@ -47,15 +48,14 @@ describe("EditViewModel", () => {
     };
     whiteRepertoire = new Repertoire(emptyRepertoire);
     blackRepertoire = new Repertoire(emptyRepertoire);
-
+    whiteRepertoire.tags = new TagTree("", "", []);
+    whiteRepertoire.tags.fen = startPosition;
+    whiteRepertoire.positions = new PositionCollection({});
+    blackRepertoire.positions = new PositionCollection({});
     const state = {
       whiteRepertoire,
       blackRepertoire
     };
-    state.whiteRepertoire.tags = new TagTree("", "", []);
-    state.whiteRepertoire.tags.fen = startPosition;
-    state.whiteRepertoire.positions = new PositionCollection({});
-    state.blackRepertoire.positions = new PositionCollection({});
 
     const store = new Vuex.Store({ state, mutations });
 
@@ -326,6 +326,42 @@ describe("EditViewModel", () => {
       component.vm.onScroll(scrollDown);
 
       expect(component.vm.updateBoard).not.toBeCalled();
+    });
+  });
+
+  describe("activePositionAnnotations", () => {
+    it("should get the position annotations for the active position", () => {
+      const expected: PositionAnnotations = {
+        comments: "comment",
+        drawings: []
+      };
+      (whiteRepertoire.positions
+        .getPositionAnnotations as jest.Mock).mockReturnValue(expected);
+      const fen = "fen";
+      component.vm.activePosition = fen;
+
+      const actual = component.vm.activePositionAnnotations;
+
+      expect(actual).toBe(expected);
+      expect(whiteRepertoire.positions.getPositionAnnotations).toBeCalledWith(
+        fen
+      );
+    });
+
+    it("should set the position annotations for the active position", () => {
+      const expected: PositionAnnotations = {
+        comments: "comment",
+        drawings: []
+      };
+      const fen = "fen";
+      component.vm.activePosition = fen;
+
+      component.vm.activePositionAnnotations = expected;
+
+      expect(whiteRepertoire.positions.setPositionAnnotations).toBeCalledWith(
+        fen,
+        expected
+      );
     });
   });
 });
