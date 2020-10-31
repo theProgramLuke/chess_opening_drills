@@ -13,7 +13,7 @@ export interface MoveData {
   san: string;
 }
 
-export interface PositionData {
+export interface PositionAnnotations {
   comments: string;
   drawings: DrawShape[];
 }
@@ -48,7 +48,7 @@ export interface PositionCollectionInterface {
 }
 
 export class PositionCollection implements PositionCollectionInterface {
-  private graph: Graph<never, PositionData | undefined, MoveData>;
+  private graph: Graph<never, PositionAnnotations | undefined, MoveData>;
   private onAddMove: AddMoveObserver;
   private onDeleteMove: DeleteMoveObserver;
 
@@ -117,11 +117,25 @@ export class PositionCollection implements PositionCollectionInterface {
     return _.tail(alg.preorder(this.graph, [fen]));
   }
 
-  setPositionData(fen: string, data: PositionData): void {
+  setPositionAnnotations(
+    fen: string,
+    data: PositionAnnotations,
+    append = false
+  ): void {
+    if (append) {
+      const existingData = this.getPositionAnnotations(fen);
+      data.drawings = _.concat(existingData.drawings, data.drawings);
+
+      if (!_.isEmpty(existingData.comments)) {
+        data.comments = `${existingData.comments}
+${data.comments}`;
+      }
+    }
+
     this.graph.setNode(fen, data);
   }
 
-  getPositionData(fen: string): PositionData {
+  getPositionAnnotations(fen: string): PositionAnnotations {
     return this.graph.node(fen) || { comments: "", drawings: [] };
   }
 
@@ -179,7 +193,20 @@ export class PositionCollection implements PositionCollectionInterface {
         }
 
         _.forEach(variation, move => {
-          fen = this.addMove(fen, move);
+          if (!_.isUndefined(move.move)) {
+            fen = this.addMove(fen, move.move);
+
+            if (!_.isUndefined(move.comments) && !_.isEmpty(move.comments)) {
+              this.setPositionAnnotations(
+                fen,
+                {
+                  comments: move.comments[0].text,
+                  drawings: []
+                },
+                true
+              );
+            }
+          }
         });
       });
     });

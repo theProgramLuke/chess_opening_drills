@@ -4,7 +4,7 @@ import {
   PositionCollection,
   DeleteMoveObserver,
   Variation,
-  PositionData
+  PositionAnnotations
 } from "@/store/repertoire/PositionCollection";
 
 const startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
@@ -226,28 +226,28 @@ describe("PositionCollection", () => {
     });
   });
 
-  describe("getPositionData", () => {
+  describe("getPositionAnnotations", () => {
     it("should get the data stored for a position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const expected: PositionData = {
+      const expected: PositionAnnotations = {
         comments: "some comments",
         drawings: [{ brush: "a brush", orig: "a1", dest: "a2" }]
       };
 
-      repertoire.setPositionData(startPosition, expected);
-      const actual = repertoire.getPositionData(startPosition);
+      repertoire.setPositionAnnotations(startPosition, expected);
+      const actual = repertoire.getPositionAnnotations(startPosition);
 
       expect(actual).toEqual(expected);
     });
 
     it("should get empty comments and drawings if there is no stored data", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const expected: PositionData = {
+      const expected: PositionAnnotations = {
         comments: "",
         drawings: []
       };
 
-      const actual = repertoire.getPositionData(startPosition);
+      const actual = repertoire.getPositionAnnotations(startPosition);
 
       expect(actual).toEqual(expected);
     });
@@ -572,6 +572,43 @@ describe("PositionCollection", () => {
       const pgn = repertoire.asPgn(startPosition);
 
       expect(pgn).toEqual(expectedPgn);
+    });
+
+    it("should set the position comments from the pgn comments", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+      const comments = "this is a comment";
+      const pgn = `1. e4 {${comments}} *`;
+      const expected = {
+        comments,
+        drawings: []
+      };
+
+      repertoire.loadPgn(pgn);
+      const actual = repertoire.getPositionAnnotations(
+        "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -"
+      );
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should append the pgn comments to existing position comments", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+      const san = "e4";
+      const exisitingComments = "existing comment";
+      const fen = repertoire.addMove(startPosition, san);
+      repertoire.setPositionAnnotations(fen, {
+        comments: exisitingComments,
+        drawings: []
+      });
+      const pgnComments = "comment from pgn";
+      const pgn = `1. ${san} {${pgnComments}} *`;
+      const expected = `${exisitingComments}
+${pgnComments}`;
+
+      repertoire.loadPgn(pgn);
+      const actual = repertoire.getPositionAnnotations(fen).comments;
+
+      expect(actual).toEqual(expected);
     });
   });
 
