@@ -9,13 +9,13 @@ import {
 } from "@/store/repertoire/chessHelpers";
 import { DrawShape } from "chessground/draw";
 
-export interface MoveData {
-  san: string;
-}
-
-export interface PositionAnnotations {
+interface PositionAnnotations {
   comments: string;
   drawings: DrawShape[];
+}
+
+export interface MoveData {
+  san: string;
 }
 
 export interface VariationMove extends MoveData {
@@ -45,12 +45,10 @@ export interface PositionCollectionInterface {
   loadPgn: (pgn: string) => void;
   getChildVariations: (fen: string) => Variation[];
   getSourceVariations: (fen: string) => Variation[];
-  setPositionAnnotations: (
-    fen: string,
-    annotations: PositionAnnotations,
-    append: boolean
-  ) => void;
-  getPositionAnnotations: (fen: string) => PositionAnnotations;
+  setPositionComments: (fen: string, comments: string) => void;
+  getPositionComments: (fen: string) => string;
+  setPositionDrawings: (fen: string, drawings: DrawShape[]) => void;
+  getPositionDrawings: (fen: string) => DrawShape[];
 }
 
 export class PositionCollection implements PositionCollectionInterface {
@@ -123,7 +121,27 @@ export class PositionCollection implements PositionCollectionInterface {
     return _.tail(alg.preorder(this.graph, [fen]));
   }
 
-  setPositionAnnotations(
+  setPositionComments(fen: string, comments: string): void {
+    const annotations = this.getPositionAnnotations(fen);
+    annotations.comments = comments;
+    this.setPositionAnnotations(fen, annotations);
+  }
+
+  getPositionComments(fen: string): string {
+    return this.getPositionAnnotations(fen).comments;
+  }
+
+  setPositionDrawings(fen: string, drawings: DrawShape[]): void {
+    const annotations = this.getPositionAnnotations(fen);
+    annotations.drawings = drawings;
+    this.setPositionAnnotations(fen, annotations);
+  }
+
+  getPositionDrawings(fen: string): DrawShape[] {
+    return this.getPositionAnnotations(fen).drawings;
+  }
+
+  private setPositionAnnotations(
     fen: string,
     data: PositionAnnotations,
     append = false
@@ -141,7 +159,7 @@ ${data.comments}`;
     this.graph.setNode(fen, data);
   }
 
-  getPositionAnnotations(fen: string): PositionAnnotations {
+  private getPositionAnnotations(fen: string): PositionAnnotations {
     return this.graph.node(fen) || { comments: "", drawings: [] };
   }
 

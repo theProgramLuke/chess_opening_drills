@@ -3,9 +3,9 @@ import _ from "lodash";
 import {
   PositionCollection,
   DeleteMoveObserver,
-  Variation,
-  PositionAnnotations
+  Variation
 } from "@/store/repertoire/PositionCollection";
+import { DrawShape } from "chessground/draw";
 
 const startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
@@ -226,28 +226,45 @@ describe("PositionCollection", () => {
     });
   });
 
-  describe("getPositionAnnotations", () => {
-    it("should get the data stored for a position", () => {
+  describe("getPositionComments", () => {
+    it("should get the comments stored for a position", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const expected: PositionAnnotations = {
-        comments: "some comments",
-        drawings: [{ brush: "a brush", orig: "a1", dest: "a2" }]
-      };
+      const expected = "some comments";
 
-      repertoire.setPositionAnnotations(startPosition, expected);
-      const actual = repertoire.getPositionAnnotations(startPosition);
+      repertoire.setPositionComments(startPosition, expected);
+      const actual = repertoire.getPositionComments(startPosition);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should get empty comments if there is no stored data", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+      const expected = "";
+
+      const actual = repertoire.getPositionComments(startPosition);
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("getPositionDrawings", () => {
+    it("should get the drawings stored for a position", () => {
+      const repertoire = new PositionCollection(startingRepertoire);
+      const expected: DrawShape[] = [
+        { brush: "a brush", orig: "a1", dest: "a2" }
+      ];
+
+      repertoire.setPositionDrawings(startPosition, expected);
+      const actual = repertoire.getPositionDrawings(startPosition);
 
       expect(actual).toEqual(expected);
     });
 
     it("should get empty comments and drawings if there is no stored data", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const expected: PositionAnnotations = {
-        comments: "",
-        drawings: []
-      };
+      const expected: DrawShape[] = [];
 
-      const actual = repertoire.getPositionAnnotations(startPosition);
+      const actual = repertoire.getPositionDrawings(startPosition);
 
       expect(actual).toEqual(expected);
     });
@@ -576,15 +593,11 @@ describe("PositionCollection", () => {
 
     it("should set the position comments from the pgn comments", () => {
       const repertoire = new PositionCollection(startingRepertoire);
-      const comments = "this is a comment";
-      const pgn = `1. e4 {${comments}} *`;
-      const expected = {
-        comments,
-        drawings: []
-      };
+      const expected = "this is a comment";
+      const pgn = `1. e4 {${expected}} *`;
 
       repertoire.loadPgn(pgn);
-      const actual = repertoire.getPositionAnnotations(
+      const actual = repertoire.getPositionComments(
         "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq -"
       );
 
@@ -594,19 +607,16 @@ describe("PositionCollection", () => {
     it("should append the pgn comments to existing position comments", () => {
       const repertoire = new PositionCollection(startingRepertoire);
       const san = "e4";
-      const exisitingComments = "existing comment";
+      const existingComments = "existing comment";
       const fen = repertoire.addMove(startPosition, san);
-      repertoire.setPositionAnnotations(fen, {
-        comments: exisitingComments,
-        drawings: []
-      });
+      repertoire.setPositionComments(fen, existingComments);
       const pgnComments = "comment from pgn";
       const pgn = `1. ${san} {${pgnComments}} *`;
-      const expected = `${exisitingComments}
+      const expected = `${existingComments}
 ${pgnComments}`;
 
       repertoire.loadPgn(pgn);
-      const actual = repertoire.getPositionAnnotations(fen).comments;
+      const actual = repertoire.getPositionComments(fen);
 
       expect(actual).toEqual(expected);
     });

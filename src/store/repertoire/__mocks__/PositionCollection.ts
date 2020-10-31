@@ -1,6 +1,7 @@
 import _ from "lodash";
 
 import * as Real from "@/store/repertoire/PositionCollection";
+import { DrawShape } from "chessground/draw";
 
 export class PositionCollection implements Real.PositionCollectionInterface {
   addMove: (fen: string, san: string) => string = jest.fn();
@@ -13,12 +14,10 @@ export class PositionCollection implements Real.PositionCollectionInterface {
   loadPgn: (pgn: string) => void = jest.fn();
   getChildVariations: (fen: string) => Real.VariationMove[][] = jest.fn();
   getSourceVariations: (fen: string) => Real.Variation[] = jest.fn();
-  setPositionAnnotations: (
-    fen: string,
-    annotations: Real.PositionAnnotations,
-    append: boolean
-  ) => void = jest.fn();
-  getPositionAnnotations: (fen: string) => Real.PositionAnnotations = jest.fn();
+  setPositionComments: (fen: string, comments: string) => void = jest.fn();
+  getPositionComments: (fen: string) => string = jest.fn();
+  setPositionDrawings: (fen: string, drawings: DrawShape[]) => void = jest.fn();
+  getPositionDrawings: (fen: string) => DrawShape[] = jest.fn();
 
   addMoveObserver: Real.AddMoveObserver;
   deleteMoveObserver: Real.DeleteMoveObserver;

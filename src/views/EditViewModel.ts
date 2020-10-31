@@ -12,7 +12,6 @@ import { Threats } from "@/components/common/chessboardViewModel";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
 import {
-  PositionAnnotations,
   Variation,
   VariationMove
 } from "@/store/repertoire/PositionCollection";
@@ -23,6 +22,7 @@ import {
   RemoveRepertoireTagPayload
 } from "@/store/MutationPayloads";
 import { fenAfterMove, normalizeFen } from "@/store/repertoire/chessHelpers";
+import { DrawShape } from "chessground/draw";
 
 @Component({
   components: {
@@ -79,16 +79,29 @@ export default class EditViewModel extends Vue {
     );
   }
 
-  get activePositionAnnotations(): PositionAnnotations {
-    return this.activeRepertoire.positions.getPositionAnnotations(
+  get activePositionComments(): string {
+    return this.activeRepertoire.positions.getPositionComments(
       this.activePosition
     );
   }
 
-  set activePositionAnnotations(annotations: PositionAnnotations) {
-    this.activeRepertoire.positions.setPositionAnnotations(
+  set activePositionComments(comments: string) {
+    this.activeRepertoire.positions.setPositionComments(
       this.activePosition,
-      annotations
+      comments
+    );
+  }
+
+  get activePositionDrawings(): DrawShape[] {
+    return this.activeRepertoire.positions.getPositionDrawings(
+      this.activePosition
+    );
+  }
+
+  set activePositionDrawings(drawings: DrawShape[]) {
+    this.activeRepertoire.positions.setPositionDrawings(
+      this.activePosition,
+      drawings
     );
   }
 
