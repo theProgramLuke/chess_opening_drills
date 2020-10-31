@@ -2,19 +2,12 @@
 
 _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/issues)._
 
-- bug, fix delete tag
-
-- persist edit position annotations (arrows etc)
-- comments for new storage
-- append comments on import PGN overlap
-- compress storage
+- warning for multiple move choices from same position on my turn
 - configurable max training attempts
 - scrollable moves list
-- per position training history
+- per position training history report
 - compressed storage? this might be slow
-- Repertoire health
-  - warning for multiple move choices from same position on my turn
-  - blunder detection
+- blunder detection
 - add +- etc annotation to position
 - reset appearance
 - add training stats to training complete!

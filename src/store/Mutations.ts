@@ -125,7 +125,6 @@ export const mutations = {
     state: MutationState,
     payload: SetPositionDrawingsPayload
   ): void {
-    console.log(payload);
     payload.repertoire.positions.setPositionDrawings(
       payload.fen,
       payload.drawings
