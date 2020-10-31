@@ -9,19 +9,17 @@ import {
   AddRepertoireTagPayload,
   RemoveRepertoireMovePayload,
   RemoveRepertoireTagPayload,
-  AddMovesFromPgnPayload
+  AddMovesFromPgnPayload,
+  SetPositionCommentsPayload,
+  SetPositionDrawingsPayload
 } from "@/store/MutationPayloads";
 
 export interface MutationState extends Storage {
   persisted: PersistantStorage;
 }
 
-function setRepertoireForSide(
-  state: MutationState,
-  forSide: Side,
-  repertoire: Repertoire
-) {
-  if (forSide === Side.White) {
+function saveRepertoire(state: MutationState, repertoire: Repertoire) {
+  if (repertoire.sideToTrain === Side.White) {
     state.whiteRepertoire = repertoire;
     state.persisted.whiteRepertoire = repertoire;
   } else {
@@ -57,11 +55,7 @@ export const mutations = {
   ): void {
     payload.repertoire.positions.addMove(payload.fen, payload.san);
 
-    setRepertoireForSide(
-      state,
-      payload.repertoire.sideToTrain,
-      payload.repertoire
-    );
+    saveRepertoire(state, payload.repertoire);
   },
 
   addRepertoireTag(
@@ -70,11 +64,7 @@ export const mutations = {
   ): void {
     payload.parent.addTag(payload.name, payload.fen);
 
-    setRepertoireForSide(
-      state,
-      payload.repertoire.sideToTrain,
-      payload.repertoire
-    );
+    saveRepertoire(state, payload.repertoire);
   },
 
   addTrainingEvent(
@@ -89,11 +79,7 @@ export const mutations = {
       moveTraining.addTrainingEvent(payload.event);
     }
 
-    setRepertoireForSide(
-      state,
-      payload.repertoire.sideToTrain,
-      payload.repertoire
-    );
+    saveRepertoire(state, payload.repertoire);
   },
 
   removeRepertoireTag(
@@ -102,11 +88,7 @@ export const mutations = {
   ): void {
     payload.repertoire.tags.removeTag(payload.id);
 
-    setRepertoireForSide(
-      state,
-      payload.repertoire.sideToTrain,
-      payload.repertoire
-    );
+    saveRepertoire(state, payload.repertoire);
   },
 
   removeRepertoireMove(
@@ -115,11 +97,7 @@ export const mutations = {
   ): void {
     payload.repertoire.positions.deleteMove(payload.fen, payload.san);
 
-    setRepertoireForSide(
-      state,
-      payload.repertoire.sideToTrain,
-      payload.repertoire
-    );
+    saveRepertoire(state, payload.repertoire);
   },
 
   addPositionsFromPgn(
@@ -128,11 +106,31 @@ export const mutations = {
   ): void {
     payload.repertoire.positions.loadPgn(payload.pgn);
 
-    setRepertoireForSide(
-      state,
-      payload.repertoire.sideToTrain,
-      payload.repertoire
+    saveRepertoire(state, payload.repertoire);
+  },
+
+  setPositionComments(
+    state: MutationState,
+    payload: SetPositionCommentsPayload
+  ): void {
+    payload.repertoire.positions.setPositionComments(
+      payload.fen,
+      payload.comments
     );
+
+    saveRepertoire(state, payload.repertoire);
+  },
+
+  setPositionDrawings(
+    state: MutationState,
+    payload: SetPositionDrawingsPayload
+  ): void {
+    payload.repertoire.positions.setPositionDrawings(
+      payload.fen,
+      payload.drawings
+    );
+
+    saveRepertoire(state, payload.repertoire);
   },
 
   setEngineMetadata(

@@ -16,7 +16,9 @@ import {
   RemoveRepertoireMovePayload,
   AddRepertoireTagPayload,
   RemoveRepertoireTagPayload,
-  AddRepertoireMovePayload
+  AddRepertoireMovePayload,
+  SetPositionCommentsPayload,
+  SetPositionDrawingsPayload
 } from "@/store/MutationPayloads";
 import { DrawShape } from "chessground/draw";
 
@@ -30,7 +32,9 @@ describe("EditViewModel", () => {
     addRepertoireMove: jest.fn(),
     removeRepertoireMove: jest.fn(),
     addRepertoireTag: jest.fn(),
-    removeRepertoireTag: jest.fn()
+    removeRepertoireTag: jest.fn(),
+    setPositionComments: jest.fn(),
+    setPositionDrawings: jest.fn()
   };
   let component: Wrapper<EditViewModel>;
   let whiteRepertoire: Repertoire;
@@ -330,7 +334,7 @@ describe("EditViewModel", () => {
   });
 
   describe("activePositionComments", () => {
-    it("should get the posComments annotations for the active position", () => {
+    it("should get the comments for the active position", () => {
       const expected = "comment";
       (whiteRepertoire.positions
         .getPositionComments as jest.Mock).mockReturnValue(expected);
@@ -343,22 +347,27 @@ describe("EditViewModel", () => {
       expect(whiteRepertoire.positions.getPositionComments).toBeCalledWith(fen);
     });
 
-    it("should set the position annotations for the active position", () => {
-      const expected = "comment";
-      const fen = "fen";
+    it("should set the comments for the active position", () => {
+      const comments = "some comment";
+      const fen = "some fen";
+      const expected: SetPositionCommentsPayload = {
+        repertoire: whiteRepertoire,
+        fen,
+        comments
+      };
       component.vm.activePosition = fen;
 
-      component.vm.activePositionComments = expected;
+      component.vm.activePositionComments = comments;
 
-      expect(whiteRepertoire.positions.setPositionComments).toBeCalledWith(
-        fen,
+      expect(mutations.setPositionComments).toBeCalledWith(
+        expect.anything(),
         expected
       );
     });
   });
 
   describe("activePositionDrawings", () => {
-    it("should get the position annotations for the active position", () => {
+    it("should get the drawings for the active position", () => {
       const expected: DrawShape[] = [];
       (whiteRepertoire.positions
         .getPositionDrawings as jest.Mock).mockReturnValue(expected);
@@ -371,15 +380,20 @@ describe("EditViewModel", () => {
       expect(whiteRepertoire.positions.getPositionDrawings).toBeCalledWith(fen);
     });
 
-    it("should set the position annotations for the active position", () => {
-      const expected: DrawShape[] = [];
-      const fen = "fen";
+    it("should set the drawings for the active position", () => {
+      const drawings: DrawShape[] = [];
+      const fen = "some fen";
+      const expected: SetPositionDrawingsPayload = {
+        repertoire: whiteRepertoire,
+        fen,
+        drawings
+      };
       component.vm.activePosition = fen;
 
-      component.vm.activePositionDrawings = expected;
+      component.vm.activePositionDrawings = drawings;
 
-      expect(whiteRepertoire.positions.setPositionDrawings).toBeCalledWith(
-        fen,
+      expect(mutations.setPositionDrawings).toBeCalledWith(
+        expect.anything(),
         expected
       );
     });

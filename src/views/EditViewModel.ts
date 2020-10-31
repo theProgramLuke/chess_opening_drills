@@ -19,7 +19,9 @@ import {
   AddRepertoireMovePayload,
   AddRepertoireTagPayload,
   RemoveRepertoireMovePayload,
-  RemoveRepertoireTagPayload
+  RemoveRepertoireTagPayload,
+  SetPositionCommentsPayload,
+  SetPositionDrawingsPayload
 } from "@/store/MutationPayloads";
 import { fenAfterMove, normalizeFen } from "@/store/repertoire/chessHelpers";
 import { DrawShape } from "chessground/draw";
@@ -57,6 +59,12 @@ export default class EditViewModel extends Vue {
   @Mutation
   removeRepertoireMove!: (payload: RemoveRepertoireMovePayload) => void;
 
+  @Mutation
+  setPositionComments!: (payload: SetPositionCommentsPayload) => void;
+
+  @Mutation
+  setPositionDrawings!: (payload: SetPositionDrawingsPayload) => void;
+
   get activePositionLegalFen(): string {
     return `${this.activePosition} 0 1`;
   }
@@ -86,10 +94,11 @@ export default class EditViewModel extends Vue {
   }
 
   set activePositionComments(comments: string) {
-    this.activeRepertoire.positions.setPositionComments(
-      this.activePosition,
+    this.setPositionComments({
+      repertoire: this.activeRepertoire,
+      fen: this.activePosition,
       comments
-    );
+    });
   }
 
   get activePositionDrawings(): DrawShape[] {
@@ -99,10 +108,11 @@ export default class EditViewModel extends Vue {
   }
 
   set activePositionDrawings(drawings: DrawShape[]) {
-    this.activeRepertoire.positions.setPositionDrawings(
-      this.activePosition,
+    this.setPositionDrawings({
+      repertoire: this.activeRepertoire,
+      fen: this.activePosition,
       drawings
-    );
+    });
   }
 
   onCreateTag(

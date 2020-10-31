@@ -26,7 +26,7 @@
               @onDeleteMove="onDeleteMove")
 
           v-tab-item.pa-2(key=2, value="tab-2")
-            v-textarea(v-model="activePosition.comment", outlined, no-resize)
+            v-textarea(v-model="activePositionComments", outlined, no-resize)
 
           v-tab-item.pa-2(key=3, value="tab-3")
             engine-recommendations(:activePosition="activePosition")
