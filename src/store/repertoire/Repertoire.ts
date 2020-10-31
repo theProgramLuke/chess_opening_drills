@@ -78,7 +78,8 @@ export class Repertoire {
 
   getTrainingVariations(
     tagsToTrain: TagTree[],
-    trainingModes: TrainingMode[]
+    trainingModes: TrainingMode[],
+    entireVariations: boolean
   ): Variation[] {
     const filteredTags: TagTree[] = _.filter(tagsToTrain, tag =>
       this.tags.includesTag(tag.id)
@@ -93,9 +94,13 @@ export class Repertoire {
       trainingModes
     );
 
-    const variations: Variation[] = this.getVariationsToTrainFromMoves(
-      trainingMoves
-    );
+    let variations: Variation[] = [];
+
+    if (entireVariations) {
+      variations = this.getVariationsToTrainFromMoves(trainingMoves);
+    } else {
+      variations = _.map(trainingMoves, move => [move]);
+    }
 
     return filterPrefixLists(variations);
   }
