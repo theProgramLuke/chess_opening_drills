@@ -2,6 +2,7 @@ import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TrainingEvent } from "@/store/repertoire/RepetitionTraining";
 import { TagTree } from "@/store/repertoire/TagTree";
 import { DrawShape } from "chessground/draw";
+import { EngineMetadata } from "./EngineHelpers";
 
 export interface AddTrainingEventPayload {
   repertoire: Repertoire;
@@ -16,16 +17,18 @@ export interface AddRepertoireMovePayload {
   san: string;
 }
 
+export type ColorName =
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "error"
+  | "warning"
+  | "info"
+  | "success";
+
 export interface SetColorPayload {
-  colorToSet:
-    | "primary"
-    | "secondary"
-    | "accent"
-    | "error"
-    | "warning"
-    | "info"
-    | "success";
-  color: string;
+  colorToSet: ColorName;
+  value: string;
 }
 
 export interface AddRepertoireTagPayload {
@@ -62,3 +65,19 @@ export interface SetPositionDrawingsPayload {
   fen: string;
   drawings: DrawShape[];
 }
+
+export type SetDarkModePayload = boolean;
+
+export type SetBoardThemePayload = string;
+
+export type SetPieceThemePayload = string;
+
+export type SetEngineMetadataPayload = EngineMetadata | undefined;
+
+export type SetBackupDirectoryPayload = string | undefined;
+
+export type SetBackupLimitPayload = number;
+
+export type SetEnableBackupsPayload = boolean;
+
+export type SetMoveAnimationSpeedPayload = number;
