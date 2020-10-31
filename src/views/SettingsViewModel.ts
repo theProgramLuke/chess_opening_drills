@@ -149,7 +149,8 @@ export default class SettingsViewModel extends Vue {
 
   get selectedEngine(): File | undefined {
     if (this.selectedEngineMetadata) {
-      return new File([], this.selectedEngineMetadata.filePath);
+      const engineFile = new File([], this.selectedEngineMetadata.filePath);
+      return engineFile;
     }
 
     return undefined;
@@ -161,7 +162,8 @@ export default class SettingsViewModel extends Vue {
 
   async setSelectedEngineAsync(newEngine: File | undefined) {
     if (newEngine) {
-      await GetMetadataFromEngine(newEngine.path).then(metadata => {
+      const path = newEngine.path || newEngine.name;
+      await GetMetadataFromEngine(path).then(metadata => {
         this.setEngineMetadata(metadata);
         this.selectedEngineMetadata = metadata;
       });
