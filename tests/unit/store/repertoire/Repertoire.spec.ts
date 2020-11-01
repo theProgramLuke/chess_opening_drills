@@ -429,4 +429,19 @@ describe("Repertoire", () => {
       });
     });
   });
+
+  describe("newSavedRepertoire", () => {
+    it.each([Side.White, Side.Black])(
+      "should create a saved repertoire with the side %s to train",
+      sideToTrain => {
+        const actual = Repertoire.newSavedRepertoire(
+          "name",
+          "fen",
+          sideToTrain
+        );
+
+        expect(actual.sideToTrain).toEqual(sideToTrain);
+      }
+    );
+  });
 });
