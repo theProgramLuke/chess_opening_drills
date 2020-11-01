@@ -279,7 +279,8 @@ describe("Repertoire", () => {
 
       const actual = repertoire.getTrainingVariations(
         [repertoire.tags],
-        [trainingMode]
+        [trainingMode],
+        true
       );
 
       expect(actual).toEqual(expected);
@@ -292,7 +293,8 @@ describe("Repertoire", () => {
 
       const actual = repertoire.getTrainingVariations(
         [repertoire.tags],
-        [trainingMode]
+        [trainingMode],
+        true
       );
 
       expect(actual).toEqual([]);
@@ -311,7 +313,8 @@ describe("Repertoire", () => {
 
       const actual = repertoire.getTrainingVariations(
         [repertoire.tags],
-        [TrainingMode.Scheduled]
+        [TrainingMode.Scheduled],
+        true
       );
 
       expect(actual).toEqual(expected);
@@ -330,7 +333,8 @@ describe("Repertoire", () => {
 
       const actual = repertoire.getTrainingVariations(
         [repertoire.tags],
-        [TrainingMode.Scheduled]
+        [TrainingMode.Scheduled],
+        true
       );
 
       expect(actual).toEqual(expected);
@@ -343,14 +347,19 @@ describe("Repertoire", () => {
 
       const actual = repertoire.getTrainingVariations(
         [repertoire.tags, repertoire.tags.children[0]],
-        [TrainingMode.Scheduled]
+        [TrainingMode.Scheduled],
+        true
       );
 
       expect(actual).toEqual(expected);
     });
 
     it("should get no variations if no training modes are specified", () => {
-      const actual = repertoire.getTrainingVariations([repertoire.tags], []);
+      const actual = repertoire.getTrainingVariations(
+        [repertoire.tags],
+        [],
+        true
+      );
 
       expect(actual).toEqual([]);
     });
@@ -364,7 +373,8 @@ describe("Repertoire", () => {
 
       const actual = repertoire.getTrainingVariations(
         [repertoire.tags, repertoire.tags.children[1]],
-        [TrainingMode.Scheduled]
+        [TrainingMode.Scheduled],
+        true
       );
 
       expect(actual).toEqual(expected);
@@ -377,10 +387,47 @@ describe("Repertoire", () => {
 
       const actual = repertoire.getTrainingVariations(
         [repertoire.tags],
-        [TrainingMode.Scheduled]
+        [TrainingMode.Scheduled],
+        true
       );
 
       expect(actual).toEqual([]);
+    });
+
+    it("should only get the individual moves to train when entireVariation is false", () => {
+      (training[positions[0][3]][moves[0][3]]
+        .includeForTrainingMode as jest.Mock).mockImplementation(() => true);
+      (training[positions[1][0]][moves[1][0]]
+        .includeForTrainingMode as jest.Mock).mockImplementation(() => true);
+      const expected = [[variations[0][3]], [variations[1][0]]];
+
+      const actual = repertoire.getTrainingVariations(
+        [repertoire.tags, repertoire.tags.children[1]],
+        [TrainingMode.Scheduled],
+        false
+      );
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should pass through the difficulty limit to includeForTrainingMode", () => {
+      const expected = 2;
+
+      repertoire.getTrainingVariations(
+        [repertoire.tags, repertoire.tags.children[1]],
+        [TrainingMode.Difficult],
+        true,
+        2
+      );
+
+      _.forEach(training, trainingForFen => {
+        _.forEach(trainingForFen, trainingForSan => {
+          expect(trainingForSan.includeForTrainingMode).toBeCalledWith(
+            expect.anything(),
+            expected
+          );
+        });
+      });
     });
 
     describe("getTrainingForTags", () => {

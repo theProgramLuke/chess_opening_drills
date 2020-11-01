@@ -136,43 +136,47 @@ describe("TrainingModeSelectorViewModel", () => {
   });
 
   describe("trainingVariations", () => {
-    it("should get the positions to be trained", () => {
-      const component = mountComponent();
-      const whiteVariations: Variation[] = [makeVariation(["e4", "e5"])];
-      const blackVariations: Variation[] = [makeVariation(["e4", "e6"])];
-      const expected: TrainingVariation[] = [
-        {
-          repertoire: component.vm.whiteRepertoire,
-          variation: whiteVariations[0]
-        },
-        {
-          repertoire: component.vm.blackRepertoire,
-          variation: blackVariations[0]
-        }
-      ];
-      const modes = [TrainingMode.Difficult, TrainingMode.Scheduled];
-      const topics = _.times(10, mockTag);
-      component.vm.selectedModes = modes;
-      component.vm.selectedTopics = topics;
-      (component.vm.whiteRepertoire
-        .getTrainingVariations as jest.Mock).mockReturnValue(whiteVariations);
-      (component.vm.blackRepertoire
-        .getTrainingVariations as jest.Mock).mockReturnValue(blackVariations);
+    it.each([true, false])(
+      "should get the positions to be trained (entire variations: %s)",
+      entireVariations => {
+        const component = mountComponent();
+        const whiteVariations: Variation[] = [makeVariation(["e4", "e5"])];
+        const blackVariations: Variation[] = [makeVariation(["e4", "e6"])];
+        const expected: TrainingVariation[] = [
+          {
+            repertoire: component.vm.whiteRepertoire,
+            variation: whiteVariations[0]
+          },
+          {
+            repertoire: component.vm.blackRepertoire,
+            variation: blackVariations[0]
+          }
+        ];
+        const modes = [TrainingMode.Difficult, TrainingMode.Scheduled];
+        const topics = _.times(10, mockTag);
+        const difficultyLimit = 1;
+        component.vm.selectedModes = modes;
+        component.vm.selectedTopics = topics;
+        (component.vm.whiteRepertoire
+          .getTrainingVariations as jest.Mock).mockReturnValue(whiteVariations);
+        (component.vm.blackRepertoire
+          .getTrainingVariations as jest.Mock).mockReturnValue(blackVariations);
+        component.vm.entireVariations = entireVariations;
+        jest
+          .spyOn(component.vm, "coercedDifficultyModeLimit", "get")
+          .mockReturnValue(difficultyLimit);
 
-      const actual = component.vm.trainingVariations;
+        const actual = component.vm.trainingVariations;
 
-      expect(actual).toEqual(expected);
-      expect(component.vm.whiteRepertoire.getTrainingVariations).toBeCalledWith(
-        topics,
-        modes
-        // TODO 1.6
-      );
-      expect(component.vm.whiteRepertoire.getTrainingVariations).toBeCalledWith(
-        topics,
-        modes
-        // TODO 1.6
-      );
-    });
+        expect(actual).toEqual(expected);
+        expect(
+          component.vm.whiteRepertoire.getTrainingVariations
+        ).toBeCalledWith(topics, modes, entireVariations, difficultyLimit);
+        expect(
+          component.vm.whiteRepertoire.getTrainingVariations
+        ).toBeCalledWith(topics, modes, entireVariations, difficultyLimit);
+      }
+    );
 
     it("should be shuffled if shuffled is true", () => {
       const component = mountComponent();

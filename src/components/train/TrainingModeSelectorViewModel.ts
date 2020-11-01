@@ -75,7 +75,9 @@ export default class TrainingModeSelectorViewModel extends Vue {
     _.forEach(repertoires, repertoire => {
       const variations = repertoire.getTrainingVariations(
         this.selectedTopics,
-        this.selectedModes
+        this.selectedModes,
+        this.entireVariations,
+        this.coercedDifficultyModeLimit
       );
 
       _.forEach(variations, variation => {
