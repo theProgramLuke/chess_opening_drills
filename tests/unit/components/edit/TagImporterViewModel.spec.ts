@@ -76,5 +76,61 @@ describe("TagImporterViewModel", () => {
         pgn
       });
     });
+
+    it("should set the error message on an exception", async () => {
+      const component = shallowMount(TagImporterViewModel, {
+        localVue,
+        store,
+        render: jest.fn(),
+        propsData: {
+          tag,
+          repertoire
+        }
+      });
+      component.vm.inputFile = file;
+      const message = "message";
+      (mutations.addPositionsFromPgn as jest.Mock).mockImplementation(() => {
+        throw { message };
+      });
+
+      await component.vm.onImport();
+      const actual = component.vm.inputFileErrors;
+
+      expect(actual).toEqual(["Invalid PGN: message"]);
+    });
+  });
+
+  describe("inputFileRules", () => {
+    it("should be valid for a non empty string", () => {
+      const component = shallowMount(TagImporterViewModel, {
+        localVue,
+        store,
+        render: jest.fn(),
+        propsData: {
+          tag,
+          repertoire
+        }
+      });
+
+      const actual = component.vm.inputFileRules[0]("not empty");
+
+      expect(actual).toBeTruthy();
+    });
+
+    it("should be invalid for an empty string", () => {
+      const component = shallowMount(TagImporterViewModel, {
+        localVue,
+        store,
+        render: jest.fn(),
+        propsData: {
+          tag,
+          repertoire
+        }
+      });
+
+      const actual = component.vm.inputFileRules[0]("");
+
+      expect(actual).toEqual("Must specify a file to import.");
+    });
   });
 });

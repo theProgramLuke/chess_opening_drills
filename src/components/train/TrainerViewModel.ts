@@ -165,25 +165,21 @@ export default class TrainerViewModel extends Vue {
   }
 
   get mistakeArrow(): DrawShape[] {
-    if (_.isUndefined(this.activeVariation)) {
+    if (_.isUndefined(this.activeVariation) || !this.showMistakeArrow) {
       return [];
     }
 
-    if (this.showMistakeArrow) {
-      const board = new Chess(this.activePositionLegalFen);
-      const index =
-        this.boardOrientation === Side.White
-          ? this.plyCount
-          : this.plyCount + 1;
-      const move = board.move(this.activeVariation.variation[index].san);
+    const board = new Chess(this.activePositionLegalFen);
+    const index =
+      this.boardOrientation === Side.White ? this.plyCount : this.plyCount + 1;
+    const move = board.move(this.activeVariation.variation[index].san);
+    const drawings: DrawShape[] = [];
 
-      if (move) {
-        const arrow = { orig: move.from, dest: move.to, brush: "red" };
-        return [arrow];
-      }
+    if (move) {
+      drawings.push({ orig: move.from, dest: move.to, brush: "red" });
     }
 
-    return [];
+    return drawings;
   }
 
   get showMistakeArrow(): boolean {
@@ -233,12 +229,8 @@ export default class TrainerViewModel extends Vue {
   }
 
   private get isTurnOfSideToTrain(): boolean {
-    if (_.isUndefined(this.activeVariation)) {
-      return false;
-    }
-
-    const sideToMove = sideFromFen(this.activePosition);
-    return sideToMove === this.activeVariation.repertoire.sideToTrain;
+    const sideToMove = sideFromFen(this.activePosition!);
+    return sideToMove === this.activeVariation!.repertoire.sideToTrain;
   }
 
   nextTrainingPosition(): void {
