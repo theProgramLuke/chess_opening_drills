@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { Mutation } from "vuex-class";
-import { InputValidationRules } from "vuetify";
+import { InputValidationRule } from "vuetify";
 
 import { TagTree } from "@/store/repertoire/TagTree";
 import { Repertoire } from "@/store/repertoire/Repertoire";
@@ -11,10 +11,8 @@ import { AddMovesFromPgnPayload } from "@/store/MutationPayloads";
 export default class TagImporterViewModel extends Vue {
   showDialog = false;
   inputFile: File = new File([], "");
-  inputFileRules: InputValidationRules = [
-    (value: string) => {
-      return !!value || "Must specify a file to import.";
-    }
+  inputFileRules: InputValidationRule[] = [
+    TagImporterViewModel.fileIsDefinedRule
   ];
   inputFileErrors: string | string[] = [];
   loading = false;
@@ -28,6 +26,10 @@ export default class TagImporterViewModel extends Vue {
 
   @Mutation
   addPositionsFromPgn!: (payload: AddMovesFromPgnPayload) => void;
+
+  private static fileIsDefinedRule(value: string): string | boolean {
+    return !!value || "Must specify a file to import.";
+  }
 
   async onImport() {
     // TODO handle no input file

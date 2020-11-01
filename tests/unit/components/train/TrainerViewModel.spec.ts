@@ -38,6 +38,8 @@ describe("TrainerViewModel", () => {
     training: {},
     sideToTrain: Side.White
   };
+  const loadPosition = jest.fn();
+
   let emptyRepertoire: Repertoire;
   let training: RepetitionTraining;
 
@@ -52,7 +54,8 @@ describe("TrainerViewModel", () => {
       localVue,
       store
     });
-    component.vm.reloadPosition = jest.fn();
+    loadPosition.mockReset();
+    component.vm.$refs["board"] = ({ loadPosition } as unknown) as Vue;
     return component;
   }
 
@@ -99,6 +102,19 @@ describe("TrainerViewModel", () => {
     });
   });
 
+  describe("activeVariationPositions", () => {
+    it("should be the be an empty array if the active variation is undefined", () => {
+      const component = mountComponent();
+      jest
+        .spyOn(component.vm, "activeVariation", "get")
+        .mockReturnValue(undefined);
+
+      const actual = component.vm.activeVariationPositions;
+
+      expect(actual).toEqual([]);
+    });
+  });
+
   describe("previewing", () => {
     it("should be true if previewing is enabled and there are new moves on my turn in the active variation", () => {
       const trainingVariation = makeTrainingVariation(["e4", "e5"]);
@@ -120,6 +136,27 @@ describe("TrainerViewModel", () => {
       const actual = component.vm.previewing;
 
       expect(actual).toBeTruthy();
+    });
+
+    it("should be false if previewing is enabled and there are no stored trained moves in the active variation", () => {
+      const trainingVariation = makeTrainingVariation(["e4", "e5"]);
+      const options = new TrainingOptions(
+        [],
+        [trainingVariation],
+        true,
+        false,
+        0,
+        0
+      );
+      (trainingVariation.repertoire.training
+        .getTrainingForMove as jest.Mock).mockReturnValue(undefined);
+      const component = mountComponent(options);
+      component.vm.variationIndex = 0;
+      component.vm.previewedVariations = [];
+
+      const actual = component.vm.previewing;
+
+      expect(actual).toBeFalsy();
     });
 
     it("should be false if not previewing", () => {
@@ -353,7 +390,7 @@ describe("TrainerViewModel", () => {
   });
 
   describe("mistakeArrow", () => {
-    it("should be an empty list if not showing te mistake arrow", () => {
+    it("should be an empty list if not showing the mistake arrow", () => {
       const component = mountComponent();
       component.vm.attempts = [];
 
@@ -519,6 +556,17 @@ describe("TrainerViewModel", () => {
       component.vm.plyCount = 0;
 
       const actual = component.vm.moveIsCorrect("other fen");
+
+      expect(actual).toBeFalsy();
+    });
+
+    it("should be false if the expected move is undefined", () => {
+      const component = mountComponent();
+      jest
+        .spyOn(component.vm, "activeVariation", "get")
+        .mockReturnValue(undefined);
+
+      const actual = component.vm.moveIsCorrect("fen");
 
       expect(actual).toBeFalsy();
     });
@@ -722,6 +770,16 @@ describe("TrainerViewModel", () => {
       const actual = component.vm.activePositionLegalFen;
 
       expect(actual).toEqual("fen 0 1");
+    });
+  });
+
+  describe("reloadPosition", () => {
+    it("should reload the board position", () => {
+      const component = mountComponent();
+
+      component.vm.reloadPosition();
+
+      expect(loadPosition).toBeCalled();
     });
   });
 });

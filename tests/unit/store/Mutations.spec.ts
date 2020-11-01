@@ -9,9 +9,11 @@ import {
   TrainingEvent
 } from "@/store/repertoire/RepetitionTraining";
 import {
+  SetEngineMetadataPayload,
   SetPositionCommentsPayload,
   SetPositionDrawingsPayload
 } from "@/store/MutationPayloads";
+import { Side } from "@/store/side";
 
 jest.mock("@/store/PersistantStorage");
 jest.mock("@/store/repertoire/Repertoire");
@@ -115,6 +117,25 @@ describe("mutations", () => {
 
       expect(repertoire.positions.addMove).toBeCalledWith(fen, san);
     });
+
+    it.each([Side.White, Side.Black])(
+      "should persist the %s repertoire",
+      sideToTrain => {
+        const repertoire = new Repertoire(emptySavedRepertoire);
+        repertoire.positions = new PositionCollection({});
+        repertoire.sideToTrain = sideToTrain;
+
+        mutations.addRepertoireMove(state, { repertoire, fen: "", san: "" });
+
+        if (sideToTrain === Side.White) {
+          expect(state.whiteRepertoire).toBe(repertoire);
+          expect(state.persisted.whiteRepertoire).toBe(repertoire);
+        } else {
+          expect(state.blackRepertoire).toBe(repertoire);
+          expect(state.persisted.blackRepertoire).toBe(repertoire);
+        }
+      }
+    );
   });
 
   describe("addRepertoireTag", () => {
@@ -128,6 +149,29 @@ describe("mutations", () => {
 
       expect(parent.addTag).toBeCalledWith(name, fen);
     });
+
+    it.each([Side.White, Side.Black])(
+      "should persist the %s repertoire",
+      sideToTrain => {
+        const repertoire = new Repertoire(emptySavedRepertoire);
+        repertoire.sideToTrain = sideToTrain;
+
+        mutations.addRepertoireTag(state, {
+          repertoire,
+          parent: new TagTree("", "", []),
+          fen: "",
+          name: ""
+        });
+
+        if (sideToTrain === Side.White) {
+          expect(state.whiteRepertoire).toBe(repertoire);
+          expect(state.persisted.whiteRepertoire).toBe(repertoire);
+        } else {
+          expect(state.blackRepertoire).toBe(repertoire);
+          expect(state.persisted.blackRepertoire).toBe(repertoire);
+        }
+      }
+    );
   });
 
   describe("addTrainingEvent", () => {
@@ -150,6 +194,33 @@ describe("mutations", () => {
       expect(moveTraining.addTrainingEvent).toBeCalledWith(event);
       expect(repertoire.training.getTrainingForMove).toBeCalledWith(fen, san);
     });
+
+    it.each([Side.White, Side.Black])(
+      "should persist the %s repertoire",
+      sideToTrain => {
+        const repertoire = new Repertoire(emptySavedRepertoire);
+        repertoire.training = new TrainingCollection();
+        repertoire.sideToTrain = sideToTrain;
+
+        mutations.addTrainingEvent(state, {
+          repertoire,
+          fen: "",
+          san: "",
+          event: {
+            attemptedMoves: [],
+            elapsedMilliseconds: 0
+          }
+        });
+
+        if (sideToTrain === Side.White) {
+          expect(state.whiteRepertoire).toBe(repertoire);
+          expect(state.persisted.whiteRepertoire).toBe(repertoire);
+        } else {
+          expect(state.blackRepertoire).toBe(repertoire);
+          expect(state.persisted.blackRepertoire).toBe(repertoire);
+        }
+      }
+    );
   });
 
   describe("removeRepertoireTag", () => {
@@ -162,6 +233,28 @@ describe("mutations", () => {
 
       expect(repertoire.tags.removeTag).toBeCalledWith(id);
     });
+
+    it.each([Side.White, Side.Black])(
+      "should persist the %s repertoire",
+      sideToTrain => {
+        const repertoire = new Repertoire(emptySavedRepertoire);
+        repertoire.tags = new TagTree("", "", []);
+        repertoire.sideToTrain = sideToTrain;
+
+        mutations.removeRepertoireTag(state, {
+          repertoire,
+          id: ""
+        });
+
+        if (sideToTrain === Side.White) {
+          expect(state.whiteRepertoire).toBe(repertoire);
+          expect(state.persisted.whiteRepertoire).toBe(repertoire);
+        } else {
+          expect(state.blackRepertoire).toBe(repertoire);
+          expect(state.persisted.blackRepertoire).toBe(repertoire);
+        }
+      }
+    );
   });
 
   describe("removeRepertoireMove", () => {
@@ -175,6 +268,29 @@ describe("mutations", () => {
 
       expect(repertoire.positions.deleteMove).toBeCalledWith(fen, san);
     });
+
+    it.each([Side.White, Side.Black])(
+      "should persist the %s repertoire",
+      sideToTrain => {
+        const repertoire = new Repertoire(emptySavedRepertoire);
+        repertoire.positions = new PositionCollection({});
+        repertoire.sideToTrain = sideToTrain;
+
+        mutations.removeRepertoireMove(state, {
+          repertoire,
+          fen: "",
+          san: ""
+        });
+
+        if (sideToTrain === Side.White) {
+          expect(state.whiteRepertoire).toBe(repertoire);
+          expect(state.persisted.whiteRepertoire).toBe(repertoire);
+        } else {
+          expect(state.blackRepertoire).toBe(repertoire);
+          expect(state.persisted.blackRepertoire).toBe(repertoire);
+        }
+      }
+    );
   });
 
   describe("addPositionsFromPgn", () => {
@@ -187,6 +303,28 @@ describe("mutations", () => {
 
       expect(repertoire.positions.loadPgn).toBeCalledWith(pgn);
     });
+
+    it.each([Side.White, Side.Black])(
+      "should persist the %s repertoire",
+      sideToTrain => {
+        const repertoire = new Repertoire(emptySavedRepertoire);
+        repertoire.positions = new PositionCollection({});
+        repertoire.sideToTrain = sideToTrain;
+
+        mutations.addPositionsFromPgn(state, {
+          repertoire,
+          pgn: ""
+        });
+
+        if (sideToTrain === Side.White) {
+          expect(state.whiteRepertoire).toBe(repertoire);
+          expect(state.persisted.whiteRepertoire).toBe(repertoire);
+        } else {
+          expect(state.blackRepertoire).toBe(repertoire);
+          expect(state.persisted.blackRepertoire).toBe(repertoire);
+        }
+      }
+    );
   });
 
   describe("setBackupDirectory", () => {
@@ -292,6 +430,21 @@ describe("mutations", () => {
         payload.fen,
         payload.drawings
       );
+    });
+  });
+
+  describe("setEngineMetadata", () => {
+    it("should set the engine metadata", () => {
+      const expected: SetEngineMetadataPayload = {
+        filePath: "",
+        name: "",
+        options: []
+      };
+
+      mutations.setEngineMetadata(state, expected);
+
+      expect(state.engineMetadata).toEqual(expected);
+      expect(state.persisted.engineMetadata).toEqual(expected);
     });
   });
 

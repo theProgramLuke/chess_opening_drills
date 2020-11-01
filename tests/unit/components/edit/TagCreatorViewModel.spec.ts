@@ -163,4 +163,23 @@ describe("TagCreatorViewModel", () => {
       expect(valid).toBeTruthy();
     });
   });
+
+  describe("validate", () => {
+    it("should validate the input form", () => {
+      const component = shallowMount(TagCreatorViewModel, {
+        render: jest.fn(),
+        propsData: {
+          repertoire,
+          parentTag: tag,
+          activePosition: taggedPosition
+        }
+      });
+      const validate = jest.fn();
+      component.vm.$refs["form"] = ({ validate } as unknown) as Vue;
+
+      component.vm.validate();
+
+      expect(validate).toBeCalled();
+    });
+  });
 });

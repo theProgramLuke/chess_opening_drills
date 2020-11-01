@@ -215,6 +215,14 @@ describe("RepetitionTraining", () => {
 
         expect(actual).toBeFalsy();
       });
+
+      it("should be not included if the scheduled timestamp is not defined", () => {
+        const training = new RepetitionTraining();
+
+        const actual = training.includeForTrainingMode(TrainingMode.Scheduled);
+
+        expect(actual).toBeFalsy();
+      });
     });
 
     describe("TrainingMode.Difficult", () => {
