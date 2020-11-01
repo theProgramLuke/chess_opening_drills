@@ -1,4 +1,4 @@
-import { shallowMount, createLocalVue } from "@vue/test-utils";
+import { shallowMount, createLocalVue, Wrapper } from "@vue/test-utils";
 import Vuex from "vuex";
 
 import TagImporterViewModel from "@/components/edit/TagImporterViewModel.ts";
@@ -17,6 +17,7 @@ describe("TagImporterViewModel", () => {
   };
   const store = new Vuex.Store({ mutations });
 
+  let component: Wrapper<TagImporterViewModel>;
   let tag: TagTree;
   let repertoire: Repertoire;
 
@@ -30,18 +31,20 @@ describe("TagImporterViewModel", () => {
     });
 
     mutations.addPositionsFromPgn.mockClear();
+
+    component = shallowMount(TagImporterViewModel, {
+      localVue,
+      store,
+      render: jest.fn(),
+      propsData: {
+        tag,
+        repertoire
+      }
+    });
   });
 
   describe("showDialog", () => {
     it("should start by not showing the dialog", () => {
-      const component = shallowMount(TagImporterViewModel, {
-        render: jest.fn(),
-        propsData: {
-          tag,
-          repertoire
-        }
-      });
-
       expect(component.vm.showDialog).toBeFalsy();
     });
   });
@@ -58,15 +61,6 @@ describe("TagImporterViewModel", () => {
     });
 
     it("should load the pgn", async () => {
-      const component = shallowMount(TagImporterViewModel, {
-        localVue,
-        store,
-        render: jest.fn(),
-        propsData: {
-          tag,
-          repertoire
-        }
-      });
       component.vm.inputFile = file;
 
       await component.vm.onImport();
@@ -78,15 +72,6 @@ describe("TagImporterViewModel", () => {
     });
 
     it("should set the error message on an exception", async () => {
-      const component = shallowMount(TagImporterViewModel, {
-        localVue,
-        store,
-        render: jest.fn(),
-        propsData: {
-          tag,
-          repertoire
-        }
-      });
       component.vm.inputFile = file;
       const message = "message";
       (mutations.addPositionsFromPgn as jest.Mock).mockImplementation(() => {
@@ -102,32 +87,12 @@ describe("TagImporterViewModel", () => {
 
   describe("inputFileRules", () => {
     it("should be valid for a non empty string", () => {
-      const component = shallowMount(TagImporterViewModel, {
-        localVue,
-        store,
-        render: jest.fn(),
-        propsData: {
-          tag,
-          repertoire
-        }
-      });
-
       const actual = component.vm.inputFileRules[0]("not empty");
 
       expect(actual).toBeTruthy();
     });
 
     it("should be invalid for an empty string", () => {
-      const component = shallowMount(TagImporterViewModel, {
-        localVue,
-        store,
-        render: jest.fn(),
-        propsData: {
-          tag,
-          repertoire
-        }
-      });
-
       const actual = component.vm.inputFileRules[0]("");
 
       expect(actual).toEqual("Must specify a file to import.");
