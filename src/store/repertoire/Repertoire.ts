@@ -79,7 +79,8 @@ export class Repertoire {
   getTrainingVariations(
     tagsToTrain: TagTree[],
     trainingModes: TrainingMode[],
-    entireVariations: boolean
+    entireVariations = true,
+    difficultyLimit = 0
   ): Variation[] {
     const filteredTags: TagTree[] = _.filter(tagsToTrain, tag =>
       this.tags.includesTag(tag.id)
@@ -91,7 +92,8 @@ export class Repertoire {
 
     const trainingMoves: VariationMove[] = this.filterMovesToTrain(
       descendantMoves,
-      trainingModes
+      trainingModes,
+      difficultyLimit
     );
 
     let variations: Variation[] = [];
@@ -175,7 +177,8 @@ export class Repertoire {
 
   private filterMovesToTrain(
     moves: VariationMove[],
-    trainingModes: TrainingMode[]
+    trainingModes: TrainingMode[],
+    difficultyLimit = 0
   ): VariationMove[] {
     const filteredMoves: VariationMove[] = [];
 
@@ -187,7 +190,7 @@ export class Repertoire {
 
       if (trainingForMove) {
         const include = _.some(trainingModes, mode =>
-          trainingForMove.includeForTrainingMode(mode)
+          trainingForMove.includeForTrainingMode(mode, difficultyLimit)
         );
 
         if (include) {

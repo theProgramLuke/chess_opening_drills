@@ -410,6 +410,26 @@ describe("Repertoire", () => {
       expect(actual).toEqual(expected);
     });
 
+    it("should pass through the difficulty limit to includeForTrainingMode", () => {
+      const expected = 2;
+
+      repertoire.getTrainingVariations(
+        [repertoire.tags, repertoire.tags.children[1]],
+        [TrainingMode.Difficult],
+        true,
+        2
+      );
+
+      _.forEach(training, trainingForFen => {
+        _.forEach(trainingForFen, trainingForSan => {
+          expect(trainingForSan.includeForTrainingMode).toBeCalledWith(
+            expect.anything(),
+            expected
+          );
+        });
+      });
+    });
+
     describe("getTrainingForTags", () => {
       it("should get an empty array that descend if no tags are specified", () => {
         const actual = repertoire.getTrainingForTags([]);
