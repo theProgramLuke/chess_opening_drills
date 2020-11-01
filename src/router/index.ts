@@ -31,7 +31,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/reports",
-    name: "Reperts",
+    name: "Reports",
 
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Reports.vue")
@@ -42,6 +42,10 @@ const routes: Array<RouteConfig> = [
 
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Settings.vue")
+  },
+  {
+    path: "*",
+    redirect: "/"
   }
 ];
 
