@@ -124,15 +124,13 @@ describe("ScheduleViewModel", () => {
         {
           color: "primary",
           name: "2 moves",
-          end: new Date("1970-01-01T00:00:00.000Z"),
-          start: new Date("1970-01-01T00:00:00.000Z"),
+          start: 86400000,
           timed: false
         },
         {
           color: "primary",
           name: "1 moves",
-          end: new Date("1970-04-26T00:00:00.000Z"),
-          start: new Date("1970-04-26T00:00:00.000Z"),
+          start: 10018800000,
           timed: false
         }
       ]);

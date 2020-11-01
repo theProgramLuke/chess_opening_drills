@@ -1,5 +1,6 @@
 import _ from "lodash";
 import now from "lodash/now";
+import { DateTime } from "luxon";
 
 import {
   SuperMemo2,
@@ -115,12 +116,13 @@ export class RepetitionTraining {
 
   private includeForScheduledMode(): boolean {
     if (this.training.scheduledRepetitionTimestamp) {
-      const today = new Date(now());
-      const scheduled = new Date(this.training.scheduledRepetitionTimestamp);
+      const today = DateTime.fromMillis(now());
+      const scheduled = DateTime.fromMillis(
+        this.training.scheduledRepetitionTimestamp
+      );
 
-      // strip time portion
-      today.setHours(0, 0, 0, 0);
-      scheduled.setHours(0, 0, 0, 0);
+      today.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+      scheduled.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
       return today >= scheduled;
     } else {
