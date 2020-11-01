@@ -154,6 +154,7 @@ describe("TrainingModeSelectorViewModel", () => {
         ];
         const modes = [TrainingMode.Difficult, TrainingMode.Scheduled];
         const topics = _.times(10, mockTag);
+        const difficultyLimit = 1;
         component.vm.selectedModes = modes;
         component.vm.selectedTopics = topics;
         (component.vm.whiteRepertoire
@@ -161,26 +162,19 @@ describe("TrainingModeSelectorViewModel", () => {
         (component.vm.blackRepertoire
           .getTrainingVariations as jest.Mock).mockReturnValue(blackVariations);
         component.vm.entireVariations = entireVariations;
+        jest
+          .spyOn(component.vm, "coercedDifficultyModeLimit", "get")
+          .mockReturnValue(difficultyLimit);
 
         const actual = component.vm.trainingVariations;
 
         expect(actual).toEqual(expected);
         expect(
           component.vm.whiteRepertoire.getTrainingVariations
-        ).toBeCalledWith(
-          topics,
-          modes,
-          entireVariations
-          // TODO 1.6
-        );
+        ).toBeCalledWith(topics, modes, entireVariations, difficultyLimit);
         expect(
           component.vm.whiteRepertoire.getTrainingVariations
-        ).toBeCalledWith(
-          topics,
-          modes,
-          entireVariations
-          // TODO 1.6
-        );
+        ).toBeCalledWith(topics, modes, entireVariations, difficultyLimit);
       }
     );
 
