@@ -123,19 +123,46 @@ describe("ScheduleViewModel", () => {
       expect(actual).toEqual([
         {
           color: "primary",
-          name: "2 positions",
-          end: new Date("1970-01-01"),
-          start: new Date("1970-01-01"),
+          name: "2 moves",
+          end: new Date("1970-01-01T00:00:00.000Z"),
+          start: new Date("1970-01-01T00:00:00.000Z"),
           timed: false
         },
         {
           color: "primary",
-          name: "1 positions",
-          end: new Date("1970-04-26"),
-          start: new Date("1970-04-26"),
+          name: "1 moves",
+          end: new Date("1970-04-26T00:00:00.000Z"),
+          start: new Date("1970-04-26T00:00:00.000Z"),
           timed: false
         }
       ]);
+    });
+
+    it("should not include moves scheduled for beyond the max timestamp", () => {
+      const whiteMoves: TrainingMoveSpecification[] = [
+        { fen: "fen0", san: "san0" }
+      ];
+      const whiteTraining: RepetitionTraining[] = _.times(
+        whiteMoves.length,
+        () => new RepetitionTraining()
+      );
+      jest
+        .spyOn(whiteTraining[0], "scheduledRepetitionTimestamp", "get")
+        .mockReturnValue(99999999999999999999);
+      (whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue(
+        whiteMoves
+      );
+      (blackRepertoire.training.getMoves as jest.Mock).mockReturnValue([]);
+      _.forEach(whiteTraining, training =>
+        (whiteRepertoire.training
+          .getTrainingForMove as jest.Mock).mockReturnValueOnce(training)
+      );
+      (blackRepertoire.training
+        .getTrainingForMove as jest.Mock).mockReturnValue([]);
+
+      const actual = component.vm.events;
+
+      expect(actual).toEqual([]);
     });
   });
 });

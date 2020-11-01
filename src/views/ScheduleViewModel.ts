@@ -3,7 +3,7 @@ import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import _ from "lodash";
 import now from "lodash/now";
-import { DateTime } from "luxon";
+import { DateTime, Duration } from "luxon";
 
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TrainingMoveSpecification } from "@/store/repertoire/TrainingCollection";
@@ -33,17 +33,18 @@ function eventsFromRepertoire(repertoires: Repertoire[]): CalendarEvent[] {
         ) {
           const date = DateTime.fromMillis(
             moveTraining.scheduledRepetitionTimestamp,
-            {
-              zone: "UTC"
-            }
+            { zone: "UTC" }
           );
-          const day = date.toISODate();
-          console.log(day);
 
-          if (days[day]) {
-            days[day]++;
-          } else {
-            days[day] = 1;
+          // Scheduled dates can exceed the max timestamp
+          if (date.isValid) {
+            const day = date.toISODate();
+
+            if (days[day]) {
+              days[day]++;
+            } else {
+              days[day] = 1;
+            }
           }
         }
       }
@@ -53,12 +54,19 @@ function eventsFromRepertoire(repertoires: Repertoire[]): CalendarEvent[] {
   const events: CalendarEvent[] = [];
 
   _.forEach(days, (count, day) => {
-    const scheduledDate = new Date(day);
+    let date = DateTime.fromISO(day);
+
+    // We need to make a JS date, so offset the timezone so
+    // it will still be the correct day.
+    const offset = Duration.fromObject({
+      minutes: date.offset
+    });
+    date = date.plus(offset);
 
     events.push({
-      name: `${count} positions`,
-      start: scheduledDate,
-      end: scheduledDate,
+      name: `${count} moves`,
+      start: date.toJSDate(),
+      end: date.toJSDate(),
       timed: false,
       color: "primary"
     });
