@@ -3,6 +3,7 @@ import { Vue, Component } from "vue-property-decorator";
 import { State } from "vuex-class";
 import _ from "lodash";
 import now from "lodash/now";
+import { DateTime } from "luxon";
 
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TrainingMoveSpecification } from "@/store/repertoire/TrainingCollection";
@@ -30,8 +31,14 @@ function eventsFromRepertoire(repertoires: Repertoire[]): CalendarEvent[] {
           moveTraining &&
           !_.isUndefined(moveTraining.scheduledRepetitionTimestamp)
         ) {
-          const date = new Date(moveTraining.scheduledRepetitionTimestamp);
-          const day = `${date.getUTCFullYear()}-${date.getUTCMonth()}-${date.getUTCDate()}`;
+          const date = DateTime.fromMillis(
+            moveTraining.scheduledRepetitionTimestamp,
+            {
+              zone: "UTC"
+            }
+          );
+          const day = date.toISODate();
+          console.log(day);
 
           if (days[day]) {
             days[day]++;
@@ -46,14 +53,12 @@ function eventsFromRepertoire(repertoires: Repertoire[]): CalendarEvent[] {
   const events: CalendarEvent[] = [];
 
   _.forEach(days, (count, day) => {
-    const daySplits: number[] = _.map(_.split(day, "-"), split =>
-      _.toNumber(split)
-    );
+    const scheduledDate = new Date(day);
 
     events.push({
       name: `${count} positions`,
-      start: new Date(daySplits[0], daySplits[1], daySplits[2]),
-      end: new Date(daySplits[0], daySplits[1], daySplits[2]),
+      start: scheduledDate,
+      end: scheduledDate,
       timed: false,
       color: "primary"
     });

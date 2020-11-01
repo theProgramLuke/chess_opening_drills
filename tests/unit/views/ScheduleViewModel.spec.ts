@@ -124,15 +124,15 @@ describe("ScheduleViewModel", () => {
         {
           color: "primary",
           name: "2 positions",
-          end: new Date("1970-01-01T06:00:00.000Z"),
-          start: new Date("1970-01-01T06:00:00.000Z"),
+          end: new Date("1970-01-01"),
+          start: new Date("1970-01-01"),
           timed: false
         },
         {
           color: "primary",
           name: "1 positions",
-          end: new Date("1970-04-26T06:00:00.000Z"),
-          start: new Date("1970-04-26T06:00:00.000Z"),
+          end: new Date("1970-04-26"),
+          start: new Date("1970-04-26"),
           timed: false
         }
       ]);
