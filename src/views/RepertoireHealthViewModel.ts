@@ -4,6 +4,7 @@ import { State } from "vuex-class";
 
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TrainingMoveSpecification } from "@/store/repertoire/TrainingCollection";
+import chessboard from "@/components/common/chessboard.vue";
 
 interface PositionToReview {
   fen: string;
@@ -11,7 +12,7 @@ interface PositionToReview {
   repertoire: Repertoire;
 }
 
-@Component
+@Component({ components: { chessboard } })
 export default class RepertoireHealthViewModel extends Vue {
   private positionsToSkip: PositionToReview[] = [];
 
@@ -25,7 +26,7 @@ export default class RepertoireHealthViewModel extends Vue {
     const position = this.positionToReview;
 
     if (position) {
-      return position.fen;
+      return `${position.fen} 0 1`;
     } else {
       return undefined;
     }

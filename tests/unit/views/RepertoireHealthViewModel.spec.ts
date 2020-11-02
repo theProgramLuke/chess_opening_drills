@@ -76,7 +76,7 @@ describe("RepertoireHealthViewModel", () => {
         [blackMultipleMoves[0].fen]: [],
         [blackMultipleMoves[2].fen]: [],
       });
-      const expected = whiteMultipleMoves[0].fen;
+      const expected = `${whiteMultipleMoves[0].fen} 0 1`;
 
       const actual = component.vm.activePosition;
 
@@ -96,7 +96,8 @@ describe("RepertoireHealthViewModel", () => {
   });
 
   describe("activePosition", () => {
-    it("should be the first position with multiple moves to train from either repertoires", () => {
+    it(`should be the legal fen of the first position 
+        with multiple moves to train from either repertoires`, () => {
       const whiteMultipleMoves: TrainingMoveSpecification[] = [
         { fen: "fen0", san: "" },
         { fen: "fen0", san: "" },
@@ -117,7 +118,7 @@ describe("RepertoireHealthViewModel", () => {
         [blackMultipleMoves[0].fen]: [],
         [blackMultipleMoves[2].fen]: [],
       });
-      const expected = whiteMultipleMoves[0].fen;
+      const expected = `${whiteMultipleMoves[0].fen} 0 1`;
 
       const actual = component.vm.activePosition;
 
@@ -183,7 +184,7 @@ describe("RepertoireHealthViewModel", () => {
       });
       (blackRepertoire.training
         .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
-      const expectedPosition = whiteMultipleMoves[2].fen;
+      const expectedPosition = `${whiteMultipleMoves[2].fen} 0 1`;
 
       component.vm.skipPosition();
       const actualPosition = component.vm.activePosition;
@@ -208,7 +209,7 @@ describe("RepertoireHealthViewModel", () => {
       });
       (blackRepertoire.training
         .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
-      const expectedPosition = whiteMultipleMoves[4].fen;
+      const expectedPosition = `${whiteMultipleMoves[4].fen} 0 1`;
 
       component.vm.skipPosition();
       component.vm.skipPosition();
