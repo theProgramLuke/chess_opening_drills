@@ -1,13 +1,17 @@
-import _ from "lodash";
-import Vue from "vue";
 import Vuex from "vuex";
 import { Wrapper, shallowMount, createLocalVue } from "@vue/test-utils";
+import _ from "lodash";
 
 import RepertoireHealthViewModel from "@/views/RepertoireHealthViewModel";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
+import {
+  TrainingCollection,
+  TrainingMoveSpecification,
+} from "@/store/repertoire/TrainingCollection";
 
 jest.mock("@/store/repertoire/Repertoire");
+jest.mock("@/store/repertoire/TrainingCollection");
 
 describe("RepertoireHealthViewModel", () => {
   let component: Wrapper<RepertoireHealthViewModel>;
@@ -44,14 +48,173 @@ describe("RepertoireHealthViewModel", () => {
 
     whiteRepertoire = new Repertoire(emptyRepertoire);
     blackRepertoire = new Repertoire(emptyRepertoire);
+    whiteRepertoire.training = new TrainingCollection();
+    blackRepertoire.training = new TrainingCollection();
 
     component = mountComponent();
   });
 
-  describe("positionsWithMultipleMovesToTrain", () => {
-    it(
-      "should be the positions with multiple moves to train from both repertoires",
-      _.noop
-    );
+  describe("activePosition", () => {
+    it("should be the first position with multiple moves to train from either repertoires", () => {
+      const whiteMultipleMoves: TrainingMoveSpecification[] = [
+        { fen: "fen0", san: "" },
+        { fen: "fen0", san: "" },
+        { fen: "fen0", san: "" },
+      ];
+      const blackMultipleMoves: TrainingMoveSpecification[] = [
+        { fen: "fen1", san: "" },
+        { fen: "fen1", san: "" },
+        { fen: "fen2", san: "" },
+        { fen: "fen2", san: "" },
+      ];
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        [whiteMultipleMoves[0].fen]: [],
+      });
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        [blackMultipleMoves[0].fen]: [],
+        [blackMultipleMoves[2].fen]: [],
+      });
+      const expected = whiteMultipleMoves[0].fen;
+
+      const actual = component.vm.activePosition;
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should be undefined if there are no position with multiple moves", () => {
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+
+      const actual = component.vm.activePosition;
+
+      expect(actual).toBeUndefined();
+    });
+  });
+
+  describe("activePosition", () => {
+    it("should be the first position with multiple moves to train from either repertoires", () => {
+      const whiteMultipleMoves: TrainingMoveSpecification[] = [
+        { fen: "fen0", san: "" },
+        { fen: "fen0", san: "" },
+        { fen: "fen0", san: "" },
+      ];
+      const blackMultipleMoves: TrainingMoveSpecification[] = [
+        { fen: "fen1", san: "" },
+        { fen: "fen1", san: "" },
+        { fen: "fen2", san: "" },
+        { fen: "fen2", san: "" },
+      ];
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        [whiteMultipleMoves[0].fen]: [],
+      });
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        [blackMultipleMoves[0].fen]: [],
+        [blackMultipleMoves[2].fen]: [],
+      });
+      const expected = whiteMultipleMoves[0].fen;
+
+      const actual = component.vm.activePosition;
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should be undefined if there are no position with multiple moves", () => {
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+
+      const actual = component.vm.activePosition;
+
+      expect(actual).toBeUndefined();
+    });
+  });
+
+  describe("activePositionMoves", () => {
+    it("should be the first position with multiple moves to train from either repertoires", () => {
+      const whiteMultipleMoves: TrainingMoveSpecification[] = [
+        { fen: "fen0", san: "san0" },
+        { fen: "fen0", san: "san1" },
+        { fen: "fen0", san: "san2" },
+      ];
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        [whiteMultipleMoves[0].fen]: whiteMultipleMoves,
+      });
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      const expected = whiteMultipleMoves;
+
+      const actual = component.vm.activePositionMoves;
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should be empty if there are no position with multiple moves", () => {
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+
+      const actual = component.vm.activePositionMoves;
+
+      expect(actual).toEqual([]);
+    });
+  });
+
+  describe("skipPosition", () => {
+    it("should advance to the next position to review", () => {
+      const whiteMultipleMoves: TrainingMoveSpecification[] = [
+        { fen: "fen0", san: "" },
+        { fen: "fen0", san: "" },
+        { fen: "fen1", san: "" },
+        { fen: "fen1", san: "" },
+      ];
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        [whiteMultipleMoves[0].fen]: [],
+        [whiteMultipleMoves[2].fen]: [],
+      });
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      const expectedPosition = whiteMultipleMoves[2].fen;
+
+      component.vm.skipPosition();
+      const actualPosition = component.vm.activePosition;
+
+      expect(actualPosition).toEqual(expectedPosition);
+    });
+
+    it("should can advance multiple positions", () => {
+      const whiteMultipleMoves: TrainingMoveSpecification[] = [
+        { fen: "fen0", san: "" },
+        { fen: "fen0", san: "" },
+        { fen: "fen1", san: "" },
+        { fen: "fen1", san: "" },
+        { fen: "fen2", san: "" },
+        { fen: "fen2", san: "" },
+      ];
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        [whiteMultipleMoves[0].fen]: [],
+        [whiteMultipleMoves[2].fen]: [],
+        [whiteMultipleMoves[4].fen]: [],
+      });
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      const expectedPosition = whiteMultipleMoves[4].fen;
+
+      component.vm.skipPosition();
+      component.vm.skipPosition();
+      const actualPosition = component.vm.activePosition;
+
+      expect(actualPosition).toEqual(expectedPosition);
+    });
   });
 });

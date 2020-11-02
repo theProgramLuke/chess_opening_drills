@@ -35,7 +35,7 @@ export const baseMenuItems: NavigationMenuItem[] = [
   {
     name: "Repertoire Health",
     route: "/health",
-    icon: "mdi-hospital-building",
+    icon: "mdi-hospital",
   },
   {
     name: "Settings",

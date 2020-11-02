@@ -28,6 +28,12 @@ const routes: Array<RouteConfig> = [
     component: () => import("../views/Reports.vue"),
   },
   {
+    path: "/health",
+    name: "Repertoire Health",
+
+    component: () => import("../views/RepertoireHealth.vue"),
+  },
+  {
     path: "/settings",
     name: "Settings",
 
