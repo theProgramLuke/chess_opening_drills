@@ -1,10 +1,11 @@
 import _ from "lodash";
 import { Vue, Component } from "vue-property-decorator";
-import { State } from "vuex-class";
+import { State, Mutation } from "vuex-class";
 
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TrainingMoveSpecification } from "@/store/repertoire/TrainingCollection";
 import chessboard from "@/components/common/chessboard.vue";
+import { RemoveRepertoireMovePayload } from "@/store/MutationPayloads";
 
 interface PositionToReview {
   fen: string;
@@ -15,12 +16,17 @@ interface PositionToReview {
 @Component({ components: { chessboard } })
 export default class RepertoireHealthViewModel extends Vue {
   private positionsToSkip: PositionToReview[] = [];
+  private showDialog: Record<string, boolean> = {};
+  private loading = false;
 
   @State
   whiteRepertoire!: Repertoire;
 
   @State
   blackRepertoire!: Repertoire;
+
+  @Mutation
+  removeRepertoireMove!: (payload: RemoveRepertoireMovePayload) => void;
 
   get activePosition(): string | undefined {
     const position = this.positionToReview;
@@ -50,15 +56,25 @@ export default class RepertoireHealthViewModel extends Vue {
     }
   }
 
-  // private get activeRepertoire(): Repertoire | undefined {
-  //   const position = this.positionToReview;
+  onDeleteMove(move: TrainingMoveSpecification): void {
+    if (this.activeRepertoire) {
+      this.removeRepertoireMove({
+        repertoire: this.activeRepertoire,
+        fen: move.fen,
+        san: move.san,
+      });
+    }
+  }
 
-  //   if (position) {
-  //     return position.repertoire;
-  //   } else {
-  //     return undefined;
-  //   }
-  // }
+  private get activeRepertoire(): Repertoire | undefined {
+    const position = this.positionToReview;
+
+    if (position) {
+      return position.repertoire;
+    } else {
+      return undefined;
+    }
+  }
 
   private get positionToReview(): PositionToReview | undefined {
     return _.head(

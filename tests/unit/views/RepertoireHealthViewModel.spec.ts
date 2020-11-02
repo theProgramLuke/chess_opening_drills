@@ -9,6 +9,7 @@ import {
   TrainingCollection,
   TrainingMoveSpecification,
 } from "@/store/repertoire/TrainingCollection";
+import { RemoveRepertoireMovePayload } from "@/store/MutationPayloads";
 
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TrainingCollection");
@@ -18,12 +19,16 @@ describe("RepertoireHealthViewModel", () => {
   let whiteRepertoire: Repertoire;
   let blackRepertoire: Repertoire;
 
+  const mutations = {
+    removeRepertoireMove: jest.fn(),
+  };
+
   function mountComponent(): Wrapper<RepertoireHealthViewModel> {
     const localVue = createLocalVue();
     localVue.use(Vuex);
 
     const state = { whiteRepertoire, blackRepertoire };
-    const store = new Vuex.Store({ state });
+    const store = new Vuex.Store({ state, mutations });
 
     return shallowMount(RepertoireHealthViewModel, {
       render: jest.fn(),
@@ -33,6 +38,8 @@ describe("RepertoireHealthViewModel", () => {
   }
 
   beforeEach(() => {
+    _.forEach(mutations, mutation => mutation.mockReset());
+
     const emptyRepertoire = {
       positions: {},
       training: {},
@@ -216,6 +223,33 @@ describe("RepertoireHealthViewModel", () => {
       const actualPosition = component.vm.activePosition;
 
       expect(actualPosition).toEqual(expectedPosition);
+    });
+  });
+
+  describe("onDeleteMove", () => {
+    it("should invoke the remove repertoire move mutation on the repertoire", () => {
+      const whiteMultipleMoves: TrainingMoveSpecification[] = [
+        { fen: "fen0", san: "san0" },
+        { fen: "fen0", san: "san1" },
+      ];
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        [whiteMultipleMoves[0].fen]: [],
+      });
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      const expected: RemoveRepertoireMovePayload = {
+        repertoire: whiteRepertoire,
+        fen: whiteMultipleMoves[0].fen,
+        san: whiteMultipleMoves[0].san,
+      };
+
+      component.vm.onDeleteMove(whiteMultipleMoves[0]);
+
+      expect(mutations.removeRepertoireMove).toBeCalledWith(
+        expect.anything(),
+        expected
+      );
     });
   });
 });
