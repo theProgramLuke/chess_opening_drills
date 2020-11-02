@@ -10,7 +10,7 @@ enum ReportToShow {
   MovesPerTag = "Moves per Tag",
   Difficulty = "Difficulty Distribution",
   Learned = "Learned Moves",
-  Retention = "Training Retention"
+  Retention = "Training Retention",
 }
 
 @Component({
@@ -18,8 +18,8 @@ enum ReportToShow {
     DifficultyReport,
     MovesPerTagReport,
     LearnedReport,
-    RetentionReport
-  }
+    RetentionReport,
+  },
 })
 export default class ReportsViewModel extends Vue {
   selectedReportType: ReportToShow = ReportToShow.MovesPerTag;
@@ -27,6 +27,6 @@ export default class ReportsViewModel extends Vue {
     ReportToShow.MovesPerTag,
     ReportToShow.Learned,
     ReportToShow.Retention,
-    ReportToShow.Difficulty
+    ReportToShow.Difficulty,
   ];
 }

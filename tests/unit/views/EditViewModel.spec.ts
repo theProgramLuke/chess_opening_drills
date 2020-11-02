@@ -9,7 +9,7 @@ import { TagTree } from "@/store/repertoire/TagTree";
 import {
   Variation,
   VariationMove,
-  PositionCollection
+  PositionCollection,
 } from "@/store/repertoire/PositionCollection";
 import { fenAfterMove } from "@/store/repertoire/chessHelpers";
 import {
@@ -18,7 +18,7 @@ import {
   RemoveRepertoireTagPayload,
   AddRepertoireMovePayload,
   SetPositionCommentsPayload,
-  SetPositionDrawingsPayload
+  SetPositionDrawingsPayload,
 } from "@/store/MutationPayloads";
 import { DrawShape } from "chessground/draw";
 
@@ -34,7 +34,7 @@ describe("EditViewModel", () => {
     addRepertoireTag: jest.fn(),
     removeRepertoireTag: jest.fn(),
     setPositionComments: jest.fn(),
-    setPositionDrawings: jest.fn()
+    setPositionDrawings: jest.fn(),
   };
   let component: Wrapper<EditViewModel>;
   let whiteRepertoire: Repertoire;
@@ -48,7 +48,7 @@ describe("EditViewModel", () => {
       positions: {},
       training: {},
       tags: { name: "", id: "", fen: "", children: [], isRootTag: false },
-      sideToTrain: Side.White
+      sideToTrain: Side.White,
     };
     whiteRepertoire = new Repertoire(emptyRepertoire);
     blackRepertoire = new Repertoire(emptyRepertoire);
@@ -58,7 +58,7 @@ describe("EditViewModel", () => {
     blackRepertoire.positions = new PositionCollection({});
     const state = {
       whiteRepertoire,
-      blackRepertoire
+      blackRepertoire,
     };
 
     const store = new Vuex.Store({ state, mutations });
@@ -66,7 +66,7 @@ describe("EditViewModel", () => {
     return shallowMount(EditViewModel, {
       render: jest.fn(),
       localVue,
-      store
+      store,
     });
   }
 
@@ -136,12 +136,12 @@ describe("EditViewModel", () => {
       const move: VariationMove = {
         san: "san",
         sourceFen: "fen0",
-        resultingFen: "fen1"
+        resultingFen: "fen1",
       };
       const expected: RemoveRepertoireMovePayload = {
         repertoire: whiteRepertoire,
         fen: move.sourceFen,
-        san: move.san
+        san: move.san,
       };
 
       component.vm.onDeleteMove(move);
@@ -162,7 +162,7 @@ describe("EditViewModel", () => {
         repertoire: component.vm.whiteRepertoire,
         name,
         parent,
-        fen
+        fen,
       };
 
       component.vm.onCreateTag({ parent, name, fen });
@@ -179,7 +179,7 @@ describe("EditViewModel", () => {
       const id = "id";
       const expected: RemoveRepertoireTagPayload = {
         repertoire: component.vm.whiteRepertoire,
-        id
+        id,
       };
 
       component.vm.onRemoveTag({ id });
@@ -242,7 +242,7 @@ describe("EditViewModel", () => {
       const expected: AddRepertoireMovePayload = {
         repertoire: whiteRepertoire,
         fen: startPosition,
-        san
+        san,
       };
 
       component.vm.onBoardMove({ fen: "new fen", history: ["e4", san] });
@@ -270,8 +270,8 @@ describe("EditViewModel", () => {
         {
           sourceFen: startPosition,
           resultingFen: alreadyExistingFen,
-          san
-        }
+          san,
+        },
       ]);
 
       component.vm.onBoardMove({ fen: startPosition, history: [san] });
@@ -288,7 +288,7 @@ describe("EditViewModel", () => {
       const nextMove: VariationMove = {
         resultingFen: "next fen",
         sourceFen: "",
-        san: ""
+        san: "",
       };
       (whiteRepertoire.positions
         .movesFromPosition as jest.Mock).mockReturnValue([nextMove]);
@@ -312,7 +312,7 @@ describe("EditViewModel", () => {
     it("should go to the previous position on scroll up", () => {
       const parent = "parent";
       (whiteRepertoire.positions.parentPositions as jest.Mock).mockReturnValue([
-        parent
+        parent,
       ]);
       component.vm.updateBoard = jest.fn();
 
@@ -353,7 +353,7 @@ describe("EditViewModel", () => {
       const expected: SetPositionCommentsPayload = {
         repertoire: whiteRepertoire,
         fen,
-        comments
+        comments,
       };
       component.vm.activePosition = fen;
 
@@ -387,7 +387,7 @@ describe("EditViewModel", () => {
       const expected: SetPositionDrawingsPayload = {
         repertoire: whiteRepertoire,
         fen,
-        drawings
+        drawings,
       };
       component.vm.activePosition = fen;
 
@@ -407,7 +407,7 @@ describe("EditViewModel", () => {
       const expected: SetPositionDrawingsPayload = {
         repertoire: whiteRepertoire,
         fen,
-        drawings
+        drawings,
       };
       component.vm.activePosition = fen;
 

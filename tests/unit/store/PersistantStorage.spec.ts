@@ -18,7 +18,7 @@ const emptySavedRepertoire: SavedRepertoire = {
   training: {},
   sideToTrain: 0,
   positions: {},
-  tags: { name: "", fen: "", id: "", children: [], isRootTag: false }
+  tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
 };
 
 describe("PersistantStorage", () => {
@@ -288,7 +288,7 @@ describe("PersistantStorage", () => {
       const metadata: EngineMetadata = {
         filePath: "path",
         name: "name",
-        options: []
+        options: [],
       };
       store.get = jest.fn(() => metadata);
 
@@ -302,7 +302,7 @@ describe("PersistantStorage", () => {
       const metadata: EngineMetadata = {
         filePath: "path",
         name: "name",
-        options: []
+        options: [],
       };
       store.get = jest.fn(() => metadata);
 

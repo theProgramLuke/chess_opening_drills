@@ -16,7 +16,7 @@ import {
   SetEngineMetadataPayload,
   SetPieceThemePayload,
   SetMoveAnimationSpeedPayload,
-  ColorName
+  ColorName,
 } from "@/store/MutationPayloads";
 
 @Component({ components: { chessboard } })
@@ -28,7 +28,7 @@ export default class SettingsViewModel extends Vue {
     "error",
     "warning",
     "info",
-    "success"
+    "success",
   ];
   readonly boardThemes = BoardThemes;
   readonly pieceThemes = PieceThemes;
@@ -127,7 +127,7 @@ export default class SettingsViewModel extends Vue {
     if (this.selectedColor !== "")
       this.setColor({
         colorToSet: this.selectedColor,
-        value
+        value,
       });
   }
 

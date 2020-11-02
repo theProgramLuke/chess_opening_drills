@@ -4,7 +4,7 @@ import { Vue, Component, Prop, Emit, Watch } from "vue-property-decorator";
 
 import {
   Variation,
-  VariationMove
+  VariationMove,
 } from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
@@ -44,7 +44,7 @@ export default class MoveListViewModel extends Vue {
         turns.push({
           turnNumber: index + 1,
           whiteMove: turn[0],
-          blackMove: turn[1]
+          blackMove: turn[1],
         });
       });
 

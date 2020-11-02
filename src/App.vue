@@ -26,7 +26,7 @@ import { mapState } from "vuex";
 
 export default Vue.extend({
   props: {
-    source: String
+    source: String,
   },
 
   data: () => ({
@@ -35,29 +35,29 @@ export default Vue.extend({
       {
         name: "Edit",
         route: "/edit",
-        icon: "mdi-file-tree"
+        icon: "mdi-file-tree",
       },
       {
         name: "Train",
         route: "/train",
-        icon: "mdi-play"
+        icon: "mdi-play",
       },
       {
         name: "Schedule",
         route: "/schedule",
-        icon: "mdi-calendar"
+        icon: "mdi-calendar",
       },
       {
         name: "Reports",
         route: "/reports",
-        icon: "mdi-chart-bar"
+        icon: "mdi-chart-bar",
       },
       {
         name: "Settings",
         route: "/settings",
-        icon: "mdi-wrench"
-      }
-    ]
+        icon: "mdi-wrench",
+      },
+    ],
   }),
 
   computed: mapState([
@@ -68,7 +68,7 @@ export default Vue.extend({
     "error",
     "warning",
     "info",
-    "success"
+    "success",
   ]),
 
   methods: {
@@ -80,7 +80,7 @@ export default Vue.extend({
       this.$vuetify.theme.currentTheme.warning = this.warning;
       this.$vuetify.theme.currentTheme.info = this.info;
       this.$vuetify.theme.currentTheme.success = this.success;
-    }
+    },
   },
 
   created() {
@@ -100,7 +100,7 @@ export default Vue.extend({
         }
       }
     });
-  }
+  },
 });
 </script>
 

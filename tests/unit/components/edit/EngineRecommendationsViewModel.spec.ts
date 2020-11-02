@@ -13,7 +13,7 @@ jest.mock("events");
 jest.mock("@/store/repertoire/chessHelpers");
 
 const state = {
-  engineMetadata: { filePath: "", options: [{ name: "", value: "value" }] }
+  engineMetadata: { filePath: "", options: [{ name: "", value: "value" }] },
 };
 const localVue = createLocalVue();
 localVue.use(Vuex);
@@ -28,12 +28,12 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition
-        }
+          activePosition,
+        },
       });
       const options: EngineOption[] = [
         { name: "name0", value: "value0", type: "string", default: "" },
-        { name: "name1", value: "value1", type: "string", default: "" }
+        { name: "name1", value: "value1", type: "string", default: "" },
       ];
       component.vm.engineMetadata.options = options;
       component.vm.startGettingEngineRecommendations = jest.fn();
@@ -61,8 +61,8 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition
-        }
+          activePosition,
+        },
       });
       const engine = new Engine("");
       const createEngine = jest.fn(() => {
@@ -86,8 +86,8 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition
-        }
+          activePosition,
+        },
       });
       const emitter = new EventEmitter();
       component.vm.engine = new Engine("");
@@ -109,8 +109,8 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition
-        }
+          activePosition,
+        },
       });
       const sorter = jest.fn();
 
@@ -125,15 +125,15 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition
-        }
+          activePosition,
+        },
       });
       const sorter = jest.fn();
       const recommendation = {
         id: 4,
         evaluation: 0,
         depth: 0,
-        variation: []
+        variation: [],
       };
 
       component.vm.receiveRecommendation({}, sorter, () => recommendation);
@@ -143,7 +143,7 @@ describe("EngineRecommendationsViewModel", () => {
         undefined,
         undefined,
         undefined,
-        recommendation
+        recommendation,
       ]);
     });
   });
@@ -155,29 +155,29 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition
-        }
+          activePosition,
+        },
       });
       const recommendations = [
         {
           id: 1,
           evaluation: 0,
           depth: 1,
-          variation: []
+          variation: [],
         },
         undefined,
         {
           id: 3,
           evaluation: 1,
           depth: 2,
-          variation: []
+          variation: [],
         },
         {
           id: 4,
           evaluation: 0,
           depth: 2,
-          variation: []
-        }
+          variation: [],
+        },
       ];
       component.vm.engineRecommendations = recommendations;
 
@@ -186,7 +186,7 @@ describe("EngineRecommendationsViewModel", () => {
       expect(component.vm.sortedEngineRecommendations).toEqual([
         recommendations[2],
         recommendations[3],
-        recommendations[0]
+        recommendations[0],
       ]);
     });
 
@@ -197,29 +197,29 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition
-        }
+          activePosition,
+        },
       });
       const recommendations = [
         {
           id: 1,
           evaluation: 0,
           depth: 1,
-          variation: []
+          variation: [],
         },
         undefined,
         {
           id: 3,
           evaluation: 1,
           depth: 2,
-          variation: []
+          variation: [],
         },
         {
           id: 4,
           evaluation: 0,
           depth: 2,
-          variation: []
-        }
+          variation: [],
+        },
       ];
       component.vm.engineRecommendations = recommendations;
 
@@ -228,7 +228,7 @@ describe("EngineRecommendationsViewModel", () => {
       expect(component.vm.sortedEngineRecommendations).toEqual([
         recommendations[3],
         recommendations[2],
-        recommendations[0]
+        recommendations[0],
       ]);
     });
   });
@@ -240,8 +240,8 @@ describe("EngineRecommendationsViewModel", () => {
         store,
         render: jest.fn(),
         propsData: {
-          activePosition
-        }
+          activePosition,
+        },
       });
       const engine = new Engine("");
       component.vm.engine = engine;

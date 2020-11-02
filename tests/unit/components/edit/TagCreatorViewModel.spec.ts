@@ -22,7 +22,7 @@ describe("TagCreatorViewModel", () => {
       positions: {},
       training: {},
       sideToTrain: 0,
-      tags: new TagTree("", "", [])
+      tags: new TagTree("", "", []),
     });
     repertoire.positions = new PositionCollection({});
   });
@@ -34,8 +34,8 @@ describe("TagCreatorViewModel", () => {
         propsData: {
           repertoire,
           parentTag: tag,
-          activePosition: taggedPosition
-        }
+          activePosition: taggedPosition,
+        },
       });
 
       expect(component.vm.showDialog).toBeFalsy();
@@ -52,8 +52,8 @@ describe("TagCreatorViewModel", () => {
         propsData: {
           repertoire,
           parentTag: tag,
-          activePosition: "not a descendant"
-        }
+          activePosition: "not a descendant",
+        },
       });
 
       expect(component.vm.disabled).toBeTruthy();
@@ -62,15 +62,15 @@ describe("TagCreatorViewModel", () => {
     it("should not be disabled if the active position is a child of the tagged position", () => {
       const childFen = "childFen";
       (repertoire.positions.descendantPositions as jest.Mock).mockReturnValue([
-        childFen
+        childFen,
       ]);
       const component = shallowMount(TagCreatorViewModel, {
         render: jest.fn(),
         propsData: {
           repertoire,
           parentTag: tag,
-          activePosition: childFen
-        }
+          activePosition: childFen,
+        },
       });
 
       expect(component.vm.disabled).toBeFalsy();
@@ -85,8 +85,8 @@ describe("TagCreatorViewModel", () => {
         propsData: {
           repertoire,
           parentTag: tag,
-          activePosition: taggedPosition
-        }
+          activePosition: taggedPosition,
+        },
       });
 
       expect(component.vm.disabled).toBeFalsy();
@@ -100,14 +100,14 @@ describe("TagCreatorViewModel", () => {
         propsData: {
           repertoire,
           parentTag: tag,
-          activePosition: taggedPosition
-        }
+          activePosition: taggedPosition,
+        },
       });
       component.vm.validate = jest.fn(() => true);
       const expected: Partial<AddRepertoireTagPayload> = {
         parent: component.vm.parentTag,
         name: component.vm.name,
-        fen: taggedPosition
+        fen: taggedPosition,
       };
 
       component.vm.onCreate();
@@ -121,8 +121,8 @@ describe("TagCreatorViewModel", () => {
         propsData: {
           repertoire,
           parentTag: tag,
-          activePosition: taggedPosition
-        }
+          activePosition: taggedPosition,
+        },
       });
       component.vm.validate = jest.fn(() => false);
 
@@ -139,8 +139,8 @@ describe("TagCreatorViewModel", () => {
         propsData: {
           repertoire,
           parentTag: tag,
-          activePosition: taggedPosition
-        }
+          activePosition: taggedPosition,
+        },
       });
 
       const valid = component.vm.nameRules[0]("");
@@ -154,8 +154,8 @@ describe("TagCreatorViewModel", () => {
         propsData: {
           repertoire,
           parentTag: tag,
-          activePosition: taggedPosition
-        }
+          activePosition: taggedPosition,
+        },
       });
 
       const valid = component.vm.nameRules[0]("some name");
@@ -171,8 +171,8 @@ describe("TagCreatorViewModel", () => {
         propsData: {
           repertoire,
           parentTag: tag,
-          activePosition: taggedPosition
-        }
+          activePosition: taggedPosition,
+        },
       });
       const validate = jest.fn();
       component.vm.$refs["form"] = ({ validate } as unknown) as Vue;

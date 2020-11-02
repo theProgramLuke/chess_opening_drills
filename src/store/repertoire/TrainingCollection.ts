@@ -2,7 +2,7 @@ import _ from "lodash";
 
 import {
   RepetitionTraining,
-  SavedRepetitionTraining
+  SavedRepetitionTraining,
 } from "@/store/repertoire/RepetitionTraining";
 
 export interface TrainingMoveSpecification {

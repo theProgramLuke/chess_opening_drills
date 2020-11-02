@@ -8,14 +8,14 @@ export const PlotlyDark = {
         error_x: { color: "#f2f5fa" },
         error_y: { color: "#f2f5fa" },
         marker: { line: { color: "rgb(17,17,17)", width: 0.5 } },
-        type: "bar"
-      }
+        type: "bar",
+      },
     ],
     barpolar: [
       {
         marker: { line: { color: "rgb(17,17,17)", width: 0.5 } },
-        type: "barpolar"
-      }
+        type: "barpolar",
+      },
     ],
     carpet: [
       {
@@ -24,20 +24,20 @@ export const PlotlyDark = {
           gridcolor: "#506784",
           linecolor: "#506784",
           minorgridcolor: "#506784",
-          startlinecolor: "#A2B1C6"
+          startlinecolor: "#A2B1C6",
         },
         baxis: {
           endlinecolor: "#A2B1C6",
           gridcolor: "#506784",
           linecolor: "#506784",
           minorgridcolor: "#506784",
-          startlinecolor: "#A2B1C6"
+          startlinecolor: "#A2B1C6",
         },
-        type: "carpet"
-      }
+        type: "carpet",
+      },
     ],
     choropleth: [
-      { colorbar: { outlinewidth: 0, ticks: "" }, type: "choropleth" }
+      { colorbar: { outlinewidth: 0, ticks: "" }, type: "choropleth" },
     ],
     contour: [
       {
@@ -52,13 +52,13 @@ export const PlotlyDark = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "contour"
-      }
+        type: "contour",
+      },
     ],
     contourcarpet: [
-      { colorbar: { outlinewidth: 0, ticks: "" }, type: "contourcarpet" }
+      { colorbar: { outlinewidth: 0, ticks: "" }, type: "contourcarpet" },
     ],
     heatmap: [
       {
@@ -73,10 +73,10 @@ export const PlotlyDark = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "heatmap"
-      }
+        type: "heatmap",
+      },
     ],
     heatmapgl: [
       {
@@ -91,16 +91,16 @@ export const PlotlyDark = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "heatmapgl"
-      }
+        type: "heatmapgl",
+      },
     ],
     histogram: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "histogram"
-      }
+        type: "histogram",
+      },
     ],
     histogram2d: [
       {
@@ -115,10 +115,10 @@ export const PlotlyDark = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "histogram2d"
-      }
+        type: "histogram2d",
+      },
     ],
     histogram2dcontour: [
       {
@@ -133,14 +133,14 @@ export const PlotlyDark = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "histogram2dcontour"
-      }
+        type: "histogram2dcontour",
+      },
     ],
     mesh3d: [{ colorbar: { outlinewidth: 0, ticks: "" }, type: "mesh3d" }],
     parcoords: [
-      { line: { colorbar: { outlinewidth: 0, ticks: "" } }, type: "parcoords" }
+      { line: { colorbar: { outlinewidth: 0, ticks: "" } }, type: "parcoords" },
     ],
     pie: [{ automargin: true, type: "pie" }],
     scatter: [{ marker: { line: { color: "#283442" } }, type: "scatter" }],
@@ -148,45 +148,45 @@ export const PlotlyDark = {
       {
         line: { colorbar: { outlinewidth: 0, ticks: "" } },
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scatter3d"
-      }
+        type: "scatter3d",
+      },
     ],
     scattercarpet: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scattercarpet"
-      }
+        type: "scattercarpet",
+      },
     ],
     scattergeo: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scattergeo"
-      }
+        type: "scattergeo",
+      },
     ],
     scattergl: [{ marker: { line: { color: "#283442" } }, type: "scattergl" }],
     scattermapbox: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scattermapbox"
-      }
+        type: "scattermapbox",
+      },
     ],
     scatterpolar: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scatterpolar"
-      }
+        type: "scatterpolar",
+      },
     ],
     scatterpolargl: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scatterpolargl"
-      }
+        type: "scatterpolargl",
+      },
     ],
     scatterternary: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scatterternary"
-      }
+        type: "scatterternary",
+      },
     ],
     surface: [
       {
@@ -201,21 +201,21 @@ export const PlotlyDark = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "surface"
-      }
+        type: "surface",
+      },
     ],
     table: [
       {
         cells: { fill: { color: "#506784" }, line: { color: "rgb(17,17,17)" } },
         header: {
           fill: { color: "#2a3f5f" },
-          line: { color: "rgb(17,17,17)" }
+          line: { color: "rgb(17,17,17)" },
         },
-        type: "table"
-      }
-    ]
+        type: "table",
+      },
+    ],
   },
   layout: {
     annotationdefaults: { arrowcolor: "#f2f5fa", arrowhead: 0, arrowwidth: 1 },
@@ -232,7 +232,7 @@ export const PlotlyDark = {
         [0.7, "#b8e186"],
         [0.8, "#7fbc41"],
         [0.9, "#4d9221"],
-        [1, "#276419"]
+        [1, "#276419"],
       ],
       sequential: [
         [0.0, "#0d0887"],
@@ -244,7 +244,7 @@ export const PlotlyDark = {
         [0.6666666666666666, "#ed7953"],
         [0.7777777777777778, "#fb9f3a"],
         [0.8888888888888888, "#fdca26"],
-        [1.0, "#f0f921"]
+        [1.0, "#f0f921"],
       ],
       sequentialminus: [
         [0.0, "#0d0887"],
@@ -256,8 +256,8 @@ export const PlotlyDark = {
         [0.6666666666666666, "#ed7953"],
         [0.7777777777777778, "#fb9f3a"],
         [0.8888888888888888, "#fdca26"],
-        [1.0, "#f0f921"]
-      ]
+        [1.0, "#f0f921"],
+      ],
     },
     colorway: [
       "#636efa",
@@ -269,7 +269,7 @@ export const PlotlyDark = {
       "#FF6692",
       "#B6E880",
       "#FF97FF",
-      "#FECB52"
+      "#FECB52",
     ],
     font: { color: "#f2f5fa" },
     geo: {
@@ -278,7 +278,7 @@ export const PlotlyDark = {
       landcolor: "rgb(17,17,17)",
       showlakes: true,
       showland: true,
-      subunitcolor: "#506784"
+      subunitcolor: "#506784",
     },
     hoverlabel: { align: "left" },
     hovermode: "closest",
@@ -288,7 +288,7 @@ export const PlotlyDark = {
     polar: {
       angularaxis: { gridcolor: "#506784", linecolor: "#506784", ticks: "" },
       bgcolor: "rgb(17,17,17)",
-      radialaxis: { gridcolor: "#506784", linecolor: "#506784", ticks: "" }
+      radialaxis: { gridcolor: "#506784", linecolor: "#506784", ticks: "" },
     },
     scene: {
       xaxis: {
@@ -298,7 +298,7 @@ export const PlotlyDark = {
         linecolor: "#506784",
         showbackground: true,
         ticks: "",
-        zerolinecolor: "#C8D4E3"
+        zerolinecolor: "#C8D4E3",
       },
       yaxis: {
         backgroundcolor: "rgb(17,17,17)",
@@ -307,7 +307,7 @@ export const PlotlyDark = {
         linecolor: "#506784",
         showbackground: true,
         ticks: "",
-        zerolinecolor: "#C8D4E3"
+        zerolinecolor: "#C8D4E3",
       },
       zaxis: {
         backgroundcolor: "rgb(17,17,17)",
@@ -316,21 +316,21 @@ export const PlotlyDark = {
         linecolor: "#506784",
         showbackground: true,
         ticks: "",
-        zerolinecolor: "#C8D4E3"
-      }
+        zerolinecolor: "#C8D4E3",
+      },
     },
     shapedefaults: { line: { color: "#f2f5fa" } },
     sliderdefaults: {
       bgcolor: "#C8D4E3",
       bordercolor: "rgb(17,17,17)",
       borderwidth: 1,
-      tickwidth: 0
+      tickwidth: 0,
     },
     ternary: {
       aaxis: { gridcolor: "#506784", linecolor: "#506784", ticks: "" },
       baxis: { gridcolor: "#506784", linecolor: "#506784", ticks: "" },
       bgcolor: "rgb(17,17,17)",
-      caxis: { gridcolor: "#506784", linecolor: "#506784", ticks: "" }
+      caxis: { gridcolor: "#506784", linecolor: "#506784", ticks: "" },
     },
     title: { x: 0.05 },
     updatemenudefaults: { bgcolor: "#506784", borderwidth: 0 },
@@ -341,7 +341,7 @@ export const PlotlyDark = {
       ticks: "",
       title: { standoff: 15 },
       zerolinecolor: "#283442",
-      zerolinewidth: 2
+      zerolinewidth: 2,
     },
     yaxis: {
       automargin: true,
@@ -350,9 +350,9 @@ export const PlotlyDark = {
       ticks: "",
       title: { standoff: 15 },
       zerolinecolor: "#283442",
-      zerolinewidth: 2
-    }
-  }
+      zerolinewidth: 2,
+    },
+  },
 };
 
 export const PlotlyWhite = {
@@ -362,11 +362,11 @@ export const PlotlyWhite = {
         error_x: { color: "#2a3f5f" },
         error_y: { color: "#2a3f5f" },
         marker: { line: { color: "white", width: 0.5 } },
-        type: "bar"
-      }
+        type: "bar",
+      },
     ],
     barpolar: [
-      { marker: { line: { color: "white", width: 0.5 } }, type: "barpolar" }
+      { marker: { line: { color: "white", width: 0.5 } }, type: "barpolar" },
     ],
     carpet: [
       {
@@ -375,20 +375,20 @@ export const PlotlyWhite = {
           gridcolor: "#C8D4E3",
           linecolor: "#C8D4E3",
           minorgridcolor: "#C8D4E3",
-          startlinecolor: "#2a3f5f"
+          startlinecolor: "#2a3f5f",
         },
         baxis: {
           endlinecolor: "#2a3f5f",
           gridcolor: "#C8D4E3",
           linecolor: "#C8D4E3",
           minorgridcolor: "#C8D4E3",
-          startlinecolor: "#2a3f5f"
+          startlinecolor: "#2a3f5f",
         },
-        type: "carpet"
-      }
+        type: "carpet",
+      },
     ],
     choropleth: [
-      { colorbar: { outlinewidth: 0, ticks: "" }, type: "choropleth" }
+      { colorbar: { outlinewidth: 0, ticks: "" }, type: "choropleth" },
     ],
     contour: [
       {
@@ -403,13 +403,13 @@ export const PlotlyWhite = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "contour"
-      }
+        type: "contour",
+      },
     ],
     contourcarpet: [
-      { colorbar: { outlinewidth: 0, ticks: "" }, type: "contourcarpet" }
+      { colorbar: { outlinewidth: 0, ticks: "" }, type: "contourcarpet" },
     ],
     heatmap: [
       {
@@ -424,10 +424,10 @@ export const PlotlyWhite = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "heatmap"
-      }
+        type: "heatmap",
+      },
     ],
     heatmapgl: [
       {
@@ -442,16 +442,16 @@ export const PlotlyWhite = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "heatmapgl"
-      }
+        type: "heatmapgl",
+      },
     ],
     histogram: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "histogram"
-      }
+        type: "histogram",
+      },
     ],
     histogram2d: [
       {
@@ -466,10 +466,10 @@ export const PlotlyWhite = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "histogram2d"
-      }
+        type: "histogram2d",
+      },
     ],
     histogram2dcontour: [
       {
@@ -484,67 +484,67 @@ export const PlotlyWhite = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "histogram2dcontour"
-      }
+        type: "histogram2dcontour",
+      },
     ],
     mesh3d: [{ colorbar: { outlinewidth: 0, ticks: "" }, type: "mesh3d" }],
     parcoords: [
-      { line: { colorbar: { outlinewidth: 0, ticks: "" } }, type: "parcoords" }
+      { line: { colorbar: { outlinewidth: 0, ticks: "" } }, type: "parcoords" },
     ],
     pie: [{ automargin: true, type: "pie" }],
     scatter: [
-      { marker: { colorbar: { outlinewidth: 0, ticks: "" } }, type: "scatter" }
+      { marker: { colorbar: { outlinewidth: 0, ticks: "" } }, type: "scatter" },
     ],
     scatter3d: [
       {
         line: { colorbar: { outlinewidth: 0, ticks: "" } },
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scatter3d"
-      }
+        type: "scatter3d",
+      },
     ],
     scattercarpet: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scattercarpet"
-      }
+        type: "scattercarpet",
+      },
     ],
     scattergeo: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scattergeo"
-      }
+        type: "scattergeo",
+      },
     ],
     scattergl: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scattergl"
-      }
+        type: "scattergl",
+      },
     ],
     scattermapbox: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scattermapbox"
-      }
+        type: "scattermapbox",
+      },
     ],
     scatterpolar: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scatterpolar"
-      }
+        type: "scatterpolar",
+      },
     ],
     scatterpolargl: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scatterpolargl"
-      }
+        type: "scatterpolargl",
+      },
     ],
     scatterternary: [
       {
         marker: { colorbar: { outlinewidth: 0, ticks: "" } },
-        type: "scatterternary"
-      }
+        type: "scatterternary",
+      },
     ],
     surface: [
       {
@@ -559,18 +559,18 @@ export const PlotlyWhite = {
           [0.6666666666666666, "#ed7953"],
           [0.7777777777777778, "#fb9f3a"],
           [0.8888888888888888, "#fdca26"],
-          [1.0, "#f0f921"]
+          [1.0, "#f0f921"],
         ],
-        type: "surface"
-      }
+        type: "surface",
+      },
     ],
     table: [
       {
         cells: { fill: { color: "#EBF0F8" }, line: { color: "white" } },
         header: { fill: { color: "#C8D4E3" }, line: { color: "white" } },
-        type: "table"
-      }
-    ]
+        type: "table",
+      },
+    ],
   },
   layout: {
     annotationdefaults: { arrowcolor: "#2a3f5f", arrowhead: 0, arrowwidth: 1 },
@@ -587,7 +587,7 @@ export const PlotlyWhite = {
         [0.7, "#b8e186"],
         [0.8, "#7fbc41"],
         [0.9, "#4d9221"],
-        [1, "#276419"]
+        [1, "#276419"],
       ],
       sequential: [
         [0.0, "#0d0887"],
@@ -599,7 +599,7 @@ export const PlotlyWhite = {
         [0.6666666666666666, "#ed7953"],
         [0.7777777777777778, "#fb9f3a"],
         [0.8888888888888888, "#fdca26"],
-        [1.0, "#f0f921"]
+        [1.0, "#f0f921"],
       ],
       sequentialminus: [
         [0.0, "#0d0887"],
@@ -611,8 +611,8 @@ export const PlotlyWhite = {
         [0.6666666666666666, "#ed7953"],
         [0.7777777777777778, "#fb9f3a"],
         [0.8888888888888888, "#fdca26"],
-        [1.0, "#f0f921"]
-      ]
+        [1.0, "#f0f921"],
+      ],
     },
     colorway: [
       "#636efa",
@@ -624,7 +624,7 @@ export const PlotlyWhite = {
       "#FF6692",
       "#B6E880",
       "#FF97FF",
-      "#FECB52"
+      "#FECB52",
     ],
     font: { color: "#2a3f5f" },
     geo: {
@@ -633,7 +633,7 @@ export const PlotlyWhite = {
       landcolor: "white",
       showlakes: true,
       showland: true,
-      subunitcolor: "#C8D4E3"
+      subunitcolor: "#C8D4E3",
     },
     hoverlabel: { align: "left" },
     hovermode: "closest",
@@ -643,7 +643,7 @@ export const PlotlyWhite = {
     polar: {
       angularaxis: { gridcolor: "#EBF0F8", linecolor: "#EBF0F8", ticks: "" },
       bgcolor: "white",
-      radialaxis: { gridcolor: "#EBF0F8", linecolor: "#EBF0F8", ticks: "" }
+      radialaxis: { gridcolor: "#EBF0F8", linecolor: "#EBF0F8", ticks: "" },
     },
     scene: {
       xaxis: {
@@ -653,7 +653,7 @@ export const PlotlyWhite = {
         linecolor: "#EBF0F8",
         showbackground: true,
         ticks: "",
-        zerolinecolor: "#EBF0F8"
+        zerolinecolor: "#EBF0F8",
       },
       yaxis: {
         backgroundcolor: "white",
@@ -662,7 +662,7 @@ export const PlotlyWhite = {
         linecolor: "#EBF0F8",
         showbackground: true,
         ticks: "",
-        zerolinecolor: "#EBF0F8"
+        zerolinecolor: "#EBF0F8",
       },
       zaxis: {
         backgroundcolor: "white",
@@ -671,15 +671,15 @@ export const PlotlyWhite = {
         linecolor: "#EBF0F8",
         showbackground: true,
         ticks: "",
-        zerolinecolor: "#EBF0F8"
-      }
+        zerolinecolor: "#EBF0F8",
+      },
     },
     shapedefaults: { line: { color: "#2a3f5f" } },
     ternary: {
       aaxis: { gridcolor: "#DFE8F3", linecolor: "#A2B1C6", ticks: "" },
       baxis: { gridcolor: "#DFE8F3", linecolor: "#A2B1C6", ticks: "" },
       bgcolor: "white",
-      caxis: { gridcolor: "#DFE8F3", linecolor: "#A2B1C6", ticks: "" }
+      caxis: { gridcolor: "#DFE8F3", linecolor: "#A2B1C6", ticks: "" },
     },
     title: { x: 0.05 },
     xaxis: {
@@ -689,7 +689,7 @@ export const PlotlyWhite = {
       ticks: "",
       title: { standoff: 15 },
       zerolinecolor: "#EBF0F8",
-      zerolinewidth: 2
+      zerolinewidth: 2,
     },
     yaxis: {
       automargin: true,
@@ -698,7 +698,7 @@ export const PlotlyWhite = {
       ticks: "",
       title: { standoff: 15 },
       zerolinecolor: "#EBF0F8",
-      zerolinewidth: 2
-    }
-  }
+      zerolinewidth: 2,
+    },
+  },
 };

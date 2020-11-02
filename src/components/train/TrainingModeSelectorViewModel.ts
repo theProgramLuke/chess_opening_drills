@@ -8,7 +8,7 @@ import { TagTree } from "@/store/repertoire/TagTree";
 import { TrainingMode } from "@/store/trainingMode";
 import {
   TrainingOptions,
-  TrainingVariation
+  TrainingVariation,
 } from "@/components/train/TrainingOptions";
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
 
@@ -25,7 +25,7 @@ export default class TrainingModeSelectorViewModel extends Vue {
     TrainingMode.Scheduled,
     TrainingMode.New,
     TrainingMode.Cram,
-    TrainingMode.Difficult
+    TrainingMode.Difficult,
   ];
   selectedModes: TrainingMode[] = [TrainingMode.Scheduled];
   previewNewVariations = true;
@@ -67,7 +67,7 @@ export default class TrainingModeSelectorViewModel extends Vue {
   get trainingVariations(): TrainingVariation[] {
     const repertoires: Repertoire[] = [
       this.whiteRepertoire,
-      this.blackRepertoire
+      this.blackRepertoire,
     ];
 
     const trainingVariations: TrainingVariation[] = [];
@@ -83,7 +83,7 @@ export default class TrainingModeSelectorViewModel extends Vue {
       _.forEach(variations, variation => {
         trainingVariations.push({
           repertoire,
-          variation
+          variation,
         });
       });
     });

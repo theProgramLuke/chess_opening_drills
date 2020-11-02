@@ -10,7 +10,7 @@ import { Repertoire } from "@/store/repertoire/Repertoire";
 export enum TrainingState {
   Selecting,
   Training,
-  Complete
+  Complete,
 }
 
 @Component({ components: { TrainingModeSelector, Trainer } })

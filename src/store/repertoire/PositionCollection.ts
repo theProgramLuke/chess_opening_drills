@@ -5,7 +5,7 @@ import { Pgn } from "chess-pgn";
 import { parse } from "pgn-parser";
 import {
   fenAfterMove,
-  variationsFromPgnGame
+  variationsFromPgnGame,
 } from "@/store/repertoire/chessHelpers";
 import { DrawShape } from "chessground/draw";
 
@@ -105,7 +105,7 @@ export class PositionCollection implements PositionCollectionInterface {
         return {
           sourceFen: fen,
           san: this.graph.edge(fen, successor).san,
-          resultingFen: successor
+          resultingFen: successor,
         };
       });
     }
@@ -225,7 +225,7 @@ ${data.comments}`;
                 fen,
                 {
                   comments: move.comments[0].text,
-                  drawings: []
+                  drawings: [],
                 },
                 true
               );
@@ -269,7 +269,7 @@ ${data.comments}`;
         clonedPath.unshift({
           ...move,
           sourceFen: parent,
-          resultingFen: fen
+          resultingFen: fen,
         });
 
         this.getSourceVariationsRecursive(parent, collector, clonedPath);
@@ -309,7 +309,7 @@ ${data.comments}`;
 
         this.collectVariations(successor, collector, [
           ...path,
-          { sourceFen: fen, resultingFen: successor, san: move.san }
+          { sourceFen: fen, resultingFen: successor, san: move.san },
         ]);
       });
     }

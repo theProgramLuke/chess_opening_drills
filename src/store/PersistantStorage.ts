@@ -84,8 +84,8 @@ function GetDefaultStorage() {
       monthlyBackupLimit: 6,
       yearlyBackupLimit: 25,
       enableBackups: true,
-      moveAnimationSpeed: 100
-    }
+      moveAnimationSpeed: 100,
+    },
   });
 }
 

@@ -6,7 +6,7 @@ import { TrainingOptions } from "@/components/train/TrainingOptions";
 describe("TrainViewModel", () => {
   const mountComponent = () =>
     shallowMount(TrainViewModel, {
-      render: jest.fn()
+      render: jest.fn(),
     });
 
   describe("isSelecting", () => {

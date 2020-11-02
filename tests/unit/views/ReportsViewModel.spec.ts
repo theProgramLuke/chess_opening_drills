@@ -5,7 +5,7 @@ import ReportsViewModel from "@/views/ReportsViewModel.ts";
 describe("ReportsViewModel", () => {
   const mountComponent = () =>
     shallowMount(ReportsViewModel, {
-      render: jest.fn()
+      render: jest.fn(),
     });
 
   it("should be render", () => {

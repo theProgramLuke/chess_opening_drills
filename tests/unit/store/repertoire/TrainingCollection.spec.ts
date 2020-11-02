@@ -3,11 +3,11 @@ import _ from "lodash";
 import {
   TrainingCollection,
   SavedTrainingCollection,
-  TrainingMoveSpecification
+  TrainingMoveSpecification,
 } from "@/store/repertoire/TrainingCollection";
 import {
   RepetitionTraining,
-  SavedRepetitionTraining
+  SavedRepetitionTraining,
 } from "@/store/repertoire/RepetitionTraining";
 
 jest.mock("@/store/repertoire/RepetitionTraining");
@@ -25,12 +25,12 @@ describe("TrainingCollection", () => {
       training.addMove(fen1, san1);
       const actual = [
         training.getTrainingForMove(fen0, san0),
-        training.getTrainingForMove(fen1, san1)
+        training.getTrainingForMove(fen1, san1),
       ];
 
       expect(actual).toEqual([
         expect.any(RepetitionTraining),
-        expect.any(RepetitionTraining)
+        expect.any(RepetitionTraining),
       ]);
     });
 
@@ -56,12 +56,12 @@ describe("TrainingCollection", () => {
       training.addMove(fen, san1);
       const actual = [
         training.getTrainingForMove(fen, san0),
-        training.getTrainingForMove(fen, san1)
+        training.getTrainingForMove(fen, san1),
       ];
 
       expect(actual).toEqual([
         expect.any(RepetitionTraining),
-        expect.any(RepetitionTraining)
+        expect.any(RepetitionTraining),
       ]);
     });
   });
@@ -123,7 +123,7 @@ describe("TrainingCollection", () => {
       training.deletePosition(fen);
       const actual = [
         training.getTrainingForMove(fen, san0),
-        training.getTrainingForMove(fen, san1)
+        training.getTrainingForMove(fen, san1),
       ];
 
       expect(actual).toEqual([undefined, undefined]);
@@ -138,12 +138,12 @@ describe("TrainingCollection", () => {
       const savedTraining: SavedRepetitionTraining = {
         history: [],
         easiness: 0,
-        effectiveTrainingIndex: 0
+        effectiveTrainingIndex: 0,
       };
       const expected = {
         [fen]: {
-          [san]: savedTraining
-        }
+          [san]: savedTraining,
+        },
       };
       training.addMove(fen, san);
       ((training.getTrainingForMove(fen, san) || expect.anything())
@@ -158,12 +158,12 @@ describe("TrainingCollection", () => {
       const savedRepetitionTraining = {
         history: [],
         easiness: 0,
-        effectiveTrainingIndex: 0
+        effectiveTrainingIndex: 0,
       };
       const saved: SavedTrainingCollection = {
         "some fen": {
-          "some san": savedRepetitionTraining
-        }
+          "some san": savedRepetitionTraining,
+        },
       };
       const mockedRepetitionTraining = new RepetitionTraining();
       (mockedRepetitionTraining.asSaved as jest.Mock).mockReturnValue(
@@ -185,7 +185,7 @@ describe("TrainingCollection", () => {
       const expected: TrainingMoveSpecification[] = [
         { fen: "fen0", san: "san0" },
         { fen: "fen1", san: "san1" },
-        { fen: "fen1", san: "san2" }
+        { fen: "fen1", san: "san2" },
       ];
       const training = new TrainingCollection();
       _.forEach(expected, move => training.addMove(move.fen, move.san));

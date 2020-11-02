@@ -23,7 +23,7 @@ export const PieceThemes = [
   "riohacha",
   "shapes",
   "spatial",
-  "staunty"
+  "staunty",
 ];
 
 export const BoardThemes = [
@@ -50,5 +50,5 @@ export const BoardThemes = [
   "wood",
   "wood2",
   "wood3",
-  "wood4"
+  "wood4",
 ];

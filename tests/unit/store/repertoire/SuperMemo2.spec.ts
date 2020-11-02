@@ -6,7 +6,7 @@ import {
   TrainingGrade,
   MillisecondsPerDay,
   SuperMemo2HistoryEntry,
-  SavedSuperMemo2
+  SavedSuperMemo2,
 } from "@/store/repertoire/SuperMemo2";
 
 jest.mock("lodash/now");
@@ -38,7 +38,7 @@ describe("SuperMemo2", () => {
       [1.86, 3 as TrainingGrade, 2.0],
       [1.68, 2 as TrainingGrade, 2.0],
       [1.46, 1 as TrainingGrade, 2.0],
-      [1.6, 0 as TrainingGrade, 2.4]
+      [1.6, 0 as TrainingGrade, 2.4],
     ])(
       "should set the easiness as %s given a grade of %s and a previous easiness of %s",
       (expectedEasiness, grade, previousEasiness) => {
@@ -91,7 +91,7 @@ describe("SuperMemo2", () => {
       [25, 5 as TrainingGrade, 2.4, 10],
       [25, 5 as TrainingGrade, 2.3001, 10],
       [24, 5 as TrainingGrade, 2.3, 10],
-      [12, 4 as TrainingGrade, 1.5, 8]
+      [12, 4 as TrainingGrade, 1.5, 8],
     ])(
       "should schedule an interval of %s days given a grade of %s, a previous easiness of %s, and a previous interval of %s days, after more than 2 repetitions",
       (expectedDays, grade, previousEasiness, previousIntervalDays) => {
@@ -115,7 +115,7 @@ describe("SuperMemo2", () => {
         );
         const expected: number[] = [
           1 * MillisecondsPerDay + nowTimestamp,
-          4 * MillisecondsPerDay + nowTimestamp
+          4 * MillisecondsPerDay + nowTimestamp,
         ];
 
         const actual: (number | undefined)[] = [];
@@ -161,7 +161,7 @@ describe("SuperMemo2", () => {
         1.34,
         1.34,
         1.4400000000000002,
-        1.5400000000000003
+        1.5400000000000003,
       ];
       const expectedIntervalDays = [1, 1, 4, 10, 23, 1, 4, 6, 9, 14];
       const expectedSchedule = _.map(
@@ -192,7 +192,7 @@ describe("SuperMemo2", () => {
         {
           easiness: 1.7000000000000002,
           timestamp: nowTimestamp,
-          grade: grades[0]
+          grade: grades[0],
         },
         { easiness: 1.3, timestamp: nowTimestamp, grade: grades[1] },
         { easiness: 1.3, timestamp: nowTimestamp, grade: grades[2] },
@@ -201,8 +201,8 @@ describe("SuperMemo2", () => {
         {
           easiness: 1.4000000000000001,
           timestamp: nowTimestamp,
-          grade: grades[5]
-        }
+          grade: grades[5],
+        },
       ];
       expect(expected.length).toEqual(grades.length);
 
@@ -220,11 +220,11 @@ describe("SuperMemo2", () => {
       history: [
         { easiness: 2.36, grade: grades[0], timestamp: nowTimestamp },
         { easiness: 2.36, grade: grades[1], timestamp: nowTimestamp },
-        { easiness: 2.46, grade: grades[2], timestamp: nowTimestamp }
+        { easiness: 2.46, grade: grades[2], timestamp: nowTimestamp },
       ],
       scheduledRepetitionTimestamp: 10 * MillisecondsPerDay + nowTimestamp,
       previousIntervalDays: 10,
-      effectiveTrainingIndex: grades.length
+      effectiveTrainingIndex: grades.length,
     };
 
     it("should capture the state of the training", () => {

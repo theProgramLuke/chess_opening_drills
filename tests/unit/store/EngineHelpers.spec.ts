@@ -6,7 +6,7 @@ import {
   MetadataEngine,
   EngineOption,
   SourceEngineOption,
-  ProcessAnalysis
+  ProcessAnalysis,
 } from "@/store/EngineHelpers";
 
 jest.mock("node-uci");
@@ -18,7 +18,7 @@ describe("GetEngineMetadata", () => {
     const name = "name";
     const options: EngineOption[] = [
       { name: "option", type: "spin", default: 0, value: 0 },
-      { name: "option2", type: "check", default: false, value: false }
+      { name: "option2", type: "check", default: false, value: false },
     ];
     engine.id = { name };
     engine.options = new Map<string, SourceEngineOption>();
@@ -41,14 +41,14 @@ describe("GetEngineMetadata", () => {
     const engine: MetadataEngine = new Engine("");
     const expectedOptions: EngineOption[] = [
       { name: "option", type: "spin", default: 0, value: 0 },
-      { name: "option2", type: "check", default: false, value: false }
+      { name: "option2", type: "check", default: false, value: false },
     ];
     const options = _.cloneDeep(expectedOptions);
     options.push({
       name: "option3",
       type: "button",
       default: false,
-      value: false
+      value: false,
     });
     engine.id = { name: name };
     engine.options = new Map<string, SourceEngineOption>();
@@ -107,13 +107,13 @@ describe("ProcessAnalysis", () => {
       score: { value: 350 },
       depth: 10,
       pv: variation.join(" "),
-      multipv: 3
+      multipv: 3,
     };
     const expected = {
       evaluation: engineData.score.value / 100,
       depth: engineData.depth,
       variation,
-      id: engineData.multipv
+      id: engineData.multipv,
     };
 
     const actual = ProcessAnalysis(engineData);

@@ -6,12 +6,12 @@ import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
 import { TagTree } from "@/store/repertoire/TagTree";
 import {
   RepetitionTraining,
-  TrainingEvent
+  TrainingEvent,
 } from "@/store/repertoire/RepetitionTraining";
 import {
   SetEngineMetadataPayload,
   SetPositionCommentsPayload,
-  SetPositionDrawingsPayload
+  SetPositionDrawingsPayload,
 } from "@/store/MutationPayloads";
 import { Side } from "@/store/side";
 
@@ -30,7 +30,7 @@ describe("mutations", () => {
     training: {},
     sideToTrain: 0,
     positions: {},
-    tags: { name: "", fen: "", id: "", children: [], isRootTag: false }
+    tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
   };
 
   beforeEach(() => {
@@ -53,7 +53,7 @@ describe("mutations", () => {
       monthlyBackupLimit: 0,
       yearlyBackupLimit: 0,
       enableBackups: false,
-      moveAnimationSpeed: 0
+      moveAnimationSpeed: 0,
     };
 
     state.whiteRepertoire.positions = new PositionCollection({});
@@ -160,7 +160,7 @@ describe("mutations", () => {
           repertoire,
           parent: new TagTree("", "", []),
           fen: "",
-          name: ""
+          name: "",
         });
 
         if (sideToTrain === Side.White) {
@@ -180,7 +180,7 @@ describe("mutations", () => {
       const moveTraining = new RepetitionTraining();
       const event: TrainingEvent = {
         attemptedMoves: [],
-        elapsedMilliseconds: 0
+        elapsedMilliseconds: 0,
       };
       repertoire.training = new TrainingCollection({});
       (repertoire.training.getTrainingForMove as jest.Mock).mockReturnValue(
@@ -208,8 +208,8 @@ describe("mutations", () => {
           san: "",
           event: {
             attemptedMoves: [],
-            elapsedMilliseconds: 0
-          }
+            elapsedMilliseconds: 0,
+          },
         });
 
         if (sideToTrain === Side.White) {
@@ -243,7 +243,7 @@ describe("mutations", () => {
 
         mutations.removeRepertoireTag(state, {
           repertoire,
-          id: ""
+          id: "",
         });
 
         if (sideToTrain === Side.White) {
@@ -279,7 +279,7 @@ describe("mutations", () => {
         mutations.removeRepertoireMove(state, {
           repertoire,
           fen: "",
-          san: ""
+          san: "",
         });
 
         if (sideToTrain === Side.White) {
@@ -313,7 +313,7 @@ describe("mutations", () => {
 
         mutations.addPositionsFromPgn(state, {
           repertoire,
-          pgn: ""
+          pgn: "",
         });
 
         if (sideToTrain === Side.White) {
@@ -402,7 +402,7 @@ describe("mutations", () => {
       const payload: SetPositionCommentsPayload = {
         repertoire,
         fen: "some fen",
-        comments: "some comments"
+        comments: "some comments",
       };
 
       mutations.setPositionComments(state, payload);
@@ -421,7 +421,7 @@ describe("mutations", () => {
       const payload: SetPositionDrawingsPayload = {
         repertoire,
         fen: "some fen",
-        drawings: []
+        drawings: [],
       };
 
       mutations.setPositionDrawings(state, payload);
@@ -438,7 +438,7 @@ describe("mutations", () => {
       const expected: SetEngineMetadataPayload = {
         filePath: "",
         name: "",
-        options: []
+        options: [],
       };
 
       mutations.setEngineMetadata(state, expected);

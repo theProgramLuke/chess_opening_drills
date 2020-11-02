@@ -6,7 +6,7 @@ import { DrawShape } from "chessground/draw";
 import TrainerViewModel from "@/components/train/TrainerViewModel.ts";
 import {
   TrainingOptions,
-  TrainingVariation
+  TrainingVariation,
 } from "@/components/train/TrainingOptions";
 import { Side } from "@/store/side";
 import { Repertoire } from "@/store/repertoire/Repertoire";
@@ -22,7 +22,7 @@ jest.mock("@/store/repertoire/RepetitionTraining");
 jest.useFakeTimers();
 
 const mutations = {
-  addTrainingEvent: jest.fn()
+  addTrainingEvent: jest.fn(),
 };
 
 const localVue = createLocalVue();
@@ -36,7 +36,7 @@ describe("TrainerViewModel", () => {
     positions: {},
     tags: new TagTree("", "", []),
     training: {},
-    sideToTrain: Side.White
+    sideToTrain: Side.White,
   };
   const loadPosition = jest.fn();
 
@@ -49,10 +49,10 @@ describe("TrainerViewModel", () => {
     const component = shallowMount(TrainerViewModel, {
       render: jest.fn(),
       propsData: {
-        options
+        options,
       },
       localVue,
-      store
+      store,
     });
     loadPosition.mockReset();
     component.vm.$refs["board"] = ({ loadPosition } as unknown) as Vue;
@@ -482,11 +482,11 @@ describe("TrainerViewModel", () => {
         const expected: AddTrainingEventPayload = {
           event: {
             attemptedMoves: [san],
-            elapsedMilliseconds: elapsed
+            elapsedMilliseconds: elapsed,
           },
           fen: trainingVariation.variation[0].sourceFen,
           san: trainingVariation.variation[0].san,
-          repertoire: trainingVariation.repertoire
+          repertoire: trainingVariation.repertoire,
         };
 
         component.vm.onBoardMove({ fen: "fen", history: ["not the san", san] });
@@ -503,11 +503,11 @@ describe("TrainerViewModel", () => {
         const expected: AddTrainingEventPayload = {
           event: {
             attemptedMoves: ["e3", "d4"],
-            elapsedMilliseconds: elapsed
+            elapsedMilliseconds: elapsed,
           },
           fen: trainingVariation.variation[0].sourceFen,
           san: trainingVariation.variation[0].san,
-          repertoire: trainingVariation.repertoire
+          repertoire: trainingVariation.repertoire,
         };
         component.vm.attempts = expected.event.attemptedMoves;
 
@@ -582,7 +582,7 @@ describe("TrainerViewModel", () => {
         "e5",
         "Nf3",
         "Nf6",
-        "Bc5"
+        "Bc5",
       ]);
       trainingVariation.repertoire.sideToTrain = Side.White;
       trainingVariation.variation[0].sourceFen = " w ";

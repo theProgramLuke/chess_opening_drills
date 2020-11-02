@@ -9,7 +9,7 @@ import { Side } from "@/store/side";
 import { TagTree } from "@/store/repertoire/TagTree";
 import {
   TrainingCollection,
-  TrainingMoveSpecification
+  TrainingMoveSpecification,
 } from "@/store/repertoire/TrainingCollection";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 
@@ -34,7 +34,7 @@ describe("ScheduleViewModel", () => {
       positions: {},
       sideToTrain: Side.White,
       tags: new TagTree("", "", []),
-      training: {}
+      training: {},
     };
     whiteRepertoire = new Repertoire(emptyRepertoire);
     blackRepertoire = new Repertoire(emptyRepertoire);
@@ -43,14 +43,14 @@ describe("ScheduleViewModel", () => {
 
     const state = {
       whiteRepertoire,
-      blackRepertoire
+      blackRepertoire,
     };
     const store = new Vuex.Store({ state });
 
     return shallowMount(ScheduleViewModel, {
       render: jest.fn(),
       store,
-      localVue
+      localVue,
     });
   }
 
@@ -81,10 +81,10 @@ describe("ScheduleViewModel", () => {
     it("should combine the repertoire training into scheduled calendar days", () => {
       const whiteMoves: TrainingMoveSpecification[] = [
         { fen: "fen0", san: "san0" },
-        { fen: "fen1", san: "san1" }
+        { fen: "fen1", san: "san1" },
       ];
       const blackMoves: TrainingMoveSpecification[] = [
-        { fen: "fen0", san: "san0" }
+        { fen: "fen0", san: "san0" },
       ];
       const whiteTraining: RepetitionTraining[] = _.times(
         whiteMoves.length,
@@ -125,20 +125,20 @@ describe("ScheduleViewModel", () => {
           color: "primary",
           name: "2 moves",
           start: 86400000,
-          timed: false
+          timed: false,
         },
         {
           color: "primary",
           name: "1 moves",
           start: 10018800000,
-          timed: false
-        }
+          timed: false,
+        },
       ]);
     });
 
     it("should not include moves scheduled for beyond the max timestamp", () => {
       const whiteMoves: TrainingMoveSpecification[] = [
-        { fen: "fen0", san: "san0" }
+        { fen: "fen0", san: "san0" },
       ];
       const whiteTraining: RepetitionTraining[] = _.times(
         whiteMoves.length,

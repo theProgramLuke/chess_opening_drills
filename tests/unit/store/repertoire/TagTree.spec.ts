@@ -35,7 +35,7 @@ describe("TagTree", () => {
     it("should be true if any of the children have the id", () => {
       const tag = new TagTree("", "", [
         new TagTree("", "", []),
-        new TagTree("", "", [])
+        new TagTree("", "", []),
       ]);
       const id = "some id";
       tag.children[1].id = id;
@@ -48,7 +48,7 @@ describe("TagTree", () => {
     it("should be false if the tag id is not the id, and no children have the id", () => {
       const tag = new TagTree("", "", [
         new TagTree("", "", []),
-        new TagTree("", "", [])
+        new TagTree("", "", []),
       ]);
 
       const actual = tag.includesTag("not the guid");
@@ -85,16 +85,16 @@ describe("TagTree", () => {
             fen: "fen1",
             id: "id1",
             children: [],
-            isRootTag: false
+            isRootTag: false,
           },
           {
             name: "name2",
             fen: "fen2",
             id: "id2",
             children: [],
-            isRootTag: false
-          }
-        ]
+            isRootTag: false,
+          },
+        ],
       };
 
       const restored = TagTree.fromSaved(saved);

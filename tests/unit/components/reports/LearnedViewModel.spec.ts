@@ -18,12 +18,12 @@ const emptySavedRepertoire: SavedRepertoire = {
   positions: {},
   training: {},
   tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
-  sideToTrain: Side.White
+  sideToTrain: Side.White,
 };
 
 const state = {
   whiteRepertoire: new Repertoire(emptySavedRepertoire),
-  blackRepertoire: new Repertoire(emptySavedRepertoire)
+  blackRepertoire: new Repertoire(emptySavedRepertoire),
 };
 state.whiteRepertoire.training = new TrainingCollection();
 state.blackRepertoire.training = new TrainingCollection();
@@ -39,12 +39,12 @@ describe("LearnedViewModel", () => {
     it("should get the concatenated tags of the repertoires", () => {
       const expectedTags = [
         state.whiteRepertoire.tags,
-        state.blackRepertoire.tags
+        state.blackRepertoire.tags,
       ];
       const component = shallowMount(LearnedViewModel, {
         localVue,
         store,
-        render: jest.fn()
+        render: jest.fn(),
       });
 
       const combined = component.vm.combinedTags;
@@ -64,7 +64,7 @@ describe("LearnedViewModel", () => {
       const component = shallowMount(LearnedViewModel, {
         localVue,
         store,
-        render: jest.fn()
+        render: jest.fn(),
       });
 
       const show = component.vm.showNoPositions;
@@ -75,7 +75,7 @@ describe("LearnedViewModel", () => {
     it("should be false if either repertoire has more than the starting positions", () => {
       state.whiteRepertoire.training = new TrainingCollection();
       (state.whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue([
-        "anything"
+        "anything",
       ]);
       (state.blackRepertoire.training.getMoves as jest.Mock).mockReturnValue(
         []
@@ -83,7 +83,7 @@ describe("LearnedViewModel", () => {
       const component = shallowMount(LearnedViewModel, {
         localVue,
         store,
-        render: jest.fn()
+        render: jest.fn(),
       });
 
       const show = component.vm.showNoPositions;
@@ -109,11 +109,11 @@ describe("LearnedViewModel", () => {
       const component = shallowMount(LearnedViewModel, {
         localVue,
         store,
-        render: jest.fn()
+        render: jest.fn(),
       });
       component.vm.selectedTags = [
         component.vm.whiteRepertoire.tags,
-        component.vm.blackRepertoire.tags
+        component.vm.blackRepertoire.tags,
       ];
       const newTraining = new RepetitionTraining();
       const trainedTraining = new RepetitionTraining();
@@ -124,7 +124,7 @@ describe("LearnedViewModel", () => {
       (component.vm.whiteRepertoire
         .getTrainingForTags as jest.Mock).mockReturnValue([
         trainedTraining,
-        newTraining
+        newTraining,
       ]);
       (component.vm.blackRepertoire
         .getTrainingForTags as jest.Mock).mockReturnValue([trainedTraining]);
@@ -136,8 +136,8 @@ describe("LearnedViewModel", () => {
           type: "pie",
           hole: 0.7,
           labels: ["Learned", "New"],
-          values: [trainedMoves, newMoves]
-        }
+          values: [trainedMoves, newMoves],
+        },
       ]);
     });
   });

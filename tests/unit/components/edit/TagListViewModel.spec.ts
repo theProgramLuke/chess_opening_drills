@@ -18,7 +18,7 @@ describe("TagListViewModel", () => {
       training: {},
       positions: {},
       sideToTrain: Side.White,
-      tags: { name: "", fen: "", id: "", children: [], isRootTag: false }
+      tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
     };
 
     whiteRepertoire = new Repertoire(emptyRepertoire);
@@ -35,8 +35,8 @@ describe("TagListViewModel", () => {
         propsData: {
           whiteRepertoire,
           blackRepertoire,
-          activePosition
-        }
+          activePosition,
+        },
       });
 
       const actual = component.vm.repertoires;
@@ -52,8 +52,8 @@ describe("TagListViewModel", () => {
         propsData: {
           whiteRepertoire,
           blackRepertoire,
-          activePosition
-        }
+          activePosition,
+        },
       });
 
       component.vm.onCreate();
@@ -69,8 +69,8 @@ describe("TagListViewModel", () => {
         propsData: {
           whiteRepertoire,
           blackRepertoire,
-          activePosition
-        }
+          activePosition,
+        },
       });
 
       component.vm.onDelete();
@@ -86,14 +86,14 @@ describe("TagListViewModel", () => {
         propsData: {
           whiteRepertoire,
           blackRepertoire,
-          activePosition
-        }
+          activePosition,
+        },
       });
 
       component.vm.onSelect(whiteRepertoire, activePosition);
 
       expect(component.emitted().onSelect).toEqual([
-        [whiteRepertoire, activePosition]
+        [whiteRepertoire, activePosition],
       ]);
     });
   });

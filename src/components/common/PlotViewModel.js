@@ -17,7 +17,7 @@ const events = [
   "doubleclick",
   "redraw",
   "animated",
-  "afterplot"
+  "afterplot",
 ];
 
 const functions = [
@@ -29,7 +29,7 @@ const functions = [
   "moveTraces",
   "extendTraces",
   "prependTraces",
-  "purge"
+  "purge",
 ];
 
 const methods = functions.reduce((all, funcName) => {
@@ -43,25 +43,25 @@ export default {
   props: {
     watchShallow: {
       type: Boolean,
-      default: false
+      default: false,
     },
     options: {
-      type: Object
+      type: Object,
     },
     data: {
-      type: Array
+      type: Array,
     },
     layout: {
-      type: Object
+      type: Object,
     },
     dark: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
-      datarevision: 1
+      datarevision: 1,
     };
   },
   computed: {
@@ -69,14 +69,14 @@ export default {
       return {
         ...(this.dark ? PlotlyDark.layout : PlotlyWhite.layout),
         ...this.layout,
-        datarevision: 0
+        datarevision: 0,
       };
     },
     internalData() {
       return _.map(this.data, datum => {
         return _.merge(datum, this.dark ? PlotlyDark.data : PlotlyWhite.data);
       });
-    }
+    },
   },
   mounted() {
     this.react();
@@ -107,7 +107,7 @@ export default {
           fullName: "plotly_" + eventName,
           handler: (...args) => {
             this.$emit(...[eventName].concat(args));
-          }
+          },
         };
       });
 
@@ -121,7 +121,7 @@ export default {
       const opts = defaults(options, {
         format: "png",
         width: el.clientWidth,
-        height: el.clientHeight
+        height: el.clientHeight,
       });
 
       return Plotly.toImage(this.$refs.container, opts);
@@ -132,7 +132,8 @@ export default {
         format: "png",
         width: el.clientWidth,
         height: el.clientHeight,
-        filename: (el.layout.title || "plot") + " - " + new Date().toISOString()
+        filename:
+          (el.layout.title || "plot") + " - " + new Date().toISOString(),
       });
 
       return Plotly.downloadImage(this.$refs.container, opts);
@@ -174,6 +175,6 @@ export default {
         this.internalLayout,
         this.getOptions()
       );
-    }
-  }
+    },
+  },
 };

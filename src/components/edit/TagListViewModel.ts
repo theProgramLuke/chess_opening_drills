@@ -9,7 +9,7 @@ import TagImporter from "@/components/edit/TagImporter.vue";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 
 @Component({
-  components: { TagDeleter, TagCreator, TagExporter, TagImporter }
+  components: { TagDeleter, TagCreator, TagExporter, TagImporter },
 })
 export default class TagListViewModel extends Vue {
   forceRender = 0;

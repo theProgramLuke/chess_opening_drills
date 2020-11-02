@@ -78,13 +78,13 @@ describe("BackupManager", () => {
   describe("SaveBackup", () => {
     it("should save a backups for each frequency if there are none existing", () => {
       const expectedDailyBackupFiles = [
-        path.join(dailyDirectory, `settings-${now}.json`)
+        path.join(dailyDirectory, `settings-${now}.json`),
       ];
       const expectedMonthlyBackupFiles = [
-        path.join(monthlyDirectory, `settings-${now}.json`)
+        path.join(monthlyDirectory, `settings-${now}.json`),
       ];
       const expectedYearlyBackupFiles = [
-        path.join(yearlyDirectory, `settings-${now}.json`)
+        path.join(yearlyDirectory, `settings-${now}.json`),
       ];
       const manager = new BackupManager(backupFolder, 1, 1, 1);
 
@@ -192,13 +192,13 @@ describe("BackupManager", () => {
       directoryBackups[monthlyDirectory] = old;
       directoryBackups[yearlyDirectory] = old;
       const expectedDailyBackupFiles = [
-        path.join(dailyDirectory, `settings-${now}.json`)
+        path.join(dailyDirectory, `settings-${now}.json`),
       ];
       const expectedMonthlyBackupFiles = [
-        path.join(monthlyDirectory, `settings-${now}.json`)
+        path.join(monthlyDirectory, `settings-${now}.json`),
       ];
       const expectedYearlyBackupFiles = [
-        path.join(yearlyDirectory, `settings-${now}.json`)
+        path.join(yearlyDirectory, `settings-${now}.json`),
       ];
       const manager = new BackupManager(backupFolder, 1, 1, 1);
 

@@ -19,7 +19,7 @@ import {
   SetBackupLimitPayload,
   SetMoveAnimationSpeedPayload,
   SetEngineMetadataPayload,
-  SetEnableBackupsPayload
+  SetEnableBackupsPayload,
 } from "@/store/MutationPayloads";
 
 export interface MutationState extends Storage {
@@ -199,5 +199,5 @@ export const mutations = {
 
   clearStorage(state: MutationState): void {
     state.persisted.clear();
-  }
+  },
 };
