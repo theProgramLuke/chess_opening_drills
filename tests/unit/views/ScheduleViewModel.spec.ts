@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { shallowMount, Wrapper, createLocalVue } from "@vue/test-utils";
-import Vuex, { Store } from "vuex";
+import Vuex from "vuex";
 import now from "lodash/now";
 
 import ScheduleViewModel from "@/views/ScheduleViewModel.ts";

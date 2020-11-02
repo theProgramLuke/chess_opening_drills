@@ -1,4 +1,3 @@
-import _ from "lodash";
 import fs from "graceful-fs";
 import ElectronStore from "electron-store";
 

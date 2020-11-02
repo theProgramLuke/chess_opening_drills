@@ -1,7 +1,7 @@
 import _ from "lodash";
+import { DrawShape } from "chessground/draw";
 
 import * as Real from "@/store/repertoire/PositionCollection";
-import { DrawShape } from "chessground/draw";
 
 export class PositionCollection implements Real.PositionCollectionInterface {
   addMove: (fen: string, san: string) => string = jest.fn();
@@ -9,7 +9,7 @@ export class PositionCollection implements Real.PositionCollectionInterface {
   movesFromPosition: (fen: string) => Real.VariationMove[] = jest.fn();
   parentPositions: (fen: string) => string[] = jest.fn();
   descendantPositions: (fen: string) => string[] = jest.fn();
-  asSaved: () => Record<string, any> = jest.fn();
+  asSaved: () => Real.SavedPositionCollection = jest.fn();
   asPgn: (fen: string) => string = jest.fn();
   loadPgn: (pgn: string) => void = jest.fn();
   getChildVariations: (fen: string) => Real.VariationMove[][] = jest.fn();

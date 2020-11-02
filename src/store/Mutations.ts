@@ -1,7 +1,6 @@
 import { Storage, PersistantStorage } from "@/store/PersistantStorage";
 import { Side } from "@/store/side";
 import { Repertoire } from "@/store/repertoire/Repertoire";
-import { EngineMetadata } from "@/store/EngineHelpers";
 import {
   AddTrainingEventPayload,
   AddRepertoireMovePayload,

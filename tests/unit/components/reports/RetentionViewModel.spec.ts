@@ -9,7 +9,6 @@ import {
   RepetitionTraining,
   TrainingHistoryEntry,
 } from "@/store/repertoire/RepetitionTraining";
-import { Writeable } from "tests/TestHelpers";
 
 jest.mock("@/store/repertoire/Repertoire");
 
@@ -62,8 +61,6 @@ describe("RetentionViewModel", () => {
     });
 
     it("should be false if the repertoire has trained positions", () => {
-      const fen = "fen";
-      const san = "san";
       (state.whiteRepertoire.getTrainingForTags as jest.Mock).mockReturnValue([
         "anything",
       ]);

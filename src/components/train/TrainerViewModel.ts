@@ -229,7 +229,7 @@ export default class TrainerViewModel extends Vue {
   }
 
   private get isTurnOfSideToTrain(): boolean {
-    const sideToMove = sideFromFen(this.activePosition!);
+    const sideToMove = sideFromFen(this.activePosition);
     return sideToMove === this.activeVariation!.repertoire.sideToTrain;
   }
 

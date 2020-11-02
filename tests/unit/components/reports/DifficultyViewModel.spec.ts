@@ -68,8 +68,6 @@ describe("DifficultyViewModel", () => {
     });
 
     it("should be false if the repertoire has trained positions", () => {
-      const fen = "fen";
-      const san = "san";
       (state.whiteRepertoire.getTrainingForTags as jest.Mock).mockReturnValue([
         "anything",
       ]);

@@ -1,12 +1,10 @@
 import { shallowMount, createLocalVue } from "@vue/test-utils";
 import Vuex from "vuex";
-import _ from "lodash";
 
 import LearnedViewModel from "@/components/reports/LearnedViewModel";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
 import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
-import { Variation } from "@/store/repertoire/PositionCollection";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 
 jest.mock("@/store/repertoire/Repertoire");
@@ -93,16 +91,6 @@ describe("LearnedViewModel", () => {
   });
 
   describe("plotData", () => {
-    function makeVariation(sans: string[]): Variation {
-      let turn = Side.White;
-
-      return _.map(sans, san => {
-        const sourceFen = turn === Side.White ? " w " : " b ";
-        turn = turn === Side.White ? Side.Black : Side.White;
-        return { san, resultingFen: "", sourceFen };
-      });
-    }
-
     it("should get a pie chart for count of moves that are trained and new from the selected tags", () => {
       const trainedMoves = 2;
       const newMoves = 1;
