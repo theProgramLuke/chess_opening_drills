@@ -104,16 +104,13 @@ export default class AppViewModel extends Vue {
   }
 
   private static countRepertoireMultipleMoves(repertoire: Repertoire): number {
-    let count = 0;
-    const grouped = _.groupBy(repertoire.training.getMoves(), move => move.fen);
+    const multipleMoves = repertoire.training.getPositionsWithMultipleTrainings();
 
-    _.forEach(grouped, group => {
-      if (group.length > 1) {
-        count += group.length;
-      }
-    });
+    let sum = 0;
 
-    return count;
+    _.forEach(multipleMoves, position => (sum += position.length));
+
+    return sum;
   }
 
   @Watch("darkMode")

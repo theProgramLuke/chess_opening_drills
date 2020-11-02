@@ -69,6 +69,21 @@ export class TrainingCollection {
     return moves;
   }
 
+  getPositionsWithMultipleTrainings(): Record<
+    string,
+    TrainingMoveSpecification[]
+  > {
+    const positionsMap: Record<string, TrainingMoveSpecification[]> = {};
+    const grouped = _.groupBy(this.getMoves(), move => move.fen);
+
+    _.forEach(
+      _.filter(grouped, group => group.length > 1),
+      group => (positionsMap[group[0].fen] = group)
+    );
+
+    return positionsMap;
+  }
+
   asSaved(): SavedTrainingCollection {
     const saved: SavedTrainingCollection = {};
 

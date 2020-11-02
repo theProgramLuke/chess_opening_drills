@@ -195,4 +195,34 @@ describe("TrainingCollection", () => {
       expect(actual).toEqual(expected);
     });
   });
+
+  describe("getPositionsWithMultipleTrainings", () => {
+    it("should be an empty collection if there are no positions with multiple moves", () => {
+      const moves: TrainingMoveSpecification[] = [
+        { fen: "0", san: "0" },
+        { fen: "1", san: "1" },
+      ];
+      const training = new TrainingCollection();
+      _.forEach(moves, move => training.addMove(move.fen, move.san));
+
+      const actual = training.getPositionsWithMultipleTrainings();
+
+      expect(actual).toEqual({});
+    });
+
+    it("should be a map of the positions with duplicate moves to the duplicate moves", () => {
+      const moves: TrainingMoveSpecification[] = [
+        { fen: "0", san: "0" },
+        { fen: "0", san: "1" },
+        { fen: "1", san: "2" },
+      ];
+      const expected = { [moves[0].fen]: [moves[0], moves[1]] };
+      const training = new TrainingCollection();
+      _.forEach(moves, move => training.addMove(move.fen, move.san));
+
+      const actual = training.getPositionsWithMultipleTrainings();
+
+      expect(actual).toEqual(expected);
+    });
+  });
 });

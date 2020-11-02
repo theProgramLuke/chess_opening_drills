@@ -4,7 +4,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import Vuetify from "vuetify";
 
-import AppViewModel, { baseMenuItems } from "@/views/AppViewModel.ts";
+import AppViewModel, { baseMenuItems } from "@/views/AppViewModel";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
 import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
@@ -206,17 +206,21 @@ describe("AppViewModel", () => {
 
     it(`should add a subtitle to the repertoire health base menu item
         with the count multiple moves from positions to train with multiple moves`, () => {
-      (state.whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue([
-        { fen: "0", san: "0" },
-        { fen: "0", san: "1" },
-        { fen: "1", san: "2" },
-      ]);
-      (state.blackRepertoire.training.getMoves as jest.Mock).mockReturnValue([
-        { fen: "2", san: "3" },
-        { fen: "2", san: "4" },
-        { fen: "2", san: "5" },
-        { fen: "3", san: "5" },
-      ]);
+      (state.whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        "0": [
+          { fen: "0", san: "0" },
+          { fen: "0", san: "1" },
+        ],
+      });
+      (state.blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        "2": [
+          { fen: "2", san: "3" },
+          { fen: "2", san: "4" },
+          { fen: "2", san: "5" },
+        ],
+      });
       const expected = _.cloneDeep(baseMenuItems);
       _.forEach(
         _.filter(expected, menuItem => menuItem.route === "/health"),
