@@ -5,47 +5,37 @@ Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
-    path: "/",
-    name: "Welcome",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Welcome.vue")
-  },
-  {
     path: "/edit",
     name: "Edit",
-    component: () => import(/* webpackChunkName: "about" */ "../views/Edit.vue")
+    component: () => import("../views/Edit.vue")
   },
   {
     path: "/train",
     name: "Train",
 
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Train.vue")
+    component: () => import("../views/Train.vue")
   },
   {
     path: "/schedule",
     name: "Schedule",
 
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Schedule.vue")
+    component: () => import("../views/Schedule.vue")
   },
   {
     path: "/reports",
     name: "Reports",
 
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Reports.vue")
+    component: () => import("../views/Reports.vue")
   },
   {
     path: "/settings",
     name: "Settings",
 
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Settings.vue")
+    component: () => import("../views/Settings.vue")
   },
   {
     path: "*",
-    redirect: "/"
+    redirect: "/edit"
   }
 ];
 
