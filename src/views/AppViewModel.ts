@@ -1,15 +1,17 @@
 import "reflect-metadata";
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { State } from "vuex-class";
+import _ from "lodash";
+import { Repertoire } from "@/store/repertoire/Repertoire";
 
-interface MenuItem {
+export interface NavigationMenuItem {
   name: string;
   route: string;
   icon: string;
   subtitle?: string;
 }
 
-export const baseMenuItems: MenuItem[] = [
+export const baseMenuItems: NavigationMenuItem[] = [
   {
     name: "Edit",
     route: "/edit",
@@ -47,6 +49,12 @@ export default class AppViewModel extends Vue {
   drawer = true;
 
   @State
+  whiteRepertoire!: Repertoire;
+
+  @State
+  blackRepertoire!: Repertoire;
+
+  @State
   darkMode!: boolean;
 
   @State
@@ -70,8 +78,42 @@ export default class AppViewModel extends Vue {
   @State
   success!: string;
 
-  get menuItems(): MenuItem[] {
-    return baseMenuItems;
+  get menuItems(): NavigationMenuItem[] {
+    const menuItems = _.cloneDeep(baseMenuItems);
+
+    _.forEach(
+      _.filter(menuItems, menuItem => menuItem.route === "/health"),
+      menuItem => {
+        menuItem.subtitle = this.repertoireHealthSubtitle;
+      }
+    );
+
+    return menuItems;
+  }
+
+  private get repertoireHealthSubtitle(): string | undefined {
+    const warningCount =
+      AppViewModel.countRepertoireMultipleMoves(this.whiteRepertoire) +
+      AppViewModel.countRepertoireMultipleMoves(this.blackRepertoire);
+
+    if (warningCount === 0) {
+      return undefined;
+    } else {
+      return `${warningCount} warnings`;
+    }
+  }
+
+  private static countRepertoireMultipleMoves(repertoire: Repertoire): number {
+    let count = 0;
+    const grouped = _.groupBy(repertoire.training.getMoves(), move => move.fen);
+
+    _.forEach(grouped, group => {
+      if (group.length > 1) {
+        count += group.length;
+      }
+    });
+
+    return count;
   }
 
   @Watch("darkMode")

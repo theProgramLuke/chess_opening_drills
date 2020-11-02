@@ -7,6 +7,10 @@ import Vuetify from "vuetify";
 import AppViewModel, { baseMenuItems } from "@/views/AppViewModel.ts";
 import { Repertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
+import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
+
+jest.mock("@/store/repertoire/Repertoire");
+jest.mock("@/store/repertoire/TrainingCollection");
 
 Vue.use(Vuetify);
 
@@ -69,6 +73,8 @@ describe("AppViewModel", () => {
       darkMode: initialDarkMode,
       ...initialColorTheme,
     };
+    state.whiteRepertoire.training = new TrainingCollection();
+    state.blackRepertoire.training = new TrainingCollection();
 
     component = mountComponent();
   });
@@ -182,6 +188,46 @@ describe("AppViewModel", () => {
       const actual = component.vm.menuItems;
 
       expect(actual).toEqual(baseMenuItems);
+    });
+
+    it("should be the base menu items if no positions have been multiple moves to be trained", () => {
+      (state.whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue([
+        { fen: "0", san: "" },
+        { fen: "1", san: "" },
+      ]);
+      (state.blackRepertoire.training.getMoves as jest.Mock).mockReturnValue(
+        []
+      );
+
+      const actual = component.vm.menuItems;
+
+      expect(actual).toEqual(baseMenuItems);
+    });
+
+    it(`should add a subtitle to the repertoire health base menu item
+        with the count multiple moves from positions to train with multiple moves`, () => {
+      (state.whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue([
+        { fen: "0", san: "0" },
+        { fen: "0", san: "1" },
+        { fen: "1", san: "2" },
+      ]);
+      (state.blackRepertoire.training.getMoves as jest.Mock).mockReturnValue([
+        { fen: "2", san: "3" },
+        { fen: "2", san: "4" },
+        { fen: "2", san: "5" },
+        { fen: "3", san: "5" },
+      ]);
+      const expected = _.cloneDeep(baseMenuItems);
+      _.forEach(
+        _.filter(expected, menuItem => menuItem.route === "/health"),
+        menuItem => {
+          menuItem.subtitle = "5 warnings";
+        }
+      );
+
+      const actual = component.vm.menuItems;
+
+      expect(actual).toEqual(expected);
     });
   });
 });
