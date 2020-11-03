@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+yarn --link-duplicates --freeze-lockfile
 yarn test:unit || exit 1
 
 if [ "$TRAVIS_OS_NAME" == "linux" ]; then
@@ -11,7 +12,7 @@ if [ "$TRAVIS_OS_NAME" == "linux" ]; then
         -v ~/.cache/electron:/root/.cache/electron \
         -v ~/.cache/electron-builder:/root/.cache/electron-builder \
         electronuserland/builder:wine \
-        /bin/bash -c "yarn --link-duplicates --freeze-lockfile && yarn release --linux --win"
+        /bin/bash -c "yarn release --linux --win"
     TRAVIS_CMD=$ORIG_CMD
     unset ORIG_CMD
 else
