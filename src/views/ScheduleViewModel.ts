@@ -81,6 +81,7 @@ export default class ScheduleViewModel extends Vue {
         color: "primary",
       });
     });
+
     return events;
   }
 
