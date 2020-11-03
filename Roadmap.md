@@ -21,5 +21,6 @@ _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/i
 - UI/UX
   - Open tag tree parent on create tag
   - Do not close all tags on delete tag
+  - Feedback for slow operations (e.g spinners for import PGN)
   - Scrollable view for expandables (tag trees, move list)
   - Localization?
