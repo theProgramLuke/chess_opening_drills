@@ -12,6 +12,7 @@ import {
   TrainingMoveSpecification,
 } from "@/store/repertoire/TrainingCollection";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
+import { Duration, DateTime } from "luxon";
 
 jest.mock("lodash/now");
 jest.mock("@/store/repertoire/Repertoire");
@@ -117,6 +118,9 @@ describe("ScheduleViewModel", () => {
         (blackRepertoire.training
           .getTrainingForMove as jest.Mock).mockReturnValueOnce(training)
       );
+      const offset = Duration.fromObject({
+        minutes: DateTime.fromMillis(0).offset,
+      });
 
       const actual = component.vm.events;
 
@@ -124,13 +128,17 @@ describe("ScheduleViewModel", () => {
         {
           color: "primary",
           name: "2 moves",
-          start: 86400000,
+          start: DateTime.fromMillis(108000000)
+            .plus(offset)
+            .toMillis(),
           timed: false,
         },
         {
           color: "primary",
           name: "1 moves",
-          start: 10018800000,
+          start: DateTime.fromMillis(10040400000)
+            .plus(offset)
+            .toMillis(),
           timed: false,
         },
       ]);
