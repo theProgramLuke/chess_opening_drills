@@ -1,6 +1,6 @@
 # Bugs and feature suggestions
 
-[Create a GitHub issue.](https://github.com/theProgramLuke/chess_opening_drills/issues)
+[Create a GitHub issue](https://github.com/theProgramLuke/chess_opening_drills/issues).
 
 # Development setup
 
