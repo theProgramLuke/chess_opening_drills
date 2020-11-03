@@ -205,7 +205,7 @@ describe("AppViewModel", () => {
     });
 
     it(`should add a subtitle to the repertoire health base menu item
-        with the count multiple moves from positions to train with multiple moves`, () => {
+        with the count of positions to train with multiple moves`, () => {
       (state.whiteRepertoire.training
         .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
         "0": [
@@ -225,7 +225,7 @@ describe("AppViewModel", () => {
       _.forEach(
         _.filter(expected, menuItem => menuItem.route === "/health"),
         menuItem => {
-          menuItem.subtitle = "5 warnings";
+          menuItem.subtitle = "2 warnings";
         }
       );
 
