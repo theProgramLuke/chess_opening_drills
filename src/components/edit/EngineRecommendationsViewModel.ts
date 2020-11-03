@@ -9,7 +9,7 @@ import {
   ProcessAnalysis,
   EngineOutput,
   EngineMetadata,
-  EngineData
+  EngineData,
 } from "@/store/EngineHelpers";
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
 import { Side } from "@/store/side";

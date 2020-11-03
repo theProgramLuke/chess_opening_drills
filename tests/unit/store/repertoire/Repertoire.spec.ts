@@ -5,7 +5,7 @@ import {
   AddMoveObserver,
   DeleteMoveObserver,
   Variation,
-  VariationMove
+  VariationMove,
 } from "@/store/repertoire/PositionCollection";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
@@ -32,7 +32,7 @@ describe("Repertoire", () => {
         sideToTrain: Side.White,
         positions: new PositionCollection({}).asSaved(),
         tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
-        training: new TrainingCollection().asSaved()
+        training: new TrainingCollection().asSaved(),
       };
       const tags = new TagTree("", "", []);
       (tags.asSaved as jest.Mock).mockReturnValue(expected.tags);
@@ -51,7 +51,7 @@ describe("Repertoire", () => {
         sideToTrain: Side.White,
         positions: {},
         tags: new TagTree("", "", []),
-        training: {}
+        training: {},
       });
       const fen = "fen w ";
       const san = "san";
@@ -68,7 +68,7 @@ describe("Repertoire", () => {
         sideToTrain: Side.White,
         positions: {},
         tags: new TagTree("", "", []),
-        training: {}
+        training: {},
       });
       const fen = "fen b ";
       const san = "san";
@@ -85,7 +85,7 @@ describe("Repertoire", () => {
         sideToTrain: Side.White,
         positions: {},
         tags: new TagTree("", "", []),
-        training: {}
+        training: {},
       });
       repertoire.tags = new TagTree("", "", []);
       const fen = "fen";
@@ -109,7 +109,7 @@ describe("Repertoire", () => {
         sideToTrain: Side.White,
         positions: {},
         tags: new TagTree("", "", []),
-        training: {}
+        training: {},
       });
       repertoire.tags = new TagTree("", "", []);
       const positions = ["some", "positions"];
@@ -136,7 +136,7 @@ describe("Repertoire", () => {
         sideToTrain: Side.White,
         positions: {},
         tags: new TagTree("", "", []),
-        training: {}
+        training: {},
       });
       // tag0
       // fen0 -> fen1 (san0)
@@ -149,17 +149,17 @@ describe("Repertoire", () => {
       //   fen6 -> fen7 (san5)
       positions = [
         ["fen0", "fen1", "fen2", "fen3", "fen4"],
-        ["fen5", "fen6", "fen7"]
+        ["fen5", "fen6", "fen7"],
       ];
       moves = [
         ["san0", "san1", "san2", "san3"],
-        ["san4", "san5"]
+        ["san4", "san5"],
       ];
       repertoire.tags = new TagTree("", "", []);
       repertoire.tags.fen = positions[0][0];
       repertoire.tags.children = [
         new TagTree("", "", []),
-        new TagTree("", "", [])
+        new TagTree("", "", []),
       ];
       (repertoire.tags.includesTag as jest.Mock).mockReturnValue(true);
       repertoire.tags.children[0].fen = positions[0][2];
@@ -172,63 +172,63 @@ describe("Repertoire", () => {
         [positions[0][4]]: [],
         [positions[1][0]]: _.takeRight(positions[1], 2),
         [positions[1][1]]: _.takeRight(positions[1], 1),
-        [positions[1][2]]: []
+        [positions[1][2]]: [],
       };
       training = {
         [positions[0][0]]: {
-          [moves[0][0]]: new RepetitionTraining()
+          [moves[0][0]]: new RepetitionTraining(),
         },
         [positions[0][1]]: {
-          [moves[0][1]]: new RepetitionTraining()
+          [moves[0][1]]: new RepetitionTraining(),
         },
         [positions[0][2]]: {
-          [moves[0][2]]: new RepetitionTraining()
+          [moves[0][2]]: new RepetitionTraining(),
         },
         [positions[0][3]]: {
-          [moves[0][3]]: new RepetitionTraining()
+          [moves[0][3]]: new RepetitionTraining(),
         },
         [positions[1][0]]: {
-          [moves[1][0]]: new RepetitionTraining()
+          [moves[1][0]]: new RepetitionTraining(),
         },
         [positions[1][1]]: {
-          [moves[1][1]]: new RepetitionTraining()
-        }
+          [moves[1][1]]: new RepetitionTraining(),
+        },
       };
       variations = [
         [
           {
             sourceFen: positions[0][0],
             san: moves[0][0],
-            resultingFen: positions[0][1]
+            resultingFen: positions[0][1],
           },
           {
             sourceFen: positions[0][1],
             san: moves[0][1],
-            resultingFen: positions[0][2]
+            resultingFen: positions[0][2],
           },
           {
             sourceFen: positions[0][2],
             san: moves[0][2],
-            resultingFen: positions[0][3]
+            resultingFen: positions[0][3],
           },
           {
             sourceFen: positions[0][3],
             san: moves[0][3],
-            resultingFen: positions[0][4]
-          }
+            resultingFen: positions[0][4],
+          },
         ],
         [
           {
             sourceFen: positions[1][0],
             san: moves[1][0],
-            resultingFen: positions[1][1]
+            resultingFen: positions[1][1],
           },
           {
             sourceFen: positions[1][1],
             san: moves[1][1],
-            resultingFen: positions[1][2]
-          }
-        ]
+            resultingFen: positions[1][2],
+          },
+        ],
       ];
       const sourceVariations: Record<string, Variation[]> = {
         [positions[0][0]]: [],
@@ -238,7 +238,7 @@ describe("Repertoire", () => {
         [positions[0][4]]: [_.take(variations[0], 4)],
         [positions[1][0]]: [],
         [positions[1][1]]: [_.take(variations[1], 1)],
-        [positions[1][2]]: [_.take(variations[1], 2)]
+        [positions[1][2]]: [_.take(variations[1], 2)],
       };
       const movesFromPositions: Record<string, VariationMove[]> = {
         [positions[0][0]]: [variations[0][0]],
@@ -248,7 +248,7 @@ describe("Repertoire", () => {
         [positions[0][4]]: [],
         [positions[1][0]]: [variations[1][0]],
         [positions[1][1]]: [variations[1][1]],
-        [positions[1][2]]: []
+        [positions[1][2]]: [],
       };
       (repertoire.training
         .getTrainingForMove as jest.Mock).mockImplementation(
@@ -459,7 +459,7 @@ describe("Repertoire", () => {
           training[positions[0][0]][moves[0][0]],
           training[positions[0][1]][moves[0][1]],
           training[positions[0][2]][moves[0][2]],
-          training[positions[0][3]][moves[0][3]]
+          training[positions[0][3]][moves[0][3]],
         ];
         (training[positions[0][0]][moves[0][0]]
           .includeForTrainingMode as jest.Mock).mockImplementation(() => true);

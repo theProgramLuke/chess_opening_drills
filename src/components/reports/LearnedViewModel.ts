@@ -58,8 +58,8 @@ export default class LearnedViewModel extends Vue {
         type: "pie",
         hole: 0.7,
         labels: ["Learned", "New"],
-        values: [learnedTrainingCount, newTrainingCount]
-      }
+        values: [learnedTrainingCount, newTrainingCount],
+      },
     ];
   }
 }

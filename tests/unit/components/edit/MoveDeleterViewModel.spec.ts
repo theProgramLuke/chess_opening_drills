@@ -7,7 +7,7 @@ describe("MoveDeleterViewModel", () => {
   const move: VariationMove = {
     sourceFen: "",
     resultingFen: "",
-    san: ""
+    san: "",
   };
 
   describe("showDialog", () => {
@@ -15,8 +15,8 @@ describe("MoveDeleterViewModel", () => {
       const component = shallowMount(MoveDeleterViewModel, {
         render: jest.fn(),
         propsData: {
-          move: move
-        }
+          move: move,
+        },
       });
 
       expect(component.vm.showDialog).toBeFalsy();
@@ -28,8 +28,8 @@ describe("MoveDeleterViewModel", () => {
       const component = shallowMount(MoveDeleterViewModel, {
         render: jest.fn(),
         propsData: {
-          move: move
-        }
+          move: move,
+        },
       });
 
       component.vm.onDelete();

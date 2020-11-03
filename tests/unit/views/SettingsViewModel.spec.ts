@@ -40,7 +40,7 @@ describe("SettingsViewModel", () => {
     setYearlyBackupLimit: jest.fn(),
     setEnableBackups: jest.fn(),
     setMoveAnimationSpeed: jest.fn(),
-    clearStorage: jest.fn()
+    clearStorage: jest.fn(),
   };
 
   let component: Wrapper<SettingsViewModel>;
@@ -54,7 +54,7 @@ describe("SettingsViewModel", () => {
     return shallowMount(SettingsViewModel, {
       localVue,
       store,
-      render: jest.fn()
+      render: jest.fn(),
     });
   }
 
@@ -71,7 +71,7 @@ describe("SettingsViewModel", () => {
       monthlyBackupLimit: 0,
       yearlyBackupLimit: 0,
       enableBackups: false,
-      moveAnimationSpeed: 0
+      moveAnimationSpeed: 0,
     };
 
     component = mountComponent();
@@ -82,7 +82,7 @@ describe("SettingsViewModel", () => {
       default: expect.anything(),
       options: expect.anything(),
       themes: expect.anything(),
-      currentTheme: {}
+      currentTheme: {},
     };
   });
 
@@ -121,7 +121,7 @@ describe("SettingsViewModel", () => {
 
       const expected: SetColorPayload = {
         colorToSet: color,
-        value: colorValue
+        value: colorValue,
       };
       expect(mutations.setColor).toBeCalledWith(state, expected);
     });

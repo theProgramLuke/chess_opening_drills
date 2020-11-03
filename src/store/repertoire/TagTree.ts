@@ -53,7 +53,7 @@ export class TagTree {
       fen: this.fen,
       id: this.id,
       children: _.map(this.children, child => child.asSaved()),
-      isRootTag: this.isRootTag
+      isRootTag: this.isRootTag,
     };
   }
 

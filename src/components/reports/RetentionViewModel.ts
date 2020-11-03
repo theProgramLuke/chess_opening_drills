@@ -19,25 +19,25 @@ export default class RetentionViewModel extends Vue {
       domain: [0, 0.8],
       showgrid: true,
       zeroline: false,
-      title: { text: "Training Repetition Count" }
+      title: { text: "Training Repetition Count" },
     },
     yaxis: {
       domain: [0, 0.8],
       showgrid: true,
       zeroline: false,
       rangemode: "nonnegative",
-      title: { text: "Retention Rate" }
+      title: { text: "Retention Rate" },
     },
     xaxis2: {
       domain: [0.85, 1],
       showgrid: false,
-      zeroline: false
+      zeroline: false,
     },
     yaxis2: {
       domain: [0.85, 1],
       showgrid: false,
-      zeroline: false
-    }
+      zeroline: false,
+    },
   };
 
   @State
@@ -70,20 +70,20 @@ export default class RetentionViewModel extends Vue {
         y,
         mode: "markers",
         name: "Positions",
-        type: "scatter"
+        type: "scatter",
       },
       {
         x,
         yaxis: "y2",
         type: "histogram",
-        showlegend: false
+        showlegend: false,
       },
       {
         y,
         xaxis: "x2",
         type: "histogram",
-        showlegend: false
-      }
+        showlegend: false,
+      },
     ];
   }
 

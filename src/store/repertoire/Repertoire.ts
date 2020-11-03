@@ -5,12 +5,12 @@ import {
   PositionCollection,
   SavedPositionCollection,
   Variation,
-  VariationMove
+  VariationMove,
 } from "@/store/repertoire/PositionCollection";
 import { Side } from "@/store/side";
 import {
   TrainingCollection,
-  SavedTrainingCollection
+  SavedTrainingCollection,
 } from "@/store/repertoire/TrainingCollection";
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
 import { TrainingMode } from "@/store/trainingMode";
@@ -56,14 +56,14 @@ export class Repertoire {
         options: {
           directed: true,
           multigraph: false,
-          compound: false
+          compound: false,
         },
         nodes: [{ v: startFen }],
-        edges: []
+        edges: [],
       },
       sideToTrain,
       tags: new TagTree(name, startFen, [], isRootTag).asSaved(),
-      training: new TrainingCollection().asSaved()
+      training: new TrainingCollection().asSaved(),
     };
   }
 
@@ -72,7 +72,7 @@ export class Repertoire {
       sideToTrain: this.sideToTrain,
       positions: this.positions.asSaved(),
       tags: this.tags.asSaved(),
-      training: this.training.asSaved()
+      training: this.training.asSaved(),
     };
   }
 

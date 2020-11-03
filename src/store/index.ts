@@ -29,7 +29,7 @@ export default new Vuex.Store({
     monthlyBackupLimit: storage.monthlyBackupLimit,
     yearlyBackupLimit: storage.yearlyBackupLimit,
     enableBackups: storage.enableBackups,
-    moveAnimationSpeed: storage.moveAnimationSpeed
+    moveAnimationSpeed: storage.moveAnimationSpeed,
   },
 
   mutations,
@@ -38,5 +38,5 @@ export default new Vuex.Store({
 
   modules: {},
 
-  strict: process.env.NODE_ENV !== "production"
+  strict: process.env.NODE_ENV !== "production",
 });

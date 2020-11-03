@@ -23,7 +23,7 @@ describe("MovesPerTagViewModel", () => {
     return shallowMount(MovesPerTagViewModel, {
       localVue,
       store,
-      render: jest.fn()
+      render: jest.fn(),
     });
   }
 
@@ -32,12 +32,12 @@ describe("MovesPerTagViewModel", () => {
       positions: {},
       training: {},
       tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
-      sideToTrain: Side.White
+      sideToTrain: Side.White,
     };
 
     state = {
       whiteRepertoire: new Repertoire(emptySavedRepertoire),
-      blackRepertoire: new Repertoire(emptySavedRepertoire)
+      blackRepertoire: new Repertoire(emptySavedRepertoire),
     };
     state.whiteRepertoire.training = new TrainingCollection();
     state.blackRepertoire.training = new TrainingCollection();
@@ -62,7 +62,7 @@ describe("MovesPerTagViewModel", () => {
 
     it("should be false if either repertoire has more than the starting positions", () => {
       (state.whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue([
-        "anything"
+        "anything",
       ]);
       (state.blackRepertoire.training.getMoves as jest.Mock).mockReturnValue(
         []
@@ -110,8 +110,8 @@ describe("MovesPerTagViewModel", () => {
           type: "sunburst",
           labels: ["White / French", "White", "Black"],
           parents: ["White", "", ""],
-          values: [3, 5, 10]
-        }
+          values: [3, 5, 10],
+        },
       ]);
     });
   });

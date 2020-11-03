@@ -5,7 +5,7 @@ import { Vue, Component, Emit, Prop } from "vue-property-decorator";
 import MoveDeleter from "@/components/edit/MoveDeleter.vue";
 import {
   Variation,
-  VariationMove
+  VariationMove,
 } from "@/store/repertoire/PositionCollection";
 
 @Component({ components: { MoveDeleter } })

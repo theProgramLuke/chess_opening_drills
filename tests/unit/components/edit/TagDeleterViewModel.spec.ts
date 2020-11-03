@@ -17,8 +17,8 @@ describe("TagDeleterViewModel", () => {
       const component = shallowMount(TagDeleterViewModel, {
         render: jest.fn(),
         propsData: {
-          tag: tag
-        }
+          tag: tag,
+        },
       });
 
       expect(component.vm.showDialog).toBeFalsy();
@@ -30,8 +30,8 @@ describe("TagDeleterViewModel", () => {
       const component = shallowMount(TagDeleterViewModel, {
         render: jest.fn(),
         propsData: {
-          tag: tag
-        }
+          tag: tag,
+        },
       });
 
       component.vm.onDelete();
@@ -43,8 +43,8 @@ describe("TagDeleterViewModel", () => {
       const component = shallowMount(TagDeleterViewModel, {
         render: jest.fn(),
         propsData: {
-          tag: tag
-        }
+          tag: tag,
+        },
       });
       component.vm.showDialog = true;
 

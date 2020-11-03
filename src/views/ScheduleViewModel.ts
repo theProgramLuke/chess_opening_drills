@@ -32,7 +32,7 @@ export default class ScheduleViewModel extends Vue {
   get events(): CalendarEvent[] {
     return ScheduleViewModel.eventsFromRepertoire([
       this.whiteRepertoire,
-      this.blackRepertoire
+      this.blackRepertoire,
     ]);
   }
 
@@ -69,7 +69,7 @@ export default class ScheduleViewModel extends Vue {
       // We need to make a JS date, so offset the timezone so
       // it will still be the correct day.
       const offset = Duration.fromObject({
-        minutes: date.offset
+        minutes: date.offset,
       });
       date = date.plus(offset);
       date = date.plus(Duration.fromObject({ days: 1 }));
@@ -78,7 +78,7 @@ export default class ScheduleViewModel extends Vue {
         name: `${scheduledTrainings.length} moves`,
         start: date.toMillis(),
         timed: false,
-        color: "primary"
+        color: "primary",
       });
     });
     return events;

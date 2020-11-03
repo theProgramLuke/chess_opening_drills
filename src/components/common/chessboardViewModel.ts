@@ -48,30 +48,30 @@ export default Vue.extend({
   props: {
     fen: {
       type: String,
-      default: ""
+      default: "",
     },
 
     free: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     showThreats: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     onPromotion: Object as PropType<Exclude<PieceType, "p">>,
 
     orientation: {
       type: Number,
-      default: Side.White
+      default: Side.White,
     },
 
     drawShapes: {
       type: Array as PropType<DrawShape[]>,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
 
   computed: {
@@ -83,7 +83,7 @@ export default Vue.extend({
       } else {
         return [];
       }
-    }
+    },
   },
 
   watch: {
@@ -105,8 +105,8 @@ export default Vue.extend({
       deep: true,
       handler(drawings: DrawShape[]) {
         this.$emit("onDrawingsChanged", drawings);
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -116,7 +116,7 @@ export default Vue.extend({
         wrapper.parentElement?.offsetHeight,
         wrapper.parentElement?.offsetWidth,
         window.innerHeight,
-        window.innerWidth
+        window.innerWidth,
       ]);
 
       minDimension = minDimension || 500;
@@ -184,7 +184,7 @@ export default Vue.extend({
         this.game.move({
           from: orig as Square,
           to: dest as Square,
-          promotion: this.promoteTo
+          promotion: this.promoteTo,
         }); // promote to queen for simplicity
         if (this.board) {
           this.board.set({
@@ -192,8 +192,8 @@ export default Vue.extend({
             turnColor: this.toColor(),
             movable: {
               color: this.toColor(),
-              dests: this.possibleMoves()
-            }
+              dests: this.possibleMoves(),
+            },
           });
         }
         this.calculatePromotions();
@@ -270,13 +270,13 @@ export default Vue.extend({
           movable: {
             color: this.toColor(),
             free: this.free,
-            dests: this.possibleMoves()
+            dests: this.possibleMoves(),
           },
           orientation: this.orientation === Side.White ? "white" : "black",
           animation: {
             enabled: true,
-            duration: this.moveAnimationSpeed
-          }
+            duration: this.moveAnimationSpeed,
+          },
         });
       } else {
         // try to find fen in the moves from this position.
@@ -287,13 +287,13 @@ export default Vue.extend({
           orientation: this.orientation === Side.White ? "white" : "black",
           movable: {
             color: this.toColor(),
-            dests: this.possibleMoves()
-          }
+            dests: this.possibleMoves(),
+          },
         });
       }
 
       this.board.set({
-        movable: { events: { after: this.changeTurn() } }
+        movable: { events: { after: this.changeTurn() } },
       });
 
       this.board.setShapes(_.cloneDeep(this.drawShapes));
@@ -301,7 +301,7 @@ export default Vue.extend({
       if (fen) {
         this.afterMove();
       }
-    }
+    },
   },
 
   mounted() {
@@ -311,5 +311,5 @@ export default Vue.extend({
 
   data: function() {
     return new ChessBoardData(new Chess(""), []);
-  }
+  },
 });

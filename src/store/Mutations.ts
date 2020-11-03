@@ -1,7 +1,6 @@
 import { Storage, PersistantStorage } from "@/store/PersistantStorage";
 import { Side } from "@/store/side";
 import { Repertoire } from "@/store/repertoire/Repertoire";
-import { EngineMetadata } from "@/store/EngineHelpers";
 import {
   AddTrainingEventPayload,
   AddRepertoireMovePayload,
@@ -19,7 +18,7 @@ import {
   SetBackupLimitPayload,
   SetMoveAnimationSpeedPayload,
   SetEngineMetadataPayload,
-  SetEnableBackupsPayload
+  SetEnableBackupsPayload,
 } from "@/store/MutationPayloads";
 
 export interface MutationState extends Storage {
@@ -199,5 +198,5 @@ export const mutations = {
 
   clearStorage(state: MutationState): void {
     state.persisted.clear();
-  }
+  },
 };

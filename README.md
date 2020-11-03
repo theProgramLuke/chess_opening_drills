@@ -5,12 +5,13 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/theprogramluke/chess_opening_drills/badge)](https://www.codefactor.io/repository/github/theprogramluke/chess_opening_drills)
 [![codecov](https://codecov.io/gh/theProgramLuke/chess_opening_drills/branch/main/graph/badge.svg)](https://codecov.io/gh/theProgramLuke/chess_opening_drills)
 
-[![Dependency Status](https://david-dm.org/theProgramLuke/chess_opening_drills.svg)](https://david-dm.org/theProgramLuke/chess_opening_drills)
-[![devDependency Status](https://david-dm.org/theProgramLuke/chess_opening_drills/dev-status.svg)](https://david-dm.org/theProgramLuke/chess_opening_drills#info=devDependencies)
-
 A cross platform chess opening preparation tool. Chess Opening Drills provides a modern experience for _practicing_ an opening repertoire. Chess Opening Drills is not a database tool to develop a repertoire, there are already many tools available for that.
 
 **This is an unfinished tool under active development and should be considered unstable. Keep PGN backups of your repertoire.**
+
+## Installation
+
+[Download releases here](https://github.com/theProgramLuke/chess_opening_drills/releases), or [build it yourself](CONTRIBUTING.md).
 
 ## Features
 

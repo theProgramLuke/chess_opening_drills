@@ -1,5 +1,3 @@
-import _ from "lodash";
-
 import { Backup } from "@/store/Backup";
 
 export const day = 24 * 60 * 60 * 1000;

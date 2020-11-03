@@ -1,11 +1,11 @@
 import { shallowMount, Wrapper } from "@vue/test-utils";
 
 import MoveListViewModel, {
-  Turn
+  Turn,
 } from "@/components/edit/MoveListViewModel.ts";
 import {
   VariationMove,
-  Variation
+  Variation,
 } from "@/store/repertoire/PositionCollection";
 
 describe("MoveListViewModel", () => {
@@ -15,8 +15,8 @@ describe("MoveListViewModel", () => {
     return shallowMount(MoveListViewModel, {
       render: jest.fn(),
       propsData: {
-        variations: []
-      }
+        variations: [],
+      },
     });
   }
 
@@ -55,38 +55,38 @@ describe("MoveListViewModel", () => {
           { resultingFen: "", san: "", sourceFen: " w " },
           { resultingFen: "", san: "", sourceFen: " b " },
           { resultingFen: "", san: "", sourceFen: " w " },
-          { resultingFen: "", san: "", sourceFen: " b " }
+          { resultingFen: "", san: "", sourceFen: " b " },
         ],
         [{ resultingFen: "", san: "", sourceFen: " w " }],
-        [{ resultingFen: "", san: "", sourceFen: " b " }]
+        [{ resultingFen: "", san: "", sourceFen: " b " }],
       ];
       const expected: Turn[][] = [
         [
           {
             turnNumber: 1,
             whiteMove: variations[0][0],
-            blackMove: variations[0][1]
+            blackMove: variations[0][1],
           },
           {
             turnNumber: 2,
             whiteMove: variations[0][2],
-            blackMove: variations[0][3]
-          }
+            blackMove: variations[0][3],
+          },
         ],
         [
           {
             turnNumber: 1,
             whiteMove: variations[1][0],
-            blackMove: undefined
-          }
+            blackMove: undefined,
+          },
         ],
         [
           {
             turnNumber: 1,
             whiteMove: undefined,
-            blackMove: variations[2][0]
-          }
-        ]
+            blackMove: variations[2][0],
+          },
+        ],
       ];
       component.vm.variations.push(...variations);
 

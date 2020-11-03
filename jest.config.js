@@ -16,14 +16,14 @@ module.exports = {
     // List of themes
     "!src/views/ChessgroundThemes.ts",
     // typescript version of vue-chessboard
-    "!src/components/common/chessboardViewModel.ts"
+    "!src/components/common/chessboardViewModel.ts",
   ],
   moduleFileExtensions: ["ts", "js"],
   globals: {
     "vue-jest": {
-      pug: { doctype: "html" }
-    }
+      pug: { doctype: "html" },
+    },
   },
   snapshotSerializers: ["jest-serializer-vue"],
-  testPathIgnorePatterns: ["/.vscode/"]
+  testPathIgnorePatterns: ["/.vscode/"],
 };

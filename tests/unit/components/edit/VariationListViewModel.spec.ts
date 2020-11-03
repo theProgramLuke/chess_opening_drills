@@ -11,8 +11,8 @@ describe("VariationListViewModel", () => {
     return shallowMount(VariationListViewModel, {
       render: jest.fn(),
       propsData: {
-        variations
-      }
+        variations,
+      },
     });
   }
 

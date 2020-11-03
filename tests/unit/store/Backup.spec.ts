@@ -38,7 +38,7 @@ describe("Backup", () => {
       expect(fs.mkdir).toBeCalledWith(
         path.dirname(filePath),
         {
-          recursive: true
+          recursive: true,
         },
         expect.anything()
       );

@@ -1,7 +1,7 @@
 <template lang="pug">
   v-dialog(v-model="showDialog" max-width="500px")
     template(v-slot:activator="{on, attrs}")
-      v-btn(v-bind="attrs" v-on="on" icon, color="error")
+      v-btn(v-bind="attrs", v-on="on", icon, color="error")
         v-icon mdi-delete
 
     v-card.pa-4

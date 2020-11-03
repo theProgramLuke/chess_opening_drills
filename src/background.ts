@@ -17,11 +17,11 @@ function createWindow() {
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: true
+      nodeIntegration: true,
     },
     icon: path.join(__static, "icon.png"),
     minHeight: 550,
-    minWidth: 700
+    minWidth: 700,
   });
 
   win.maximize();
@@ -50,7 +50,7 @@ if (!gotSingletonLock) {
 } else {
   // Scheme must be registered before the app is ready
   protocol.registerSchemesAsPrivileged([
-    { scheme: "app", privileges: { secure: true, standard: true } }
+    { scheme: "app", privileges: { secure: true, standard: true } },
   ]);
 
   // Quit when all windows are closed.

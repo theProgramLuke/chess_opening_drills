@@ -6,7 +6,7 @@ import {
   SuperMemo2,
   TrainingGrade,
   SuperMemo2HistoryEntry,
-  SavedSuperMemo2
+  SavedSuperMemo2,
 } from "@/store/repertoire/SuperMemo2";
 import { TrainingMode } from "../trainingMode";
 
@@ -43,7 +43,7 @@ export class RepetitionTraining {
         return {
           easiness: entry.easiness,
           grade: entry.grade,
-          timestamp: entry.timestamp
+          timestamp: entry.timestamp,
         } as SuperMemo2HistoryEntry;
       }),
       scheduledRepetitionTimestamp
@@ -79,7 +79,7 @@ export class RepetitionTraining {
     return _.map(this.historyInternal, (event, index) => {
       return {
         ...this.training.history[index],
-        ...event
+        ...event,
       } as TrainingHistoryEntry;
     });
   }
@@ -87,7 +87,7 @@ export class RepetitionTraining {
   asSaved(): SavedRepetitionTraining {
     return {
       ...this.training.asSaved(),
-      history: this.history
+      history: this.history,
     };
   }
 

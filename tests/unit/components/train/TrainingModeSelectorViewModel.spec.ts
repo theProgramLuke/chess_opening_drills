@@ -5,7 +5,7 @@ import shuffle from "lodash/shuffle";
 import TrainingModeSelectorViewModel from "@/components/train/TrainingModeSelectorViewModel.ts";
 import {
   TrainingOptions,
-  TrainingVariation
+  TrainingVariation,
 } from "@/components/train/TrainingOptions";
 import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { TagTree } from "@/store/repertoire/TagTree";
@@ -22,7 +22,7 @@ describe("TrainingModeSelectorViewModel", () => {
     positions: {},
     training: {},
     tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
-    sideToTrain: Side.White
+    sideToTrain: Side.White,
   };
 
   const mountComponent = (
@@ -33,8 +33,8 @@ describe("TrainingModeSelectorViewModel", () => {
       render: jest.fn(),
       propsData: {
         whiteRepertoire,
-        blackRepertoire
-      }
+        blackRepertoire,
+      },
     });
 
   function mockTag(name: number): TagTree {
@@ -76,7 +76,7 @@ describe("TrainingModeSelectorViewModel", () => {
       component.vm.blackRepertoire.tags = new TagTree("", "", []);
       const expected = [
         component.vm.whiteRepertoire.tags,
-        component.vm.blackRepertoire.tags
+        component.vm.blackRepertoire.tags,
       ];
 
       const actual = component.vm.combinedTags;
@@ -109,7 +109,7 @@ describe("TrainingModeSelectorViewModel", () => {
     it.each([
       [0, 0.2],
       [50, 2.6],
-      [100, 5]
+      [100, 5],
     ])("should convert %s to %s", (input, expected) => {
       const component = mountComponent();
       component.vm.playbackSpeedSlideValue = input;
@@ -124,7 +124,7 @@ describe("TrainingModeSelectorViewModel", () => {
     it.each([
       [0, 1],
       [50, 3],
-      [100, 5]
+      [100, 5],
     ])("should convert %s to %s", (input, expected) => {
       const component = mountComponent();
       component.vm.difficultyModeLimit = input;
@@ -145,12 +145,12 @@ describe("TrainingModeSelectorViewModel", () => {
         const expected: TrainingVariation[] = [
           {
             repertoire: component.vm.whiteRepertoire,
-            variation: whiteVariations[0]
+            variation: whiteVariations[0],
           },
           {
             repertoire: component.vm.blackRepertoire,
-            variation: blackVariations[0]
-          }
+            variation: blackVariations[0],
+          },
         ];
         const modes = [TrainingMode.Difficult, TrainingMode.Scheduled];
         const topics = _.times(10, mockTag);
@@ -185,12 +185,12 @@ describe("TrainingModeSelectorViewModel", () => {
       const expected: TrainingVariation[] = [
         {
           repertoire: component.vm.whiteRepertoire,
-          variation: whiteVariations[0]
+          variation: whiteVariations[0],
         },
         {
           repertoire: component.vm.blackRepertoire,
-          variation: blackVariations[0]
-        }
+          variation: blackVariations[0],
+        },
       ];
       const modes = [TrainingMode.Difficult, TrainingMode.Scheduled];
       const topics = _.times(10, mockTag);
@@ -227,7 +227,7 @@ describe("TrainingModeSelectorViewModel", () => {
       const component = mountComponent();
       const variations = [
         makeVariation(["e4", "e5", "Nc3", "Nf6", "f4"]),
-        makeVariation(["d4", "Nf6", "c4", "g6", "Nf3"])
+        makeVariation(["d4", "Nf6", "c4", "g6", "Nf3"]),
       ];
       (component.vm.whiteRepertoire
         .getTrainingVariations as jest.Mock).mockReturnValue(variations);
@@ -259,8 +259,8 @@ describe("TrainingModeSelectorViewModel", () => {
       const expectedVariations: TrainingVariation[] = [
         {
           repertoire: component.vm.whiteRepertoire,
-          variation: variations[0]
-        }
+          variation: variations[0],
+        },
       ];
       component.vm.selectedTopics = expectedTags;
       (component.vm.whiteRepertoire
@@ -278,9 +278,9 @@ describe("TrainingModeSelectorViewModel", () => {
               true,
               0.6799999999999999,
               1.6
-            )
-          ]
-        ]
+            ),
+          ],
+        ],
       });
     });
   });

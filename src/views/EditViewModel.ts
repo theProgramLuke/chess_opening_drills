@@ -13,7 +13,7 @@ import { Repertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
 import {
   Variation,
-  VariationMove
+  VariationMove,
 } from "@/store/repertoire/PositionCollection";
 import {
   AddRepertoireMovePayload,
@@ -21,7 +21,7 @@ import {
   RemoveRepertoireMovePayload,
   RemoveRepertoireTagPayload,
   SetPositionCommentsPayload,
-  SetPositionDrawingsPayload
+  SetPositionDrawingsPayload,
 } from "@/store/MutationPayloads";
 import { fenAfterMove, normalizeFen } from "@/store/repertoire/chessHelpers";
 import { DrawShape } from "chessground/draw";
@@ -32,8 +32,8 @@ import { DrawShape } from "chessground/draw";
     TagList,
     MoveList,
     VariationList,
-    EngineRecommendations
-  }
+    EngineRecommendations,
+  },
 })
 export default class EditViewModel extends Vue {
   // hack so that this will be reactive https://github.com/vuejs/vue-class-component/issues/211
@@ -97,7 +97,7 @@ export default class EditViewModel extends Vue {
     this.setPositionComments({
       repertoire: this.activeRepertoire,
       fen: this.activePosition,
-      comments
+      comments,
     });
   }
 
@@ -111,7 +111,7 @@ export default class EditViewModel extends Vue {
     this.setPositionDrawings({
       repertoire: this.activeRepertoire,
       fen: this.activePosition,
-      drawings
+      drawings,
     });
   }
 
@@ -126,7 +126,7 @@ export default class EditViewModel extends Vue {
   ): void {
     this.addRepertoireTag({
       ...partialPayload,
-      repertoire: this.activeRepertoire
+      repertoire: this.activeRepertoire,
     });
   }
 
@@ -134,7 +134,7 @@ export default class EditViewModel extends Vue {
     this.removeRepertoireMove({
       repertoire: this.activeRepertoire,
       fen: move.sourceFen,
-      san: move.san
+      san: move.san,
     });
 
     ++this.recomputeNextMovesCounter;
@@ -145,7 +145,7 @@ export default class EditViewModel extends Vue {
   ): void {
     this.removeRepertoireTag({
       ...partialPayload,
-      repertoire: this.activeRepertoire
+      repertoire: this.activeRepertoire,
     });
   }
 
@@ -174,7 +174,7 @@ export default class EditViewModel extends Vue {
         this.addRepertoireMove({
           repertoire: this.activeRepertoire,
           fen: this.activePosition,
-          san: lastMoveSan
+          san: lastMoveSan,
         });
       }
 

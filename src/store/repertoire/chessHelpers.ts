@@ -23,7 +23,7 @@ export function fenAfterMove(fen: string, san: string): string | undefined {
 
     const enPassant = _.some(
       game.moves({
-        verbose: true
+        verbose: true,
       }),
       move => move.flags.includes("e") // "e" is en passant flag https://github.com/jhlywa/chess.js/
     );

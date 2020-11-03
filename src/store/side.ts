@@ -1,4 +1,4 @@
 export enum Side {
   White,
-  Black
+  Black,
 }

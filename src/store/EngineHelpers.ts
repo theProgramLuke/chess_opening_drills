@@ -51,7 +51,7 @@ export async function GetMetadataFromEngine(
           option.value = option.default;
           options.push({
             name: key,
-            ...option
+            ...option,
           });
         }
       });
@@ -59,7 +59,7 @@ export async function GetMetadataFromEngine(
       const result = {
         name: engine.id.name,
         filePath: enginePath,
-        options
+        options,
       };
 
       await engine.quit();
@@ -91,7 +91,7 @@ export function ProcessAnalysis(
       evaluation: engineData.score.value / 100,
       depth: engineData.depth,
       variation: engineData.pv.split(" "),
-      id: engineData.multipv
+      id: engineData.multipv,
     };
   }
 

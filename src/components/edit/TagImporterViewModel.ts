@@ -12,7 +12,7 @@ export default class TagImporterViewModel extends Vue {
   showDialog = false;
   inputFile: File = new File([], "");
   inputFileRules: InputValidationRule[] = [
-    TagImporterViewModel.fileIsDefinedRule
+    TagImporterViewModel.fileIsDefinedRule,
   ];
   inputFileErrors: string | string[] = [];
   loading = false;
@@ -38,7 +38,7 @@ export default class TagImporterViewModel extends Vue {
         try {
           this.addPositionsFromPgn({
             repertoire: this.repertoire,
-            pgn
+            pgn,
           });
           this.showDialog = false;
         } catch (error) {

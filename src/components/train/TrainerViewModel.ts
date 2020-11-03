@@ -8,7 +8,7 @@ import chessboard from "@/components/common/chessboard.vue";
 import { Threats } from "@/components/common/chessboardViewModel";
 import {
   TrainingOptions,
-  TrainingVariation
+  TrainingVariation,
 } from "@/components/train/TrainingOptions";
 import { Side } from "@/store/side";
 import { sideFromFen, normalizeFen } from "@/store/repertoire/chessHelpers";
@@ -203,10 +203,10 @@ export default class TrainerViewModel extends Vue {
             repertoire: this.activeVariation.repertoire,
             event: {
               attemptedMoves: this.attempts,
-              elapsedMilliseconds: this.getElapsedSeconds()
+              elapsedMilliseconds: this.getElapsedSeconds(),
             },
             fen: this.activePosition,
-            san: this.activeVariation.variation[this.plyCount].san
+            san: this.activeVariation.variation[this.plyCount].san,
           });
 
           this.nextTrainingPosition();
@@ -229,7 +229,7 @@ export default class TrainerViewModel extends Vue {
   }
 
   private get isTurnOfSideToTrain(): boolean {
-    const sideToMove = sideFromFen(this.activePosition!);
+    const sideToMove = sideFromFen(this.activePosition);
     return sideToMove === this.activeVariation!.repertoire.sideToTrain;
   }
 

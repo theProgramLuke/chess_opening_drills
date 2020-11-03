@@ -39,9 +39,9 @@ export default class MovesPerTagViewModel extends Vue {
         labels: _.concat(whiteTagCounts.labels, blackTagCounts.labels),
         parents: _.concat(whiteTagCounts.parents, blackTagCounts.parents),
         values: _.concat(whiteTagCounts.counts, blackTagCounts.counts),
-        maxdepth: 3
+        maxdepth: 3,
         // hoverinfo: "label+"
-      }
+      },
     ];
   }
 

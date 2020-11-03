@@ -7,9 +7,8 @@ import { Repertoire, SavedRepertoire } from "@/store/repertoire/Repertoire";
 import { Side } from "@/store/side";
 import {
   RepetitionTraining,
-  TrainingHistoryEntry
+  TrainingHistoryEntry,
 } from "@/store/repertoire/RepetitionTraining";
-import { Writeable } from "tests/TestHelpers";
 
 jest.mock("@/store/repertoire/Repertoire");
 
@@ -25,7 +24,7 @@ describe("RetentionViewModel", () => {
     return shallowMount(RetentionViewModel, {
       localVue,
       store,
-      render: jest.fn()
+      render: jest.fn(),
     });
   }
 
@@ -34,12 +33,12 @@ describe("RetentionViewModel", () => {
       positions: {},
       training: {},
       tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
-      sideToTrain: Side.White
+      sideToTrain: Side.White,
     };
 
     state = {
       whiteRepertoire: new Repertoire(emptySavedRepertoire),
-      blackRepertoire: new Repertoire(emptySavedRepertoire)
+      blackRepertoire: new Repertoire(emptySavedRepertoire),
     };
 
     store = new Vuex.Store({ state });
@@ -62,10 +61,8 @@ describe("RetentionViewModel", () => {
     });
 
     it("should be false if the repertoire has trained positions", () => {
-      const fen = "fen";
-      const san = "san";
       (state.whiteRepertoire.getTrainingForTags as jest.Mock).mockReturnValue([
-        "anything"
+        "anything",
       ]);
       (state.blackRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
         []
@@ -86,7 +83,7 @@ describe("RetentionViewModel", () => {
           : ["multiple", "attempts"],
         elapsedMilliseconds: 0,
         grade: 0,
-        timestamp: 0
+        timestamp: 0,
       };
     }
 
@@ -137,20 +134,20 @@ describe("RetentionViewModel", () => {
           y,
           mode: "markers",
           name: "Positions",
-          type: "scatter"
+          type: "scatter",
         },
         {
           x,
           yaxis: "y2",
           type: "histogram",
-          showlegend: false
+          showlegend: false,
         },
         {
           y,
           xaxis: "x2",
           type: "histogram",
-          showlegend: false
-        }
+          showlegend: false,
+        },
       ]);
     });
   });

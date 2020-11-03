@@ -13,7 +13,7 @@ describe("TagImporterViewModel", () => {
   const localVue = createLocalVue();
   localVue.use(Vuex);
   const mutations = {
-    addPositionsFromPgn: jest.fn()
+    addPositionsFromPgn: jest.fn(),
   };
   const store = new Vuex.Store({ mutations });
 
@@ -27,7 +27,7 @@ describe("TagImporterViewModel", () => {
       training: {},
       positions: {},
       sideToTrain: Side.White,
-      tags: new TagTree("", "", []).asSaved()
+      tags: new TagTree("", "", []).asSaved(),
     });
 
     mutations.addPositionsFromPgn.mockClear();
@@ -38,8 +38,8 @@ describe("TagImporterViewModel", () => {
       render: jest.fn(),
       propsData: {
         tag,
-        repertoire
-      }
+        repertoire,
+      },
     });
   });
 
@@ -67,7 +67,7 @@ describe("TagImporterViewModel", () => {
 
       expect(mutations.addPositionsFromPgn).toBeCalledWith(expect.anything(), {
         repertoire,
-        pgn
+        pgn,
       });
     });
 

@@ -13,7 +13,7 @@ export default class TagCreatorViewModel extends Vue {
   valid = false;
   name = "";
   nameRules: InputValidationRule[] = [
-    (value: string) => !!value || "Name is required"
+    (value: string) => !!value || "Name is required",
   ];
 
   @Prop({ required: true })
@@ -44,7 +44,7 @@ export default class TagCreatorViewModel extends Vue {
       const emitted: Omit<AddRepertoireTagPayload, "repertoire"> = {
         parent: this.parentTag,
         name: this.name,
-        fen: this.activePosition
+        fen: this.activePosition,
       };
       this.$emit("onCreate", emitted);
       this.showDialog = false;

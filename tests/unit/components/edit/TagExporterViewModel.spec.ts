@@ -30,7 +30,7 @@ describe("TagExporterViewModel", () => {
       training: {},
       positions: {},
       tags: new TagTree("", "", []),
-      sideToTrain: Side.White
+      sideToTrain: Side.White,
     });
     repertoire.positions = new PositionCollection({});
     (repertoire.positions.asPgn as jest.Mock).mockReturnValue(pgnText);
@@ -42,8 +42,8 @@ describe("TagExporterViewModel", () => {
         render: jest.fn(),
         propsData: {
           tag,
-          repertoire
-        }
+          repertoire,
+        },
       });
 
       const actual = component.vm.pgnText;
@@ -63,8 +63,8 @@ describe("TagExporterViewModel", () => {
         render: jest.fn(),
         propsData: {
           tag,
-          repertoire
-        }
+          repertoire,
+        },
       });
 
       component.vm.save();
@@ -83,7 +83,7 @@ describe("TagExporterViewModel", () => {
         dispatchEvent: jest.fn(),
         readText: jest.fn(),
         removeEventListener: jest.fn(),
-        writeText: jest.fn()
+        writeText: jest.fn(),
       };
     });
 
@@ -92,8 +92,8 @@ describe("TagExporterViewModel", () => {
         render: jest.fn(),
         propsData: {
           tag,
-          repertoire
-        }
+          repertoire,
+        },
       });
 
       component.vm.copy();

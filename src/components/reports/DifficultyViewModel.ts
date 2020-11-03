@@ -13,13 +13,13 @@ export default class DifficultyViewModel extends Vue {
   layout: Partial<Layout> = {
     yaxis: {
       rangemode: "tozero",
-      title: { text: "Position Count" }
+      title: { text: "Position Count" },
     },
     xaxis: {
-      title: { text: "Difficulty" }
+      title: { text: "Difficulty" },
     },
     margin: { b: 125 },
-    barmode: "stack"
+    barmode: "stack",
   };
 
   @State
@@ -46,19 +46,19 @@ export default class DifficultyViewModel extends Vue {
   get plotData() {
     const common = {
       xbins: { start: 0, end: 15 },
-      type: "histogram"
+      type: "histogram",
     };
     return [
       {
         ...common,
         name: "Black Positions",
-        x: this.blackEasiness
+        x: this.blackEasiness,
       },
       {
         ...common,
         name: "White Positions",
-        x: this.whiteEasiness
-      }
+        x: this.whiteEasiness,
+      },
     ];
   }
 

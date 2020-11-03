@@ -5,11 +5,11 @@ import {
   RepetitionTraining,
   TrainingHistoryEntry,
   SavedRepetitionTraining,
-  TrainingEvent
+  TrainingEvent,
 } from "@/store/repertoire/RepetitionTraining";
 import {
   TrainingGrade,
-  MillisecondsPerDay
+  MillisecondsPerDay,
 } from "@/store/repertoire/SuperMemo2";
 import { TrainingMode } from "@/store/trainingMode";
 
@@ -41,7 +41,7 @@ describe("RepetitionTraining", () => {
       [0 as TrainingGrade, 0, 4],
       [0 as TrainingGrade, Infinity, 4],
       [0 as TrainingGrade, 0, Infinity],
-      [0 as TrainingGrade, Infinity, Infinity]
+      [0 as TrainingGrade, Infinity, Infinity],
     ])(
       "should assign a grade of %s for the duration %s with %s attempted move(s)",
       (expectedGrade, elapsedMilliseconds, attemptsCount) => {
@@ -50,7 +50,7 @@ describe("RepetitionTraining", () => {
 
         training.addTrainingEvent({
           attemptedMoves,
-          elapsedMilliseconds
+          elapsedMilliseconds,
         });
         const actual = training.history[0].grade;
 
@@ -69,14 +69,14 @@ describe("RepetitionTraining", () => {
           attemptedMoves,
           easiness: expect.anything(),
           grade: expect.anything(),
-          timestamp: expect.anything()
-        }
+          timestamp: expect.anything(),
+        },
       ];
       const training = new RepetitionTraining();
 
       training.addTrainingEvent({
         attemptedMoves,
-        elapsedMilliseconds
+        elapsedMilliseconds,
       });
       const actual = training.history;
 
@@ -88,18 +88,18 @@ describe("RepetitionTraining", () => {
     const events: TrainingEvent[] = [
       { elapsedMilliseconds: 10000, attemptedMoves: [""] },
       { elapsedMilliseconds: 3000, attemptedMoves: [""] },
-      { elapsedMilliseconds: 0, attemptedMoves: [""] }
+      { elapsedMilliseconds: 0, attemptedMoves: [""] },
     ];
     const saved: SavedRepetitionTraining = {
       easiness: 2.46,
       history: [
         { easiness: 2.36, grade: 3, timestamp: nowTimestamp, ...events[0] },
         { easiness: 2.36, grade: 4, timestamp: nowTimestamp, ...events[1] },
-        { easiness: 2.46, grade: 5, timestamp: nowTimestamp, ...events[2] }
+        { easiness: 2.46, grade: 5, timestamp: nowTimestamp, ...events[2] },
       ],
       scheduledRepetitionTimestamp: 10 * MillisecondsPerDay + nowTimestamp,
       previousIntervalDays: 10,
-      effectiveTrainingIndex: events.length
+      effectiveTrainingIndex: events.length,
     };
 
     it("should capture the state of the training", () => {
@@ -134,7 +134,7 @@ describe("RepetitionTraining", () => {
         const training = new RepetitionTraining();
         training.addTrainingEvent({
           elapsedMilliseconds: 0,
-          attemptedMoves: [""]
+          attemptedMoves: [""],
         });
 
         const actual = training.includeForTrainingMode(TrainingMode.New);
@@ -156,7 +156,7 @@ describe("RepetitionTraining", () => {
         const training = new RepetitionTraining();
         training.addTrainingEvent({
           elapsedMilliseconds: 0,
-          attemptedMoves: [""]
+          attemptedMoves: [""],
         });
 
         const actual = training.includeForTrainingMode(TrainingMode.Cram);
@@ -176,7 +176,7 @@ describe("RepetitionTraining", () => {
         ); // first training interval will be millisecondsPerDay
         training.addTrainingEvent({
           elapsedMilliseconds: 0,
-          attemptedMoves: [""]
+          attemptedMoves: [""],
         });
         expect(training.scheduledRepetitionTimestamp).toEqual(
           lastMillisecondOfToday
@@ -193,7 +193,7 @@ describe("RepetitionTraining", () => {
         (now as jest.Mock).mockReturnValue(0);
         training.addTrainingEvent({
           elapsedMilliseconds: 0,
-          attemptedMoves: [""]
+          attemptedMoves: [""],
         });
         (now as jest.Mock).mockReturnValue(10 * millisecondsPerDay);
 
@@ -207,7 +207,7 @@ describe("RepetitionTraining", () => {
         (now as jest.Mock).mockReturnValue(10 * millisecondsPerDay);
         training.addTrainingEvent({
           elapsedMilliseconds: 0,
-          attemptedMoves: [""]
+          attemptedMoves: [""],
         });
         (now as jest.Mock).mockReturnValue(0);
 
@@ -241,7 +241,7 @@ describe("RepetitionTraining", () => {
         const training = new RepetitionTraining();
         training.addTrainingEvent({
           elapsedMilliseconds: 0,
-          attemptedMoves: [""]
+          attemptedMoves: [""],
         });
         expect(training.easiness).toEqual(2.6);
 
@@ -257,7 +257,7 @@ describe("RepetitionTraining", () => {
         const training = new RepetitionTraining();
         training.addTrainingEvent({
           elapsedMilliseconds: 0,
-          attemptedMoves: [""]
+          attemptedMoves: [""],
         });
         expect(training.easiness).toEqual(2.6);
 
@@ -273,7 +273,7 @@ describe("RepetitionTraining", () => {
         const training = new RepetitionTraining();
         training.addTrainingEvent({
           elapsedMilliseconds: 0,
-          attemptedMoves: [""]
+          attemptedMoves: [""],
         });
         expect(training.easiness).toEqual(2.6);
 

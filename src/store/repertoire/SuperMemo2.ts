@@ -79,7 +79,7 @@ export class SuperMemo2 {
     this.historyInternal.push({
       easiness: this.easinessInternal,
       timestamp: now(),
-      grade
+      grade,
     });
 
     if (grade < 3) {
@@ -100,7 +100,7 @@ export class SuperMemo2 {
       history: this.historyInternal,
       scheduledRepetitionTimestamp: this.scheduledRepetitionTimestamp,
       previousIntervalDays: this.previousIntervalDays,
-      effectiveTrainingIndex: this.effectiveTrainingIndex
+      effectiveTrainingIndex: this.effectiveTrainingIndex,
     };
   }
 

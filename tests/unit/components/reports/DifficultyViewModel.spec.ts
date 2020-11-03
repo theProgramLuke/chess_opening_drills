@@ -17,7 +17,7 @@ const emptySavedRepertoire: SavedRepertoire = {
   positions: {},
   training: {},
   tags: { name: "", fen: "", id: "", children: [], isRootTag: false },
-  sideToTrain: Side.White
+  sideToTrain: Side.White,
 };
 
 const notIncludedTraining = new RepetitionTraining();
@@ -30,7 +30,7 @@ const includedTraining = new RepetitionTraining();
 
 const state = {
   whiteRepertoire: new Repertoire(emptySavedRepertoire),
-  blackRepertoire: new Repertoire(emptySavedRepertoire)
+  blackRepertoire: new Repertoire(emptySavedRepertoire),
 };
 
 const localVue = createLocalVue();
@@ -59,7 +59,7 @@ describe("DifficultyViewModel", () => {
       const component = shallowMount(DifficultyViewModel, {
         localVue,
         store,
-        render: jest.fn()
+        render: jest.fn(),
       });
 
       const show = component.vm.showNoPositions;
@@ -68,10 +68,8 @@ describe("DifficultyViewModel", () => {
     });
 
     it("should be false if the repertoire has trained positions", () => {
-      const fen = "fen";
-      const san = "san";
       (state.whiteRepertoire.getTrainingForTags as jest.Mock).mockReturnValue([
-        "anything"
+        "anything",
       ]);
       (state.blackRepertoire.getTrainingForTags as jest.Mock).mockReturnValue(
         []
@@ -79,7 +77,7 @@ describe("DifficultyViewModel", () => {
       const component = shallowMount(DifficultyViewModel, {
         localVue,
         store,
-        render: jest.fn()
+        render: jest.fn(),
       });
 
       const show = component.vm.showNoPositions;
@@ -101,7 +99,7 @@ describe("DifficultyViewModel", () => {
       const component = shallowMount(DifficultyViewModel, {
         localVue,
         store,
-        render: jest.fn()
+        render: jest.fn(),
       });
 
       const plotData = component.vm.plotData;
@@ -111,14 +109,14 @@ describe("DifficultyViewModel", () => {
           type: "histogram",
           name: "Black Positions",
           x: blackEasinessFactors,
-          xbins: { start: 0, end: 15 }
+          xbins: { start: 0, end: 15 },
         },
         {
           type: "histogram",
           name: "White Positions",
           x: whiteEasinessFactors,
-          xbins: { start: 0, end: 15 }
-        }
+          xbins: { start: 0, end: 15 },
+        },
       ]);
     });
   });
