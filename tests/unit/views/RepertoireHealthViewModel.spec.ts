@@ -105,7 +105,7 @@ describe("RepertoireHealthViewModel", () => {
   });
 
   describe("activePosition", () => {
-    it(`should be the legal fen of the first position 
+    it(`should be the legal fen of the first position
         with multiple moves to train from either repertoires`, () => {
       const whiteMultipleMoves: TrainingMoveSpecification[] = [
         { fen: "fen0", san: "" },
