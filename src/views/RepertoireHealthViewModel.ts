@@ -15,9 +15,10 @@ interface PositionToReview {
 
 @Component({ components: { chessboard } })
 export default class RepertoireHealthViewModel extends Vue {
+  recomputePositions = 0;
+
   private positionsToSkip: PositionToReview[] = [];
   private showDialog: Record<string, boolean> = {};
-  private loading = false;
 
   @State
   whiteRepertoire!: Repertoire;
@@ -64,6 +65,8 @@ export default class RepertoireHealthViewModel extends Vue {
         san: move.san,
       });
     }
+
+    ++this.recomputePositions;
   }
 
   private get activeRepertoire(): Repertoire | undefined {
@@ -83,6 +86,8 @@ export default class RepertoireHealthViewModel extends Vue {
   }
 
   private get positionsWithMultipleMoves(): PositionToReview[] {
+    this.recomputePositions;
+
     return _.concat(
       RepertoireHealthViewModel.getPositionsToReview(this.whiteRepertoire),
       RepertoireHealthViewModel.getPositionsToReview(this.blackRepertoire)

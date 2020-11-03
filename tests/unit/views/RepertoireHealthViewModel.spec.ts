@@ -251,5 +251,49 @@ describe("RepertoireHealthViewModel", () => {
         expected
       );
     });
+
+    it("should trigger the positions to recompute", () => {
+      const whiteMultipleMoves: TrainingMoveSpecification[] = [
+        { fen: "fen0", san: "san0" },
+        { fen: "fen0", san: "san1" },
+      ];
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        [whiteMultipleMoves[0].fen]: [],
+      });
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      const expected: RemoveRepertoireMovePayload = {
+        repertoire: whiteRepertoire,
+        fen: whiteMultipleMoves[0].fen,
+        san: whiteMultipleMoves[0].san,
+      };
+
+      component.vm.onDeleteMove(whiteMultipleMoves[0]);
+
+      expect(mutations.removeRepertoireMove).toBeCalledWith(
+        expect.anything(),
+        expected
+      );
+    });
+
+    it("should trigger the positions to recompute", () => {
+      const whiteMultipleMoves: TrainingMoveSpecification[] = [
+        { fen: "fen0", san: "san0" },
+        { fen: "fen0", san: "san1" },
+      ];
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+        [whiteMultipleMoves[0].fen]: [],
+      });
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      const expected = component.vm.recomputePositions + 1;
+
+      component.vm.onDeleteMove(whiteMultipleMoves[0]);
+      const actual = component.vm.recomputePositions;
+
+      expect(actual).toEqual(expected);
+    });
   });
 });
