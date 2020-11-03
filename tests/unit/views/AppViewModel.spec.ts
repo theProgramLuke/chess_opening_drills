@@ -43,7 +43,12 @@ describe("AppViewModel", () => {
     const localVue = createLocalVue();
     localVue.use(Vuex);
 
-    const store = new Vuex.Store({ state });
+    const mutations = {
+      addRepertoireMove: jest.fn(),
+      removeRepertoireMove: jest.fn(),
+      otherMutation: jest.fn(),
+    };
+    const store = new Vuex.Store({ state, mutations });
 
     return shallowMount(AppViewModel, {
       render: jest.fn(),
@@ -230,6 +235,27 @@ describe("AppViewModel", () => {
       );
 
       const actual = component.vm.menuItems;
+
+      expect(actual).toEqual(expected);
+    });
+
+    it.each(["addRepertoireMove", "removeRepertoireMove"])(
+      `should update the subtitle when the repertoire positions change by %s`,
+      mutationType => {
+        const expected = component.vm.recomputeMenuItems + 1;
+
+        component.vm.$store.commit(mutationType);
+        const actual = component.vm.recomputeMenuItems;
+
+        expect(actual).toEqual(expected);
+      }
+    );
+
+    it(`should not update the subtitle for other mutations`, () => {
+      const expected = component.vm.recomputeMenuItems;
+
+      component.vm.$store.commit("otherMutation");
+      const actual = component.vm.recomputeMenuItems;
 
       expect(actual).toEqual(expected);
     });

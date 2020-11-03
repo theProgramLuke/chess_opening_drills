@@ -47,6 +47,7 @@ export const baseMenuItems: NavigationMenuItem[] = [
 @Component
 export default class AppViewModel extends Vue {
   drawer = true;
+  recomputeMenuItems = 0;
 
   @State
   whiteRepertoire!: Repertoire;
@@ -92,6 +93,8 @@ export default class AppViewModel extends Vue {
   }
 
   private get repertoireHealthSubtitle(): string | undefined {
+    this.recomputeMenuItems;
+
     const warningCount =
       AppViewModel.countRepertoireMultipleMoves(this.whiteRepertoire) +
       AppViewModel.countRepertoireMultipleMoves(this.blackRepertoire);
@@ -151,6 +154,15 @@ export default class AppViewModel extends Vue {
 
   created() {
     this.initializeTheme();
+
+    this.$store.subscribe(mutation => {
+      if (
+        mutation.type === "addRepertoireMove" ||
+        mutation.type === "removeRepertoireMove"
+      ) {
+        ++this.recomputeMenuItems;
+      }
+    });
   }
 
   private initializeTheme() {
