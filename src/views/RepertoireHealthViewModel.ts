@@ -14,7 +14,6 @@ interface PositionToReview {
   repertoire: Repertoire;
 }
 
-// TODO ambiquate annotations
 @Component({ components: { chessboard } })
 export default class RepertoireHealthViewModel extends Vue {
   recomputePositions = 0;

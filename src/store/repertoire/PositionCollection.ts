@@ -67,6 +67,7 @@ export class PositionCollection implements PositionCollectionInterface {
   }
 
   addMove(fen: string, san: string): string {
+    san = PositionCollection.stripSanAnnotations(san);
     const nextFen = fenAfterMove(fen, san);
 
     if (nextFen) {
@@ -139,6 +140,12 @@ export class PositionCollection implements PositionCollectionInterface {
 
   getPositionDrawings(fen: string): DrawShape[] {
     return this.getPositionAnnotations(fen).drawings;
+  }
+
+  private static stripSanAnnotations(san: string): string {
+    san = _.split(san, "!").join("");
+    san = _.split(san, "?").join("");
+    return san;
   }
 
   private setPositionAnnotations(

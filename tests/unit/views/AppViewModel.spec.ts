@@ -46,6 +46,7 @@ describe("AppViewModel", () => {
     const mutations = {
       addRepertoireMove: jest.fn(),
       removeRepertoireMove: jest.fn(),
+      addPositionsFromPgn: jest.fn(),
       otherMutation: jest.fn(),
     };
     const store = new Vuex.Store({ state, mutations });
@@ -239,7 +240,11 @@ describe("AppViewModel", () => {
       expect(actual).toEqual(expected);
     });
 
-    it.each(["addRepertoireMove", "removeRepertoireMove"])(
+    it.each([
+      "addRepertoireMove",
+      "removeRepertoireMove",
+      "addPositionsFromPgn",
+    ])(
       `should update the subtitle when the repertoire positions change by %s`,
       mutationType => {
         const expected = component.vm.recomputeMenuItems + 1;

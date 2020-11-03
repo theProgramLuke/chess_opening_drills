@@ -224,6 +224,22 @@ describe("PositionCollection", () => {
 
       expect(onAddMove).not.toBeCalled();
     });
+
+    it.each(["!", "!!", "?", "??", "!?", "?!"])(
+      "should strip off san annotation symbols %s",
+      annotation => {
+        const repertoire = new PositionCollection(startingRepertoire);
+        const san = "e4";
+        const expected: Variation = [
+          { san, resultingFen: expect.anything(), sourceFen: startPosition },
+        ];
+
+        repertoire.addMove(startPosition, san + annotation);
+        const actual = repertoire.movesFromPosition(startPosition);
+
+        expect(actual).toEqual(expected);
+      }
+    );
   });
 
   describe("getPositionComments", () => {

@@ -158,7 +158,8 @@ export default class AppViewModel extends Vue {
     this.$store.subscribe(mutation => {
       if (
         mutation.type === "addRepertoireMove" ||
-        mutation.type === "removeRepertoireMove"
+        mutation.type === "removeRepertoireMove" ||
+        mutation.type === "addPositionsFromPgn"
       ) {
         ++this.recomputeMenuItems;
       }
