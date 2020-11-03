@@ -30,3 +30,5 @@ after_success:
 branches:
   except:
     - "/^v\\d+\\.\\d+\\.\\d+$/"
+
+dist: bionic
