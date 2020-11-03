@@ -6,6 +6,7 @@ import { Repertoire } from "@/store/repertoire/Repertoire";
 import { TrainingMoveSpecification } from "@/store/repertoire/TrainingCollection";
 import chessboard from "@/components/common/chessboard.vue";
 import { RemoveRepertoireMovePayload } from "@/store/MutationPayloads";
+import { Side } from "@/store/side";
 
 interface PositionToReview {
   fen: string;
@@ -13,6 +14,7 @@ interface PositionToReview {
   repertoire: Repertoire;
 }
 
+// TODO ambiquate annotations
 @Component({ components: { chessboard } })
 export default class RepertoireHealthViewModel extends Vue {
   recomputePositions = 0;
@@ -46,6 +48,16 @@ export default class RepertoireHealthViewModel extends Vue {
       return position.moves;
     } else {
       return [];
+    }
+  }
+
+  get boardOrientation(): Side {
+    const repertoire = this.activeRepertoire;
+
+    if (!_.isUndefined(repertoire)) {
+      return repertoire.sideToTrain;
+    } else {
+      return Side.White;
     }
   }
 

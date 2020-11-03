@@ -57,6 +57,8 @@ describe("RepertoireHealthViewModel", () => {
     blackRepertoire = new Repertoire(emptyRepertoire);
     whiteRepertoire.training = new TrainingCollection();
     blackRepertoire.training = new TrainingCollection();
+    whiteRepertoire.sideToTrain = Side.White;
+    blackRepertoire.sideToTrain = Side.Black;
 
     component = mountComponent();
   });
@@ -173,6 +175,41 @@ describe("RepertoireHealthViewModel", () => {
       const actual = component.vm.activePositionMoves;
 
       expect(actual).toEqual([]);
+    });
+  });
+
+  describe("boardOrientation", () => {
+    it.each([Side.White, Side.Black])(
+      "should be the orientation of the side to train",
+      side => {
+        (whiteRepertoire.training
+          .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+          fen: [],
+        });
+        (blackRepertoire.training
+          .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({
+          fen: [],
+        });
+        if (side === Side.Black) {
+          component.vm.skipPosition();
+        }
+
+        const actual = component.vm.boardOrientation;
+
+        expect(actual).toEqual(side);
+      }
+    );
+
+    it("should be white if there are no position with multiple moves", () => {
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      const expected = Side.White;
+
+      const actual = component.vm.boardOrientation;
+
+      expect(actual).toEqual(expected);
     });
   });
 

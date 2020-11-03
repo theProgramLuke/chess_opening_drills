@@ -2,7 +2,7 @@
   div
     div(v-if="activePosition !== undefined")
       div
-        chessboard(:fen="activePosition")
+        chessboard(:fen="activePosition", :orientation="boardOrientation")
 
       div(v-for="move in activePositionMoves")
         v-dialog(v-model="showDialog[move.san]" max-width="500px")
