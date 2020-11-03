@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-yarn --link-duplicates --freeze-lockfile
+yarn --link-duplicates --pure-lockfile
 yarn test:unit || exit 1
 
 if [ "$TRAVIS_OS_NAME" == "linux" ]; then
