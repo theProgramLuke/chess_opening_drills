@@ -4,7 +4,6 @@ _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/i
 
 - Features
 
-  - Warning for multiple move choices from same position on my turn
   - Blunder detection
   - Edit mode arrows for existing moves?
   - Configurable max training attempts before mistake arrow

@@ -252,6 +252,17 @@ describe("RepertoireHealthViewModel", () => {
       );
     });
 
+    it("should not invoke the remove repertoire move mutation if there are no positions to review", () => {
+      (whiteRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+      (blackRepertoire.training
+        .getPositionsWithMultipleTrainings as jest.Mock).mockReturnValue({});
+
+      component.vm.onDeleteMove({ fen: "", san: "" });
+
+      expect(mutations.removeRepertoireMove).not.toBeCalled();
+    });
+
     it("should trigger the positions to recompute", () => {
       const whiteMultipleMoves: TrainingMoveSpecification[] = [
         { fen: "fen0", san: "san0" },
