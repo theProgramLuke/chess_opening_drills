@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-env
-
 yarn --link-duplicates --pure-lockfile || exit 1
 yarn test:unit || exit 1
 
