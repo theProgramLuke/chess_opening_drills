@@ -11,6 +11,8 @@ matrix:
     - os: linux
       services: docker
       language: generic
+      dist: focal
+      node_js: "10.22.0"
 
 cache:
   directories:
@@ -30,8 +32,3 @@ after_success:
 branches:
   except:
     - "/^v\\d+\\.\\d+\\.\\d+$/"
-
-dist: focal
-
-node_js:
-  - 10.22.0
