@@ -4,6 +4,16 @@
 
 # Development setup
 
+## Node installation
+
+Install [`nvm`](https://github.com/nvm-sh/nvm#installing-and-updating).
+
+```
+nvm install $(< .nvmrc)
+```
+
+## Install dependencies
+
 ```
 yarn install
 ```
