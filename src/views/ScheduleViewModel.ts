@@ -70,9 +70,9 @@ export default class ScheduleViewModel extends Vue {
       // it will still be the correct day.
       const offset = Duration.fromObject({
         minutes: date.offset,
+        days: 1,
       });
       date = date.plus(offset);
-      date = date.plus(Duration.fromObject({ days: 1 }));
 
       events.push({
         name: `${scheduledTrainings.length} moves`,
@@ -81,6 +81,7 @@ export default class ScheduleViewModel extends Vue {
         color: "primary",
       });
     });
+
     return events;
   }
 

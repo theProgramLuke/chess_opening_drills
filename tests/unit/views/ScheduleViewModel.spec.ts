@@ -12,6 +12,7 @@ import {
   TrainingMoveSpecification,
 } from "@/store/repertoire/TrainingCollection";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
+import { Duration, DateTime } from "luxon";
 
 jest.mock("lodash/now");
 jest.mock("@/store/repertoire/Repertoire");
@@ -69,6 +70,8 @@ describe("ScheduleViewModel", () => {
   });
 
   describe("events", () => {
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+
     it("should get no events if there are no positions", () => {
       (whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue([]);
       (blackRepertoire.training.getMoves as jest.Mock).mockReturnValue([]);
@@ -78,7 +81,7 @@ describe("ScheduleViewModel", () => {
       expect(actual).toEqual([]);
     });
 
-    it("should combine the repertoire training into scheduled calendar days", () => {
+    it.only("should combine the repertoire training into scheduled calendar days", () => {
       const whiteMoves: TrainingMoveSpecification[] = [
         { fen: "fen0", san: "san0" },
         { fen: "fen1", san: "san1" },
@@ -99,7 +102,7 @@ describe("ScheduleViewModel", () => {
         .mockReturnValue(0);
       jest
         .spyOn(whiteTraining[1], "scheduledRepetitionTimestamp", "get")
-        .mockReturnValue(9999999999);
+        .mockReturnValue(20 * millisecondsPerDay);
       jest
         .spyOn(blackTraining[0], "scheduledRepetitionTimestamp", "get")
         .mockReturnValue(0);
@@ -117,6 +120,8 @@ describe("ScheduleViewModel", () => {
         (blackRepertoire.training
           .getTrainingForMove as jest.Mock).mockReturnValueOnce(training)
       );
+      const expectedTomorrow = DateTime.fromMillis(1 * millisecondsPerDay);
+      const expectedLater = DateTime.fromMillis(21 * millisecondsPerDay);
 
       const actual = component.vm.events;
 
@@ -124,13 +129,13 @@ describe("ScheduleViewModel", () => {
         {
           color: "primary",
           name: "2 moves",
-          start: 86400000,
+          start: expectedTomorrow.toMillis(),
           timed: false,
         },
         {
           color: "primary",
           name: "1 moves",
-          start: 10018800000,
+          start: expectedLater.toMillis(),
           timed: false,
         },
       ]);
