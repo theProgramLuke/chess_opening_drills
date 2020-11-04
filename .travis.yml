@@ -31,4 +31,7 @@ branches:
   except:
     - "/^v\\d+\\.\\d+\\.\\d+$/"
 
-dist: bionic
+dist: focal
+
+node_js:
+  - 10.22.0
