@@ -9,6 +9,7 @@ _Add suggestions [here](https://github.com/theProgramLuke/chess_opening_drills/i
 - Edit mode arrows for existing moves?
 - Configurable max training attempts before mistake arrow
 - Notifications for available updates
+- Import from Lichess game or public study
 - Per position training history report
   - Easiness sparkline
   - Most common mistakes
