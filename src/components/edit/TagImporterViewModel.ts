@@ -32,21 +32,18 @@ export default class TagImporterViewModel extends Vue {
   }
 
   async onImport() {
-    // TODO handle no input file
-    if (this.inputFile) {
-      this.inputFile.text().then(pgn => {
-        try {
-          this.addPositionsFromPgn({
-            repertoire: this.repertoire,
-            pgn,
-          });
-          this.showDialog = false;
-        } catch (error) {
-          this.inputFileErrors = [`Invalid PGN: ${error.message}`];
-        } finally {
-          this.loading = false;
-        }
-      });
-    }
+    this.inputFile.text().then(pgn => {
+      try {
+        this.addPositionsFromPgn({
+          repertoire: this.repertoire,
+          pgn,
+        });
+        this.showDialog = false;
+      } catch (error) {
+        this.inputFileErrors = [`Invalid PGN: ${error.message}`];
+      } finally {
+        this.loading = false;
+      }
+    });
   }
 }

@@ -165,14 +165,12 @@ export default class TrainerViewModel extends Vue {
   }
 
   get mistakeArrow(): DrawShape[] {
-    if (_.isUndefined(this.activeVariation) || !this.showMistakeArrow) {
+    if (_.isUndefined(this.expectedMove) || !this.showMistakeArrow) {
       return [];
     }
 
     const board = new Chess(this.activePositionLegalFen);
-    const index =
-      this.boardOrientation === Side.White ? this.plyCount : this.plyCount + 1;
-    const move = board.move(this.activeVariation.variation[index].san);
+    const move = board.move(this.expectedMove.san);
     const drawings: DrawShape[] = [];
 
     if (move) {

@@ -21,6 +21,7 @@ const store = new Vuex.Store({ state });
 
 describe("EngineRecommendationsViewModel", () => {
   const activePosition = "some fen";
+
   describe("activateEngine", () => {
     it("active=true should start an engine with the saved options", async () => {
       const component = shallowMount(EngineRecommendationsViewModel, {
@@ -77,6 +78,27 @@ describe("EngineRecommendationsViewModel", () => {
       expect(component.vm.engine).toBeUndefined();
       expect(createEngine).not.toBeCalled();
     });
+
+    it("should set the engine to the new position when changed", async () => {
+      const component = shallowMount(EngineRecommendationsViewModel, {
+        localVue,
+        store,
+        render: jest.fn(),
+        propsData: {
+          activePosition,
+        },
+      });
+      const emitter = new EventEmitter();
+      const engine = new Engine("");
+      engine.goInfinite = jest.fn(() => emitter);
+      engine.position = jest.fn();
+      component.vm.engine = engine;
+      const updatedPosition = "new position";
+
+      await component.setProps({ activePosition: updatedPosition });
+
+      expect(engine.position).toBeCalledWith(updatedPosition);
+    });
   });
 
   describe("startGettingEngineRecommendations", () => {
@@ -99,6 +121,44 @@ describe("EngineRecommendationsViewModel", () => {
 
       expect(component.vm.engine.position).toBeCalledWith(activePosition);
       expect(component.vm.receiveRecommendation).toBeCalled();
+    });
+
+    it("should not set the engine position and receive recommendations when there is no engine", async () => {
+      const component = shallowMount(EngineRecommendationsViewModel, {
+        localVue,
+        store,
+        render: jest.fn(),
+        propsData: {
+          activePosition,
+        },
+      });
+      component.vm.engine = undefined;
+      component.vm.receiveRecommendation = jest.fn();
+
+      await component.vm.startGettingEngineRecommendations();
+
+      expect(component.vm.receiveRecommendation).not.toBeCalled();
+    });
+
+    it("should stop the engine if it is already has recommendations", async () => {
+      const component = shallowMount(EngineRecommendationsViewModel, {
+        localVue,
+        store,
+        render: jest.fn(),
+        propsData: {
+          activePosition,
+        },
+      });
+      const emitter = new EventEmitter();
+      const engine = new Engine("");
+      engine.goInfinite = jest.fn(() => emitter);
+      engine.position = jest.fn();
+      component.vm.engine = engine;
+      component.vm.engineRecommendations = [undefined];
+
+      await component.vm.startGettingEngineRecommendations();
+
+      expect(engine.stop).toBeCalled();
     });
   });
 

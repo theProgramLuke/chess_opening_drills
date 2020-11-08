@@ -1,6 +1,6 @@
 import _ from "lodash";
 import "reflect-metadata";
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import { State } from "vuex-class";
 import { Engine } from "node-uci";
 
@@ -29,6 +29,11 @@ export default class EngineRecommendationsViewModel extends Vue {
   @State
   engineMetadata!: EngineMetadata;
 
+  @Watch("activePosition")
+  async onActivePositionChanged(): Promise<void> {
+    await this.startGettingEngineRecommendations();
+  }
+
   async activateEngine(active: boolean): Promise<void> {
     if (active) {
       this.engine = new Engine(this.engineMetadata.filePath);
@@ -53,7 +58,13 @@ export default class EngineRecommendationsViewModel extends Vue {
 
   async startGettingEngineRecommendations(): Promise<void> {
     if (this.engine) {
+      if (!_.isEmpty(this.engineRecommendations)) {
+        await this.engine.stop();
+      }
+
       this.sortedEngineRecommendations = [];
+      this.engineRecommendations = [];
+
       await this.engine.position(this.activePosition);
 
       const throttledSort = _.throttle(this.sortEngineRecommendations, 100);

@@ -674,32 +674,32 @@ describe("TrainerViewModel", () => {
       expect(nextAdvance).not.toBeCalled();
     });
 
-    it.skip("should be called after a delay on mount if previewing", () => {
-      // TODO skip
+    it("should be called after a delay on mount if previewing", () => {
+      (training.includeForTrainingMode as jest.Mock).mockImplementation(
+        (mode: TrainingMode) => mode === TrainingMode.New
+      );
       const component = mountComponent(
         new TrainingOptions([], [trainingVariation], true, false, delay, 0)
       );
-      const nextAdvance = jest.fn();
-      component.vm.advancePreview = nextAdvance;
 
-      component.vm.$mount();
-      jest.advanceTimersByTime(delay * 1000);
+      jest.advanceTimersByTime(delay * 2 * 1000);
+      const index = component.vm.previewIndex;
 
-      expect(nextAdvance).toBeCalled();
+      expect(index).toEqual(1);
     });
 
-    it.skip("should not be called before a delay on mount if previewing", () => {
-      // TODO skip
+    it("should not be called before a delay on mount if previewing", () => {
+      (training.includeForTrainingMode as jest.Mock).mockImplementation(
+        (mode: TrainingMode) => mode === TrainingMode.New
+      );
       const component = mountComponent(
         new TrainingOptions([], [trainingVariation], true, false, delay, 0)
       );
-      const nextAdvance = jest.fn();
-      component.vm.advancePreview = nextAdvance;
 
-      component.vm.$mount();
       jest.advanceTimersByTime(delay * 1000);
+      const index = component.vm.previewIndex;
 
-      expect(nextAdvance).toBeCalled();
+      expect(index).toEqual(0);
     });
 
     it("should mark the variation as previewed when all the positions have been shown", () => {
