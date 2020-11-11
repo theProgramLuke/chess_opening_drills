@@ -41,6 +41,10 @@ export default class PlotViewModel extends Vue {
     Plotly.purge(this.plotRootElement);
   }
 
+  private get plotlyTheme(): typeof PlotlyWhite | typeof PlotlyDark {
+    return this.dark ? PlotlyDark : PlotlyWhite;
+  }
+
   private react(): void {
     Plotly.react(
       this.plotRootElement,
@@ -51,24 +55,17 @@ export default class PlotViewModel extends Vue {
   }
 
   private get internalLayout(): Layout {
-    return {
-      ...(this.dark ? PlotlyDark.layout : PlotlyWhite.layout),
-      ...this.layout,
-    };
+    return _.merge(this.plotlyTheme.layout, this.layout);
   }
 
   private get internalData(): PlotData[] {
-    return _.map(this.data, dataEntry => {
-      return _.merge(dataEntry, this.dark ? PlotlyDark.data : PlotlyWhite.data);
-    });
+    return _.map(this.data, dataEntry =>
+      _.merge(dataEntry, this.plotlyTheme.data)
+    );
   }
 
   private get internalOptions(): Config {
-    const opts: Config = this.options || {};
-
-    opts.responsive = true;
-
-    return opts;
+    return _.merge(this.options, { responsive: true });
   }
 
   private get plotRootElement(): HTMLElement {
