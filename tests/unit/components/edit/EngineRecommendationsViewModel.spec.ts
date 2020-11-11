@@ -7,7 +7,6 @@ import EngineRecommendationsViewModel from "@/components/edit/EngineRecommendati
 import { sideFromFen } from "@/store/repertoire/chessHelpers";
 import { EngineOption } from "@/store/EngineHelpers";
 import { Side } from "@/store/side";
-import { before } from "lodash";
 
 jest.mock("node-uci");
 jest.mock("events");
@@ -44,7 +43,7 @@ describe("EngineRecommendationsViewModel", () => {
     goInfiniteEmitter.on = jest.fn();
     engine.goInfinite = jest.fn(() => goInfiniteEmitter);
     engine.position = jest.fn();
-    engine.stop = jest.fn();
+    engine.stop = jest.fn().mockResolvedValue(true);
     (Engine as jest.Mock).mockImplementation(() => engine);
 
     component = mountComponent();
@@ -96,13 +95,12 @@ describe("EngineRecommendationsViewModel", () => {
       expect(createEngine).not.toBeCalled();
     });
 
-    it("should set the engine to the new position when changed", async () => {
-      component.vm.engine = engine;
-      const updatedPosition = "new position";
+    it("should start getting engine recommendations when changed", async () => {
+      component.vm.startGettingEngineRecommendations = jest.fn();
 
-      await component.setProps({ activePosition: updatedPosition });
+      await component.setProps({ activePosition: "new position" });
 
-      expect(engine.position).toBeCalledWith(updatedPosition);
+      expect(component.vm.startGettingEngineRecommendations).toBeCalled();
     });
   });
 

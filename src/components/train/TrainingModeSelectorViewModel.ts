@@ -45,7 +45,24 @@ export default class TrainingModeSelectorViewModel extends Vue {
   }
 
   get showPreviewInput(): boolean {
-    return _.includes(this.selectedModes, TrainingMode.New);
+    function variationHasNewMoves(variation: TrainingVariation): boolean {
+      return _.some(variation.variation, move => {
+        const training = variation.repertoire.training.getTrainingForMove(
+          move.sourceFen,
+          move.san
+        );
+
+        if (training) {
+          return training.includeForTrainingMode(TrainingMode.New);
+        } else {
+          return false;
+        }
+      });
+    }
+
+    const anyNewMoves = _.some(this.trainingVariations, variationHasNewMoves);
+
+    return _.includes(this.selectedModes, TrainingMode.New) || anyNewMoves;
   }
 
   get showDifficultyModeInput(): boolean {
@@ -88,12 +105,7 @@ export default class TrainingModeSelectorViewModel extends Vue {
       });
     });
 
-    if (this.shouldShuffle) {
-      const shuffled = shuffle(trainingVariations);
-      return shuffled;
-    } else {
-      return trainingVariations;
-    }
+    return trainingVariations;
   }
 
   get playbackSpeedLabel(): string {
@@ -126,11 +138,20 @@ export default class TrainingModeSelectorViewModel extends Vue {
   onStartTraining(): TrainingOptions {
     return new TrainingOptions(
       this.selectedTopics,
-      this.trainingVariations,
+      this.maybeShuffledTrainingVariations,
       this.previewNewVariations,
       this.entireVariations,
       this.coercedPlaybackSpeed,
       this.coercedDifficultyModeLimit
     );
+  }
+
+  private get maybeShuffledTrainingVariations(): TrainingVariation[] {
+    if (this.shouldShuffle) {
+      const shuffled = shuffle(this.trainingVariations);
+      return shuffled;
+    } else {
+      return this.trainingVariations;
+    }
   }
 }

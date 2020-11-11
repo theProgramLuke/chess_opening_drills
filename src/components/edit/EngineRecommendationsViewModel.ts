@@ -62,7 +62,7 @@ export default class EngineRecommendationsViewModel extends Vue {
 
   async startGettingEngineRecommendations(): Promise<void> {
     if (this.engine) {
-      await this.engine.stop();
+      await this.engine.stop().catch();
 
       this.sortedEngineRecommendations = [];
       this.engineRecommendations = [];
