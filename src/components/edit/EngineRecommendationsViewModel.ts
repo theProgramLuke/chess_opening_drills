@@ -36,6 +36,10 @@ export default class EngineRecommendationsViewModel extends Vue {
 
   async activateEngine(active: boolean): Promise<void> {
     if (active) {
+      if (this.engine) {
+        await this.engine.quit();
+      }
+
       this.engine = new Engine(this.engineMetadata.filePath);
 
       await this.engine.init();
@@ -45,22 +49,20 @@ export default class EngineRecommendationsViewModel extends Vue {
         }
       });
 
-      this.startGettingEngineRecommendations();
+      await this.startGettingEngineRecommendations();
     } else {
       if (this.engine) {
         await this.engine
           .quit()
           .then(() => (this.engine = undefined))
-          .catch();
+          .catch(_.noop);
       }
     }
   }
 
   async startGettingEngineRecommendations(): Promise<void> {
     if (this.engine) {
-      if (!_.isEmpty(this.engineRecommendations)) {
-        await this.engine.stop();
-      }
+      await this.engine.stop();
 
       this.sortedEngineRecommendations = [];
       this.engineRecommendations = [];
