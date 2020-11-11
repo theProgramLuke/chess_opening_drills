@@ -12,9 +12,13 @@ import { TagTree } from "@/store/repertoire/TagTree";
 import { TrainingMode } from "@/store/trainingMode";
 import { Side } from "@/store/side";
 import { Variation } from "@/store/repertoire/PositionCollection";
+import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
+import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
 
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TagTree");
+jest.mock("@/store/repertoire/RepetitionTraining");
+jest.mock("@/store/repertoire/TrainingCollection");
 jest.mock("lodash/shuffle");
 
 describe("TrainingModeSelectorViewModel", () => {
@@ -60,14 +64,28 @@ describe("TrainingModeSelectorViewModel", () => {
     });
 
     it("should be true if there are untrained moves in the selected variations", () => {
+      const whiteVariations: Variation[] = [makeVariation(["e4", "e5"])];
+      const blackVariations: Variation[] = [makeVariation(["e4", "e6"])];
       const whiteRepertoire = new Repertoire(emptySavedRepertoire);
       const blackRepertoire = new Repertoire(emptySavedRepertoire);
       (whiteRepertoire.getTrainingVariations as jest.Mock).mockReturnValue([
-        [],
+        whiteVariations,
       ]);
       (blackRepertoire.getTrainingVariations as jest.Mock).mockReturnValue([
-        [],
+        blackVariations,
       ]);
+      whiteRepertoire.training = new TrainingCollection();
+      blackRepertoire.training = new TrainingCollection();
+      const includeForNewTraining = new RepetitionTraining();
+      (includeForNewTraining.includeForTrainingMode as jest.Mock).mockImplementation(
+        mode => mode === TrainingMode.New
+      );
+      (whiteRepertoire.training
+        .getTrainingForMove as jest.Mock).mockReturnValue(
+        includeForNewTraining
+      );
+      (blackRepertoire.training
+        .getTrainingForMove as jest.Mock).mockReturnValue(undefined);
       const component = mountComponent(whiteRepertoire, blackRepertoire);
       component.vm.selectedModes = [TrainingMode.Cram];
 
@@ -77,9 +95,35 @@ describe("TrainingModeSelectorViewModel", () => {
     });
 
     it(`should be false if the new training mode is not selected
-        and there are untrained moves in the selected variations`, () => {
+        and there are no moves in the selected variations`, () => {
       const component = mountComponent();
       component.vm.selectedModes = [];
+
+      const actual = component.vm.showPreviewInput;
+
+      expect(actual).toBeFalsy();
+    });
+
+    it(`should be false if the new training mode is not selected
+        and there are no untrained moves in the selected variations`, () => {
+      const whiteVariations: Variation[] = [makeVariation(["e4", "e5"])];
+      const blackVariations: Variation[] = [makeVariation(["e4", "e6"])];
+      const whiteRepertoire = new Repertoire(emptySavedRepertoire);
+      const blackRepertoire = new Repertoire(emptySavedRepertoire);
+      (whiteRepertoire.getTrainingVariations as jest.Mock).mockReturnValue([
+        whiteVariations,
+      ]);
+      (blackRepertoire.getTrainingVariations as jest.Mock).mockReturnValue([
+        blackVariations,
+      ]);
+      whiteRepertoire.training = new TrainingCollection();
+      blackRepertoire.training = new TrainingCollection();
+      (whiteRepertoire.training
+        .getTrainingForMove as jest.Mock).mockReturnValue(undefined);
+      (blackRepertoire.training
+        .getTrainingForMove as jest.Mock).mockReturnValue(undefined);
+      const component = mountComponent(whiteRepertoire, blackRepertoire);
+      component.vm.selectedModes = [TrainingMode.Cram];
 
       const actual = component.vm.showPreviewInput;
 

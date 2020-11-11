@@ -45,16 +45,22 @@ export default class TrainingModeSelectorViewModel extends Vue {
   }
 
   get showPreviewInput(): boolean {
-    const anyNewMoves = _.some(
-      _.map([this.whiteRepertoire, this.blackRepertoire], repertoire =>
-        repertoire.getTrainingVariations(
-          this.selectedTopics,
-          [TrainingMode.New],
-          this.entireVariations,
-          this.coercedDifficultyModeLimit
-        )
-      )
-    );
+    function variationHasNewMoves(variation: TrainingVariation): boolean {
+      return _.some(variation.variation, move => {
+        const training = variation.repertoire.training.getTrainingForMove(
+          move.sourceFen,
+          move.san
+        );
+
+        if (training) {
+          return training.includeForTrainingMode(TrainingMode.New);
+        } else {
+          return false;
+        }
+      });
+    }
+
+    const anyNewMoves = _.some(this.trainingVariations, variationHasNewMoves);
 
     return _.includes(this.selectedModes, TrainingMode.New) || anyNewMoves;
   }
