@@ -11,6 +11,7 @@ module.exports = {
     "!src/router/index.ts",
     "!src/background.ts",
     "!src/plugins/**",
+    "!src/store/index.ts",
     // Generated Plotly themes
     "!src/views/PlotlyLayouts.ts",
     // List of themes
