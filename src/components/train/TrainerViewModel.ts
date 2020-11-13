@@ -201,7 +201,7 @@ export default class TrainerViewModel extends Vue {
             repertoire: this.activeVariation.repertoire,
             event: {
               attemptedMoves: this.attempts,
-              elapsedMilliseconds: this.getElapsedSeconds(),
+              elapsedMilliseconds: this.getElapsedMilliseconds(),
             },
             fen: this.activePosition,
             san: this.activeVariation.variation[this.plyCount].san,
@@ -267,8 +267,8 @@ export default class TrainerViewModel extends Vue {
   }
 
   // Method instead of computed so this won't be cached
-  getElapsedSeconds(): number {
-    return (_.now() - this.startTime) / 1000;
+  getElapsedMilliseconds(): number {
+    return _.now() - this.startTime;
   }
 
   advancePreview(): void {

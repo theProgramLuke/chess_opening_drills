@@ -477,7 +477,7 @@ describe("TrainerViewModel", () => {
 
       it("should add a training event", () => {
         const elapsed = 10;
-        component.vm.getElapsedSeconds = jest.fn(() => elapsed);
+        component.vm.getElapsedMilliseconds = jest.fn(() => elapsed);
         const san = "san";
         const expected: AddTrainingEventPayload = {
           event: {
@@ -499,7 +499,7 @@ describe("TrainerViewModel", () => {
 
       it("should track the attempted moves for the training event", () => {
         const elapsed = 10;
-        component.vm.getElapsedSeconds = jest.fn(() => elapsed);
+        component.vm.getElapsedMilliseconds = jest.fn(() => elapsed);
         const expected: AddTrainingEventPayload = {
           event: {
             attemptedMoves: ["e3", "d4"],
