@@ -12,6 +12,7 @@ import {
   MillisecondsPerDay,
 } from "@/store/repertoire/SuperMemo2";
 import { TrainingMode } from "@/store/trainingMode";
+import { DateTime, DateObject } from "luxon";
 
 jest.mock("lodash/now");
 
@@ -196,6 +197,22 @@ describe("RepetitionTraining", () => {
           attemptedMoves: [""],
         });
         (now as jest.Mock).mockReturnValue(10 * millisecondsPerDay);
+
+        const actual = training.includeForTrainingMode(TrainingMode.Scheduled);
+
+        expect(actual).toBeTruthy();
+      });
+
+      it("should be included if the scheduled timestamp is later in the same day as now", () => {
+        const common: DateObject = { year: 2020, month: 9, day: 20 };
+        const startOfDay = DateTime.fromObject(
+          _.merge(common, { hour: 0, second: 1 })
+        ).toMillis();
+        const endOfDay = DateTime.fromObject(
+          _.merge(common, { hour: 23 })
+        ).toMillis();
+        const training = new RepetitionTraining(0, 0, 0, [], endOfDay);
+        (now as jest.Mock).mockReturnValue(startOfDay);
 
         const actual = training.includeForTrainingMode(TrainingMode.Scheduled);
 
