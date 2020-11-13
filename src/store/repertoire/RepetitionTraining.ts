@@ -116,13 +116,18 @@ export class RepetitionTraining {
 
   private includeForScheduledMode(): boolean {
     if (this.training.scheduledRepetitionTimestamp) {
-      const today = DateTime.fromMillis(now());
-      const scheduled = DateTime.fromMillis(
+      let today = DateTime.fromMillis(now());
+      let scheduled = DateTime.fromMillis(
         this.training.scheduledRepetitionTimestamp
       );
 
-      today.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-      scheduled.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+      today = today.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+      scheduled = scheduled.set({
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      });
 
       return today >= scheduled;
     } else {

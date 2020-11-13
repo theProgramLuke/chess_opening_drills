@@ -12,6 +12,7 @@ import {
   MillisecondsPerDay,
 } from "@/store/repertoire/SuperMemo2";
 import { TrainingMode } from "@/store/trainingMode";
+import { DateTime, DateObject } from "luxon";
 
 jest.mock("lodash/now");
 
@@ -120,6 +121,17 @@ describe("RepetitionTraining", () => {
     });
   });
 
+  describe("scheduledRepetitionTimestamp", () => {
+    it("should be the timestamp of the training", () => {
+      const expected = 24601;
+      const training = new RepetitionTraining(0, 0, 0, [], expected);
+
+      const actual = training.scheduledRepetitionTimestamp;
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
   describe("includeForTrainingMode", () => {
     describe("TrainingMode.New", () => {
       it("should be included if the position has not been trained", () => {
@@ -166,36 +178,31 @@ describe("RepetitionTraining", () => {
     });
 
     describe("TrainingMode.Scheduled", () => {
-      it("should be included if the scheduled timestamp is the last millisecond of today", () => {
-        const training = new RepetitionTraining();
-        const today = new Date(10 * millisecondsPerDay);
-        today.setHours(23, 59, 59, 999);
-        const lastMillisecondOfToday = today.getMilliseconds();
-        (now as jest.Mock).mockReturnValue(
-          lastMillisecondOfToday - millisecondsPerDay
-        ); // first training interval will be millisecondsPerDay
-        training.addTrainingEvent({
-          elapsedMilliseconds: 0,
-          attemptedMoves: [""],
-        });
-        expect(training.scheduledRepetitionTimestamp).toEqual(
-          lastMillisecondOfToday
+      it("should be included if the scheduled timestamp is before today", () => {
+        const training = new RepetitionTraining(
+          0,
+          0,
+          0,
+          [],
+          1 * millisecondsPerDay
         );
-        (now as jest.Mock).mockReturnValue(lastMillisecondOfToday);
+        (now as jest.Mock).mockReturnValue(10 * millisecondsPerDay);
 
         const actual = training.includeForTrainingMode(TrainingMode.Scheduled);
 
         expect(actual).toBeTruthy();
       });
 
-      it("should be included if the scheduled timestamp is before today", () => {
-        const training = new RepetitionTraining();
-        (now as jest.Mock).mockReturnValue(0);
-        training.addTrainingEvent({
-          elapsedMilliseconds: 0,
-          attemptedMoves: [""],
-        });
-        (now as jest.Mock).mockReturnValue(10 * millisecondsPerDay);
+      it("should be included if the scheduled timestamp is later in the same day as now", () => {
+        const common: DateObject = { year: 2020, month: 9, day: 20 };
+        const startOfDay = DateTime.fromObject(
+          _.merge(common, { hour: 0, second: 1 })
+        ).toMillis();
+        const endOfDay = DateTime.fromObject(
+          _.merge(common, { hour: 23 })
+        ).toMillis();
+        const training = new RepetitionTraining(0, 0, 0, [], endOfDay);
+        (now as jest.Mock).mockReturnValue(startOfDay);
 
         const actual = training.includeForTrainingMode(TrainingMode.Scheduled);
 
@@ -203,12 +210,13 @@ describe("RepetitionTraining", () => {
       });
 
       it("should be not included if the scheduled timestamp is later than today", () => {
-        const training = new RepetitionTraining();
-        (now as jest.Mock).mockReturnValue(10 * millisecondsPerDay);
-        training.addTrainingEvent({
-          elapsedMilliseconds: 0,
-          attemptedMoves: [""],
-        });
+        const training = new RepetitionTraining(
+          0,
+          0,
+          0,
+          [],
+          10 * millisecondsPerDay
+        );
         (now as jest.Mock).mockReturnValue(0);
 
         const actual = training.includeForTrainingMode(TrainingMode.Scheduled);
