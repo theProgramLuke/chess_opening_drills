@@ -10,6 +10,7 @@ import { TagTree } from "@/store/repertoire/TagTree";
 
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TrainingCollection");
+jest.mock("@/store/repertoire/TagTree");
 
 describe("MovesPerTagViewModel", () => {
   const localVue = createLocalVue();
@@ -48,7 +49,7 @@ describe("MovesPerTagViewModel", () => {
   });
 
   describe("showNoPositions", () => {
-    it("should be true if the repertoire only have the starting positions", () => {
+    it("should be true if the repertoires only have the starting positions", () => {
       (state.whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue(
         []
       );
