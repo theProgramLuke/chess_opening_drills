@@ -81,7 +81,7 @@ describe("ScheduleViewModel", () => {
       expect(actual).toEqual([]);
     });
 
-    it.only("should combine the repertoire training into scheduled calendar days", () => {
+    it("should combine the repertoire training into scheduled calendar days", () => {
       const whiteMoves: TrainingMoveSpecification[] = [
         { fen: "fen0", san: "san0" },
         { fen: "fen1", san: "san1" },
@@ -141,31 +141,34 @@ describe("ScheduleViewModel", () => {
       ]);
     });
 
-    it("should not include moves scheduled for beyond the max timestamp", () => {
-      const whiteMoves: TrainingMoveSpecification[] = [
-        { fen: "fen0", san: "san0" },
-      ];
-      const whiteTraining: RepetitionTraining[] = _.times(
-        whiteMoves.length,
-        () => new RepetitionTraining()
-      );
-      jest
-        .spyOn(whiteTraining[0], "scheduledRepetitionTimestamp", "get")
-        .mockReturnValue(99999999999999999999);
-      (whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue(
-        whiteMoves
-      );
-      (blackRepertoire.training.getMoves as jest.Mock).mockReturnValue([]);
-      _.forEach(whiteTraining, training =>
-        (whiteRepertoire.training
-          .getTrainingForMove as jest.Mock).mockReturnValueOnce(training)
-      );
-      (blackRepertoire.training
-        .getTrainingForMove as jest.Mock).mockReturnValue([]);
+    it.each([706977483966273, 999999999999999999999999999])(
+      "should not include moves scheduled for very large timestamps %s",
+      largeTimestamp => {
+        const whiteMoves: TrainingMoveSpecification[] = [
+          { fen: "fen0", san: "san0" },
+        ];
+        const whiteTraining: RepetitionTraining[] = _.times(
+          whiteMoves.length,
+          () => new RepetitionTraining()
+        );
+        jest
+          .spyOn(whiteTraining[0], "scheduledRepetitionTimestamp", "get")
+          .mockReturnValue(largeTimestamp);
+        (whiteRepertoire.training.getMoves as jest.Mock).mockReturnValue(
+          whiteMoves
+        );
+        (blackRepertoire.training.getMoves as jest.Mock).mockReturnValue([]);
+        _.forEach(whiteTraining, training =>
+          (whiteRepertoire.training
+            .getTrainingForMove as jest.Mock).mockReturnValueOnce(training)
+        );
+        (blackRepertoire.training
+          .getTrainingForMove as jest.Mock).mockReturnValue([]);
 
-      const actual = component.vm.events;
+        const actual = component.vm.events;
 
-      expect(actual).toEqual([]);
-    });
+        expect(actual).toEqual([]);
+      }
+    );
   });
 });
