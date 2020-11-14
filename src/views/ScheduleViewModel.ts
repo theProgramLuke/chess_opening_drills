@@ -100,7 +100,7 @@ export default class ScheduleViewModel extends Vue {
       _.map(scheduledTrainings, scheduled =>
         DateTime.fromMillis(scheduled, { zone: "UTC" })
       ),
-      date => date.isValid
+      date => date.isValid && !date.toISODate().startsWith("+")
     );
 
     const days = _.groupBy(scheduledDates, date => date.toISODate());
