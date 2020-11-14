@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/theProgramLuke/chess_opening_drills.svg?branch=main)](https://travis-ci.org/theProgramLuke/chess_opening_drills)
 [![CodeFactor](https://www.codefactor.io/repository/github/theprogramluke/chess_opening_drills/badge)](https://www.codefactor.io/repository/github/theprogramluke/chess_opening_drills)
 [![codecov](https://codecov.io/gh/theProgramLuke/chess_opening_drills/branch/main/graph/badge.svg)](https://codecov.io/gh/theProgramLuke/chess_opening_drills)
+[![Discord](https://img.shields.io/discord/757701054782636082?color=%4E5D94&label=Discord&logo=discord&logoColor=white)](https://discord.gg/y595KypE)
 
 A cross platform chess opening preparation tool. Chess Opening Drills provides a modern experience for _practicing_ an opening repertoire. Chess Opening Drills is not a database tool to develop a repertoire, there are already many tools available for that.
 
