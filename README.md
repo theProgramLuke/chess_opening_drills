@@ -8,8 +8,6 @@
 
 A cross platform chess opening preparation tool. Chess Opening Drills provides a modern experience for _practicing_ an opening repertoire. Chess Opening Drills is not a database tool to develop a repertoire, there are already many tools available for that.
 
-**This is an unfinished tool under active development and should be considered unstable. Keep PGN backups of your repertoire.**
-
 ## Installation
 
 [Download releases here](https://github.com/theProgramLuke/chess_opening_drills/releases), or [build it yourself](CONTRIBUTING.md).
