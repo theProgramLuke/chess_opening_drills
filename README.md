@@ -6,7 +6,7 @@
 [![codecov](https://codecov.io/gh/theProgramLuke/chess_opening_drills/branch/main/graph/badge.svg)](https://codecov.io/gh/theProgramLuke/chess_opening_drills)
 [![Discord](https://img.shields.io/discord/776971719641399326)](https://discord.gg/y595KypE)
 
-A cross platform chess opening preparation tool. Chess Opening Drills provides a modern experience for _practicing_ an opening repertoire. Chess Opening Drills is not a database tool to develop a repertoire, there are already many tools available for that.
+Chess Opening Drills is a modern, cross platform tool for _practicing_ an opening repertoire. Chess Opening Drills is not a database tool to develop a repertoire, there are already many tools available for that.
 
 ## Installation
 
@@ -18,6 +18,7 @@ A cross platform chess opening preparation tool. Chess Opening Drills provides a
 - Generate reports on your repertoire and training history.
 - Transpositions between variations are detected automatically.
 - Import and export your repertoire as PGN.
+- Automatic repertoire backups.
 
 ## Screenshots
 
