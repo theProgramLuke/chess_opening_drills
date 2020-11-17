@@ -5,6 +5,11 @@ Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
+    path: "/welcome",
+    name: "Welcome",
+    component: () => import("../views/Welcome.vue"),
+  },
+  {
     path: "/edit",
     name: "Edit",
     component: () => import("../views/Edit.vue"),
@@ -41,7 +46,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "*",
-    redirect: "/edit",
+    redirect: "/welcome",
   },
 ];
 

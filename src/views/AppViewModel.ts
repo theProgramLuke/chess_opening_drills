@@ -13,6 +13,11 @@ export interface NavigationMenuItem {
 
 export const baseMenuItems: NavigationMenuItem[] = [
   {
+    name: "Welcome",
+    route: "/welcome",
+    icon: "mdi-home",
+  },
+  {
     name: "Edit",
     route: "/edit",
     icon: "mdi-file-tree",
