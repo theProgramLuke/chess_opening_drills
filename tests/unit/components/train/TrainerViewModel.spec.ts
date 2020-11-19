@@ -15,6 +15,7 @@ import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 import { TrainingMode } from "@/store/trainingMode";
 import { TagTree } from "@/store/repertoire/TagTree";
+import { component } from "vue/types/umd";
 
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TrainingCollection");
@@ -531,7 +532,7 @@ describe("TrainerViewModel", () => {
 
   describe("moveIsCorrect", () => {
     it("should be true if the normalized fen matches the expected resulting fen", () => {
-      const fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
+      const fen = "rnbqkbnr/ppp2ppp/4p3/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6";
       const trainingVariation = makeTrainingVariation(["e4", "e5"]);
       trainingVariation.variation[0].resultingFen = fen;
       const component = mountComponent(
@@ -541,8 +542,22 @@ describe("TrainerViewModel", () => {
       component.vm.plyCount = 0;
 
       const actual = component.vm.moveIsCorrect(
-        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        "rnbqkbnr/ppp2ppp/4p3/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6"
       );
+
+      expect(actual).toBeTruthy();
+    });
+
+    it(`should be true if the expected resulting fen has a possible en passant capture
+        and the actual move matches`, () => {
+      const component = mountComponent();
+      const expectedFen =
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
+      jest
+        .spyOn(component.vm, "expectedMove", "get")
+        .mockReturnValue({ sourceFen: "", resultingFen: expectedFen, san: "" });
+
+      const actual = component.vm.moveIsCorrect(expectedFen);
 
       expect(actual).toBeTruthy();
     });
