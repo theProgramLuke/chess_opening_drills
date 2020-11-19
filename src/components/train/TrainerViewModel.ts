@@ -221,8 +221,8 @@ export default class TrainerViewModel extends Vue {
       return false;
     }
 
-    const expectedFen = this.expectedMove.resultingFen;
-    const attemptedFen = normalizeFen(fen, false); // TODO possible en passant
+    const expectedFen = normalizeFen(this.expectedMove.resultingFen, false);
+    const attemptedFen = normalizeFen(fen, false);
     return attemptedFen === expectedFen;
   }
 
