@@ -19,7 +19,7 @@
   "main": "background.js",
   "dependencies": {
     "@types/humanize-duration": "3.18.1",
-    "core-js": "^3.6.5",
+    "core-js": "^3.7.0",
     "electron-store": "6.0.0",
     "electron-updater": "4.3.5",
     "humanize-duration": "3.24.0",
