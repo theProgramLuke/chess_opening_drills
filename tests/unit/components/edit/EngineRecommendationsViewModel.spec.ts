@@ -127,7 +127,17 @@ describe("EngineRecommendationsViewModel", () => {
 
     it("should stop the engine if it is already has recommendations", async () => {
       component.vm.engine = engine;
-      component.vm.engineRecommendations = [undefined];
+
+      await component.vm.startGettingEngineRecommendations();
+
+      expect(engine.stop).toBeCalled();
+    });
+
+    it("should not fail if stop throws", async () => {
+      component.vm.engine = engine;
+      (engine.stop as jest.Mock).mockImplementation(() => {
+        throw new Error("should be caught");
+      });
 
       await component.vm.startGettingEngineRecommendations();
 
