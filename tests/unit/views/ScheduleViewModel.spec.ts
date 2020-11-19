@@ -12,7 +12,7 @@ import {
   TrainingMoveSpecification,
 } from "@/store/repertoire/TrainingCollection";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
-import { Duration, DateTime } from "luxon";
+import { DateTime } from "luxon";
 
 jest.mock("lodash/now");
 jest.mock("@/store/repertoire/Repertoire");
