@@ -22,9 +22,11 @@ Chess Opening Drills is a modern, cross platform tool for _practicing_ an openin
 
 ## Screenshots
 
-![Edit Mode](images/edit.png)
+![Training Mode](images/train.gif)
 
-![Training Mode](images/train.png)
+![Edit Mode](images/edit.gif)
+
+![Reports Mode](images/reports.gif)
 
 ## Roadmap
 
