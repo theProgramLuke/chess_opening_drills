@@ -256,7 +256,7 @@ describe("SuperMemo2", () => {
     });
 
     it("should limit the saved timestamp to a safe max date", () => {
-      const sm2 = new SuperMemo2(0, 0, 0, [], 325036800000000);
+      const sm2 = new SuperMemo2(0, 0, 0, [], 325036800000000 + 100);
 
       const actual = sm2.asSaved().scheduledRepetitionTimestamp;
 

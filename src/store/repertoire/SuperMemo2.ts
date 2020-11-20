@@ -98,13 +98,12 @@ export class SuperMemo2 {
   }
 
   asSaved(): SavedSuperMemo2 {
-    let timestamp: number | undefined;
+    let timestamp = this.scheduledRepetitionTimestamp;
 
     if (this.scheduledRepetitionTimestamp) {
-      timestamp =
-        this.scheduledRepetitionTimestamp > MaxTimestamp
-          ? MaxTimestamp
-          : this.scheduledRepetitionTimestamp;
+      if (this.scheduledRepetitionTimestamp > MaxTimestamp) {
+        timestamp = MaxTimestamp;
+      }
     }
 
     return {
