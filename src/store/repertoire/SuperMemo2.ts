@@ -26,6 +26,9 @@ export interface SavedSuperMemo2 {
   readonly previousIntervalDays?: number;
 }
 
+// Jan 01 3000
+const MaxTimestamp = 325036800000000;
+
 export class SuperMemo2 {
   private easinessInternal: number;
   private historyInternal: SuperMemo2HistoryEntry[];
@@ -99,8 +102,8 @@ export class SuperMemo2 {
 
     if (this.scheduledRepetitionTimestamp) {
       timestamp =
-        this.scheduledRepetitionTimestamp > 325036800000000
-          ? 325036800000000
+        this.scheduledRepetitionTimestamp > MaxTimestamp
+          ? MaxTimestamp
           : this.scheduledRepetitionTimestamp;
     }
 
@@ -126,7 +129,7 @@ export class SuperMemo2 {
 
     this.scheduledRepetitionTimestampInternal = _.min([
       now() + days * MillisecondsPerDay,
-      325036800000000,
+      MaxTimestamp,
     ]);
 
     this.previousIntervalDays = days;
