@@ -95,10 +95,19 @@ export class SuperMemo2 {
   }
 
   asSaved(): SavedSuperMemo2 {
+    let timestamp: number | undefined = undefined;
+
+    if (this.scheduledRepetitionTimestamp) {
+      timestamp =
+        this.scheduledRepetitionTimestamp > 325036800000000
+          ? 325036800000000
+          : this.scheduledRepetitionTimestamp;
+    }
+
     return {
       easiness: this.easinessInternal,
       history: this.historyInternal,
-      scheduledRepetitionTimestamp: this.scheduledRepetitionTimestamp,
+      scheduledRepetitionTimestamp: timestamp,
       previousIntervalDays: this.previousIntervalDays,
       effectiveTrainingIndex: this.effectiveTrainingIndex,
     };
@@ -115,8 +124,11 @@ export class SuperMemo2 {
       days = _.ceil((this.previousIntervalDays || 0) * this.easinessInternal);
     }
 
-    this.scheduledRepetitionTimestampInternal =
-      now() + days * MillisecondsPerDay;
+    this.scheduledRepetitionTimestampInternal = _.min([
+      now() + days * MillisecondsPerDay,
+      325036800000000,
+    ]);
+
     this.previousIntervalDays = days;
   }
 }
