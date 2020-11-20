@@ -77,7 +77,10 @@ export class SuperMemo2 {
 
     this.easinessInternal =
       previousEasiness + (0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02));
-    this.easinessInternal = _.max([this.easinessInternal, 1.3]) || 1.3;
+
+    if (this.easinessInternal < 1.3) {
+      this.easinessInternal = 1.3;
+    }
 
     this.historyInternal.push({
       easiness: this.easinessInternal,
