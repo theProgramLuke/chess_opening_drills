@@ -264,7 +264,7 @@ describe("SuperMemo2", () => {
     });
 
     it("should save an undefined scheduled timestamp", () => {
-      const sm2 = new SuperMemo2(0, 0, 0, [], undefined);
+      const sm2 = new SuperMemo2();
 
       const actual = sm2.asSaved().scheduledRepetitionTimestamp;
 
