@@ -26,6 +26,9 @@ export interface SavedSuperMemo2 {
   readonly previousIntervalDays?: number;
 }
 
+// Jan 01 3000
+const MaxTimestamp = 325036800000000;
+
 export class SuperMemo2 {
   private easinessInternal: number;
   private historyInternal: SuperMemo2HistoryEntry[];
@@ -74,7 +77,10 @@ export class SuperMemo2 {
 
     this.easinessInternal =
       previousEasiness + (0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02));
-    this.easinessInternal = _.max([this.easinessInternal, 1.3]) || 1.3;
+
+    if (this.easinessInternal < 1.3) {
+      this.easinessInternal = 1.3;
+    }
 
     this.historyInternal.push({
       easiness: this.easinessInternal,
@@ -95,10 +101,18 @@ export class SuperMemo2 {
   }
 
   asSaved(): SavedSuperMemo2 {
+    let timestamp = this.scheduledRepetitionTimestamp;
+
+    if (this.scheduledRepetitionTimestamp) {
+      if (this.scheduledRepetitionTimestamp > MaxTimestamp) {
+        timestamp = MaxTimestamp;
+      }
+    }
+
     return {
       easiness: this.easinessInternal,
       history: this.historyInternal,
-      scheduledRepetitionTimestamp: this.scheduledRepetitionTimestamp,
+      scheduledRepetitionTimestamp: timestamp,
       previousIntervalDays: this.previousIntervalDays,
       effectiveTrainingIndex: this.effectiveTrainingIndex,
     };
@@ -115,8 +129,11 @@ export class SuperMemo2 {
       days = _.ceil((this.previousIntervalDays || 0) * this.easinessInternal);
     }
 
-    this.scheduledRepetitionTimestampInternal =
-      now() + days * MillisecondsPerDay;
+    this.scheduledRepetitionTimestampInternal = _.min([
+      now() + days * MillisecondsPerDay,
+      MaxTimestamp,
+    ]);
+
     this.previousIntervalDays = days;
   }
 }

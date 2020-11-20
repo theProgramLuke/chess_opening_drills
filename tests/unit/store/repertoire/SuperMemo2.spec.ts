@@ -30,6 +30,7 @@ describe("SuperMemo2", () => {
       expect(actual).toEqual(expected);
     });
   });
+
   describe("addTrainingEvent", () => {
     it.each([
       [2.1, 5 as TrainingGrade, 2.0],
@@ -182,6 +183,16 @@ describe("SuperMemo2", () => {
       expect(actualEasiness).toEqual(expectedEasiness);
       expect(actualSchedule).toEqual(expectedSchedule);
     });
+
+    it("should not increase the scheduled repetition above a safe max date", () => {
+      const sm2 = new SuperMemo2(2.5, 99, 325036800000000 - 1);
+      const expected = 325036800000000;
+
+      sm2.addTrainingEvent(5);
+      const actual = sm2.scheduledRepetitionTimestamp;
+
+      expect(actual).toEqual(expected);
+    });
   });
 
   describe("history", () => {
@@ -242,6 +253,22 @@ describe("SuperMemo2", () => {
       const actual = sm2.asSaved();
 
       expect(actual).toEqual(saved);
+    });
+
+    it("should limit the saved timestamp to a safe max date", () => {
+      const sm2 = new SuperMemo2(0, 0, 0, [], 325036800000000 + 100);
+
+      const actual = sm2.asSaved().scheduledRepetitionTimestamp;
+
+      expect(actual).toEqual(325036800000000);
+    });
+
+    it("should save an undefined scheduled timestamp", () => {
+      const sm2 = new SuperMemo2();
+
+      const actual = sm2.asSaved().scheduledRepetitionTimestamp;
+
+      expect(actual).toBeUndefined();
     });
   });
 });
