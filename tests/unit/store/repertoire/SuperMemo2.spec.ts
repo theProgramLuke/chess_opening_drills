@@ -262,5 +262,13 @@ describe("SuperMemo2", () => {
 
       expect(actual).toEqual(325036800000000);
     });
+
+    it("should save an undefined scheduled timestamp", () => {
+      const sm2 = new SuperMemo2(0, 0, 0, [], undefined);
+
+      const actual = sm2.asSaved().scheduledRepetitionTimestamp;
+
+      expect(actual).toBeUndefined();
+    });
   });
 });
