@@ -95,7 +95,7 @@ export class SuperMemo2 {
   }
 
   asSaved(): SavedSuperMemo2 {
-    let timestamp: number | undefined = undefined;
+    let timestamp: number | undefined;
 
     if (this.scheduledRepetitionTimestamp) {
       timestamp =
