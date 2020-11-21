@@ -54,7 +54,7 @@
     "@vue/cli-service": "~4.5.8",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^5.0.2",
-    "@vue/test-utils": "^1.0.3",
+    "@vue/test-utils": "^1.1.1",
     "chess-pgn": "0.1.10",
     "chess.js": "0.11.0",
     "chessground": "7.9.3",
