@@ -9,8 +9,15 @@
 Chess Opening Drills is a modern, cross platform tool for _practicing_ an opening repertoire. Chess Opening Drills is not a database tool to develop a repertoire, there are already many tools available for that.
 
 ## Installation
+Download the latest release, or [build it yourself](CONTRIBUTING.md).
 
-[Download releases here](https://github.com/theProgramLuke/chess_opening_drills/releases), or [build it yourself](CONTRIBUTING.md).
+[Windows Installer](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.7.4/Chess-Opening-Drills-Setup-0.7.4.exe)
+
+[Windows Portable](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.7.4/Chess-Opening-Drills-0.7.4.exe)
+
+[Linux](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.7.4/Chess-Opening-Drills-0.7.4.AppImage)
+
+[Mac](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.7.4/Chess-Opening-Drills-0.7.4.dmg)
 
 ## Features
 
