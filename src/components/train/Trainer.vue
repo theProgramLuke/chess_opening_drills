@@ -12,7 +12,7 @@
           v-spacer
           v-btn(
             text,
-            @click="alternateMoveEntered = false") Dismiss
+            @click="acknowledgeAlternateMove") Dismiss
 
     v-row.fill-height.py-0.my-0.align-center
       div.almost-fill-height
