@@ -421,6 +421,7 @@ describe("TrainerViewModel", () => {
 
     beforeEach(() => {
       trainingVariation = makeTrainingVariation(["e4"]);
+      trainingVariation.repertoire.training = new TrainingCollection();
       component = mountComponent(
         new TrainingOptions([], [trainingVariation], false, false, 0, 0)
       );
@@ -459,6 +460,32 @@ describe("TrainerViewModel", () => {
 
         component.vm.onBoardMove({ fen: "fen" });
 
+        expect(component.vm.reloadPosition).toBeCalled();
+      });
+
+      it("should set alternateMoveEntered to true and reload the position if an alternate move was entered", () => {
+        component.vm.reloadPosition = jest.fn();
+        (trainingVariation.repertoire.training
+          .getTrainingForMove as jest.Mock).mockReturnValue(
+          new RepetitionTraining()
+        );
+
+        component.vm.onBoardMove({ fen: "fen" });
+        const actual = component.vm.alternateMoveEntered;
+
+        expect(actual).toBeTruthy();
+        expect(component.vm.reloadPosition).toBeCalled();
+      });
+
+      it("should set alternateMoveEntered to false and reload the position if an alternate move was not entered", () => {
+        component.vm.reloadPosition = jest.fn();
+        (trainingVariation.repertoire.training
+          .getTrainingForMove as jest.Mock).mockReturnValue(undefined);
+
+        component.vm.onBoardMove({ fen: "fen" });
+        const actual = component.vm.alternateMoveEntered;
+
+        expect(actual).toBeFalsy();
         expect(component.vm.reloadPosition).toBeCalled();
       });
     });
@@ -527,6 +554,21 @@ describe("TrainerViewModel", () => {
         expect(component.vm.nextTrainingPosition).toBeCalled();
       });
     });
+  });
+
+  describe("acknowledgeAlternateMove", () => {
+    it.each([true, false])(
+      "should set alternateMoveEntered to false from %s",
+      initial => {
+        const component = mountComponent();
+        component.vm.alternateMoveEntered = initial;
+
+        component.vm.acknowledgeAlternateMove();
+        const actual = component.vm.alternateMoveEntered;
+
+        expect(actual).toBeFalsy();
+      }
+    );
   });
 
   describe("moveIsCorrect", () => {

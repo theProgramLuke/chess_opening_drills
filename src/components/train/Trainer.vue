@@ -1,5 +1,19 @@
 <template lang="pug">
   v-container.fill-height.py-0.my-0(v-if="!complete")
+    v-dialog(
+      modal,
+      v-model="alternateMoveEntered",
+      @click:outside="acknowledgeAlternateMove",
+      max-width=750)
+      v-card
+        v-card-title Multiple moves from this position
+        v-card-text The move you entered is in your repertoire, but is not the move being trained.
+        v-card-actions
+          v-spacer
+          v-btn(
+            text,
+            @click="acknowledgeAlternateMove") Dismiss
+
     v-row.fill-height.py-0.my-0.align-center
       div.almost-fill-height
         chessboard(

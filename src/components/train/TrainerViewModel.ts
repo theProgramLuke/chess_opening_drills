@@ -27,6 +27,7 @@ export default class TrainerViewModel extends Vue {
   attempts: string[] = [];
   previewedVariations: number[] = [];
   mistakeInVariation = false;
+  alternateMoveEntered = false;
 
   @Prop({ required: true })
   options!: TrainingOptions;
@@ -194,7 +195,8 @@ export default class TrainerViewModel extends Vue {
     if (!_.isUndefined(this.activeVariation)) {
       if (threats.fen && threats.fen !== this.activePositionLegalFen) {
         const correct = this.moveIsCorrect(threats.fen);
-        this.attempts.push(_.last(threats.history) || "not a move");
+        const san = _.last(threats.history) || "not a move";
+        this.attempts.push(san);
 
         if (correct) {
           this.addTrainingEvent({
@@ -209,7 +211,19 @@ export default class TrainerViewModel extends Vue {
 
           this.nextTrainingPosition();
         } else {
-          this.mistakeInVariation = true;
+          if (
+            _.isUndefined(
+              this.activeVariation.repertoire.training.getTrainingForMove(
+                this.activePosition,
+                san
+              )
+            )
+          ) {
+            this.mistakeInVariation = true;
+          } else {
+            this.alternateMoveEntered = true;
+          }
+
           this.reloadPosition();
         }
       }
@@ -264,6 +278,10 @@ export default class TrainerViewModel extends Vue {
         this.$emit("onCompleted");
       }
     }
+  }
+
+  acknowledgeAlternateMove(): void {
+    this.alternateMoveEntered = false;
   }
 
   // Method instead of computed so this won't be cached
