@@ -230,10 +230,6 @@ export default class TrainerViewModel extends Vue {
     }
   }
 
-  acknowledgeAlternateMove(): void {
-    this.alternateMoveEntered = false;
-  }
-
   moveIsCorrect(fen: string): boolean {
     if (_.isUndefined(this.expectedMove)) {
       return false;
@@ -282,6 +278,10 @@ export default class TrainerViewModel extends Vue {
         this.$emit("onCompleted");
       }
     }
+  }
+
+  acknowledgeAlternateMove(): void {
+    this.alternateMoveEntered = false;
   }
 
   // Method instead of computed so this won't be cached
