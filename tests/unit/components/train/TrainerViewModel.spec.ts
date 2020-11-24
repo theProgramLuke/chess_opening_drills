@@ -15,7 +15,6 @@ import { TrainingCollection } from "@/store/repertoire/TrainingCollection";
 import { RepetitionTraining } from "@/store/repertoire/RepetitionTraining";
 import { TrainingMode } from "@/store/trainingMode";
 import { TagTree } from "@/store/repertoire/TagTree";
-import { component } from "vue/types/umd";
 
 jest.mock("@/store/repertoire/Repertoire");
 jest.mock("@/store/repertoire/TrainingCollection");
