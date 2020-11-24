@@ -1,5 +1,19 @@
 <template lang="pug">
   v-container.ma-0.pa-0.fill-height(fluid)
+    v-dialog(
+        modal,
+        v-model="showNoMoves",
+        @click:outside="dismissNoMoves",
+        max-width=750)
+        v-card
+          v-card-title Your repertoire is empty
+          v-card-text Drag pieces on the board to add moves, or import a PGN file.
+          v-card-actions
+            v-spacer
+            v-btn(
+              text,
+              @click="dismissNoMoves") OK
+              
     v-row.ma-0.pa-0.fill-height(align="stretch")
       v-col.ma-0.pa-0(cols="4")
         v-tabs(show-arrows, grow)
