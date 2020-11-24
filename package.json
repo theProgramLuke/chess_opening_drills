@@ -80,7 +80,7 @@
     "plotly.js": "1.54.7",
     "prettier": "^2.2.0",
     "reflect-metadata": "0.1.13",
-    "sass": "^1.19.0",
+    "sass": "^1.29.0",
     "sass-loader": "^8.0.2",
     "spectron": "^11.0.0",
     "typescript": "~3.9.3",
