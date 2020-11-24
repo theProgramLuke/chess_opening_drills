@@ -265,4 +265,44 @@ describe("AppViewModel", () => {
       expect(actual).toEqual(expected);
     });
   });
+
+  describe("onRouteChanged", () => {
+    let htmlClassList: { add: jest.Mock; remove: jest.Mock };
+
+    beforeEach(() => {
+      htmlClassList = { add: jest.fn(), remove: jest.fn() };
+
+      jest
+        .spyOn(global.document, "children", "get")
+        .mockReturnValue(([
+          { classList: htmlClassList },
+        ] as unknown) as HTMLCollection);
+    });
+
+    it.each(["Welcome", "Settings"])(
+      "should add the scrollable class for the %s route",
+      name => {
+        component.vm.onRouteChange({ name });
+
+        expect(htmlClassList.add).toBeCalledWith("scrollable");
+      }
+    );
+
+    it("should remove the scrollable class for the other routes", () => {
+      component.vm.onRouteChange({ name: "other" });
+
+      expect(htmlClassList.remove).toBeCalledWith("scrollable");
+    });
+
+    it("should not call add or remove if the element is undefined", () => {
+      jest
+        .spyOn(global.document, "children", "get")
+        .mockReturnValue(([] as unknown) as HTMLCollection);
+
+      component.vm.onRouteChange({});
+
+      expect(htmlClassList.add).not.toBeCalled();
+      expect(htmlClassList.remove).not.toBeCalled();
+    });
+  });
 });

@@ -27,4 +27,8 @@
 html {
   overflow-y: hidden !important;
 }
+
+.scrollable {
+  overflow-y: auto !important;
+}
 </style>

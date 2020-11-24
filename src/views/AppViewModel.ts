@@ -3,6 +3,7 @@ import { Vue, Component, Watch } from "vue-property-decorator";
 import { State } from "vuex-class";
 import _ from "lodash";
 import { Repertoire } from "@/store/repertoire/Repertoire";
+import { Location } from "vue-router";
 
 export interface NavigationMenuItem {
   name: string;
@@ -48,6 +49,10 @@ export const baseMenuItems: NavigationMenuItem[] = [
     icon: "mdi-wrench",
   },
 ];
+
+interface RouteSpecification {
+  name: string;
+}
 
 @Component
 export default class AppViewModel extends Vue {
@@ -115,6 +120,19 @@ export default class AppViewModel extends Vue {
     const multipleMoves = repertoire.training.getPositionsWithMultipleTrainings();
 
     return _.size(multipleMoves);
+  }
+
+  @Watch("$route")
+  onRouteChange(route: Location): void {
+    const element = _.first(document.children);
+
+    if (element) {
+      if (route.name === "Settings" || route.name === "Welcome") {
+        element.classList.add("scrollable");
+      } else {
+        element.classList.remove("scrollable");
+      }
+    }
   }
 
   @Watch("darkMode")

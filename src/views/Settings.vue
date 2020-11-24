@@ -131,12 +131,6 @@
                             v-model="option.value",
                             hide-details,
                             dense)
-
-        v-expansion-panel
-          v-expansion-panel-header Development
-          v-expansion-panel-content.pa-2
-            v-btn(@click="clearStorage", color="error")
-             | Clear All Storage
 </template>
 
 <script lang="ts" src="./SettingsViewModel.ts" />
