@@ -50,10 +50,6 @@ export const baseMenuItems: NavigationMenuItem[] = [
   },
 ];
 
-interface RouteSpecification {
-  name: string;
-}
-
 @Component
 export default class AppViewModel extends Vue {
   drawer = true;
