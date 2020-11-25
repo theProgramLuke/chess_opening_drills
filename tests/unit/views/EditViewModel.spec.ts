@@ -95,6 +95,69 @@ describe("EditViewModel", () => {
     });
   });
 
+  describe("showNoMoves", () => {
+    const startPosition =
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
+
+    it("should be true if there are no moves from the starting position of either repertoire and dismissedNoMoves is false", () => {
+      component.vm.dismissedNoMoves = false;
+      (whiteRepertoire.positions
+        .movesFromPosition as jest.Mock).mockReturnValue([]);
+      (blackRepertoire.positions
+        .movesFromPosition as jest.Mock).mockReturnValue([]);
+
+      const actual = component.vm.showNoMoves;
+
+      expect(actual).toBeTruthy();
+      expect(whiteRepertoire.positions.movesFromPosition).toBeCalledWith(
+        startPosition
+      );
+      expect(blackRepertoire.positions.movesFromPosition).toBeCalledWith(
+        startPosition
+      );
+    });
+
+    it("should be false if dismissedNoMoves is true", () => {
+      component.vm.dismissedNoMoves = true;
+
+      const actual = component.vm.showNoMoves;
+
+      expect(actual).toBeFalsy();
+    });
+
+    it("should be false if there are moves from the start position and dismissedNoMoves is false", () => {
+      component.vm.dismissedNoMoves = false;
+      (whiteRepertoire.positions
+        .movesFromPosition as jest.Mock).mockReturnValue([undefined]);
+      (blackRepertoire.positions
+        .movesFromPosition as jest.Mock).mockReturnValue([]);
+
+      const actual = component.vm.showNoMoves;
+
+      expect(actual).toBeFalsy();
+      expect(whiteRepertoire.positions.movesFromPosition).toBeCalledWith(
+        startPosition
+      );
+      expect(blackRepertoire.positions.movesFromPosition).toBeCalledWith(
+        startPosition
+      );
+    });
+  });
+
+  describe("dismissNoMoves", () => {
+    it.each([true, false])(
+      "should set dismissedNoMoves to true from %s",
+      initial => {
+        component.vm.dismissedNoMoves = initial;
+
+        component.vm.dismissNoMoves();
+        const actual = component.vm.dismissedNoMoves;
+
+        expect(actual).toBeTruthy();
+      }
+    );
+  });
+
   describe("sourceVariations", () => {
     it("should be the source variations of the active position", () => {
       const turnList: Variation[] = [];
