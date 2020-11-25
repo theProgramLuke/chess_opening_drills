@@ -7,7 +7,6 @@ import {
   MillisecondsPerDay,
   SuperMemo2HistoryEntry,
   SavedSuperMemo2,
-  MillisecondsPerHour,
 } from "@/store/repertoire/SuperMemo2";
 
 jest.mock("lodash/now");

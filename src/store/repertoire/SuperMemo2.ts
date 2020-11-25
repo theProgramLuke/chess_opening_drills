@@ -10,7 +10,7 @@ import now from "lodash/now"; // separate import for mock
 // 0 - complete blackout.
 export type TrainingGrade = 0 | 1 | 2 | 3 | 4 | 5;
 
-export const MillisecondsPerHour = 1000 * 60 * 60;
+const MillisecondsPerHour = 1000 * 60 * 60;
 export const MillisecondsPerDay = 24 * MillisecondsPerHour;
 
 export interface SuperMemo2HistoryEntry {
