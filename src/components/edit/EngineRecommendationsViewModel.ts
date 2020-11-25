@@ -102,21 +102,23 @@ export default class EngineRecommendationsViewModel extends Vue {
 
   sortEngineRecommendations(): void {
     const recommendations: EngineOutput[] = [];
+    const blackToMove = sideFromFen(this.activePosition) === Side.Black;
 
     _.forEach(this.engineRecommendations, recommendation => {
       if (recommendation) {
+        if (blackToMove) {
+          recommendation.evaluation = 0 - recommendation.evaluation;
+        }
         recommendations.push(recommendation);
       }
     });
 
-    this.sortedEngineRecommendations = _.reverse(
-      _.sortBy(recommendations, recommendation => {
-        let evaluation = recommendation.evaluation;
-        if (sideFromFen(this.activePosition) === Side.Black) {
-          evaluation = 0 - evaluation;
-        }
-        return 255 * recommendation.depth + evaluation;
-      })
+    const evaluationSortOrder = blackToMove ? "asc" : "desc";
+
+    this.sortedEngineRecommendations = _.orderBy(
+      recommendations,
+      ["depth", "evaluation"],
+      ["desc", evaluationSortOrder]
     );
   }
 

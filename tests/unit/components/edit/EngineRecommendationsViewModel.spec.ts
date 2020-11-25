@@ -221,7 +221,7 @@ describe("EngineRecommendationsViewModel", () => {
         undefined,
         {
           id: 3,
-          evaluation: 1,
+          evaluation: -1,
           depth: 2,
           variation: [],
         },
