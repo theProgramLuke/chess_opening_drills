@@ -40,6 +40,7 @@ export default class EditViewModel extends Vue {
   activeRepertoire: Repertoire = (null as unknown) as Repertoire;
   activePosition = "";
   recomputeNextMovesCounter = 0;
+  dismissedNoMoves = false;
 
   @State
   whiteRepertoire!: Repertoire;
@@ -71,6 +72,22 @@ export default class EditViewModel extends Vue {
 
   get boardOrientation(): Side {
     return this.activeRepertoire.sideToTrain;
+  }
+
+  get showNoMoves(): boolean {
+    const startPosition =
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
+
+    const whiteRepertoireIsEmpty = _.isEmpty(
+      this.whiteRepertoire.positions.movesFromPosition(startPosition)
+    );
+    const blackRepertoireIsEmpty = _.isEmpty(
+      this.blackRepertoire.positions.movesFromPosition(startPosition)
+    );
+
+    return (
+      !this.dismissedNoMoves && whiteRepertoireIsEmpty && blackRepertoireIsEmpty
+    );
   }
 
   get sourceVariations(): Variation[] {
@@ -113,6 +130,10 @@ export default class EditViewModel extends Vue {
       fen: this.activePosition,
       drawings,
     });
+  }
+
+  dismissNoMoves(): void {
+    this.dismissedNoMoves = true;
   }
 
   onDrawingsChanged(drawings: DrawShape[]): void {
