@@ -7,6 +7,7 @@ import {
   MillisecondsPerDay,
   SuperMemo2HistoryEntry,
   SavedSuperMemo2,
+  MillisecondsPerHour,
 } from "@/store/repertoire/SuperMemo2";
 
 jest.mock("lodash/now");
@@ -114,14 +115,16 @@ describe("SuperMemo2", () => {
           10, // Already trained more than 2 times successfully
           10
         );
+        const timeOffset = 99 * MillisecondsPerDay; // avoid the train early case
         const expected: number[] = [
           1 * MillisecondsPerDay + nowTimestamp,
-          4 * MillisecondsPerDay + nowTimestamp,
+          4 * MillisecondsPerDay + timeOffset,
         ];
 
         const actual: (number | undefined)[] = [];
         sm2.addTrainingEvent(grade);
         actual.push(sm2.scheduledRepetitionTimestamp);
+        (now as jest.Mock).mockReturnValue(timeOffset);
         sm2.addTrainingEvent(5);
         actual.push(sm2.scheduledRepetitionTimestamp);
 
@@ -133,16 +136,16 @@ describe("SuperMemo2", () => {
       const previousIntervalDays = 5;
       const easiness = 2;
       const sm2 = new SuperMemo2(easiness, 2, previousIntervalDays);
-      const expectedDays = [easiness * previousIntervalDays];
-      expectedDays.push(easiness * expectedDays[0]);
-      const expected = _.map(
-        expectedDays,
-        days => days * MillisecondsPerDay + nowTimestamp
-      );
+      const timeOffset = 99 * MillisecondsPerDay; // avoid the train early case
+      const expected = [
+        10 * MillisecondsPerDay + nowTimestamp,
+        20 * MillisecondsPerDay + timeOffset,
+      ];
 
       const actual: (number | undefined)[] = [];
       sm2.addTrainingEvent(4); // Train with grade = 4 for this test so the easiness doesn't change.
       actual.push(sm2.scheduledRepetitionTimestamp);
+      (now as jest.Mock).mockReturnValue(timeOffset);
       sm2.addTrainingEvent(4); // Train with grade = 4 for this test so the easiness doesn't change.
       actual.push(sm2.scheduledRepetitionTimestamp);
 
@@ -165,16 +168,22 @@ describe("SuperMemo2", () => {
         1.5400000000000003,
       ];
       const expectedIntervalDays = [1, 1, 4, 10, 23, 1, 4, 6, 9, 14];
+      const trainingTimes = _.times(
+        expectedIntervalDays.length,
+        index => index * 99 * MillisecondsPerDay
+      );
       const expectedSchedule = _.map(
         expectedIntervalDays,
-        days => days * MillisecondsPerDay + nowTimestamp
+        (days, index) => days * MillisecondsPerDay + trainingTimes[index]
       );
       expect(expectedEasiness.length).toEqual(grades.length);
       expect(expectedSchedule.length).toEqual(grades.length);
 
       const actualEasiness: number[] = [];
       const actualSchedule: (number | undefined)[] = [];
-      _.forEach(grades, grade => {
+      _.forEach(grades, (grade, index) => {
+        // Avoid early training case
+        (now as jest.Mock).mockReturnValue(trainingTimes[index]);
         sm2.addTrainingEvent(grade);
         actualEasiness.push(sm2.easiness);
         actualSchedule.push(sm2.scheduledRepetitionTimestamp);
@@ -187,6 +196,17 @@ describe("SuperMemo2", () => {
     it("should not increase the scheduled repetition above a safe max date", () => {
       const sm2 = new SuperMemo2(2.5, 99, 325036800000000 - 1);
       const expected = 325036800000000;
+
+      sm2.addTrainingEvent(5);
+      const actual = sm2.scheduledRepetitionTimestamp;
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should not increase the scheduled repetition if now is less than an hour since the previous repetition", () => {
+      const expected = 1000;
+      (now as jest.Mock).mockReturnValue(0);
+      const sm2 = new SuperMemo2(2.5, 3, 0, [], expected);
 
       sm2.addTrainingEvent(5);
       const actual = sm2.scheduledRepetitionTimestamp;
@@ -225,22 +245,24 @@ describe("SuperMemo2", () => {
   });
 
   describe("asSaved", () => {
-    const grades: TrainingGrade[] = [3, 4, 5];
     const saved: SavedSuperMemo2 = {
       easiness: 2.46,
       history: [
-        { easiness: 2.36, grade: grades[0], timestamp: nowTimestamp },
-        { easiness: 2.36, grade: grades[1], timestamp: nowTimestamp },
-        { easiness: 2.46, grade: grades[2], timestamp: nowTimestamp },
+        { easiness: 2.36, grade: 3, timestamp: MillisecondsPerDay },
+        { easiness: 2.36, grade: 4, timestamp: 10 * MillisecondsPerDay },
+        { easiness: 2.46, grade: 5, timestamp: 20 * MillisecondsPerDay },
       ],
-      scheduledRepetitionTimestamp: 10 * MillisecondsPerDay + nowTimestamp,
+      scheduledRepetitionTimestamp: 30 * MillisecondsPerDay,
       previousIntervalDays: 10,
-      effectiveTrainingIndex: grades.length,
+      effectiveTrainingIndex: 3,
     };
 
-    it("should capture the state of the training", () => {
+    it("should save the state of the training", () => {
       const sm2 = new SuperMemo2();
-      _.forEach(grades, grade => sm2.addTrainingEvent(grade));
+      _.forEach(saved.history, historyEntry => {
+        (now as jest.Mock).mockReturnValue(historyEntry.timestamp);
+        sm2.addTrainingEvent(historyEntry.grade);
+      });
 
       const actual = sm2.asSaved();
 

@@ -17,7 +17,6 @@ import { DateTime, DateObject } from "luxon";
 jest.mock("lodash/now");
 
 const nowTimestamp = 24601;
-export const millisecondsPerDay = 86400000;
 
 beforeEach(() => {
   (now as jest.Mock).mockReset();
@@ -94,18 +93,36 @@ describe("RepetitionTraining", () => {
     const saved: SavedRepetitionTraining = {
       easiness: 2.46,
       history: [
-        { easiness: 2.36, grade: 3, timestamp: nowTimestamp, ...events[0] },
-        { easiness: 2.36, grade: 4, timestamp: nowTimestamp, ...events[1] },
-        { easiness: 2.46, grade: 5, timestamp: nowTimestamp, ...events[2] },
+        {
+          easiness: 2.36,
+          grade: 3,
+          timestamp: MillisecondsPerDay,
+          ...events[0],
+        },
+        {
+          easiness: 2.36,
+          grade: 4,
+          timestamp: 10 * MillisecondsPerDay,
+          ...events[1],
+        },
+        {
+          easiness: 2.46,
+          grade: 5,
+          timestamp: 20 * MillisecondsPerDay,
+          ...events[2],
+        },
       ],
-      scheduledRepetitionTimestamp: 10 * MillisecondsPerDay + nowTimestamp,
+      scheduledRepetitionTimestamp: 30 * MillisecondsPerDay,
       previousIntervalDays: 10,
       effectiveTrainingIndex: events.length,
     };
 
-    it("should capture the state of the training", () => {
+    it("should save the state of the training", () => {
       const training = new RepetitionTraining();
-      _.forEach(events, event => training.addTrainingEvent(event));
+      _.forEach(saved.history, historyEntry => {
+        (now as jest.Mock).mockReturnValue(historyEntry.timestamp);
+        training.addTrainingEvent(historyEntry);
+      });
 
       const actual = training.asSaved();
 
@@ -184,9 +201,9 @@ describe("RepetitionTraining", () => {
           0,
           0,
           [],
-          1 * millisecondsPerDay
+          1 * MillisecondsPerDay
         );
-        (now as jest.Mock).mockReturnValue(10 * millisecondsPerDay);
+        (now as jest.Mock).mockReturnValue(10 * MillisecondsPerDay);
 
         const actual = training.includeForTrainingMode(TrainingMode.Scheduled);
 
@@ -215,7 +232,7 @@ describe("RepetitionTraining", () => {
           0,
           0,
           [],
-          10 * millisecondsPerDay
+          10 * MillisecondsPerDay
         );
         (now as jest.Mock).mockReturnValue(0);
 

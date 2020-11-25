@@ -10,7 +10,8 @@ import now from "lodash/now"; // separate import for mock
 // 0 - complete blackout.
 export type TrainingGrade = 0 | 1 | 2 | 3 | 4 | 5;
 
-export const MillisecondsPerDay = 86400000;
+export const MillisecondsPerHour = 1000 * 60 * 60;
+export const MillisecondsPerDay = 24 * MillisecondsPerHour;
 
 export interface SuperMemo2HistoryEntry {
   readonly easiness: number;
@@ -73,6 +74,16 @@ export class SuperMemo2 {
   }
 
   addTrainingEvent(grade: TrainingGrade): void {
+    // https://apps.ankiweb.net/docs/manual20.html
+    // reviewing a card shortly after it is scheduled has little impact on scheduling
+    // (eg, a card due tomorrow with a one day interval will remain due tomorrow if reviewed early)
+    let trainedEarly = false;
+    if (this.scheduledRepetitionTimestampInternal) {
+      const timeSinceLastTraining =
+        now() - this.scheduledRepetitionTimestampInternal;
+      trainedEarly = timeSinceLastTraining < MillisecondsPerHour;
+    }
+
     const previousEasiness = this.easinessInternal;
 
     this.easinessInternal =
@@ -97,7 +108,9 @@ export class SuperMemo2 {
       ++this.effectiveTrainingIndex;
     }
 
-    this.updateSchedule();
+    if (!trainedEarly) {
+      this.updateSchedule();
+    }
   }
 
   asSaved(): SavedSuperMemo2 {
