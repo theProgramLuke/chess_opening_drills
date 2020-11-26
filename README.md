@@ -11,13 +11,13 @@ Chess Opening Drills is a modern, cross platform tool for _practicing_ an openin
 ## Installation
 Download the latest release, or [build it yourself](CONTRIBUTING.md).
 
-[Windows Installer](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.7.4/Chess-Opening-Drills-Setup-0.7.4.exe)
+[Windows Installer](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.8.1/Chess-Opening-Drills-Setup-0.8.1.exe)
 
-[Windows Portable](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.7.4/Chess-Opening-Drills-0.7.4.exe)
+[Windows Portable](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.8.1/Chess-Opening-Drills-0.8.1.exe)
 
-[Linux](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.7.4/Chess-Opening-Drills-0.7.4.AppImage)
+[Linux](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.8.1/Chess-Opening-Drills-0.8.1.AppImage)
 
-[Mac](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.7.4/Chess-Opening-Drills-0.7.4.dmg)
+[Mac](https://github.com/theProgramLuke/chess_opening_drills/releases/download/v0.8.1/Chess-Opening-Drills-0.8.1.dmg)
 
 ## Features
 
