@@ -78,9 +78,9 @@ export class SuperMemo2 {
     // reviewing a card shortly after it is scheduled has little impact on scheduling
     // (eg, a card due tomorrow with a one day interval will remain due tomorrow if reviewed early)
     let trainedEarly = false;
-    if (this.scheduledRepetitionTimestampInternal) {
-      const timeSinceLastTraining =
-        now() - this.scheduledRepetitionTimestampInternal;
+    const lastTraining = _.last(this.history);
+    if (lastTraining) {
+      const timeSinceLastTraining = now() - lastTraining.timestamp;
       trainedEarly = timeSinceLastTraining < MillisecondsPerHour;
     }
 
@@ -99,16 +99,16 @@ export class SuperMemo2 {
       grade,
     });
 
-    if (grade < 3) {
-      // If the quality response was lower than 3
-      // then start repetitions for the item from the beginning without changing the E-Factor
+    const correctResponse = grade >= 3;
+    if (correctResponse) {
+      ++this.effectiveTrainingIndex;
+    } else {
+      // start repetitions for the item from the beginning without changing the easiness
       // (i.e. use intervals I(1), I(2) etc. as if the item was memorized anew).
       this.effectiveTrainingIndex = 1;
-    } else {
-      ++this.effectiveTrainingIndex;
     }
 
-    if (!trainedEarly) {
+    if (!(trainedEarly && correctResponse)) {
       this.updateSchedule();
     }
   }

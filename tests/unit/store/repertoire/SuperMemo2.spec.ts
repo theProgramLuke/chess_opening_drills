@@ -202,16 +202,44 @@ describe("SuperMemo2", () => {
       expect(actual).toEqual(expected);
     });
 
-    it("should not increase the scheduled repetition if now is less than an hour since the previous repetition", () => {
-      const expected = 1000;
-      (now as jest.Mock).mockReturnValue(0);
-      const sm2 = new SuperMemo2(2.5, 3, 0, [], expected);
+    it.each([3 as TrainingGrade, 4 as TrainingGrade, 5 as TrainingGrade])(
+      `should not increase the scheduled repetition after a correct response %s
+        if now is less than an hour since the previous repetition`,
+      grade => {
+        const initialTimestamp = 0;
+        (now as jest.Mock).mockReturnValue(initialTimestamp);
+        const sm2 = new SuperMemo2();
+        sm2.addTrainingEvent(5);
+        const expected = sm2.scheduledRepetitionTimestamp;
+        (now as jest.Mock).mockReturnValue(initialTimestamp + 1);
 
-      sm2.addTrainingEvent(5);
-      const actual = sm2.scheduledRepetitionTimestamp;
+        sm2.addTrainingEvent(grade);
+        const actual = sm2.scheduledRepetitionTimestamp;
 
-      expect(actual).toEqual(expected);
-    });
+        expect(actual).toEqual(expected);
+      }
+    );
+
+    it.each([0 as TrainingGrade, 1 as TrainingGrade, 2 as TrainingGrade])(
+      `should increase the scheduled repetition after a correct response %s
+        if now is less than an hour since the previous repetition`,
+      grade => {
+        const initialTimestamp = 0;
+        (now as jest.Mock).mockReturnValue(initialTimestamp);
+        const sm2 = new SuperMemo2();
+        sm2.addTrainingEvent(5);
+        const expected = sm2.scheduledRepetitionTimestamp;
+        (now as jest.Mock).mockReturnValue(initialTimestamp + 1);
+
+        sm2.addTrainingEvent(grade);
+        const actual = sm2.scheduledRepetitionTimestamp;
+
+        expect(expected).toBeDefined();
+        if (expected) {
+          expect(actual).toBeGreaterThan(expected);
+        }
+      }
+    );
   });
 
   describe("history", () => {
