@@ -29,7 +29,7 @@
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.4.9",
     "vuetify": "^2.2.11",
-    "vuex": "^3.4.0"
+    "vuex": "^3.6.0"
   },
   "devDependencies": {
     "@types/chess.js": "0.10.1",
