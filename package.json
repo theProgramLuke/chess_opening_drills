@@ -58,7 +58,7 @@
     "chess-pgn": "0.1.10",
     "chess.js": "0.11.0",
     "chessground": "7.9.3",
-    "electron": "^9.0.0",
+    "electron": "^16.0.1",
     "electron-devtools-installer": "^3.1.0",
     "electron-icon-builder": "1.0.2",
     "eslint": "^6.7.2",
